@@ -1,0 +1,76 @@
+# ============================================================
+#  GUILD BOARD SETTINGS — safe for any officer to edit!
+#  Edit this file right in the GitHub website (pencil icon),
+#  then go to Actions -> "Weekly Guild Board" -> "Run workflow"
+#  to post an updated board immediately.
+# ============================================================
+
+guild:
+  name: "YOUR GUILD NAME"        # exactly as it appears on Warcraft Logs
+  realm_slug: "proudmoore"       # lowercase, spaces become dashes (e.g. "area-52")
+  region: "us"                   # us / eu / kr / tw
+
+# How many days of logs to include (7 = one raid week)
+lookback_days: 7
+
+# How many players shown per category (3, 4, or 5)
+top_n: 5
+
+raid:
+  enabled: true
+  difficulty: heroic             # normal / heroic / mythic
+
+# ------------------------------------------------------------
+#  RANKINGS vs THE REGION — guild progress standing plus your
+#  top players by Warcraft Logs All Stars realm rank.
+# ------------------------------------------------------------
+rankings:
+  enabled: true
+  zone_id: 0                     # 0 = auto-detect the current raid from this week's logs
+  max_characters: 30             # how many raiders to look up (1 API call each)
+
+# ------------------------------------------------------------
+#  MULTIPLE LOGGERS — if two people upload the same raid, the
+#  script automatically detects duplicate pulls so deaths and
+#  pull counts aren't double-counted. Optionally name your
+#  primary logger's Warcraft Logs USERNAME so their reports
+#  win ties when the same pull appears in two logs.
+# ------------------------------------------------------------
+dedup:
+  enabled: true
+  preferred_uploader: ""         # WCL account name of your primary logger (optional)
+
+# ------------------------------------------------------------
+#  PUGS & ROSTER FILTERING — you run pugs, so choose whether
+#  they appear on the board. guild_members_only pulls your
+#  roster from Warcraft Logs automatically (no list to keep).
+#  always_include = trials/friends not in guild yet.
+#  always_exclude = anyone who should never appear.
+# ------------------------------------------------------------
+filters:
+  guild_members_only: false      # false = pugs can appear on the board
+  always_include: []
+    # - Sometrialname
+  always_exclude: []
+    # - Somename
+
+# ------------------------------------------------------------
+#  ROAST OF THE WEEK — officers update this each week!
+#  Pick the winning roast from the Discord thread, paste it
+#  below, then run the workflow. Leave "roast" empty for none.
+# ------------------------------------------------------------
+roast_of_the_week:
+  winner: ""                     # who said it
+  target: ""                     # which healer got flamed (optional)
+  roast: ""                      # the roast itself
+
+# ------------------------------------------------------------
+#  MYTHIC+ BOARD (optional) — flip enabled to true and list
+#  your raiders below. Names on your guild's realm can be
+#  listed plain; off-realm characters as Name-Realm.
+# ------------------------------------------------------------
+mplus:
+  enabled: false
+  roster:
+    # - Rakell
+    # - Somewarrior-Proudmoore
