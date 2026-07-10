@@ -111,7 +111,7 @@ def test_build_embed():
                 "realm_rank": 14, "region_rank": 892, "best_avg": 91.3}]
     now = datetime.now(timezone.utc)
     embed = lb.build_embed(cfg, stats, standing, leaders, "Current Raid",
-                           None, now, now)
+                           None, now, now, no_logs=False)
     field_names = [f["name"] for f in embed["fields"]]
     assert any("Guild Standing" in n for n in field_names)
     assert any("Top DPS" in n for n in field_names)
@@ -122,6 +122,65 @@ def test_build_embed():
     assert "6 kills / 30 pulls" in embed["footer"]["text"]
     # Discord embed field values must stay under 1024 chars
     assert all(len(f["value"]) <= 1024 for f in embed["fields"])
+
+
+def test_no_logs_notice():
+    cfg = {
+        "guild": {"name": "Test Guild"},
+        "raid": {"difficulty": "heroic"},
+        "top_n": 5,
+        "lookback_days": 7,
+        "sections": {
+            "no_logs_notice": {
+                "enabled": True,
+                "message": "No logs for {lookback_days} days"
+            }
+        }
+    }
+    # Test with no_logs=True
+    field = lb.format_no_logs_notice(cfg, None, None, None, None, None, no_logs=True)
+    assert field is not None
+    assert "No logs for 7 days" in field["value"]
+    
+    # Test with no_logs=False
+    field = lb.format_no_logs_notice(cfg, None, None, None, None, None, no_logs=False)
+    assert field is None
+
+
+def test_modular_sections():
+    cfg = {
+        "guild": {"name": "Test Guild"},
+        "raid": {"difficulty": "heroic"},
+        "top_n": 5,
+        "lookback_days": 7,
+        "sections": {
+            "roast_of_the_week": {
+                "order": 10,
+                "enabled": True,
+                "winner": "Rakell",
+                "roast": "Test roast"
+            },
+            "no_logs_notice": {
+                "order": 1,
+                "enabled": True,
+                "message": "No logs"
+            }
+        }
+    }
+    stats = {
+        "best_dps": {},
+        "best_hps": {},
+        "deaths": {},
+        "pulls": 0,
+        "kills": 0,
+    }
+    now = datetime.now(timezone.utc)
+    embed = lb.build_embed(cfg, stats, None, None, None, None, now, now, no_logs=True)
+    field_names = [f["name"] for f in embed["fields"]]
+    # no_logs_notice should come before roast_of_the_week due to order
+    notice_idx = next(i for i, n in enumerate(field_names) if "No Logs" in n)
+    roast_idx = next(i for i, n in enumerate(field_names) if "Roast" in n)
+    assert notice_idx < roast_idx
 
 
 if __name__ == "__main__":

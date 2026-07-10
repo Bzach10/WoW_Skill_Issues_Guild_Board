@@ -530,12 +530,37 @@ def fetch_realm_rank_leaders(token, cfg, participants, zone_id, difficulty):
 # Raider.io (optional M+ board)
 # ---------------------------------------------------------------------------
 
-def collect_mplus(cfg):
-    """Return list of (key_level, dungeon, name, timed) for the roster's best weekly runs."""
+def collect_mplus(cfg, token=None):
+    """Return list of (key_level, dungeon, name, timed) for the roster's best weekly runs.
+    
+    If token is provided and auto_fetch_roster is enabled, fetches roster from WCL guild API.
+    Otherwise uses manual roster from config.
+    """
     results = []
     region = cfg["guild"]["region"]
     default_realm = cfg["guild"]["realm_slug"]
-    for entry in (cfg.get("mplus", {}).get("roster") or []):
+    
+    # Determine roster source
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus") if sections else cfg.get("mplus", {})
+    
+    roster = mplus_cfg.get("roster", [])
+    auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
+    
+    # Auto-fetch roster from WCL if enabled and no manual roster provided
+    if auto_fetch and not roster and token:
+        try:
+            print("Auto-fetching M+ roster from guild members...")
+            guild_names = fetch_guild_member_names(token, cfg)
+            if guild_names:
+                # Format as Name-Realm for Raider.io
+                roster = [f"{name}-{default_realm}" for name in guild_names]
+                print(f"Fetched {len(roster)} guild members for M+ roster.")
+        except (RuntimeError, requests.RequestException) as exc:
+            print(f"Failed to auto-fetch M+ roster: {exc}")
+            roster = []
+    
+    for entry in roster:
         if "-" in entry:
             name, realm = entry.split("-", 1)
         else:
@@ -638,86 +663,344 @@ def rank_lines_mplus(results, top_n):
     return "\n".join(lines) if lines else "_No keys recorded this week_"
 
 
-def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_dt, end_dt):
+# ---------------------------------------------------------------------------
+# Section formatter functions for modular board system
+# ---------------------------------------------------------------------------
+
+def format_no_logs_notice(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the no logs notice field (only appears when no_logs is True)."""
+    if not no_logs:
+        return None
+    
+    sections = cfg.get("sections", {})
+    notice_cfg = sections.get("no_logs_notice", {})
+    
+    if not notice_cfg.get("enabled", True):
+        return None
+    
+    message = notice_cfg.get("message", "No raid logs found for the last {lookback_days} days.")
+    lookback_days = cfg.get("lookback_days", 7)
+    formatted_message = message.format(lookback_days=lookback_days)
+    
+    return {
+        "name": "\u26A0\uFE0F No Logs This Week",
+        "value": formatted_message,
+        "inline": False,
+    }
+
+
+def format_guild_standing(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the guild standing field."""
+    sections = cfg.get("sections", {})
+    standing_cfg = sections.get("guild_standing", {})
+    
+    if not standing_cfg.get("enabled", True):
+        return None
+    
+    # Fall back to legacy config if sections not present
+    if not standing_cfg and cfg.get("rankings", {}).get("enabled", True):
+        standing_cfg = cfg.get("rankings", {})
+    
+    if not standing_cfg.get("enabled", True):
+        return None
+    
+    if standing:
+        value = guild_standing_value(standing, zone_name)
+        if value:
+            return {"name": "\U0001F30D Guild Standing", "value": value, "inline": False}
+    
+    return None
+
+
+def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the top DPS parses field."""
+    sections = cfg.get("sections", {})
+    dps_cfg = sections.get("top_dps", {})
+    
+    if not dps_cfg.get("enabled", True):
+        return None
+    
+    # Fall back to legacy config
+    if not dps_cfg and cfg.get("raid", {}).get("enabled", True):
+        dps_cfg = cfg.get("raid", {})
+    
+    if not dps_cfg.get("enabled", True):
+        return None
+    
+    if stats is not None:
+        top_n = int(cfg.get("top_n", 5))
+        return {
+            "name": "\u2694\uFE0F Top DPS Parses",
+            "value": rank_lines_parses(stats["best_dps"], top_n, "DPS"),
+            "inline": False,
+        }
+    
+    return None
+
+
+def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the top healing parses field."""
+    sections = cfg.get("sections", {})
+    healing_cfg = sections.get("top_healing", {})
+    
+    if not healing_cfg.get("enabled", True):
+        return None
+    
+    # Fall back to legacy config
+    if not healing_cfg and cfg.get("raid", {}).get("enabled", True):
+        healing_cfg = cfg.get("raid", {})
+    
+    if not healing_cfg.get("enabled", True):
+        return None
+    
+    if stats is not None:
+        top_n = int(cfg.get("top_n", 5))
+        return {
+            "name": "\U0001F489 Top Healing Parses",
+            "value": rank_lines_parses(stats["best_hps"], top_n, "HPS"),
+            "inline": False,
+        }
+    
+    return None
+
+
+def format_realm_rank_leaders(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the realm rank leaders field."""
+    sections = cfg.get("sections", {})
+    leaders_cfg = sections.get("realm_rank_leaders", {})
+    
+    if not leaders_cfg.get("enabled", True):
+        return None
+    
+    # Fall back to legacy config
+    if not leaders_cfg and cfg.get("rankings", {}).get("enabled", True):
+        leaders_cfg = cfg.get("rankings", {})
+    
+    if not leaders_cfg.get("enabled", True):
+        return None
+    
+    if leaders:
+        top_n = int(cfg.get("top_n", 5))
+        return {
+            "name": "\u2B50 Realm Rank Leaders (Tier All Stars)",
+            "value": rank_lines_leaders(leaders, top_n),
+            "inline": False,
+        }
+    
+    return None
+
+
+def format_most_deaths(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the most deaths field."""
+    sections = cfg.get("sections", {})
+    deaths_cfg = sections.get("most_deaths", {})
+    
+    if not deaths_cfg.get("enabled", True):
+        return None
+    
+    if stats is not None:
+        top_n = int(cfg.get("top_n", 5))
+        return {
+            "name": "\U0001F480 Graveyard Camper Award (Most Deaths)",
+            "value": rank_lines_deaths(stats["deaths"], top_n),
+            "inline": False,
+        }
+    
+    return None
+
+
+def format_roast_of_the_week(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the roast of the week field."""
+    sections = cfg.get("sections", {})
+    roast_cfg = sections.get("roast_of_the_week", {})
+    
+    if not roast_cfg.get("enabled", True):
+        return None
+    
+    # Fall back to legacy config
+    if not roast_cfg:
+        roast_cfg = cfg.get("roast_of_the_week", {})
+    
+    if not roast_cfg:
+        return None
+    
+    if roast_cfg.get("roast"):
+        winner = roast_cfg.get("winner", "Anonymous")
+        target = roast_cfg.get("target", "")
+        target_txt = f" (aimed at {target})" if target else ""
+        return {
+            "name": "\U0001F525 Roast of the Week",
+            "value": f"\u201C{roast_cfg['roast']}\u201D\n— **{winner}**{target_txt}",
+            "inline": False,
+        }
+    else:
+        return {
+            "name": "\U0001F525 Roast of the Week",
+            "value": "_No roast submitted. Healers live to see another week._",
+            "inline": False,
+        }
+
+
+def format_mplus(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+    """Format the M+ board field."""
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus", {})
+    
+    if not mplus_cfg.get("enabled", True):
+        return None
+    
+    # Fall back to legacy config
+    if not mplus_cfg:
+        mplus_cfg = cfg.get("mplus", {})
+    
+    if not mplus_cfg.get("enabled", False):
+        return None
+    
+    if mplus_results is not None:
+        top_n = int(cfg.get("top_n", 5))
+        return {
+            "name": "\U0001F5DD\uFE0F Highest M+ Keys This Week",
+            "value": rank_lines_mplus(mplus_results, top_n),
+            "inline": False,
+        }
+    
+    return None
+
+
+# Section registry: maps section names to their formatter functions
+SECTION_FORMATTERS = {
+    "no_logs_notice": format_no_logs_notice,
+    "guild_standing": format_guild_standing,
+    "top_dps": format_top_dps,
+    "top_healing": format_top_healing,
+    "realm_rank_leaders": format_realm_rank_leaders,
+    "most_deaths": format_most_deaths,
+    "roast_of_the_week": format_roast_of_the_week,
+    "mplus": format_mplus,
+}
+
+
+def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_dt, end_dt, no_logs=False):
     guild_name = cfg["guild"]["name"]
     difficulty = str(cfg["raid"]["difficulty"]).title()
     top_n = int(cfg.get("top_n", 5))
     date_range = f"{start_dt.strftime('%b %d')} – {end_dt.strftime('%b %d, %Y')}"
 
-    # Guild Progress Tile
-    progress_image = "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721"
+    # Progress image configuration
+    sections = cfg.get("sections", {})
+    progress_cfg = sections.get("progress_image", {})
+    
+    progress_image = None
+    if progress_cfg.get("enabled", True):
+        progress_image = progress_cfg.get("url", "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721")
+        
+        # Test if image URL is accessible if remove_on_failure is set
+        if progress_cfg.get("remove_on_failure", True) and progress_image:
+            try:
+                resp = requests.head(progress_image, timeout=10, allow_redirects=True)
+                if resp.status_code >= 400:
+                    print(f"Progress image URL returned status {resp.status_code}, removing image.")
+                    progress_image = None
+            except requests.RequestException as exc:
+                print(f"Failed to verify progress image URL: {exc}, removing image.")
+                progress_image = None
 
+    # Build fields using section registry
     fields = []
+    
+    # Get sections and sort by order
+    section_items = list(sections.items()) if sections else []
+    
+    # Add legacy config sections if new sections not present
+    if not section_items:
+        # Use legacy behavior
+        if standing:
+            value = guild_standing_value(standing, zone_name)
+            if value:
+                fields.append({"name": "\U0001F30D Guild Standing", "value": value, "inline": False})
 
-    if standing:
-        value = guild_standing_value(standing, zone_name)
-        if value:
-            fields.append({"name": "\U0001F30D Guild Standing", "value": value, "inline": False})
+        if stats is not None:
+            fields.append({
+                "name": "\u2694\uFE0F Top DPS Parses",
+                "value": rank_lines_parses(stats["best_dps"], top_n, "DPS"),
+                "inline": False,
+            })
+            fields.append({
+                "name": "\U0001F489 Top Healing Parses",
+                "value": rank_lines_parses(stats["best_hps"], top_n, "HPS"),
+                "inline": False,
+            })
 
-    if stats is not None:
-        fields.append({
-            "name": "\u2694\uFE0F Top DPS Parses",
-            "value": rank_lines_parses(stats["best_dps"], top_n, "DPS"),
-            "inline": False,
-        })
-        fields.append({
-            "name": "\U0001F489 Top Healing Parses",
-            "value": rank_lines_parses(stats["best_hps"], top_n, "HPS"),
-            "inline": False,
-        })
+        if leaders:
+            fields.append({
+                "name": "\u2B50 Realm Rank Leaders (Tier All Stars)",
+                "value": rank_lines_leaders(leaders, top_n),
+                "inline": False,
+            })
 
-    if leaders:
-        fields.append({
-            "name": "\u2B50 Realm Rank Leaders (Tier All Stars)",
-            "value": rank_lines_leaders(leaders, top_n),
-            "inline": False,
-        })
+        if stats is not None:
+            fields.append({
+                "name": "\U0001F480 Graveyard Camper Award (Most Deaths)",
+                "value": rank_lines_deaths(stats["deaths"], top_n),
+                "inline": False,
+            })
 
-    if stats is not None:
-        fields.append({
-            "name": "\U0001F480 Graveyard Camper Award (Most Deaths)",
-            "value": rank_lines_deaths(stats["deaths"], top_n),
-            "inline": False,
-        })
+        roast = cfg.get("roast_of_the_week") or {}
+        if roast.get("roast"):
+            winner = roast.get("winner", "Anonymous")
+            target = roast.get("target", "")
+            target_txt = f" (aimed at {target})" if target else ""
+            fields.append({
+                "name": "\U0001F525 Roast of the Week",
+                "value": f"\u201C{roast['roast']}\u201D\n— **{winner}**{target_txt}",
+                "inline": False,
+            })
+        else:
+            fields.append({
+                "name": "\U0001F525 Roast of the Week",
+                "value": "_No roast submitted. Healers live to see another week._",
+                "inline": False,
+            })
 
-    roast = cfg.get("roast_of_the_week") or {}
-    if roast.get("roast"):
-        winner = roast.get("winner", "Anonymous")
-        target = roast.get("target", "")
-        target_txt = f" (aimed at {target})" if target else ""
-        fields.append({
-            "name": "\U0001F525 Roast of the Week",
-            "value": f"\u201C{roast['roast']}\u201D\n— **{winner}**{target_txt}",
-            "inline": False,
-        })
+        if mplus_results is not None:
+            fields.append({
+                "name": "\U0001F5DD\uFE0F Highest M+ Keys This Week",
+                "value": rank_lines_mplus(mplus_results, top_n),
+                "inline": False,
+            })
     else:
-        fields.append({
-            "name": "\U0001F525 Roast of the Week",
-            "value": "_No roast submitted. Healers live to see another week._",
-            "inline": False,
-        })
-
-    if mplus_results is not None:
-        fields.append({
-            "name": "\U0001F5DD\uFE0F Highest M+ Keys This Week",
-            "value": rank_lines_mplus(mplus_results, top_n),
-            "inline": False,
-        })
+        # Use new modular section system
+        sorted_sections = sorted(section_items, key=lambda x: x[1].get("order", 999))
+        
+        for section_name, section_cfg in sorted_sections:
+            formatter = SECTION_FORMATTERS.get(section_name)
+            if formatter:
+                try:
+                    field = formatter(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs)
+                    if field:
+                        fields.append(field)
+                except Exception as exc:
+                    print(f"Error formatting section '{section_name}': {exc}")
+                    continue
 
     footer_bits = []
     if stats is not None:
         footer_bits.append(f"{stats['kills']} kills / {stats['pulls']} pulls this week")
     footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
 
-    return {
+    embed = {
         "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
         "description": f"Raid week: **{date_range}**",
         "color": 0xC69B6D,
-        "image": {"url": progress_image},
         "fields": fields,
         "footer": {"text": " | ".join(footer_bits)},
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+    
+    if progress_image:
+        embed["image"] = {"url": progress_image}
+    
+    return embed
 
 
 def post_to_discord(webhook_url, embed, content=None):
@@ -746,53 +1029,57 @@ def main():
     standing = None
     leaders = None
     zone_name = None
+    no_logs = False
+    token = None
 
-    if cfg.get("raid", {}).get("enabled", True):
+    # Check if we need WCL token (for raid or M+ auto-fetch)
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus") if sections else cfg.get("mplus", {})
+    raid_enabled = cfg.get("raid", {}).get("enabled", True)
+    mplus_enabled = mplus_cfg.get("enabled", False)
+    mplus_auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
+    
+    needs_token = raid_enabled or (mplus_enabled and mplus_auto_fetch)
+    
+    if needs_token:
         client_id = require_env("WCL_CLIENT_ID")
         client_secret = require_env("WCL_CLIENT_SECRET")
         token = get_wcl_token(client_id, client_secret)
+
+    if raid_enabled:
         reports = fetch_guild_reports(token, cfg, start_ms, end_ms)
 
         if not reports:
             print("No Warcraft Logs reports found in the lookback window.")
-            post_to_discord(webhook_url, {
-                "title": f"\U0001F3C6 {cfg['guild']['name']} Weekly Board",
-                "description": (
-                    "No logs were uploaded to Warcraft Logs this week, so the "
-                    "board takes a bye. Make sure someone runs the WCL uploader "
-                    "on raid night!"
-                ),
-                "color": 0x99AAB5,
-            })
-            return
+            no_logs = True
+        else:
+            print(f"Found {len(reports)} report(s) this week.")
+            stats = collect_raid_stats(token, cfg, reports)
+            stats = apply_roster_filters(token, cfg, stats)
 
-        print(f"Found {len(reports)} report(s) this week.")
-        stats = collect_raid_stats(token, cfg, reports)
-        stats = apply_roster_filters(token, cfg, stats)
-
-        # Rankings vs the rest of the region (never let this block the post)
-        if (cfg.get("rankings") or {}).get("enabled", True):
-            zone_id, zone_name = detect_zone(cfg, reports)
-            if zone_id:
-                try:
-                    standing = fetch_guild_standing(token, cfg, zone_id)
-                except (RuntimeError, requests.RequestException) as exc:
-                    print(f"Guild standing lookup failed: {exc}")
-                try:
-                    leaders = fetch_realm_rank_leaders(
-                        token, cfg, stats["participants"], zone_id, stats["difficulty"]
-                    )
-                except (RuntimeError, requests.RequestException) as exc:
-                    print(f"Realm rank leaders lookup failed: {exc}")
-            else:
-                print("Could not detect raid zone; skipping rankings section.")
+            # Rankings vs the rest of the region (never let this block the post)
+            if (cfg.get("rankings") or {}).get("enabled", True):
+                zone_id, zone_name = detect_zone(cfg, reports)
+                if zone_id:
+                    try:
+                        standing = fetch_guild_standing(token, cfg, zone_id)
+                    except (RuntimeError, requests.RequestException) as exc:
+                        print(f"Guild standing lookup failed: {exc}")
+                    try:
+                        leaders = fetch_realm_rank_leaders(
+                            token, cfg, stats["participants"], zone_id, stats["difficulty"]
+                        )
+                    except (RuntimeError, requests.RequestException) as exc:
+                        print(f"Realm rank leaders lookup failed: {exc}")
+                else:
+                    print("Could not detect raid zone; skipping rankings section.")
 
     mplus_results = None
-    if cfg.get("mplus", {}).get("enabled", False):
-        mplus_results = collect_mplus(cfg)
+    if mplus_enabled:
+        mplus_results = collect_mplus(cfg, token)
 
     embed = build_embed(cfg, stats, standing, leaders, zone_name,
-                        mplus_results, start_dt, end_dt)
+                        mplus_results, start_dt, end_dt, no_logs)
     post_to_discord(webhook_url, embed)
     print("Board posted to Discord.")
 

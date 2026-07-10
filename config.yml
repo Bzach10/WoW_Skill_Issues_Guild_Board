@@ -16,6 +16,75 @@ lookback_days: 7
 # How many players shown per category (3, 4, or 5)
 top_n: 5
 
+# ------------------------------------------------------------
+#  BOARD SECTIONS — each section has an order field to control
+#  where it appears in the Discord embed. Lower numbers appear
+#  first. Set enabled: false to skip a section.
+# ------------------------------------------------------------
+sections:
+  # Progress image at the very top (order 0)
+  progress_image:
+    order: 0
+    enabled: true
+    url: "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721"
+    remove_on_failure: true  # Remove image section if URL fails to load
+
+  # Notice when no logs are found (only appears if reports are empty)
+  no_logs_notice:
+    order: 1
+    enabled: true
+    message: "No raid logs found for the last {lookback_days} days. We need more guild players!"
+
+  # Guild standing vs other guilds (realm/region/world rank)
+  guild_standing:
+    order: 2
+    enabled: true
+    zone_id: 0                     # 0 = auto-detect from this week's logs
+    max_characters: 30             # how many raiders to look up (1 API call each)
+
+  # Top DPS parses of the week
+  top_dps:
+    order: 3
+    enabled: true
+    difficulty: mythic             # normal / heroic / mythic
+
+  # Top healing parses of the week
+  top_healing:
+    order: 4
+    enabled: true
+    difficulty: mythic             # normal / heroic / mythic
+
+  # Realm rank leaders (WCL All Stars)
+  realm_rank_leaders:
+    order: 5
+    enabled: true
+    max_characters: 30
+
+  # Most deaths (Graveyard Camper award)
+  most_deaths:
+    order: 6
+    enabled: true
+
+  # Roast of the week
+  roast_of_the_week:
+    order: 7
+    enabled: true
+    winner: "Rakdaddy"                     # who said it
+    target: "Healmates"                     # which healer got flamed (optional)
+    roast: "Healmates Sucks"                # the roast itself
+
+  # Mythic+ board
+  mplus:
+    order: 8
+    enabled: true
+    auto_fetch_roster: true    # Auto-fetch from guild roster (recommended)
+    active_days: 7             # Only include members active in last X days
+    roster: []                 # Manual override (leave empty for auto-fetch)
+    # - "Rakell-Proudmoore"   # Example manual entry
+
+# ------------------------------------------------------------
+#  RAID SETTINGS
+# ------------------------------------------------------------
 raid:
   enabled: true
   difficulty: mythic             # normal / heroic / mythic
@@ -54,24 +123,3 @@ filters:
     # - Sometrialname
   always_exclude: []
     # - Somename
-
-# ------------------------------------------------------------
-#  ROAST OF THE WEEK — officers update this each week!
-#  Pick the winning roast from the Discord thread, paste it
-#  below, then run the workflow. Leave "roast" empty for none.
-# ------------------------------------------------------------
-roast_of_the_week:
-  winner: "Rakdaddy"                     # who said it
-  target: "Healmates"                     # which healer got flamed (optional)
-  roast: "Healmates Sucks"                      # the roast itself
-
-# ------------------------------------------------------------
-#  MYTHIC+ BOARD (optional) — flip enabled to true and list
-#  your raiders below. Names on your guild's realm can be
-#  listed plain; off-realm characters as Name-Realm.
-# ------------------------------------------------------------
-mplus:
-  enabled: true
-  roster: 
-    - "Rakell-Proudmoore"
-    - "Rakdisc-Proudmoore"
