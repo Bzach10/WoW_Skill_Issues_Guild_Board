@@ -681,37 +681,23 @@ def collect_mplus_season_scores(cfg, token=None):
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
-                "fields": "mythic_plus_scores",
+                "fields": "mythic_plus_scores_by_season",
             }, timeout=30)
             if resp.status_code != 200:
                 print(f"[M+ SEASON SCORES] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            print(f"[M+ SEASON SCORES] Raw data for {name}: {data}")
             
-            # Try multiple possible field names for scores
-            scores = data.get("mythic_plus_scores")
-            if not scores:
-                scores = data.get("mythic_plus", {}).get("scores")
-            if not scores:
-                scores = data.get("mythic_plus_profile", {}).get("scores")
-            
-            print(f"[M+ SEASON SCORES] Scores data for {name}: {scores}")
-            
-            if scores:
-                # Get best score across all specs
-                best_score = 0
-                best_spec = ""
-                best_class = ""
-                for spec_name, spec_data in scores.items():
-                    score = spec_data.get("score", 0)
-                    if score > best_score:
-                        best_score = score
-                        best_spec = spec_data.get("spec", "")
-                        best_class = spec_data.get("class", "")
-                if best_score > 0:
-                    results.append((best_score, name.strip(), best_class, best_spec))
-                    print(f"[M+ SEASON SCORES] Added {name} with score {best_score}")
+            # Try to get season scores
+            season_scores = data.get("mythic_plus_scores_by_season")
+            if season_scores:
+                # Get current season score
+                current_season = season_scores.get("season", {})
+                if current_season:
+                    score = current_season.get("score", 0)
+                    if score > 0:
+                        results.append((score, name.strip(), data.get("class", ""), data.get("active_spec_name", "")))
+                        print(f"[M+ SEASON SCORES] Added {name} with score {score}")
         except requests.RequestException as exc:
             print(f"[M+ SEASON SCORES] Error fetching {name}: {exc}")
             continue
@@ -725,8 +711,8 @@ def collect_mplus_season_scores(cfg, token=None):
 
 
 def collect_mplus_season_parses(cfg, token=None):
-    """Return list of (parse, dungeon, name, class, spec) for best season parses from Raider.io."""
-    print(f"[M+ SEASON PARSES] Collecting season-long M+ parses...")
+    """Return list of (score, dungeon, name, class, spec) for best season runs from Raider.io."""
+    print(f"[M+ SEASON PARSES] Collecting season-long M+ runs...")
     results = []
     region = cfg["guild"]["region"]
     default_realm = cfg["guild"]["realm_slug"]
@@ -767,7 +753,6 @@ def collect_mplus_season_parses(cfg, token=None):
                 print(f"[M+ SEASON PARSES] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            print(f"[M+ SEASON PARSES] Raw data for {name}: {data}")
             
             # Try multiple possible field names for runs
             runs = data.get("mythic_plus_best_runs")
@@ -776,21 +761,19 @@ def collect_mplus_season_parses(cfg, token=None):
             if not runs:
                 runs = data.get("mythic_plus_recent_best_runs")
             
-            print(f"[M+ SEASON PARSES] Runs data for {name}: {runs}")
-            
             if runs:
-                # Get best parse across all runs
-                best_run = max(runs, key=lambda r: r.get("parse", 0))
-                parse = best_run.get("parse", 0)
-                if parse > 0:
+                # Get best run by score across all runs
+                best_run = max(runs, key=lambda r: r.get("score", 0))
+                score = best_run.get("score", 0)
+                if score > 0:
                     results.append((
-                        parse,
+                        score,
                         best_run.get("dungeon", "?"),
                         name.strip(),
                         best_run.get("class", ""),
                         best_run.get("spec", ""),
                     ))
-                    print(f"[M+ SEASON PARSES] Added {name} with parse {parse}")
+                    print(f"[M+ SEASON PARSES] Added {name} with score {score}")
         except requests.RequestException as exc:
             print(f"[M+ SEASON PARSES] Error fetching {name}: {exc}")
             continue
@@ -799,7 +782,7 @@ def collect_mplus_season_parses(cfg, token=None):
             continue
         time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
-    print(f"[M+ SEASON PARSES] Found {len(results)} players with season parses.")
+    print(f"[M+ SEASON PARSES] Found {len(results)} players with season runs.")
     return results
 
 
@@ -1396,12 +1379,13 @@ def main():
                     # Use difficulty fallback for guild standing
                     if use_fallback:
                         print("[GUILD STANDING] Using difficulty fallback")
-                        standing, diff_used = try_difficulties(
-                            lambda cfg, token, reports, difficulty: fetch_guild_standing(token, cfg, zone_id),
-                            cfg, token, reports
-                        )
-                        if standing:
-                            print(f"[GUILD STANDING] Using {diff_used} data")
+                        # Guild standing doesn't use difficulty, just try once
+                        try:
+                            standing = fetch_guild_standing(token, cfg, zone_id)
+                            if standing:
+                                print("[GUILD STANDING] Found data")
+                        except (RuntimeError, requests.RequestException) as exc:
+                            print(f"Guild standing lookup failed: {exc}")
                     else:
                         try:
                             standing = fetch_guild_standing(token, cfg, zone_id)
