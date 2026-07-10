@@ -48,7 +48,7 @@ dedup:
 #  always_exclude = anyone who should never appear.
 # ------------------------------------------------------------
 filters:
-  guild_members_only: True      # false = pugs can appear on the board
+  guild_members_only: False  # false = pugs can appear on the board
   always_include: []
     # - Sometrialname
   always_exclude: []
@@ -70,8 +70,7 @@ roast_of_the_week:
 #  listed plain; off-realm characters as Name-Realm.
 # ------------------------------------------------------------
 mplus:
-  enabled: True
+  enabled: true
   roster:
-  - Rakell-Proudmoore
-  - Rakdisc-Proudmoore
-
+    - Rakell-Proudmoore
+    - Rakdisc-Proudmoore
