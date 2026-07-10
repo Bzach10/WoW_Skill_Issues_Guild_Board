@@ -124,6 +124,29 @@ def test_build_embed():
     assert all(len(f["value"]) <= 1024 for f in embed["fields"])
 
 
+def test_section_header():
+    cfg = {
+        "guild": {"name": "Test Guild"},
+        "sections": {
+            "raid_header": {
+                "enabled": True,
+                "type": "section_header",
+                "title": "Raid",
+                "icon": "⚔️",
+            }
+        }
+    }
+    field = lb.format_section_header(cfg, "raid_header", None, None, None, None, None, None, None, None)
+    assert field is not None
+    assert "Raid" in field["name"]
+    assert field["value"] == "\u200b"
+    assert field["inline"] is False
+
+    # Disabled header should be skipped
+    cfg["sections"]["raid_header"]["enabled"] = False
+    assert lb.format_section_header(cfg, "raid_header", None, None, None, None, None, None, None, None) is None
+
+
 def test_no_logs_notice():
     cfg = {
         "guild": {"name": "Test Guild"},

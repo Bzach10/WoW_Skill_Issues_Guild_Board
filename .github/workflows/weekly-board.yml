@@ -44,5 +44,12 @@ jobs:
             echo "No roster cache changes to commit."
           else
             git commit -m "Update roster cache [skip ci]"
-            git push
+            if git pull --rebase origin main; then
+              git push
+            else
+              git checkout --ours roster_cache.json
+              git add roster_cache.json
+              git rebase --continue
+              git push
+            fi
           fi

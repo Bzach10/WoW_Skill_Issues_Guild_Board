@@ -828,17 +828,10 @@ def collect_mplus_season_scores(cfg, token=None):
             data = resp.json()
             score = 0
 
-            # Primary source: overall season score
+            # Overall season score only (e.g., 3400 total rating)
             scores = data.get("mythic_plus_scores") or {}
             if isinstance(scores, dict):
                 score = scores.get("all") or scores.get("score") or 0
-
-            # Fallback: best run score from season runs
-            if not score:
-                runs = data.get("mythic_plus_best_runs") or []
-                if runs:
-                    best = max(runs, key=lambda r: r.get("score", 0))
-                    score = best.get("score", 0)
 
             if score > 0:
                 spec = clean_spec_name(data.get("active_spec_name"), data.get("class", ""))
@@ -1146,6 +1139,23 @@ def rank_lines_mplus(results, top_n):
 # Section formatter functions for modular board system
 # ---------------------------------------------------------------------------
 
+def format_section_header(cfg, section_name, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
+    """Format a section header embed field for grouped board sections."""
+    sections = cfg.get("sections", {})
+    section_cfg = sections.get(section_name, {})
+
+    if not section_cfg.get("enabled", True):
+        return None
+
+    title = section_cfg.get("title") or section_name.replace("_header", "").title()
+    icon = section_cfg.get("icon", "")
+    return {
+        "name": f"────────── {icon} {title} {icon} ──────────",
+        "value": "\u200b",
+        "inline": False,
+    }
+
+
 def format_no_logs_notice(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the no logs notice field (only appears when no_logs is True)."""
     if not no_logs:
@@ -1443,17 +1453,20 @@ def format_mplus_season_parses(cfg, stats, standing, leaders, zone_name, mplus_r
 # Section registry: maps section names to their formatter functions
 SECTION_FORMATTERS = {
     "no_logs_notice": format_no_logs_notice,
+    "guild_achievement_header": lambda cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs: format_section_header(cfg, "guild_achievement_header", stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs),
     "guild_standing": format_guild_standing,
-    "top_dps": format_top_dps,
-    "top_healing": format_top_healing,
-    "realm_rank_leaders": format_realm_rank_leaders,
-    "most_deaths": format_most_deaths,
-    "roast_of_the_week": format_roast_of_the_week,
+    "mplus_header": lambda cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs: format_section_header(cfg, "mplus_header", stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs),
     "mplus": format_mplus,
     "mplus_last_week": format_mplus,
     "mplus_season_scores": format_mplus_season_scores,
     "mplus_season_parses": format_mplus_season_parses,
     "mplus_season_runs": format_mplus_season_parses,
+    "raid_header": lambda cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs: format_section_header(cfg, "raid_header", stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs),
+    "top_dps": format_top_dps,
+    "top_healing": format_top_healing,
+    "realm_rank_leaders": format_realm_rank_leaders,
+    "most_deaths": format_most_deaths,
+    "roast_of_the_week": format_roast_of_the_week,
 }
 
 
