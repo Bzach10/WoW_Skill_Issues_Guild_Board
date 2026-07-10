@@ -32,6 +32,7 @@ from pathlib import Path
 
 import requests
 import yaml
+from PIL import Image, ImageDraw, ImageFont
 
 WCL_TOKEN_URL = "https://www.warcraftlogs.com/oauth/token"
 WCL_API_URL = "https://www.warcraftlogs.com/api/v2/client"
@@ -1456,7 +1457,98 @@ SECTION_FORMATTERS = {
 }
 
 
-def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs=False):
+def _load_font(size):
+    """Try to load a nice font, fall back to Pillow default."""
+    candidates = [
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+        "/System/Library/Fonts/Helvetica.ttc",
+        "C:/Windows/Fonts/arial.ttf",
+    ]
+    for path in candidates:
+        try:
+            return ImageFont.truetype(path, size)
+        except Exception:
+            continue
+    return ImageFont.load_default()
+
+
+def generate_progress_image(cfg, stats, standing, zone_name, start_dt, end_dt, output_path="progress.png"):
+    """Generate a static PNG progress image from the data we have and save it.
+
+    Discord cannot embed the WCL HTML widget, so we attach a generated image instead.
+    """
+    width, height = 850, 320
+    bg = (18, 18, 22)
+    accent = (230, 180, 70)
+    text = (220, 220, 220)
+    muted = (150, 150, 150)
+
+    img = Image.new("RGB", (width, height), bg)
+    draw = ImageDraw.Draw(img)
+
+    title_font = _load_font(32)
+    subtitle_font = _load_font(20)
+    label_font = _load_font(16)
+    value_font = _load_font(24)
+
+    guild_name = cfg["guild"]["name"]
+    difficulty = str(cfg.get("raid", {}).get("difficulty", "mythic")).title()
+    zone = zone_name or "Current Raid"
+    date_range = f"{start_dt.strftime('%b %d')} – {end_dt.strftime('%b %d, %Y')}"
+
+    # Title
+    draw.text((40, 30), guild_name, font=title_font, fill=accent)
+    draw.text((40, 75), f"{difficulty} {zone}", font=subtitle_font, fill=text)
+    draw.text((40, 105), date_range, font=label_font, fill=muted)
+
+    # Stats boxes
+    kills = stats.get("kills", 0) if stats else 0
+    pulls = stats.get("pulls", 0) if stats else 0
+    deaths = stats.get("deaths", {}) if stats else {}
+    total_deaths = sum(deaths.values()) if deaths else 0
+
+    stats_data = [
+        ("Kills", str(kills)),
+        ("Pulls", str(pulls)),
+        ("Deaths", str(total_deaths)),
+    ]
+
+    if standing:
+        if standing.get("world"):
+            stats_data.append(("World", f"#{standing['world']:,}"))
+        if standing.get("region"):
+            stats_data.append(("Region", f"#{standing['region']:,}"))
+        if standing.get("realm"):
+            stats_data.append(("Realm", f"#{standing['realm']:,}"))
+
+    x = 40
+    y = 160
+    for label, value in stats_data[:5]:
+        draw.text((x, y), label, font=label_font, fill=muted)
+        draw.text((x, y + 25), value, font=value_font, fill=text)
+        x += 150
+
+    # Pull bar
+    bar_x, bar_y, bar_w, bar_h = 40, 250, 770, 30
+    draw.rounded_rectangle([bar_x, bar_y, bar_x + bar_w, bar_y + bar_h], radius=6, outline=muted, width=2)
+    if pulls > 0:
+        fill_w = int(bar_w * (kills / max(pulls, 1)))
+        if fill_w > 0:
+            draw.rounded_rectangle([bar_x, bar_y, bar_x + fill_w, bar_y + bar_h], radius=6, fill=accent)
+        pct = kills / max(pulls, 1) * 100
+        label = f"{kills} / {pulls} kills ({pct:.1f}%)"
+    else:
+        label = "No pulls this week"
+    bbox = draw.textbbox((0, 0), label, font=label_font)
+    text_w = bbox[2] - bbox[0]
+    draw.text((bar_x + (bar_w - text_w) // 2, bar_y + 4), label, font=label_font, fill=bg if pulls and kills else text)
+
+    img.save(output_path, "PNG")
+    print(f"[PROGRESS IMAGE] Generated static image at {output_path}")
+
+
+def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs=False, progress_image_url=None):
     guild_name = cfg["guild"]["name"]
     difficulty = str(cfg["raid"]["difficulty"]).title()
     top_n = int(cfg.get("top_n", 5))
@@ -1468,25 +1560,29 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
     
     progress_image = None
     if progress_cfg.get("enabled", True):
-        progress_image = progress_cfg.get("url", "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721")
-        print(f"[PROGRESS IMAGE] URL: {progress_image}")
-        
-        # Test if image URL is accessible if remove_on_failure is set
-        if progress_cfg.get("remove_on_failure", True) and progress_image:
-            try:
-                print(f"[PROGRESS IMAGE] Verifying URL accessibility...")
-                # Use GET request instead of HEAD for better compatibility
-                resp = requests.get(progress_image, timeout=5, stream=True, allow_redirects=True)
-                print(f"[PROGRESS IMAGE] GET request status: {resp.status_code}")
-                if resp.status_code >= 400:
-                    print(f"[PROGRESS IMAGE] URL returned error status {resp.status_code}, removing image.")
+        if progress_image_url:
+            progress_image = progress_image_url
+            print(f"[PROGRESS IMAGE] Using provided image URL: {progress_image}")
+        else:
+            progress_image = progress_cfg.get("url", "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721")
+            print(f"[PROGRESS IMAGE] URL: {progress_image}")
+
+            # Test if image URL is accessible if remove_on_failure is set
+            if progress_cfg.get("remove_on_failure", True) and progress_image:
+                try:
+                    print(f"[PROGRESS IMAGE] Verifying URL accessibility...")
+                    # Use GET request instead of HEAD for better compatibility
+                    resp = requests.get(progress_image, timeout=5, stream=True, allow_redirects=True)
+                    print(f"[PROGRESS IMAGE] GET request status: {resp.status_code}")
+                    if resp.status_code >= 400:
+                        print(f"[PROGRESS IMAGE] URL returned error status {resp.status_code}, removing image.")
+                        progress_image = None
+                    else:
+                        print(f"[PROGRESS IMAGE] URL accessible, including image.")
+                    resp.close()
+                except requests.RequestException as exc:
+                    print(f"[PROGRESS IMAGE] Failed to verify URL: {exc}, removing image.")
                     progress_image = None
-                else:
-                    print(f"[PROGRESS IMAGE] URL accessible, including image.")
-                resp.close()
-            except requests.RequestException as exc:
-                print(f"[PROGRESS IMAGE] Failed to verify URL: {exc}, removing image.")
-                progress_image = None
     else:
         print(f"[PROGRESS IMAGE] Section disabled.")
 
@@ -1588,11 +1684,18 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
     return embed
 
 
-def post_to_discord(webhook_url, embed, content=None):
+def post_to_discord(webhook_url, embed, content=None, image_path=None):
     payload = {"embeds": [embed]}
     if content:
         payload["content"] = content
-    resp = requests.post(webhook_url, json=payload, timeout=30)
+
+    if image_path and os.path.exists(image_path):
+        with open(image_path, "rb") as f:
+            files = {"file": (os.path.basename(image_path), f, "image/png")}
+            data = {"payload_json": json.dumps(payload)}
+            resp = requests.post(webhook_url, data=data, files=files, timeout=30)
+    else:
+        resp = requests.post(webhook_url, json=payload, timeout=30)
     resp.raise_for_status()
 
 
@@ -1737,9 +1840,24 @@ def main():
     if mplus_season_parses_cfg.get("enabled", False):
         mplus_season_parses = collect_mplus_season_parses(cfg, token)
 
+    # Generate static progress image; Discord cannot embed the WCL HTML widget
+    sections = cfg.get("sections", {})
+    progress_cfg = sections.get("progress_image", {})
+    progress_image_path = None
+    progress_image_url = None
+    if progress_cfg.get("enabled", True):
+        progress_image_path = "progress.png"
+        try:
+            generate_progress_image(cfg, stats, standing, zone_name, start_dt, end_dt, progress_image_path)
+            progress_image_url = "attachment://progress.png"
+        except Exception as exc:
+            print(f"[PROGRESS IMAGE] Failed to generate image: {exc}")
+            progress_image_path = None
+
     embed = build_embed(cfg, stats, standing, leaders, zone_name,
-                        mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs)
-    post_to_discord(webhook_url, embed)
+                        mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs,
+                        progress_image_url=progress_image_url)
+    post_to_discord(webhook_url, embed, image_path=progress_image_path)
     print("Board posted to Discord.")
 
 
