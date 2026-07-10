@@ -687,7 +687,17 @@ def collect_mplus_season_scores(cfg, token=None):
                 print(f"[M+ SEASON SCORES] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            scores = data.get("mythic_plus_scores", {})
+            print(f"[M+ SEASON SCORES] Raw data for {name}: {data}")
+            
+            # Try multiple possible field names for scores
+            scores = data.get("mythic_plus_scores")
+            if not scores:
+                scores = data.get("mythic_plus", {}).get("scores")
+            if not scores:
+                scores = data.get("mythic_plus_profile", {}).get("scores")
+            
+            print(f"[M+ SEASON SCORES] Scores data for {name}: {scores}")
+            
             if scores:
                 # Get best score across all specs
                 best_score = 0
@@ -701,8 +711,12 @@ def collect_mplus_season_scores(cfg, token=None):
                         best_class = spec_data.get("class", "")
                 if best_score > 0:
                     results.append((best_score, name.strip(), best_class, best_spec))
+                    print(f"[M+ SEASON SCORES] Added {name} with score {best_score}")
         except requests.RequestException as exc:
             print(f"[M+ SEASON SCORES] Error fetching {name}: {exc}")
+            continue
+        except Exception as exc:
+            print(f"[M+ SEASON SCORES] Unexpected error for {name}: {exc}")
             continue
         time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
@@ -747,13 +761,23 @@ def collect_mplus_season_parses(cfg, token=None):
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
-                "fields": "mythic_plus_recent_best_runs",
+                "fields": "mythic_plus_best_runs",
             }, timeout=30)
             if resp.status_code != 200:
                 print(f"[M+ SEASON PARSES] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            runs = data.get("mythic_plus_recent_best_runs", []) or []
+            print(f"[M+ SEASON PARSES] Raw data for {name}: {data}")
+            
+            # Try multiple possible field names for runs
+            runs = data.get("mythic_plus_best_runs")
+            if not runs:
+                runs = data.get("mythic_plus", {}).get("best_runs")
+            if not runs:
+                runs = data.get("mythic_plus_recent_best_runs")
+            
+            print(f"[M+ SEASON PARSES] Runs data for {name}: {runs}")
+            
             if runs:
                 # Get best parse across all runs
                 best_run = max(runs, key=lambda r: r.get("parse", 0))
@@ -766,8 +790,12 @@ def collect_mplus_season_parses(cfg, token=None):
                         best_run.get("class", ""),
                         best_run.get("spec", ""),
                     ))
+                    print(f"[M+ SEASON PARSES] Added {name} with parse {parse}")
         except requests.RequestException as exc:
             print(f"[M+ SEASON PARSES] Error fetching {name}: {exc}")
+            continue
+        except Exception as exc:
+            print(f"[M+ SEASON PARSES] Unexpected error for {name}: {exc}")
             continue
         time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
@@ -919,14 +947,17 @@ def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, mplu
         print(f"[SECTION] top_dps: Disabled (legacy)")
         return None
     
-    print(f"[SECTION] top_dps: Enabled, formatting...")
+    print(f"[SECTION] top_dps: Enabled, formatting... stats is {stats}")
     if stats is not None:
+        print(f"[SECTION] top_dps: stats has {len(stats.get('best_dps', {}))} DPS entries")
         top_n = int(cfg.get("top_n", 5))
         return {
             "name": "\u2694\uFE0F Top DPS Parses",
             "value": rank_lines_parses(stats["best_dps"], top_n, "DPS"),
             "inline": False,
         }
+    else:
+        print(f"[SECTION] top_dps: stats is None, skipping")
     
     return None
 
@@ -949,14 +980,17 @@ def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, 
         print(f"[SECTION] top_healing: Disabled (legacy)")
         return None
     
-    print(f"[SECTION] top_healing: Enabled, formatting...")
+    print(f"[SECTION] top_healing: Enabled, formatting... stats is {stats}")
     if stats is not None:
+        print(f"[SECTION] top_healing: stats has {len(stats.get('best_hps', {}))} HPS entries")
         top_n = int(cfg.get("top_n", 5))
         return {
             "name": "\U0001F489 Top Healing Parses",
             "value": rank_lines_parses(stats["best_hps"], top_n, "HPS"),
             "inline": False,
         }
+    else:
+        print(f"[SECTION] top_healing: stats is None, skipping")
     
     return None
 
@@ -1338,14 +1372,22 @@ def main():
                 stats, difficulty_used = try_difficulties(collect_raid_stats, cfg, token, reports)
                 if stats:
                     print(f"[RAID] Using {difficulty_used} data")
+                    print(f"[RAID] Stats: {len(stats.get('best_dps', {}))} DPS, {len(stats.get('best_hps', {}))} HPS, {stats.get('kills')} kills, {stats.get('pulls')} pulls")
                 else:
                     print("[RAID] No data found for any difficulty")
             else:
                 print("[RAID] Using configured difficulty only")
                 stats = collect_raid_stats(token, cfg, reports)
+                if stats:
+                    print(f"[RAID] Stats: {len(stats.get('best_dps', {}))} DPS, {len(stats.get('best_hps', {}))} HPS, {stats.get('kills')} kills, {stats.get('pulls')} pulls")
+                else:
+                    print("[RAID] No data found")
             
             if stats:
                 stats = apply_roster_filters(token, cfg, stats)
+                print(f"[RAID] After roster filters: {len(stats.get('best_dps', {}))} DPS, {len(stats.get('best_hps', {}))} HPS")
+            else:
+                print("[RAID] Stats is None, skipping roster filters")
 
             # Rankings vs the rest of the region (never let this block the post)
             if (cfg.get("rankings") or {}).get("enabled", True):
