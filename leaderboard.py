@@ -287,6 +287,41 @@ def count_deaths(token, code, fight_ids, death_totals):
 
 
 # ---------------------------------------------------------------------------
+# Difficulty fallback helper
+# ---------------------------------------------------------------------------
+
+def try_difficulties(func, cfg, token, reports, *args):
+    """Try a function with each difficulty (mythic -> heroic -> normal) until one succeeds.
+    
+    Args:
+        func: Function that takes (cfg, token, reports, difficulty, *args) as parameters
+        cfg: Config dict
+        token: WCL API token
+        reports: List of reports from WCL
+        *args: Additional arguments to pass to func
+        
+    Returns:
+        Tuple of (result, difficulty_used) or (None, None) if all fail
+    """
+    difficulties = ["mythic", "heroic", "normal"]
+    for diff in difficulties:
+        try:
+            print(f"[DIFFICULTY FALLBACK] Trying {diff}...")
+            difficulty_num = DIFFICULTY_MAP.get(diff, 4)
+            result = func(cfg, token, reports, difficulty_num, *args)
+            if result:
+                print(f"[DIFFICULTY FALLBACK] Found data for {diff}")
+                return result, diff
+            else:
+                print(f"[DIFFICULTY FALLBACK] No data for {diff}")
+        except Exception as exc:
+            print(f"[DIFFICULTY FALLBACK] Error with {diff}: {exc}")
+            continue
+    print(f"[DIFFICULTY FALLBACK] No data found for any difficulty")
+    return None, None
+
+
+# ---------------------------------------------------------------------------
 # Duplicate-log handling (multiple people logging the same raid)
 # ---------------------------------------------------------------------------
 
@@ -319,8 +354,18 @@ def report_sort_key(report, preferred_uploader):
     return (0 if is_preferred else 1, -duration)
 
 
-def collect_raid_stats(token, cfg, reports):
-    difficulty = DIFFICULTY_MAP.get(str(cfg["raid"]["difficulty"]).lower(), 4)
+def collect_raid_stats(token, cfg, reports, difficulty=None):
+    """Collect raid stats for a specific difficulty.
+    
+    Args:
+        token: WCL API token
+        cfg: Config dict
+        reports: List of reports from WCL
+        difficulty: Difficulty number (1-5), if None reads from config
+    """
+    if difficulty is None:
+        difficulty = DIFFICULTY_MAP.get(str(cfg["raid"]["difficulty"]).lower(), 4)
+    
     dedup_cfg = cfg.get("dedup") or {}
     dedup_enabled = bool(dedup_cfg.get("enabled", True))
     preferred_uploader = (dedup_cfg.get("preferred_uploader") or "").strip().lower()
@@ -376,6 +421,10 @@ def collect_raid_stats(token, cfg, reports):
         print(f"Deduplication: skipped {duplicates_skipped} duplicate pull(s) "
               f"from overlapping reports.")
 
+    # Return None if no data found
+    if not best_dps and not best_hps and pulls == 0:
+        return None
+    
     return {
         "best_dps": best_dps,
         "best_hps": best_hps,
@@ -536,6 +585,7 @@ def collect_mplus(cfg, token=None):
     If token is provided and auto_fetch_roster is enabled, fetches roster from WCL guild API.
     Otherwise uses manual roster from config.
     """
+    print(f"[M+ WEEKLY] Collecting weekly M+ data...")
     results = []
     region = cfg["guild"]["region"]
     default_realm = cfg["guild"]["realm_slug"]
@@ -550,16 +600,17 @@ def collect_mplus(cfg, token=None):
     # Auto-fetch roster from WCL if enabled and no manual roster provided
     if auto_fetch and not roster and token:
         try:
-            print("Auto-fetching M+ roster from guild members...")
+            print("[M+ WEEKLY] Auto-fetching roster from guild members...")
             guild_names = fetch_guild_member_names(token, cfg)
             if guild_names:
                 # Format as Name-Realm for Raider.io
                 roster = [f"{name}-{default_realm}" for name in guild_names]
-                print(f"Fetched {len(roster)} guild members for M+ roster.")
+                print(f"[M+ WEEKLY] Fetched {len(roster)} guild members for M+ roster.")
         except (RuntimeError, requests.RequestException) as exc:
-            print(f"Failed to auto-fetch M+ roster: {exc}")
+            print(f"[M+ WEEKLY] Failed to auto-fetch roster: {exc}")
             roster = []
     
+    print(f"[M+ WEEKLY] Processing {len(roster)} characters...")
     for entry in roster:
         if "-" in entry:
             name, realm = entry.split("-", 1)
@@ -573,6 +624,7 @@ def collect_mplus(cfg, token=None):
                 "fields": "mythic_plus_weekly_highest_level_runs",
             }, timeout=30)
             if resp.status_code != 200:
+                print(f"[M+ WEEKLY] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             runs = resp.json().get("mythic_plus_weekly_highest_level_runs") or []
             if runs:
@@ -583,10 +635,143 @@ def collect_mplus(cfg, token=None):
                     name.strip(),
                     (best.get("num_keystone_upgrades", 0) or 0) > 0,
                 ))
-        except requests.RequestException:
+        except requests.RequestException as exc:
+            print(f"[M+ WEEKLY] Error fetching {name}: {exc}")
             continue
         time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
+    print(f"[M+ WEEKLY] Found {len(results)} players with weekly runs.")
+    return results
+
+
+def collect_mplus_season_scores(cfg, token=None):
+    """Return list of (score, name, class, spec) for season-long M+ scores from Raider.io."""
+    print(f"[M+ SEASON SCORES] Collecting season-long M+ scores...")
+    results = []
+    region = cfg["guild"]["region"]
+    default_realm = cfg["guild"]["realm_slug"]
+    
+    # Determine roster source
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus_season_scores", {})
+    
+    roster = mplus_cfg.get("roster", [])
+    auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
+    
+    # Auto-fetch roster from WCL if enabled and no manual roster provided
+    if auto_fetch and not roster and token:
+        try:
+            print("[M+ SEASON SCORES] Auto-fetching roster from guild members...")
+            guild_names = fetch_guild_member_names(token, cfg)
+            if guild_names:
+                roster = [f"{name}-{default_realm}" for name in guild_names]
+                print(f"[M+ SEASON SCORES] Fetched {len(roster)} guild members.")
+        except (RuntimeError, requests.RequestException) as exc:
+            print(f"[M+ SEASON SCORES] Failed to auto-fetch roster: {exc}")
+            roster = []
+    
+    print(f"[M+ SEASON SCORES] Processing {len(roster)} characters...")
+    for entry in roster:
+        if "-" in entry:
+            name, realm = entry.split("-", 1)
+        else:
+            name, realm = entry, default_realm
+        try:
+            resp = requests.get(RAIDERIO_URL, params={
+                "region": region,
+                "realm": realm.strip(),
+                "name": name.strip(),
+                "fields": "mythic_plus_scores",
+            }, timeout=30)
+            if resp.status_code != 200:
+                print(f"[M+ SEASON SCORES] Failed to fetch {name}: HTTP {resp.status_code}")
+                continue
+            data = resp.json()
+            scores = data.get("mythic_plus_scores", {})
+            if scores:
+                # Get best score across all specs
+                best_score = 0
+                best_spec = ""
+                best_class = ""
+                for spec_name, spec_data in scores.items():
+                    score = spec_data.get("score", 0)
+                    if score > best_score:
+                        best_score = score
+                        best_spec = spec_data.get("spec", "")
+                        best_class = spec_data.get("class", "")
+                if best_score > 0:
+                    results.append((best_score, name.strip(), best_class, best_spec))
+        except requests.RequestException as exc:
+            print(f"[M+ SEASON SCORES] Error fetching {name}: {exc}")
+            continue
+        time.sleep(0.3)
+    results.sort(key=lambda r: r[0], reverse=True)
+    print(f"[M+ SEASON SCORES] Found {len(results)} players with season scores.")
+    return results
+
+
+def collect_mplus_season_parses(cfg, token=None):
+    """Return list of (parse, dungeon, name, class, spec) for best season parses from Raider.io."""
+    print(f"[M+ SEASON PARSES] Collecting season-long M+ parses...")
+    results = []
+    region = cfg["guild"]["region"]
+    default_realm = cfg["guild"]["realm_slug"]
+    
+    # Determine roster source
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus_season_parses", {})
+    
+    roster = mplus_cfg.get("roster", [])
+    auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
+    
+    # Auto-fetch roster from WCL if enabled and no manual roster provided
+    if auto_fetch and not roster and token:
+        try:
+            print("[M+ SEASON PARSES] Auto-fetching roster from guild members...")
+            guild_names = fetch_guild_member_names(token, cfg)
+            if guild_names:
+                roster = [f"{name}-{default_realm}" for name in guild_names]
+                print(f"[M+ SEASON PARSES] Fetched {len(roster)} guild members.")
+        except (RuntimeError, requests.RequestException) as exc:
+            print(f"[M+ SEASON PARSES] Failed to auto-fetch roster: {exc}")
+            roster = []
+    
+    print(f"[M+ SEASON PARSES] Processing {len(roster)} characters...")
+    for entry in roster:
+        if "-" in entry:
+            name, realm = entry.split("-", 1)
+        else:
+            name, realm = entry, default_realm
+        try:
+            resp = requests.get(RAIDERIO_URL, params={
+                "region": region,
+                "realm": realm.strip(),
+                "name": name.strip(),
+                "fields": "mythic_plus_recent_best_runs",
+            }, timeout=30)
+            if resp.status_code != 200:
+                print(f"[M+ SEASON PARSES] Failed to fetch {name}: HTTP {resp.status_code}")
+                continue
+            data = resp.json()
+            runs = data.get("mythic_plus_recent_best_runs", []) or []
+            if runs:
+                # Get best parse across all runs
+                best_run = max(runs, key=lambda r: r.get("parse", 0))
+                parse = best_run.get("parse", 0)
+                if parse > 0:
+                    results.append((
+                        parse,
+                        best_run.get("dungeon", "?"),
+                        name.strip(),
+                        best_run.get("class", ""),
+                        best_run.get("spec", ""),
+                    ))
+        except requests.RequestException as exc:
+            print(f"[M+ SEASON PARSES] Error fetching {name}: {exc}")
+            continue
+        time.sleep(0.3)
+    results.sort(key=lambda r: r[0], reverse=True)
+    print(f"[M+ SEASON PARSES] Found {len(results)} players with season parses.")
     return results
 
 
@@ -667,7 +852,7 @@ def rank_lines_mplus(results, top_n):
 # Section formatter functions for modular board system
 # ---------------------------------------------------------------------------
 
-def format_no_logs_notice(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_no_logs_notice(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the no logs notice field (only appears when no_logs is True)."""
     if not no_logs:
         return None
@@ -689,12 +874,14 @@ def format_no_logs_notice(cfg, stats, standing, leaders, zone_name, mplus_result
     }
 
 
-def format_guild_standing(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_guild_standing(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the guild standing field."""
+    print(f"[SECTION] guild_standing: Checking if enabled...")
     sections = cfg.get("sections", {})
     standing_cfg = sections.get("guild_standing", {})
     
     if not standing_cfg.get("enabled", True):
+        print(f"[SECTION] guild_standing: Disabled")
         return None
     
     # Fall back to legacy config if sections not present
@@ -702,8 +889,10 @@ def format_guild_standing(cfg, stats, standing, leaders, zone_name, mplus_result
         standing_cfg = cfg.get("rankings", {})
     
     if not standing_cfg.get("enabled", True):
+        print(f"[SECTION] guild_standing: Disabled (legacy)")
         return None
     
+    print(f"[SECTION] guild_standing: Enabled, formatting...")
     if standing:
         value = guild_standing_value(standing, zone_name)
         if value:
@@ -712,12 +901,14 @@ def format_guild_standing(cfg, stats, standing, leaders, zone_name, mplus_result
     return None
 
 
-def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the top DPS parses field."""
+    print(f"[SECTION] top_dps: Checking if enabled...")
     sections = cfg.get("sections", {})
     dps_cfg = sections.get("top_dps", {})
     
     if not dps_cfg.get("enabled", True):
+        print(f"[SECTION] top_dps: Disabled")
         return None
     
     # Fall back to legacy config
@@ -725,8 +916,10 @@ def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, no_l
         dps_cfg = cfg.get("raid", {})
     
     if not dps_cfg.get("enabled", True):
+        print(f"[SECTION] top_dps: Disabled (legacy)")
         return None
     
+    print(f"[SECTION] top_dps: Enabled, formatting...")
     if stats is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
@@ -738,12 +931,14 @@ def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, no_l
     return None
 
 
-def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the top healing parses field."""
+    print(f"[SECTION] top_healing: Checking if enabled...")
     sections = cfg.get("sections", {})
     healing_cfg = sections.get("top_healing", {})
     
     if not healing_cfg.get("enabled", True):
+        print(f"[SECTION] top_healing: Disabled")
         return None
     
     # Fall back to legacy config
@@ -751,8 +946,10 @@ def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, 
         healing_cfg = cfg.get("raid", {})
     
     if not healing_cfg.get("enabled", True):
+        print(f"[SECTION] top_healing: Disabled (legacy)")
         return None
     
+    print(f"[SECTION] top_healing: Enabled, formatting...")
     if stats is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
@@ -764,12 +961,14 @@ def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, 
     return None
 
 
-def format_realm_rank_leaders(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_realm_rank_leaders(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the realm rank leaders field."""
+    print(f"[SECTION] realm_rank_leaders: Checking if enabled...")
     sections = cfg.get("sections", {})
     leaders_cfg = sections.get("realm_rank_leaders", {})
     
     if not leaders_cfg.get("enabled", True):
+        print(f"[SECTION] realm_rank_leaders: Disabled")
         return None
     
     # Fall back to legacy config
@@ -777,8 +976,10 @@ def format_realm_rank_leaders(cfg, stats, standing, leaders, zone_name, mplus_re
         leaders_cfg = cfg.get("rankings", {})
     
     if not leaders_cfg.get("enabled", True):
+        print(f"[SECTION] realm_rank_leaders: Disabled (legacy)")
         return None
     
+    print(f"[SECTION] realm_rank_leaders: Enabled, formatting...")
     if leaders:
         top_n = int(cfg.get("top_n", 5))
         return {
@@ -790,14 +991,17 @@ def format_realm_rank_leaders(cfg, stats, standing, leaders, zone_name, mplus_re
     return None
 
 
-def format_most_deaths(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_most_deaths(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the most deaths field."""
+    print(f"[SECTION] most_deaths: Checking if enabled...")
     sections = cfg.get("sections", {})
     deaths_cfg = sections.get("most_deaths", {})
     
     if not deaths_cfg.get("enabled", True):
+        print(f"[SECTION] most_deaths: Disabled")
         return None
     
+    print(f"[SECTION] most_deaths: Enabled, formatting...")
     if stats is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
@@ -809,12 +1013,14 @@ def format_most_deaths(cfg, stats, standing, leaders, zone_name, mplus_results, 
     return None
 
 
-def format_roast_of_the_week(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_roast_of_the_week(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the roast of the week field."""
+    print(f"[SECTION] roast_of_the_week: Checking if enabled...")
     sections = cfg.get("sections", {})
     roast_cfg = sections.get("roast_of_the_week", {})
     
     if not roast_cfg.get("enabled", True):
+        print(f"[SECTION] roast_of_the_week: Disabled")
         return None
     
     # Fall back to legacy config
@@ -822,8 +1028,10 @@ def format_roast_of_the_week(cfg, stats, standing, leaders, zone_name, mplus_res
         roast_cfg = cfg.get("roast_of_the_week", {})
     
     if not roast_cfg:
+        print(f"[SECTION] roast_of_the_week: No config found")
         return None
     
+    print(f"[SECTION] roast_of_the_week: Enabled, formatting...")
     if roast_cfg.get("roast"):
         winner = roast_cfg.get("winner", "Anonymous")
         target = roast_cfg.get("target", "")
@@ -841,12 +1049,14 @@ def format_roast_of_the_week(cfg, stats, standing, leaders, zone_name, mplus_res
         }
 
 
-def format_mplus(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs):
+def format_mplus(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     """Format the M+ board field."""
+    print(f"[SECTION] mplus: Checking if enabled...")
     sections = cfg.get("sections", {})
     mplus_cfg = sections.get("mplus", {})
     
     if not mplus_cfg.get("enabled", True):
+        print(f"[SECTION] mplus: Disabled")
         return None
     
     # Fall back to legacy config
@@ -854,13 +1064,67 @@ def format_mplus(cfg, stats, standing, leaders, zone_name, mplus_results, no_log
         mplus_cfg = cfg.get("mplus", {})
     
     if not mplus_cfg.get("enabled", False):
+        print(f"[SECTION] mplus: Disabled (legacy)")
         return None
     
+    print(f"[SECTION] mplus: Enabled, formatting...")
     if mplus_results is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
             "name": "\U0001F5DD\uFE0F Highest M+ Keys This Week",
             "value": rank_lines_mplus(mplus_results, top_n),
+            "inline": False,
+        }
+    
+    return None
+
+
+def format_mplus_season_scores(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
+    """Format the M+ season scores field."""
+    print(f"[SECTION] mplus_season_scores: Checking if enabled...")
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus_season_scores", {})
+    
+    if not mplus_cfg.get("enabled", True):
+        print(f"[SECTION] mplus_season_scores: Disabled")
+        return None
+    
+    print(f"[SECTION] mplus_season_scores: Enabled, formatting...")
+    if mplus_season_scores is not None:
+        top_n = int(cfg.get("top_n", 5))
+        lines = []
+        for i, (score, name, cls, spec) in enumerate(mplus_season_scores[:top_n]):
+            lines.append(f"{medal(i)} **{name}** ({cls} {spec}) — {score:.0f} score")
+        value = "\n".join(lines) if lines else "_No season scores found_"
+        return {
+            "name": "\U0001F3C6 Season-Long M+ Scores",
+            "value": value,
+            "inline": False,
+        }
+    
+    return None
+
+
+def format_mplus_season_parses(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
+    """Format the M+ season parses field."""
+    print(f"[SECTION] mplus_season_parses: Checking if enabled...")
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus_season_parses", {})
+    
+    if not mplus_cfg.get("enabled", True):
+        print(f"[SECTION] mplus_season_parses: Disabled")
+        return None
+    
+    print(f"[SECTION] mplus_season_parses: Enabled, formatting...")
+    if mplus_season_parses is not None:
+        top_n = int(cfg.get("top_n", 5))
+        lines = []
+        for i, (parse, dungeon, name, cls, spec) in enumerate(mplus_season_parses[:top_n]):
+            lines.append(f"{medal(i)} **{name}** ({cls} {spec}) — {parse:.0f}% on {dungeon}")
+        value = "\n".join(lines) if lines else "_No season parses found_"
+        return {
+            "name": "\U0001F525 Season-Long Top M+ Parses",
+            "value": value,
             "inline": False,
         }
     
@@ -877,10 +1141,12 @@ SECTION_FORMATTERS = {
     "most_deaths": format_most_deaths,
     "roast_of_the_week": format_roast_of_the_week,
     "mplus": format_mplus,
+    "mplus_season_scores": format_mplus_season_scores,
+    "mplus_season_parses": format_mplus_season_parses,
 }
 
 
-def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_dt, end_dt, no_logs=False):
+def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs=False):
     guild_name = cfg["guild"]["name"]
     difficulty = str(cfg["raid"]["difficulty"]).title()
     top_n = int(cfg.get("top_n", 5))
@@ -893,17 +1159,24 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_d
     progress_image = None
     if progress_cfg.get("enabled", True):
         progress_image = progress_cfg.get("url", "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721")
+        print(f"[PROGRESS IMAGE] URL: {progress_image}")
         
         # Test if image URL is accessible if remove_on_failure is set
         if progress_cfg.get("remove_on_failure", True) and progress_image:
             try:
+                print(f"[PROGRESS IMAGE] Verifying URL accessibility...")
                 resp = requests.head(progress_image, timeout=10, allow_redirects=True)
+                print(f"[PROGRESS IMAGE] HEAD request status: {resp.status_code}")
                 if resp.status_code >= 400:
-                    print(f"Progress image URL returned status {resp.status_code}, removing image.")
+                    print(f"[PROGRESS IMAGE] URL returned error status {resp.status_code}, removing image.")
                     progress_image = None
+                else:
+                    print(f"[PROGRESS IMAGE] URL accessible, including image.")
             except requests.RequestException as exc:
-                print(f"Failed to verify progress image URL: {exc}, removing image.")
+                print(f"[PROGRESS IMAGE] Failed to verify URL: {exc}, removing image.")
                 progress_image = None
+    else:
+        print(f"[PROGRESS IMAGE] Section disabled.")
 
     # Build fields using section registry
     fields = []
@@ -976,7 +1249,7 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_d
             formatter = SECTION_FORMATTERS.get(section_name)
             if formatter:
                 try:
-                    field = formatter(cfg, stats, standing, leaders, zone_name, mplus_results, no_logs)
+                    field = formatter(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs)
                     if field:
                         fields.append(field)
                 except Exception as exc:
@@ -1054,32 +1327,87 @@ def main():
             no_logs = True
         else:
             print(f"Found {len(reports)} report(s) this week.")
-            stats = collect_raid_stats(token, cfg, reports)
-            stats = apply_roster_filters(token, cfg, stats)
+            
+            # Use difficulty fallback for raid stats
+            sections = cfg.get("sections", {})
+            raid_cfg = sections.get("top_dps") if sections else cfg.get("raid", {})
+            use_fallback = raid_cfg.get("difficulty_fallback", True)
+            
+            if use_fallback:
+                print("[RAID] Using difficulty fallback (mythic -> heroic -> normal)")
+                stats, difficulty_used = try_difficulties(collect_raid_stats, cfg, token, reports)
+                if stats:
+                    print(f"[RAID] Using {difficulty_used} data")
+                else:
+                    print("[RAID] No data found for any difficulty")
+            else:
+                print("[RAID] Using configured difficulty only")
+                stats = collect_raid_stats(token, cfg, reports)
+            
+            if stats:
+                stats = apply_roster_filters(token, cfg, stats)
 
             # Rankings vs the rest of the region (never let this block the post)
             if (cfg.get("rankings") or {}).get("enabled", True):
                 zone_id, zone_name = detect_zone(cfg, reports)
                 if zone_id:
-                    try:
-                        standing = fetch_guild_standing(token, cfg, zone_id)
-                    except (RuntimeError, requests.RequestException) as exc:
-                        print(f"Guild standing lookup failed: {exc}")
-                    try:
-                        leaders = fetch_realm_rank_leaders(
-                            token, cfg, stats["participants"], zone_id, stats["difficulty"]
+                    # Use difficulty fallback for guild standing
+                    if use_fallback:
+                        print("[GUILD STANDING] Using difficulty fallback")
+                        standing, diff_used = try_difficulties(
+                            lambda cfg, token, reports, difficulty: fetch_guild_standing(token, cfg, zone_id),
+                            cfg, token, reports
                         )
-                    except (RuntimeError, requests.RequestException) as exc:
-                        print(f"Realm rank leaders lookup failed: {exc}")
+                        if standing:
+                            print(f"[GUILD STANDING] Using {diff_used} data")
+                    else:
+                        try:
+                            standing = fetch_guild_standing(token, cfg, zone_id)
+                        except (RuntimeError, requests.RequestException) as exc:
+                            print(f"Guild standing lookup failed: {exc}")
+                    
+                    # Use difficulty fallback for realm rank leaders
+                    if stats and stats.get("participants"):
+                        if use_fallback:
+                            print("[REALM RANK LEADERS] Using difficulty fallback")
+                            leaders, diff_used = try_difficulties(
+                                lambda cfg, token, reports, difficulty: fetch_realm_rank_leaders(
+                                    token, cfg, stats["participants"], zone_id, difficulty
+                                ),
+                                cfg, token, reports
+                            )
+                            if leaders:
+                                print(f"[REALM RANK LEADERS] Using {diff_used} data")
+                        else:
+                            try:
+                                leaders = fetch_realm_rank_leaders(
+                                    token, cfg, stats["participants"], zone_id, stats["difficulty"]
+                                )
+                            except (RuntimeError, requests.RequestException) as exc:
+                                print(f"Realm rank leaders lookup failed: {exc}")
                 else:
                     print("Could not detect raid zone; skipping rankings section.")
 
     mplus_results = None
+    mplus_season_scores = None
+    mplus_season_parses = None
+    
     if mplus_enabled:
         mplus_results = collect_mplus(cfg, token)
+    
+    # Collect M+ season data if enabled
+    sections = cfg.get("sections", {})
+    mplus_season_scores_cfg = sections.get("mplus_season_scores", {})
+    mplus_season_parses_cfg = sections.get("mplus_season_parses", {})
+    
+    if mplus_season_scores_cfg.get("enabled", False):
+        mplus_season_scores = collect_mplus_season_scores(cfg, token)
+    
+    if mplus_season_parses_cfg.get("enabled", False):
+        mplus_season_parses = collect_mplus_season_parses(cfg, token)
 
     embed = build_embed(cfg, stats, standing, leaders, zone_name,
-                        mplus_results, start_dt, end_dt, no_logs)
+                        mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs)
     post_to_discord(webhook_url, embed)
     print("Board posted to Discord.")
 
