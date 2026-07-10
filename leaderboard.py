@@ -231,9 +231,9 @@ def resolve_roster(cfg, token, section_name="mplus"):
     if auto_fetch and token:
         print(f"[{section_name.upper()}] Auto-fetching roster from WCL guild members...")
         try:
-            guild_names = fetch_guild_member_names(token, cfg)
-            if guild_names:
-                roster = [f"{name}-{default_realm}" for name in guild_names]
+            guild_roster = fetch_guild_member_roster(token, cfg)
+            if guild_roster:
+                roster = [f"{name}-{realm}" for name, realm in guild_roster]
                 print(f"[{section_name.upper()}] Fetched {len(roster)} guild members from WCL.")
                 if cache_enabled:
                     save_roster_cache(cfg, roster)
@@ -340,6 +340,10 @@ query ($name: String!, $slug: String!, $region: String!, $page: Int!) {
       members(limit: 100, page: $page) {
         data {
           name
+          server {
+            slug
+            name
+          }
         }
         has_more_pages
       }
@@ -439,14 +443,14 @@ def count_deaths(token, code, fight_ids, death_totals):
 
 def try_difficulties(func, cfg, token, reports, *args):
     """Try a function with each difficulty (mythic -> heroic -> normal) until one succeeds.
-    
+
     Args:
-        func: Function that takes (cfg, token, reports, difficulty, *args) as parameters
+        func: Function that takes (token, cfg, reports, difficulty, *args) as parameters
         cfg: Config dict
         token: WCL API token
         reports: List of reports from WCL
         *args: Additional arguments to pass to func
-        
+
     Returns:
         Tuple of (result, difficulty_used) or (None, None) if all fail
     """
@@ -455,7 +459,7 @@ def try_difficulties(func, cfg, token, reports, *args):
         try:
             print(f"[DIFFICULTY FALLBACK] Trying {diff}...")
             difficulty_num = DIFFICULTY_MAP.get(diff, 4)
-            result = func(cfg, token, reports, difficulty_num, *args)
+            result = func(token, cfg, reports, difficulty_num, *args)
             if result:
                 print(f"[DIFFICULTY FALLBACK] Found data for {diff}")
                 return result, diff
@@ -587,12 +591,13 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
 # Roster filtering (pugs vs guild members)
 # ---------------------------------------------------------------------------
 
-def fetch_guild_member_names(token, cfg):
-    """Pull the guild roster from Warcraft Logs (synced from the in-game roster)."""
+def fetch_guild_member_roster(token, cfg):
+    """Pull the guild roster from WCL as a list of (name, realm_slug) tuples."""
     guild = cfg["guild"]
-    names = set()
+    roster = []
+    seen = set()
     page = 1
-    while page <= 10:  # up to 1000 members; plenty
+    while page <= 10:
         data = gql(token, GUILD_MEMBERS_QUERY, {
             "name": guild["name"],
             "slug": guild["realm_slug"],
@@ -602,12 +607,26 @@ def fetch_guild_member_names(token, cfg):
         members = (((data.get("guildData") or {}).get("guild") or {}).get("members")) or {}
         for member in (members.get("data") or []):
             name = member.get("name")
-            if name:
-                names.add(name.strip().lower())
+            if not name:
+                continue
+            server = member.get("server") or {}
+            realm = server.get("slug") or guild["realm_slug"]
+            key = f"{name.strip().lower()}-{realm.lower()}"
+            if key not in seen:
+                seen.add(key)
+                roster.append((name.strip().lower(), realm))
         if not members.get("has_more_pages"):
             break
         page += 1
-    return names
+    return roster
+
+
+def fetch_guild_member_names(token, cfg):
+    """Pull the guild roster from Warcraft Logs (synced from the in-game roster).
+
+    Returns a set of lowercase names for roster filtering compatibility.
+    """
+    return {name for name, _ in fetch_guild_member_roster(token, cfg)}
 
 
 def apply_roster_filters(token, cfg, stats):
@@ -780,7 +799,8 @@ def collect_mplus(cfg, token=None):
 def collect_mplus_season_scores(cfg, token=None):
     """Return list of (score, name, spec) for season-long M+ overall score from Raider.io.
 
-    Uses the `mythic_plus_profile` field which contains the character's overall score.
+    Tries `mythic_plus_scores` first (returns an `all` score), then falls back to the
+    best `score` from `mythic_plus_best_runs`.
     """
     print(f"[M+ SEASON SCORES] Collecting season-long M+ scores...")
     results = []
@@ -799,15 +819,26 @@ def collect_mplus_season_scores(cfg, token=None):
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
-                "fields": "mythic_plus_profile",
+                "fields": "mythic_plus_scores,mythic_plus_best_runs",
             }, timeout=30)
             if resp.status_code != 200:
                 print(f"[M+ SEASON SCORES] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            profile = data.get("mythic_plus_profile") or {}
-            current = profile.get("current_period") or {}
-            score = current.get("score") or 0
+            score = 0
+
+            # Primary source: overall season score
+            scores = data.get("mythic_plus_scores") or {}
+            if isinstance(scores, dict):
+                score = scores.get("all") or scores.get("score") or 0
+
+            # Fallback: best run score from season runs
+            if not score:
+                runs = data.get("mythic_plus_best_runs") or []
+                if runs:
+                    best = max(runs, key=lambda r: r.get("score", 0))
+                    score = best.get("score", 0)
+
             if score > 0:
                 spec = clean_spec_name(data.get("active_spec_name"), data.get("class", ""))
                 results.append((score, name.strip(), spec))
@@ -825,31 +856,35 @@ def collect_mplus_season_scores(cfg, token=None):
 
 
 def collect_mplus_season_parses(cfg, token=None):
-    """Return list of (parse, dungeon, name, spec) for best season M+ parses.
+    """Return list of (parse/score, dungeon, name, spec, is_wcl) for best season M+ runs.
 
-    Tries WCL API for parse percentiles first if configured, then falls back to
-    Raider.io `mythic_plus_best_runs` score data.
+    Always starts with Raider.io `mythic_plus_best_runs` so the board has data.
+    If WCL is enabled, tries to replace the top Raider.io entries with WCL parse
+    percentiles for the same dungeon.
     """
     print("[M+ SEASON RUNS] Collecting season-long M+ runs...")
     sections = cfg.get("sections", {})
     mplus_cfg = sections.get("mplus_season_parses") or sections.get("mplus_season_runs", {})
     use_wcl = mplus_cfg.get("use_wcl_parses", True)
-    fallback = mplus_cfg.get("fallback_to_raiderio", True)
 
     roster, _ = resolve_roster(cfg, token, "mplus_season_parses" if "mplus_season_parses" in sections else "mplus_season_runs")
 
-    results = []
-    if use_wcl and token:
-        print("[M+ SEASON RUNS] Attempting WCL parse lookup...")
-        try:
-            results = collect_mplus_wcl_parses(cfg, token, roster)
-            print(f"[M+ SEASON RUNS] WCL returned {len(results)} results")
-        except (RuntimeError, requests.RequestException) as exc:
-            print(f"[M+ SEASON RUNS] WCL parse lookup failed: {exc}")
+    # Always start with Raider.io data (reliable, gives us dungeon + score)
+    results = collect_mplus_raiderio_season_runs(cfg, roster)
 
-    if not results and fallback:
-        print("[M+ SEASON RUNS] Falling back to Raider.io best runs...")
-        results = collect_mplus_raiderio_season_runs(cfg, roster)
+    if use_wcl and token and results:
+        print("[M+ SEASON RUNS] Attempting WCL parse enrichment on top Raider.io entries...")
+        try:
+            wcl_results = collect_mplus_wcl_parses(cfg, token, results)
+            if wcl_results:
+                # Replace Raider.io entries by character name with WCL parse data
+                by_name = {r[2].lower(): r for r in results}
+                for wcl in wcl_results:
+                    by_name[wcl[2].lower()] = wcl
+                results = list(by_name.values())
+                print(f"[M+ SEASON RUNS] Enriched {len(wcl_results)} entries with WCL parse data")
+        except (RuntimeError, requests.RequestException) as exc:
+            print(f"[M+ SEASON RUNS] WCL parse enrichment failed: {exc}")
 
     results.sort(key=lambda r: r[0], reverse=True)
     print(f"[M+ SEASON RUNS] Found {len(results)} players with season runs.")
@@ -919,58 +954,69 @@ MPLUS_DUNGEON_IDS = [
 ]
 
 
-def collect_mplus_wcl_parses(cfg, token, roster):
-    """Attempt to fetch M+ parse percentiles from Warcraft Logs.
+def collect_mplus_wcl_parses(cfg, token, raiderio_results):
+    """Attempt to fetch M+ parse percentiles from Warcraft Logs for top Raider.io entries.
 
-    Returns list of (percentile, dungeon, name, spec). This is best-effort; WCL
-    M+ parse support varies and may return empty data for some characters.
+    `raiderio_results` is a list of (score, dungeon, name, spec, is_wcl). We use
+    the dungeon name to find the WCL encounter ID and replace the score with a
+    parse percentile if one exists.
+
+    Returns list of (percentile, dungeon, name, spec, is_wcl). Empty list if WCL
+    does not return any data.
     """
-    print(f"[M+ WCL PARSES] Processing {len(roster)} characters across {len(MPLUS_DUNGEON_IDS)} dungeons...")
-    results = []
-    max_calls = cfg.get("rankings", {}).get("max_characters", 30)
-    call_count = 0
     top_n = int(cfg.get("top_n", 5))
+    candidates = raiderio_results[:top_n]
+    print(f"[M+ WCL PARSES] Processing {len(candidates)} top Raider.io entries across {len(MPLUS_DUNGEON_IDS)} dungeons...")
 
-    for entry in roster[:max_calls]:
-        if "-" in entry:
-            name, realm = entry.split("-", 1)
+    # Map dungeon name (case-insensitive) to encounter ID
+    dungeon_to_id = {}
+    for encounter_id in MPLUS_DUNGEON_IDS:
+        name = _mplus_dungeon_name(cfg, token, encounter_id)
+        dungeon_to_id[name.lower()] = encounter_id
+
+    results = []
+    call_count = 0
+    call_limit = 100
+
+    for score, rio_dungeon, name, spec, _ in candidates:
+        if call_count >= call_limit:
+            print(f"[M+ WCL PARSES] Hit call limit ({call_limit}); stopping.")
+            break
+
+        # Find WCL encounter ID for this dungeon
+        encounter_id = dungeon_to_id.get((rio_dungeon or "").lower())
+        if not encounter_id:
+            continue
+
+        # Parse realm from cached roster entry
+        if "-" in name:
+            char_name, realm = name.split("-", 1)
         else:
-            name, realm = entry, cfg["guild"]["realm_slug"]
+            char_name, realm = name, cfg["guild"]["realm_slug"]
 
-        best_for_char = None
-        for encounter_id in MPLUS_DUNGEON_IDS:
-            if call_count >= 200:
-                print(f"[M+ WCL PARSES] Hit call limit; stopping WCL parse lookup.")
-                break
-            try:
-                data = gql(token, MPLUS_PARSE_QUERY, {
-                    "name": name.strip(),
-                    "serverSlug": realm.strip(),
-                    "serverRegion": cfg["guild"]["region"],
-                    "encounterID": encounter_id,
-                })
-                call_count += 1
-                rankings = (((data.get("characterData") or {}).get("character") or {}).get("encounterRankings") or {})
-                ranks = rankings.get("ranks") or []
-                if not ranks:
-                    continue
-                # Best rank for this dungeon
-                best = max(ranks, key=lambda r: r.get("percentile") or 0)
-                percentile = best.get("percentile") or 0
-                if percentile > 0 and (best_for_char is None or percentile > best_for_char[0]):
-                    best_for_char = (percentile, encounter_id, name.strip(), best.get("spec", ""))
-            except Exception as exc:
-                # WCL M+ parse lookup can fail for many reasons; log and continue
-                print(f"[M+ WCL PARSES] Error for {name} dungeon {encounter_id}: {exc}")
+        try:
+            data = gql(token, MPLUS_PARSE_QUERY, {
+                "name": char_name.strip(),
+                "serverSlug": realm.strip(),
+                "serverRegion": cfg["guild"]["region"],
+                "encounterID": encounter_id,
+            })
+            call_count += 1
+            rankings = (((data.get("characterData") or {}).get("character") or {}).get("encounterRankings") or {})
+            ranks = rankings.get("ranks") or []
+            if not ranks:
                 continue
-
-        if best_for_char:
-            # Resolve dungeon name from encounter ID
-            percentile, encounter_id, name, spec = best_for_char
-            # Try to get dungeon name from WCL or use ID
-            dungeon_name = _mplus_dungeon_name(cfg, token, encounter_id)
-            results.append((percentile, dungeon_name, name, spec, True))
-            print(f"[M+ WCL PARSES] Added {name} {percentile:.0f}% on {dungeon_name}")
+            # Best rank for this dungeon
+            best = max(ranks, key=lambda r: r.get("percentile") or 0)
+            percentile = best.get("percentile") or 0
+            if percentile > 0:
+                wcl_spec = clean_spec_name(best.get("spec"), best.get("class"))
+                results.append((percentile, rio_dungeon, char_name.strip(), wcl_spec or spec, True))
+                print(f"[M+ WCL PARSES] Added {char_name} {percentile:.0f}% on {rio_dungeon}")
+        except Exception as exc:
+            # WCL M+ parse lookup can fail for many reasons; log and continue
+            print(f"[M+ WCL PARSES] Error for {char_name} on {rio_dungeon}: {exc}")
+            continue
 
     print(f"[M+ WCL PARSES] Made {call_count} WCL calls, found {len(results)} results")
     return results
@@ -998,7 +1044,7 @@ MPLUS_PARSE_QUERY = """
 query ($name: String!, $serverSlug: String!, $serverRegion: String!, $encounterID: Int!) {
   characterData {
     character(name: $name, serverSlug: $serverSlug, serverRegion: $serverRegion) {
-      encounterRankings(encounterID: $encounterID, partition: -1, metric: playerscore)
+      encounterRankings(encounterID: $encounterID, metric: playerscore)
     }
   }
 }
@@ -1656,7 +1702,7 @@ def main():
                         if use_fallback:
                             print("[REALM RANK LEADERS] Using difficulty fallback")
                             leaders, diff_used = try_difficulties(
-                                lambda cfg, token, reports, difficulty: fetch_realm_rank_leaders(
+                                lambda token, cfg, reports, difficulty: fetch_realm_rank_leaders(
                                     token, cfg, stats["participants"], zone_id, difficulty
                                 ),
                                 cfg, token, reports
