@@ -644,16 +644,15 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_d
     top_n = int(cfg.get("top_n", 5))
     date_range = f"{start_dt.strftime('%b %d')} – {end_dt.strftime('%b %d, %Y')}"
 
+    # Guild Progress Tile
+    progress_image = "https://www.warcraftlogs.com/embed/guild-progress-tile/46?difficulty=4&guild=821721"
+
     fields = []
 
     if standing:
         value = guild_standing_value(standing, zone_name)
         if value:
-            fields.append({
-                "name": "\U0001F30D Guild Standing",
-                "value": value,
-                "inline": False,
-            })
+            fields.append({"name": "\U0001F30D Guild Standing", "value": value, "inline": False})
 
     if stats is not None:
         fields.append({
@@ -714,6 +713,7 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, start_d
         "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
         "description": f"Raid week: **{date_range}**",
         "color": 0xC69B6D,
+        "image": {"url": progress_image},
         "fields": fields,
         "footer": {"text": " | ".join(footer_bits)},
         "timestamp": datetime.now(timezone.utc).isoformat(),
