@@ -1470,6 +1470,84 @@ SECTION_FORMATTERS = {
 }
 
 
+def _section_group(section_name):
+    """Map a section name to its high-level group for layout."""
+    if section_name in {"guild_achievement_header", "guild_standing"}:
+        return "guild_achievement"
+    if section_name in {"mplus_header", "mplus", "mplus_last_week", "mplus_season_scores", "mplus_season_parses", "mplus_season_runs"}:
+        return "mplus"
+    if section_name in {"raid_header", "top_dps", "top_healing", "realm_rank_leaders", "most_deaths", "roast_of_the_week"}:
+        return "raid"
+    return "other"
+
+
+def _build_two_column_fields(cfg, raw_fields):
+    """Arrange raid and M+ fields side by side, with guild achievements below."""
+    sections = cfg.get("sections", {})
+
+    other = []
+    raid = []
+    mplus = []
+    guild_achievement = []
+
+    for section_name, field in raw_fields:
+        group = _section_group(section_name)
+        if group == "other":
+            other.append(field)
+        elif group == "raid":
+            raid.append(field)
+        elif group == "mplus":
+            mplus.append(field)
+        elif group == "guild_achievement":
+            guild_achievement.append(field)
+
+    # Drop the original full-width headers; we'll create inline column headers
+    raid = [f for f in raid if f["value"] != "\u200b"]
+    mplus = [f for f in mplus if f["value"] != "\u200b"]
+
+    # Guild achievement header stays full-width, but skip the other header bodies if empty
+    ga_header = next((f for f in guild_achievement if f["value"] == "\u200b"), None)
+    ga_body = [f for f in guild_achievement if f["value"] != "\u200b"]
+
+    # Build inline column headers using configured title/icon
+    raid_cfg = sections.get("raid_header", {})
+    mplus_cfg = sections.get("mplus_header", {})
+    raid_title = raid_cfg.get("title", "Raid")
+    mplus_title = mplus_cfg.get("title", "Mythic Plus")
+    raid_icon = raid_cfg.get("icon", "")
+    mplus_icon = mplus_cfg.get("icon", "")
+
+    columns = []
+    if raid or mplus:
+        columns.append({"name": f"{raid_icon} {raid_title}".strip(), "value": "\u200b", "inline": True})
+        columns.append({"name": f"{mplus_icon} {mplus_title}".strip(), "value": "\u200b", "inline": True})
+
+    # Interleave raid and mplus fields, marking them inline
+    max_len = max(len(raid), len(mplus))
+    for i in range(max_len):
+        if i < len(raid):
+            raid[i]["inline"] = True
+            columns.append(raid[i])
+        else:
+            columns.append({"name": "\u200b", "value": "\u200b", "inline": True})
+        if i < len(mplus):
+            mplus[i]["inline"] = True
+            columns.append(mplus[i])
+        else:
+            columns.append({"name": "\u200b", "value": "\u200b", "inline": True})
+
+    fields = []
+    fields.extend(other)
+    fields.extend(columns)
+    if ga_header:
+        ga_header["inline"] = False
+        fields.append(ga_header)
+    for f in ga_body:
+        f["inline"] = False
+        fields.append(f)
+    return fields
+
+
 def _load_font(size):
     """Try to load a nice font, fall back to Pillow default."""
     candidates = [
@@ -1665,17 +1743,24 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
     else:
         # Use new modular section system
         sorted_sections = sorted(section_items, key=lambda x: x[1].get("order", 999))
-        
+        raw_fields = []
+
         for section_name, section_cfg in sorted_sections:
             formatter = SECTION_FORMATTERS.get(section_name)
             if formatter:
                 try:
                     field = formatter(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs)
                     if field:
-                        fields.append(field)
+                        raw_fields.append((section_name, field))
                 except Exception as exc:
                     print(f"Error formatting section '{section_name}': {exc}")
                     continue
+
+        layout = cfg.get("display", {}).get("layout", "two_column")
+        if layout == "two_column":
+            fields = _build_two_column_fields(cfg, raw_fields)
+        else:
+            fields = [field for _, field in raw_fields]
 
     footer_bits = []
     if stats is not None:

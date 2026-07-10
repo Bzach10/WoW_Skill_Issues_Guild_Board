@@ -16,6 +16,10 @@ lookback_days: 7
 # How many players shown per category (3, 4, or 5)
 top_n: 5
 
+# Board layout: single_column or two_column (raid left, M+ right, guild achievements bottom)
+display:
+  layout: two_column
+
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
 #  where it appears in the Discord embed. Lower numbers appear
