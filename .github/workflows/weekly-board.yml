@@ -55,26 +55,26 @@ jobs:
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          ARGS=""
+          args=()
           if [ -n "${{ github.event.inputs.roast }}" ]; then
-            ARGS="$ARGS --roast '${{ github.event.inputs.roast }}'"
+            args+=(--roast "${{ github.event.inputs.roast }}")
           fi
           if [ -n "${{ github.event.inputs.roast_winner }}" ]; then
-            ARGS="$ARGS --roast-winner '${{ github.event.inputs.roast_winner }}'"
+            args+=(--roast-winner "${{ github.event.inputs.roast_winner }}")
           fi
           if [ -n "${{ github.event.inputs.roast_target }}" ]; then
-            ARGS="$ARGS --roast-target '${{ github.event.inputs.roast_target }}'"
+            args+=(--roast-target "${{ github.event.inputs.roast_target }}")
           fi
           if [ -n "${{ github.event.inputs.difficulty }}" ]; then
-            ARGS="$ARGS --difficulty ${{ github.event.inputs.difficulty }}"
+            args+=(--difficulty ${{ github.event.inputs.difficulty }})
           fi
           if [ -n "${{ github.event.inputs.lookback }}" ]; then
-            ARGS="$ARGS --lookback ${{ github.event.inputs.lookback }}"
+            args+=(--lookback ${{ github.event.inputs.lookback }})
           fi
           if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
-            ARGS="$ARGS --dry-run"
+            args+=(--dry-run)
           fi
-          python leaderboard.py $ARGS
+          python leaderboard.py "${args[@]}"
 
       - name: Commit roster cache
         env:
@@ -87,7 +87,7 @@ jobs:
             echo "No roster cache changes to commit."
           else
             git commit -m "Update roster cache [skip ci]"
-            if git pull --rebase origin main; then
+            if git pull --rebase origin ${{ github.ref_name }}; then
               git push
             else
               git checkout --ours roster_cache.json
