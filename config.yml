@@ -48,7 +48,8 @@ dedup:
 #  always_exclude = anyone who should never appear.
 # ------------------------------------------------------------
 filters:
-  guild_members_only: False  # false = pugs can appear on the board
+  guild_members_only: false
+  # false = pugs can appear on the board
   always_include: []
     # - Sometrialname
   always_exclude: []
@@ -71,6 +72,6 @@ roast_of_the_week:
 # ------------------------------------------------------------
 mplus:
   enabled: true
-  roster:
-    - Rakell-Proudmoore
-    - Rakdisc-Proudmoore
+  roster: 
+    - "Rakell-Proudmoore"
+    - "Rakdisc-Proudmoore"
