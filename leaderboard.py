@@ -1182,13 +1182,15 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
         if progress_cfg.get("remove_on_failure", True) and progress_image:
             try:
                 print(f"[PROGRESS IMAGE] Verifying URL accessibility...")
-                resp = requests.head(progress_image, timeout=10, allow_redirects=True)
-                print(f"[PROGRESS IMAGE] HEAD request status: {resp.status_code}")
+                # Use GET request instead of HEAD for better compatibility
+                resp = requests.get(progress_image, timeout=5, stream=True, allow_redirects=True)
+                print(f"[PROGRESS IMAGE] GET request status: {resp.status_code}")
                 if resp.status_code >= 400:
                     print(f"[PROGRESS IMAGE] URL returned error status {resp.status_code}, removing image.")
                     progress_image = None
                 else:
                     print(f"[PROGRESS IMAGE] URL accessible, including image.")
+                resp.close()
             except requests.RequestException as exc:
                 print(f"[PROGRESS IMAGE] Failed to verify URL: {exc}, removing image.")
                 progress_image = None
