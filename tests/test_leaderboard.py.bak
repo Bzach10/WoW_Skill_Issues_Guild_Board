@@ -174,20 +174,17 @@ def test_modular_sections():
     cfg = {
         "guild": {"name": "Test Guild"},
         "raid": {"difficulty": "heroic"},
-        "top_n": 5,
+        "top_n": 3,
         "lookback_days": 7,
+        "display": {"layout": "two_column"},
         "sections": {
-            "roast_of_the_week": {
-                "order": 10,
-                "enabled": True,
-                "winner": "Rakell",
-                "roast": "Test roast"
-            },
-            "no_logs_notice": {
-                "order": 1,
-                "enabled": True,
-                "message": "No logs"
-            }
+            "announcement": {"order": 0, "enabled": True, "title": "📢 Announcement", "text": "Test announcement"},
+            "no_logs_notice": {"order": 1, "enabled": True, "message": "No logs"},
+            "raid_header": {"order": 2, "enabled": True, "type": "section_header", "title": "Raid", "icon": "⚔️"},
+            "mplus_header": {"order": 3, "enabled": True, "type": "section_header", "title": "Mythic Plus", "icon": "🗝️"},
+            "guild_achievement_header": {"order": 4, "enabled": True, "type": "section_header", "title": "Guild Achievements", "icon": "🏆"},
+            "roast_of_the_week": {"order": 5, "enabled": True, "winner": "Rakell", "roast": "Test roast"},
+            "overall_realm_rank": {"order": 6, "enabled": True},
         }
     }
     stats = {
@@ -197,13 +194,69 @@ def test_modular_sections():
         "pulls": 0,
         "kills": 0,
     }
+    standing = {"realm": 7, "region": 413, "world": 1842}
     now = datetime.now(timezone.utc)
-    embed = lb.build_embed(cfg, stats, None, None, None, None, None, None, now, now, no_logs=True)
+    embed = lb.build_embed(cfg, stats, standing, None, None, None, None, None, now, now, no_logs=True)
     field_names = [f["name"] for f in embed["fields"]]
-    # no_logs_notice should come before roast_of_the_week due to order
-    notice_idx = next(i for i, n in enumerate(field_names) if "No Logs" in n)
-    roast_idx = next(i for i, n in enumerate(field_names) if "Roast" in n)
-    assert notice_idx < roast_idx
+    # Announcement first, then two columns, then guild achievements
+    assert "Announcement" in field_names[0]
+    assert "Raid" in field_names[1]
+    assert "Mythic Plus" in field_names[2]
+    assert "Guild Achievements" in field_names[3]
+    assert "Overall Realm Rank" in field_names
+    assert "Roast" in field_names[-1]
+    # No logs notice should appear inside the Raid column
+    raid_value = embed["fields"][1]["value"]
+    assert "No logs" in raid_value
+    # All field values fit within Discord limits
+    assert all(len(f["value"]) <= 1024 for f in embed["fields"])
+
+
+def test_announcement():
+    cfg = {
+        "guild": {"name": "Test Guild"},
+        "sections": {
+            "announcement": {"enabled": True, "title": "📢 Announcement", "text": "Hello guild!"}
+        }
+    }
+    field = lb.format_announcement(cfg, None, None, None, None, None, None, None, None)
+    assert field is not None
+    assert field["name"] == "📢 Announcement"
+    assert "Hello guild!" in field["value"]
+    assert field["inline"] is False
+
+    # Disabled announcement should be skipped
+    cfg["sections"]["announcement"]["enabled"] = False
+    assert lb.format_announcement(cfg, None, None, None, None, None, None, None, None) is None
+
+
+def test_overall_realm_rank():
+    cfg = {
+        "guild": {"name": "Test Guild"},
+        "sections": {"overall_realm_rank": {"enabled": True}}
+    }
+    standing = {"realm": 7, "region": 413, "world": 1842}
+    field = lb.format_overall_realm_rank(cfg, None, standing, None, None, None, None, None, None)
+    assert field is not None
+    assert "Overall Realm Rank" in field["name"]
+    assert "Realm **#7**" in field["value"]
+
+    # No standing data -> no field
+    assert lb.format_overall_realm_rank(cfg, None, None, None, None, None, None, None, None) is None
+
+
+def test_mplus_season_score_formatting():
+    cfg = {"guild": {"name": "Test Guild"}, "top_n": 3, "sections": {"mplus_season_scores": {"enabled": True}}}
+    scores = [
+        (2834.5, "Gravykin", "Protection"),
+        (2710.0, "Buchalter", "Frost"),
+        (2500.0, "Rakell", "Enhancement"),
+    ]
+    field = lb.format_mplus_season_scores(cfg, None, None, None, None, None, scores, None, False)
+    assert field is not None
+    assert "Season-Long M+ Scores" in field["name"]
+    assert "2835" in field["value"] or "2834" in field["value"]
+    assert "Gravykin" in field["value"]
 
 
 if __name__ == "__main__":

@@ -38,22 +38,43 @@ Go to the Actions tab → "Weekly Guild Board" → "Run workflow" → Run. Withi
 
 That's it. It now posts automatically every Tuesday at 9 AM ET, covering the previous 7 days of logs.
 
-Optional: `test_leaderboard.py` is an offline test suite (no API keys needed). Run `python3 test_leaderboard.py` locally after any code change to sanity-check the dedup, filtering, and formatting logic.
+Optional: `tests/test_guild_board.py` is an offline pytest suite (no API keys needed). Run `pytest` locally after any code change to sanity-check the dedup, filtering, and formatting logic.
 
 ## Giving officers access (no coding required)
 
 1. Repo → Settings → Collaborators → invite their GitHub accounts (free accounts are fine).
 2. Their entire job each week:
-   - Open `config.yml` on the GitHub website, click the pencil icon.
+   - Open `weekly_state.json` on the GitHub website, click the pencil icon.
    - Paste the winning roast into the `roast_of_the_week` section (winner, target, roast).
+   - Optionally add temporary roster overrides in `roster_overrides`.
    - Click "Commit changes."
    - Optional: Actions tab → "Weekly Guild Board" → "Run workflow" to repost immediately, or just let Tuesday's automatic post include it.
 
-Officers can also toggle categories, change `top_n`, switch difficulty, adjust the pug filter, or enable the M+ board — all from the same file, no code.
+Officers can also toggle categories, change `top_n`, switch difficulty, adjust the pug filter, or enable the M+ board — all from `config.yml`, no code.
+
+## CLI & preview
+
+Run locally with no network calls:
+
+```bash
+python leaderboard.py --preview
+```
+
+This writes `preview.html` so you can see exactly how the board will look.
+
+Other useful flags:
+
+```bash
+python leaderboard.py --dry-run                              # build and print the embed, no Discord post
+python leaderboard.py --difficulty heroic --lookback 7       # override difficulty/lookback
+python leaderboard.py --roast "..." --roast-winner Bud      # override roast for one run
+```
+
+The GitHub Actions workflow also supports these as `workflow_dispatch` inputs.
 
 ## The roast workflow
 
-The board's footer prompts people to drop healer roasts in a thread. During the week, members react to their favorites. Before Tuesday, an officer picks the winner (most reactions, or officer's choice) and pastes it into `config.yml`. The Tuesday post crowns them.
+The board's footer prompts people to drop healer roasts in a thread. During the week, members react to their favorites. Before Tuesday, an officer picks the winner (most reactions, or officer's choice) and pastes it into `weekly_state.json`. The Tuesday post crowns them.
 
 ## Pugs and roster filtering
 

@@ -1,0 +1,344 @@
+import json
+import logging
+import os
+import time
+from datetime import datetime, timedelta, timezone
+
+import requests
+
+from guild_board.config import load_config, require_env, resolve_roster, save_roster_cache
+from guild_board.discord import post_to_discord
+from guild_board.filters import apply_roster_filters
+from guild_board.formatters import build_embed
+from guild_board.images import generate_progress_image
+from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
+from guild_board.wcl import (
+    DIFFICULTY_MAP,
+    collect_raid_stats,
+    detect_zone,
+    fetch_guild_reports,
+    fetch_guild_standing,
+    fetch_realm_rank_leaders,
+    get_wcl_token,
+    try_difficulties,
+)
+
+logger = logging.getLogger(__name__)
+
+
+def _load_weekly_state(path="weekly_state.json"):
+    """Load volatile weekly state (roast, roster overrides) if it exists."""
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+
+
+def _merge_state(cfg, state):
+    """Merge weekly_state.json values into config."""
+    if not state:
+        return cfg
+    roast = state.get("roast_of_the_week")
+    if roast:
+        cfg.setdefault("sections", {}).setdefault("roast_of_the_week", {}).update(roast)
+        cfg.setdefault("roast_of_the_week", {}).update(roast)
+
+    overrides = state.get("roster_overrides", {})
+    if overrides:
+        filters = cfg.setdefault("filters", {})
+        include = set(filters.get("always_include", []))
+        exclude = set(filters.get("always_exclude", []))
+        include.update(overrides.get("always_include", []))
+        exclude.update(overrides.get("always_exclude", []))
+        filters["always_include"] = sorted(include)
+        filters["always_exclude"] = sorted(exclude)
+    return cfg
+
+
+def _setup_logging(level=logging.INFO):
+    logging.basicConfig(
+        level=level,
+        format="%(asctime)s [%(levelname)s] [%(name)s] %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    )
+
+
+def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
+    """Collect data and build the Discord embed (and optionally post it)."""
+    if start_dt is None or end_dt is None:
+        lookback_days = int(cfg.get("lookback_days", 7))
+        end_dt = datetime.now(timezone.utc)
+        start_dt = end_dt - timedelta(days=lookback_days)
+
+    start_ms = int(start_dt.timestamp() * 1000)
+    end_ms = int(end_dt.timestamp() * 1000)
+
+    stats = None
+    standing = None
+    leaders = None
+    zone_name = None
+    no_logs = False
+    token = None
+
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus") or cfg.get("mplus", {})
+    mplus_season_scores_cfg = sections.get("mplus_season_scores") or {}
+    mplus_season_parses_cfg = sections.get("mplus_season_parses") or sections.get("mplus_season_runs") or {}
+    raid_enabled = cfg.get("raid", {}).get("enabled", True)
+
+    mplus_enabled = mplus_cfg.get("enabled", False)
+    mplus_auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
+    season_scores_auto_fetch = mplus_season_scores_cfg.get("auto_fetch_roster", False)
+    season_parses_auto_fetch = mplus_season_parses_cfg.get("auto_fetch_roster", False)
+
+    needs_token = (
+        raid_enabled
+        or (mplus_enabled and mplus_auto_fetch)
+        or (mplus_season_scores_cfg.get("enabled", False) and season_scores_auto_fetch)
+        or (mplus_season_parses_cfg.get("enabled", False) and season_parses_auto_fetch)
+    )
+
+    if needs_token:
+        client_id = require_env("WCL_CLIENT_ID")
+        client_secret = require_env("WCL_CLIENT_SECRET")
+        token = get_wcl_token(client_id, client_secret)
+
+    if raid_enabled:
+        reports = fetch_guild_reports(token, cfg, start_ms, end_ms)
+
+        if not reports:
+            logger.info("No Warcraft Logs reports found in the lookback window.")
+            no_logs = True
+        else:
+            logger.info("Found %s report(s) this week.", len(reports))
+
+            sections = cfg.get("sections", {})
+            raid_cfg = sections.get("top_dps") if sections else cfg.get("raid", {})
+            use_fallback = raid_cfg.get("difficulty_fallback", True)
+
+            if use_fallback:
+                logger.info("Using difficulty fallback (mythic -> heroic -> normal)")
+                stats, difficulty_used = try_difficulties(collect_raid_stats, cfg, token, reports)
+                if stats:
+                    logger.info("Using %s data", difficulty_used)
+                    logger.info("Stats: %s DPS, %s HPS, %s kills, %s pulls",
+                                len(stats.get("best_dps", {})),
+                                len(stats.get("best_hps", {})),
+                                stats.get("kills"),
+                                stats.get("pulls"))
+                else:
+                    logger.info("No data found for any difficulty")
+            else:
+                logger.info("Using configured difficulty only")
+                stats = collect_raid_stats(token, cfg, reports)
+                if stats:
+                    logger.info("Stats: %s DPS, %s HPS, %s kills, %s pulls",
+                                len(stats.get("best_dps", {})),
+                                len(stats.get("best_hps", {})),
+                                stats.get("kills"),
+                                stats.get("pulls"))
+                else:
+                    logger.info("No data found")
+
+            if stats:
+                stats = apply_roster_filters(token, cfg, stats)
+                logger.info("After roster filters: %s DPS, %s HPS",
+                            len(stats.get("best_dps", {})),
+                            len(stats.get("best_hps", {})))
+            else:
+                logger.info("Stats is None, skipping roster filters")
+
+            if (cfg.get("rankings") or {}).get("enabled", True):
+                zone_id, zone_name = detect_zone(cfg, reports)
+                if zone_id:
+                    try:
+                        standing = fetch_guild_standing(token, cfg, zone_id)
+                        if standing:
+                            logger.info("Guild standing retrieved: %s", standing)
+                    except (RuntimeError, requests.RequestException) as exc:
+                        logger.warning("Guild standing lookup failed: %s", exc)
+
+                    if stats and stats.get("participants"):
+                        if use_fallback:
+                            logger.info("Using difficulty fallback for realm rank leaders")
+                            leaders, diff_used = try_difficulties(
+                                lambda token, cfg, reports, difficulty: fetch_realm_rank_leaders(
+                                    token, cfg, stats["participants"], zone_id, difficulty
+                                ),
+                                cfg, token, reports
+                            )
+                            if leaders:
+                                logger.info("Using %s data for realm rank leaders", diff_used)
+                        else:
+                            try:
+                                leaders = fetch_realm_rank_leaders(
+                                    token, cfg, stats["participants"], zone_id, stats["difficulty"]
+                                )
+                            except (RuntimeError, requests.RequestException) as exc:
+                                logger.warning("Realm rank leaders lookup failed: %s", exc)
+                else:
+                    logger.info("Could not detect raid zone; skipping rankings section.")
+
+    mplus_results = None
+    mplus_season_scores = None
+    mplus_season_parses = None
+
+    if mplus_enabled:
+        mplus_results = collect_mplus(cfg, token)
+
+    sections = cfg.get("sections", {})
+    mplus_season_scores_cfg = sections.get("mplus_season_scores", {})
+    mplus_season_parses_cfg = sections.get("mplus_season_parses", {})
+
+    if mplus_season_scores_cfg.get("enabled", False):
+        mplus_season_scores = collect_mplus_season_scores(cfg, token)
+
+    if mplus_season_parses_cfg.get("enabled", False):
+        mplus_season_parses = collect_mplus_season_parses(cfg, token)
+
+    progress_image_path = None
+    progress_image_url = None
+    sections = cfg.get("sections", {})
+    progress_cfg = sections.get("progress_image", {})
+    if progress_cfg.get("enabled", True):
+        progress_image_path = "progress.png"
+        try:
+            generate_progress_image(cfg, stats, standing, zone_name, start_dt, end_dt, progress_image_path)
+            progress_image_url = "attachment://progress.png"
+        except Exception as exc:
+            logger.warning("Failed to generate image: %s", exc)
+            progress_image_path = None
+
+    embed = build_embed(cfg, stats, standing, leaders, zone_name,
+                        mplus_results, mplus_season_scores, mplus_season_parses,
+                        start_dt, end_dt, no_logs,
+                        progress_image_url=progress_image_url)
+
+    if preview:
+        return embed, progress_image_path
+
+    if not dry_run:
+        webhook_url = require_env("DISCORD_WEBHOOK_URL")
+        post_to_discord(webhook_url, embed, image_path=progress_image_path, cfg=cfg)
+        logger.info("Board posted to Discord.")
+
+    return embed, progress_image_path
+
+
+def main(argv=None):
+    import argparse
+    parser = argparse.ArgumentParser(description="WoW Guild Weekly Board")
+    parser.add_argument("--preview", action="store_true", help="Render preview to preview.html and exit without posting")
+    parser.add_argument("--dry-run", action="store_true", help="Collect data and print embed but do not post")
+    parser.add_argument("--date", help="End date for the board (YYYY-MM-DD)")
+    parser.add_argument("--lookback", type=int, default=None, help="Override lookback days")
+    parser.add_argument("--difficulty", help="Override raid difficulty (normal/heroic/mythic)")
+    parser.add_argument("--roast", help="Override roast of the week")
+    parser.add_argument("--roast-winner", help="Override roast winner")
+    parser.add_argument("--roast-target", help="Override roast target")
+    parser.add_argument("--verbose", action="store_true", help="Enable debug logging")
+    args = parser.parse_args(argv)
+
+    level = logging.DEBUG if args.verbose else logging.INFO
+    _setup_logging(level)
+
+    cfg = load_config()
+    state = _load_weekly_state()
+    cfg = _merge_state(cfg, state)
+
+    if args.difficulty:
+        cfg.setdefault("raid", {})["difficulty"] = args.difficulty
+        if cfg.get("sections"):
+            for key in ("top_dps", "top_healing"):
+                cfg["sections"].setdefault(key, {})["difficulty"] = args.difficulty
+
+    if args.lookback is not None:
+        cfg["lookback_days"] = args.lookback
+
+    if args.roast:
+        roast = {
+            "roast": args.roast,
+            "winner": args.roast_winner or "Anonymous",
+            "target": args.roast_target or "",
+        }
+        cfg.setdefault("sections", {}).setdefault("roast_of_the_week", {}).update(roast)
+        cfg.setdefault("roast_of_the_week", {}).update(roast)
+
+    if args.date:
+        end_dt = datetime.strptime(args.date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
+    else:
+        end_dt = datetime.now(timezone.utc)
+    start_dt = end_dt - timedelta(days=int(cfg.get("lookback_days", 7)))
+
+    embed, image_path = build_board(cfg, start_dt=start_dt, end_dt=end_dt, preview=args.preview, dry_run=args.dry_run)
+
+    if args.preview:
+        _write_preview(embed, image_path)
+        return
+
+    if args.dry_run:
+        import json as _json
+        print(_json.dumps(embed, indent=2))
+
+
+def _write_preview(embed, image_path):
+    """Write a local preview HTML file for the board."""
+    html = _embed_to_html(embed, image_path)
+    with open("preview.html", "w", encoding="utf-8") as f:
+        f.write(html)
+    logger.info("Preview written to preview.html")
+
+
+def _embed_to_html(embed, image_path):
+    """Convert a Discord embed to a basic HTML preview."""
+    title = embed.get("title", "")
+    description = embed.get("description", "")
+    color = embed.get("color", 0xC69B6D)
+    color_hex = f"#{color:06x}"
+    fields = embed.get("fields", [])
+    footer = embed.get("footer", {}).get("text", "")
+    image_url = embed.get("image", {}).get("url", "")
+
+    field_html = ""
+    for field in fields:
+        name = field.get("name", "")
+        value = field.get("value", "").replace("\n", "<br>")
+        field_html += f"<div class='field'><h3>{name}</h3><p>{value}</p></div>\n"
+
+    img_tag = f"<img src='{image_url}' alt='progress' />" if image_url else ""
+    if image_path and not image_url:
+        img_tag = f"<img src='{image_path}' alt='progress' />"
+
+    return f"""<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Guild Board Preview</title>
+<style>
+body {{ background: #1e1e22; color: #eee; font-family: Arial, sans-serif; padding: 20px; }}
+.card {{ background: #2a2a30; border-left: 5px solid {color_hex}; padding: 20px; max-width: 800px; margin: auto; border-radius: 8px; }}
+h1 {{ color: {color_hex}; margin: 0 0 10px; }}
+.field {{ margin-bottom: 12px; border-bottom: 1px solid #444; padding-bottom: 8px; }}
+.field h3 {{ margin: 0 0 4px; color: #fff; font-size: 14px; }}
+.field p {{ margin: 0; color: #ddd; font-size: 13px; }}
+.footer {{ color: #999; font-size: 12px; margin-top: 16px; }}
+img {{ max-width: 100%; margin-top: 12px; border-radius: 8px; }}
+a {{ color: #6cb5ff; text-decoration: none; }}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>{title}</h1>
+<p>{description}</p>
+{img_tag}
+{field_html}
+<div class="footer">{footer}</div>
+</div>
+</body>
+</html>
+"""
+
+
+if __name__ == "__main__":
+    main()

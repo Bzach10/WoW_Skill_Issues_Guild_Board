@@ -7,7 +7,27 @@ on:
     - cron: "0 13 * * 2"
   # This adds the "Run workflow" button so officers can post/repost
   # the board manually any time (e.g., after updating the roast).
-  workflow_dispatch: {}
+  workflow_dispatch:
+    inputs:
+      roast:
+        description: "Override the roast of the week"
+        required: false
+      roast_winner:
+        description: "Who said the roast"
+        required: false
+      roast_target:
+        description: "Who the roast is aimed at"
+        required: false
+      difficulty:
+        description: "Override raid difficulty (normal, heroic, mythic)"
+        required: false
+      lookback:
+        description: "Override lookback days"
+        required: false
+      dry_run:
+        description: "Dry run only (do not post to Discord)"
+        type: boolean
+        required: false
 
 jobs:
   post-board:
@@ -26,12 +46,35 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Run tests
+        run: pytest
+
       - name: Build and post the board
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-        run: python leaderboard.py
+        run: |
+          ARGS=""
+          if [ -n "${{ github.event.inputs.roast }}" ]; then
+            ARGS="$ARGS --roast '${{ github.event.inputs.roast }}'"
+          fi
+          if [ -n "${{ github.event.inputs.roast_winner }}" ]; then
+            ARGS="$ARGS --roast-winner '${{ github.event.inputs.roast_winner }}'"
+          fi
+          if [ -n "${{ github.event.inputs.roast_target }}" ]; then
+            ARGS="$ARGS --roast-target '${{ github.event.inputs.roast_target }}'"
+          fi
+          if [ -n "${{ github.event.inputs.difficulty }}" ]; then
+            ARGS="$ARGS --difficulty ${{ github.event.inputs.difficulty }}"
+          fi
+          if [ -n "${{ github.event.inputs.lookback }}" ]; then
+            ARGS="$ARGS --lookback ${{ github.event.inputs.lookback }}"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python leaderboard.py $ARGS
 
       - name: Commit roster cache
         env:
