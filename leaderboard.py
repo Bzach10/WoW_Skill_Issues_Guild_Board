@@ -778,59 +778,40 @@ def collect_mplus(cfg, token=None):
 
 
 def collect_mplus_season_scores(cfg, token=None):
-    """Return list of (score, name, class, spec) for season-long M+ scores from Raider.io."""
+    """Return list of (score, name, spec) for season-long M+ overall score from Raider.io.
+
+    Uses the `mythic_plus_profile` field which contains the character's overall score.
+    """
     print(f"[M+ SEASON SCORES] Collecting season-long M+ scores...")
     results = []
     region = cfg["guild"]["region"]
-    default_realm = cfg["guild"]["realm_slug"]
-    
-    # Determine roster source
-    sections = cfg.get("sections", {})
-    mplus_cfg = sections.get("mplus_season_scores", {})
-    
-    roster = mplus_cfg.get("roster", [])
-    auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
-    
-    # Auto-fetch roster from WCL if enabled and no manual roster provided
-    if auto_fetch and not roster and token:
-        try:
-            print("[M+ SEASON SCORES] Auto-fetching roster from guild members...")
-            guild_names = fetch_guild_member_names(token, cfg)
-            if guild_names:
-                roster = [f"{name}-{default_realm}" for name in guild_names]
-                print(f"[M+ SEASON SCORES] Fetched {len(roster)} guild members.")
-        except (RuntimeError, requests.RequestException) as exc:
-            print(f"[M+ SEASON SCORES] Failed to auto-fetch roster: {exc}")
-            roster = []
-    
+
+    roster, _ = resolve_roster(cfg, token, "mplus_season_scores")
+
     print(f"[M+ SEASON SCORES] Processing {len(roster)} characters...")
     for entry in roster:
         if "-" in entry:
             name, realm = entry.split("-", 1)
         else:
-            name, realm = entry, default_realm
+            name, realm = entry, cfg["guild"]["realm_slug"]
         try:
             resp = requests.get(RAIDERIO_URL, params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
-                "fields": "mythic_plus_scores_by_season",
+                "fields": "mythic_plus_profile",
             }, timeout=30)
             if resp.status_code != 200:
                 print(f"[M+ SEASON SCORES] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            
-            # Try to get season scores
-            season_scores = data.get("mythic_plus_scores_by_season")
-            if season_scores:
-                # Get current season score
-                current_season = season_scores.get("season", {})
-                if current_season:
-                    score = current_season.get("score", 0)
-                    if score > 0:
-                        results.append((score, name.strip(), data.get("class", ""), data.get("active_spec_name", "")))
-                        print(f"[M+ SEASON SCORES] Added {name} with score {score}")
+            profile = data.get("mythic_plus_profile") or {}
+            current = profile.get("current_period") or {}
+            score = current.get("score") or 0
+            if score > 0:
+                spec = clean_spec_name(data.get("active_spec_name"), data.get("class", ""))
+                results.append((score, name.strip(), spec))
+                print(f"[M+ SEASON SCORES] Added {name} with score {score}")
         except requests.RequestException as exc:
             print(f"[M+ SEASON SCORES] Error fetching {name}: {exc}")
             continue
@@ -844,37 +825,47 @@ def collect_mplus_season_scores(cfg, token=None):
 
 
 def collect_mplus_season_parses(cfg, token=None):
-    """Return list of (score, dungeon, name, class, spec) for best season runs from Raider.io."""
-    print(f"[M+ SEASON PARSES] Collecting season-long M+ runs...")
+    """Return list of (parse, dungeon, name, spec) for best season M+ parses.
+
+    Tries WCL API for parse percentiles first if configured, then falls back to
+    Raider.io `mythic_plus_best_runs` score data.
+    """
+    print("[M+ SEASON RUNS] Collecting season-long M+ runs...")
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get("mplus_season_parses") or sections.get("mplus_season_runs", {})
+    use_wcl = mplus_cfg.get("use_wcl_parses", True)
+    fallback = mplus_cfg.get("fallback_to_raiderio", True)
+
+    roster, _ = resolve_roster(cfg, token, "mplus_season_parses" if "mplus_season_parses" in sections else "mplus_season_runs")
+
+    results = []
+    if use_wcl and token:
+        print("[M+ SEASON RUNS] Attempting WCL parse lookup...")
+        try:
+            results = collect_mplus_wcl_parses(cfg, token, roster)
+            print(f"[M+ SEASON RUNS] WCL returned {len(results)} results")
+        except (RuntimeError, requests.RequestException) as exc:
+            print(f"[M+ SEASON RUNS] WCL parse lookup failed: {exc}")
+
+    if not results and fallback:
+        print("[M+ SEASON RUNS] Falling back to Raider.io best runs...")
+        results = collect_mplus_raiderio_season_runs(cfg, roster)
+
+    results.sort(key=lambda r: r[0], reverse=True)
+    print(f"[M+ SEASON RUNS] Found {len(results)} players with season runs.")
+    return results
+
+
+def collect_mplus_raiderio_season_runs(cfg, roster):
+    """Return list of (score, dungeon, name, spec) from Raider.io best runs."""
+    print(f"[M+ SEASON RIO] Processing {len(roster)} characters...")
     results = []
     region = cfg["guild"]["region"]
-    default_realm = cfg["guild"]["realm_slug"]
-    
-    # Determine roster source
-    sections = cfg.get("sections", {})
-    mplus_cfg = sections.get("mplus_season_parses", {})
-    
-    roster = mplus_cfg.get("roster", [])
-    auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
-    
-    # Auto-fetch roster from WCL if enabled and no manual roster provided
-    if auto_fetch and not roster and token:
-        try:
-            print("[M+ SEASON PARSES] Auto-fetching roster from guild members...")
-            guild_names = fetch_guild_member_names(token, cfg)
-            if guild_names:
-                roster = [f"{name}-{default_realm}" for name in guild_names]
-                print(f"[M+ SEASON PARSES] Fetched {len(roster)} guild members.")
-        except (RuntimeError, requests.RequestException) as exc:
-            print(f"[M+ SEASON PARSES] Failed to auto-fetch roster: {exc}")
-            roster = []
-    
-    print(f"[M+ SEASON PARSES] Processing {len(roster)} characters...")
     for entry in roster:
         if "-" in entry:
             name, realm = entry.split("-", 1)
         else:
-            name, realm = entry, default_realm
+            name, realm = entry, cfg["guild"]["realm_slug"]
         try:
             resp = requests.get(RAIDERIO_URL, params={
                 "region": region,
@@ -883,40 +874,145 @@ def collect_mplus_season_parses(cfg, token=None):
                 "fields": "mythic_plus_best_runs",
             }, timeout=30)
             if resp.status_code != 200:
-                print(f"[M+ SEASON PARSES] Failed to fetch {name}: HTTP {resp.status_code}")
+                print(f"[M+ SEASON RIO] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
             data = resp.json()
-            
-            # Try multiple possible field names for runs
-            runs = data.get("mythic_plus_best_runs")
+            runs = data.get("mythic_plus_best_runs") or []
             if not runs:
-                runs = data.get("mythic_plus", {}).get("best_runs")
+                runs = data.get("mythic_plus", {}).get("best_runs") or []
             if not runs:
-                runs = data.get("mythic_plus_recent_best_runs")
-            
+                runs = data.get("mythic_plus_recent_best_runs") or []
             if runs:
-                # Get best run by score across all runs
                 best_run = max(runs, key=lambda r: r.get("score", 0))
                 score = best_run.get("score", 0)
                 if score > 0:
+                    spec = clean_spec_name(best_run.get("spec"), data.get("class", ""))
                     results.append((
                         score,
                         best_run.get("dungeon", "?"),
                         name.strip(),
-                        best_run.get("class", ""),
-                        best_run.get("spec", ""),
+                        spec,
+                        False,
                     ))
-                    print(f"[M+ SEASON PARSES] Added {name} with score {score}")
+                    print(f"[M+ SEASON RIO] Added {name} with score {score}")
         except requests.RequestException as exc:
-            print(f"[M+ SEASON PARSES] Error fetching {name}: {exc}")
+            print(f"[M+ SEASON RIO] Error fetching {name}: {exc}")
             continue
         except Exception as exc:
-            print(f"[M+ SEASON PARSES] Unexpected error for {name}: {exc}")
+            print(f"[M+ SEASON RIO] Unexpected error for {name}: {exc}")
             continue
         time.sleep(0.3)
-    results.sort(key=lambda r: r[0], reverse=True)
-    print(f"[M+ SEASON PARSES] Found {len(results)} players with season runs.")
     return results
+
+
+# WCL M+ dungeon encounter IDs for current season (The War Within Season 2 / Liberation of Undermine)
+# These are stable per expansion and may be discovered via worldData -> zones -> encounters if needed.
+MPLUS_DUNGEON_IDS = [
+    14963,  # The MOTHERLODE!!
+    14971,  # The Rookery
+    14973,  # Operation: Floodgate
+    14975,  # The Theater of Pain
+    14977,  # The Azure Vault
+    14979,  # Darkflame Cleft
+    14981,  # Cinderbrew Meadery
+    14983,  # Priory of the Sacred Flame
+]
+
+
+def collect_mplus_wcl_parses(cfg, token, roster):
+    """Attempt to fetch M+ parse percentiles from Warcraft Logs.
+
+    Returns list of (percentile, dungeon, name, spec). This is best-effort; WCL
+    M+ parse support varies and may return empty data for some characters.
+    """
+    print(f"[M+ WCL PARSES] Processing {len(roster)} characters across {len(MPLUS_DUNGEON_IDS)} dungeons...")
+    results = []
+    max_calls = cfg.get("rankings", {}).get("max_characters", 30)
+    call_count = 0
+    top_n = int(cfg.get("top_n", 5))
+
+    for entry in roster[:max_calls]:
+        if "-" in entry:
+            name, realm = entry.split("-", 1)
+        else:
+            name, realm = entry, cfg["guild"]["realm_slug"]
+
+        best_for_char = None
+        for encounter_id in MPLUS_DUNGEON_IDS:
+            if call_count >= 200:
+                print(f"[M+ WCL PARSES] Hit call limit; stopping WCL parse lookup.")
+                break
+            try:
+                data = gql(token, MPLUS_PARSE_QUERY, {
+                    "name": name.strip(),
+                    "serverSlug": realm.strip(),
+                    "serverRegion": cfg["guild"]["region"],
+                    "encounterID": encounter_id,
+                })
+                call_count += 1
+                rankings = (((data.get("characterData") or {}).get("character") or {}).get("encounterRankings") or {})
+                ranks = rankings.get("ranks") or []
+                if not ranks:
+                    continue
+                # Best rank for this dungeon
+                best = max(ranks, key=lambda r: r.get("percentile") or 0)
+                percentile = best.get("percentile") or 0
+                if percentile > 0 and (best_for_char is None or percentile > best_for_char[0]):
+                    best_for_char = (percentile, encounter_id, name.strip(), best.get("spec", ""))
+            except Exception as exc:
+                # WCL M+ parse lookup can fail for many reasons; log and continue
+                print(f"[M+ WCL PARSES] Error for {name} dungeon {encounter_id}: {exc}")
+                continue
+
+        if best_for_char:
+            # Resolve dungeon name from encounter ID
+            percentile, encounter_id, name, spec = best_for_char
+            # Try to get dungeon name from WCL or use ID
+            dungeon_name = _mplus_dungeon_name(cfg, token, encounter_id)
+            results.append((percentile, dungeon_name, name, spec, True))
+            print(f"[M+ WCL PARSES] Added {name} {percentile:.0f}% on {dungeon_name}")
+
+    print(f"[M+ WCL PARSES] Made {call_count} WCL calls, found {len(results)} results")
+    return results
+
+
+def _mplus_dungeon_name(cfg, token, encounter_id):
+    """Best-effort dungeon name lookup from WCL encounter ID."""
+    # Cache simple ID->name mapping to avoid extra calls
+    if not hasattr(_mplus_dungeon_name, "cache"):
+        _mplus_dungeon_name.cache = {}
+    if encounter_id in _mplus_dungeon_name.cache:
+        return _mplus_dungeon_name.cache[encounter_id]
+
+    try:
+        data = gql(token, MPLUS_DUNGEON_NAME_QUERY, {"encounterID": encounter_id})
+        encounter = ((data.get("worldData") or {}).get("encounter") or {})
+        name = encounter.get("name") or f"Dungeon {encounter_id}"
+        _mplus_dungeon_name.cache[encounter_id] = name
+        return name
+    except Exception:
+        return f"Dungeon {encounter_id}"
+
+
+MPLUS_PARSE_QUERY = """
+query ($name: String!, $serverSlug: String!, $serverRegion: String!, $encounterID: Int!) {
+  characterData {
+    character(name: $name, serverSlug: $serverSlug, serverRegion: $serverRegion) {
+      encounterRankings(encounterID: $encounterID, partition: -1, metric: playerscore)
+    }
+  }
+}
+"""
+
+MPLUS_DUNGEON_NAME_QUERY = """
+query ($encounterID: Int!) {
+  worldData {
+    encounter(id: $encounterID) {
+      name
+    }
+  }
+}
+"""
 
 
 # ---------------------------------------------------------------------------
@@ -986,9 +1082,16 @@ def guild_standing_value(standing, zone_name):
 
 def rank_lines_mplus(results, top_n):
     lines = []
-    for i, (level, dungeon, name, timed) in enumerate(results[:top_n]):
+    for i, item in enumerate(results[:top_n]):
+        # Support both old (level, dungeon, name, timed) and new (level, dungeon, name, spec, timed)
+        if len(item) == 4:
+            level, dungeon, name, timed = item
+            spec = ""
+        else:
+            level, dungeon, name, spec, timed = item
         tag = "timed" if timed else "over time"
-        lines.append(f"{medal(i)} **{name}** — +{level} {dungeon} ({tag})")
+        spec_txt = f" ({spec})" if spec else ""
+        lines.append(f"{medal(i)} **{name}**{spec_txt} — +{level} {dungeon} ({tag})")
     return "\n".join(lines) if lines else "_No keys recorded this week_"
 
 
@@ -1200,32 +1303,28 @@ def format_roast_of_the_week(cfg, stats, standing, leaders, zone_name, mplus_res
 
 
 def format_mplus(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
-    """Format the M+ board field."""
-    print(f"[SECTION] mplus: Checking if enabled...")
+    """Format the M+ last-week board field."""
+    print(f"[SECTION] mplus_last_week: Checking if enabled...")
     sections = cfg.get("sections", {})
-    mplus_cfg = sections.get("mplus", {})
-    
-    if not mplus_cfg.get("enabled", True):
-        print(f"[SECTION] mplus: Disabled")
-        return None
-    
-    # Fall back to legacy config
+    mplus_cfg = sections.get("mplus_last_week") if sections else {}
+    if not mplus_cfg:
+        mplus_cfg = sections.get("mplus", {})
     if not mplus_cfg:
         mplus_cfg = cfg.get("mplus", {})
-    
-    if not mplus_cfg.get("enabled", False):
-        print(f"[SECTION] mplus: Disabled (legacy)")
+
+    if not mplus_cfg.get("enabled", True):
+        print(f"[SECTION] mplus_last_week: Disabled")
         return None
-    
-    print(f"[SECTION] mplus: Enabled, formatting...")
+
+    print(f"[SECTION] mplus_last_week: Enabled, formatting...")
     if mplus_results is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
-            "name": "\U0001F5DD\uFE0F Highest M+ Keys This Week",
+            "name": "\U0001F5DD\uFE0F Last Week M+ Runs",
             "value": rank_lines_mplus(mplus_results, top_n),
             "inline": False,
         }
-    
+
     return None
 
 
@@ -1234,50 +1333,63 @@ def format_mplus_season_scores(cfg, stats, standing, leaders, zone_name, mplus_r
     print(f"[SECTION] mplus_season_scores: Checking if enabled...")
     sections = cfg.get("sections", {})
     mplus_cfg = sections.get("mplus_season_scores", {})
-    
+
     if not mplus_cfg.get("enabled", True):
         print(f"[SECTION] mplus_season_scores: Disabled")
         return None
-    
+
     print(f"[SECTION] mplus_season_scores: Enabled, formatting...")
     if mplus_season_scores is not None:
         top_n = int(cfg.get("top_n", 5))
         lines = []
-        for i, (score, name, cls, spec) in enumerate(mplus_season_scores[:top_n]):
-            lines.append(f"{medal(i)} **{name}** ({cls} {spec}) — {score:.0f} score")
+        for i, (score, name, spec) in enumerate(mplus_season_scores[:top_n]):
+            spec_txt = f" ({spec})" if spec else ""
+            lines.append(f"{medal(i)} **{name}**{spec_txt} — {score:.0f} score")
         value = "\n".join(lines) if lines else "_No season scores found_"
         return {
             "name": "\U0001F3C6 Season-Long M+ Scores",
             "value": value,
             "inline": False,
         }
-    
+
     return None
 
 
 def format_mplus_season_parses(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
-    """Format the M+ season parses field."""
-    print(f"[SECTION] mplus_season_parses: Checking if enabled...")
+    """Format the M+ season runs/parses field."""
+    print(f"[SECTION] mplus_season_runs: Checking if enabled...")
     sections = cfg.get("sections", {})
-    mplus_cfg = sections.get("mplus_season_parses", {})
-    
+    mplus_cfg = sections.get("mplus_season_runs") if sections else {}
+    if not mplus_cfg:
+        mplus_cfg = sections.get("mplus_season_parses", {})
+
     if not mplus_cfg.get("enabled", True):
-        print(f"[SECTION] mplus_season_parses: Disabled")
+        print(f"[SECTION] mplus_season_runs: Disabled")
         return None
-    
-    print(f"[SECTION] mplus_season_parses: Enabled, formatting...")
+
+    print(f"[SECTION] mplus_season_runs: Enabled, formatting...")
     if mplus_season_parses is not None:
         top_n = int(cfg.get("top_n", 5))
         lines = []
-        for i, (parse, dungeon, name, cls, spec) in enumerate(mplus_season_parses[:top_n]):
-            lines.append(f"{medal(i)} **{name}** ({cls} {spec}) — {parse:.0f}% on {dungeon}")
-        value = "\n".join(lines) if lines else "_No season parses found_"
+        use_wcl = mplus_cfg.get("use_wcl_parses", True)
+        for i, item in enumerate(mplus_season_parses[:top_n]):
+            if len(item) == 5:
+                value, dungeon, name, spec, is_wcl = item
+            else:
+                value, dungeon, name, spec = item
+                is_wcl = use_wcl
+            spec_txt = f" ({spec})" if spec else ""
+            if is_wcl:
+                lines.append(f"{medal(i)} **{name}**{spec_txt} — {value:.0f}% on {dungeon}")
+            else:
+                lines.append(f"{medal(i)} **{name}**{spec_txt} — {value:.0f} score on {dungeon}")
+        value = "\n".join(lines) if lines else "_No season runs found_"
         return {
-            "name": "\U0001F525 Season-Long Top M+ Parses",
+            "name": "\U0001F525 Top Season Mythic+ Runs",
             "value": value,
             "inline": False,
         }
-    
+
     return None
 
 
@@ -1291,8 +1403,10 @@ SECTION_FORMATTERS = {
     "most_deaths": format_most_deaths,
     "roast_of_the_week": format_roast_of_the_week,
     "mplus": format_mplus,
+    "mplus_last_week": format_mplus,
     "mplus_season_scores": format_mplus_season_scores,
     "mplus_season_parses": format_mplus_season_parses,
+    "mplus_season_runs": format_mplus_season_parses,
 }
 
 
@@ -1460,11 +1574,21 @@ def main():
     # Check if we need WCL token (for raid or M+ auto-fetch)
     sections = cfg.get("sections", {})
     mplus_cfg = sections.get("mplus") if sections else cfg.get("mplus", {})
+    mplus_season_scores_cfg = sections.get("mplus_season_scores", {})
+    mplus_season_parses_cfg = sections.get("mplus_season_parses") or sections.get("mplus_season_runs", {})
     raid_enabled = cfg.get("raid", {}).get("enabled", True)
+
     mplus_enabled = mplus_cfg.get("enabled", False)
     mplus_auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
-    
-    needs_token = raid_enabled or (mplus_enabled and mplus_auto_fetch)
+    season_scores_auto_fetch = mplus_season_scores_cfg.get("auto_fetch_roster", False)
+    season_parses_auto_fetch = mplus_season_parses_cfg.get("auto_fetch_roster", False)
+
+    needs_token = (
+        raid_enabled
+        or (mplus_enabled and mplus_auto_fetch)
+        or (mplus_season_scores_cfg.get("enabled", False) and season_scores_auto_fetch)
+        or (mplus_season_parses_cfg.get("enabled", False) and season_parses_auto_fetch)
+    )
     
     if needs_token:
         client_id = require_env("WCL_CLIENT_ID")

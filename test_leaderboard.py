@@ -111,7 +111,7 @@ def test_build_embed():
                 "realm_rank": 14, "region_rank": 892, "best_avg": 91.3}]
     now = datetime.now(timezone.utc)
     embed = lb.build_embed(cfg, stats, standing, leaders, "Current Raid",
-                           None, now, now, no_logs=False)
+                           None, None, None, now, now, no_logs=False)
     field_names = [f["name"] for f in embed["fields"]]
     assert any("Guild Standing" in n for n in field_names)
     assert any("Top DPS" in n for n in field_names)
@@ -138,12 +138,12 @@ def test_no_logs_notice():
         }
     }
     # Test with no_logs=True
-    field = lb.format_no_logs_notice(cfg, None, None, None, None, None, no_logs=True)
+    field = lb.format_no_logs_notice(cfg, None, None, None, None, None, None, None, no_logs=True)
     assert field is not None
     assert "No logs for 7 days" in field["value"]
-    
+
     # Test with no_logs=False
-    field = lb.format_no_logs_notice(cfg, None, None, None, None, None, no_logs=False)
+    field = lb.format_no_logs_notice(cfg, None, None, None, None, None, None, None, no_logs=False)
     assert field is None
 
 
@@ -175,7 +175,7 @@ def test_modular_sections():
         "kills": 0,
     }
     now = datetime.now(timezone.utc)
-    embed = lb.build_embed(cfg, stats, None, None, None, None, now, now, no_logs=True)
+    embed = lb.build_embed(cfg, stats, None, None, None, None, None, None, now, now, no_logs=True)
     field_names = [f["name"] for f in embed["fields"]]
     # no_logs_notice should come before roast_of_the_week due to order
     notice_idx = next(i for i, n in enumerate(field_names) if "No Logs" in n)

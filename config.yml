@@ -75,12 +75,11 @@ sections:
     target: "Healmates"                     # which healer got flamed (optional)
     roast: "Healmates Sucks"                # the roast itself
 
-  # Mythic+ board
+  # Mythic+ board — last week's highest keys (Raider.io weekly rotation)
   mplus:
     order: 8
     enabled: true
     auto_fetch_roster: true    # Auto-fetch from guild roster (recommended)
-    active_days: 7             # Only include members active in last X days
     roster: []                 # Manual override (leave empty for auto-fetch)
     # - "Rakell-Proudmoore"   # Example manual entry
 
@@ -91,12 +90,19 @@ sections:
     auto_fetch_roster: true    # Auto-fetch from guild roster (recommended)
     roster: []                 # Manual override (leave empty for auto-fetch)
 
-  # Season-long M+ parse percentiles (from Raider.io)
+  # Season-long top M+ runs (WCL parse percentiles, falls back to Raider.io best runs)
   mplus_season_parses:
     order: 10
     enabled: true
     auto_fetch_roster: true    # Auto-fetch from guild roster (recommended)
     roster: []                 # Manual override (leave empty for auto-fetch)
+    use_wcl_parses: true       # Try WCL parse percentiles first
+    fallback_to_raiderio: true # Fall back to Raider.io best runs if WCL fails
+
+# Roster cache — keeps the auto-fetched guild roster between runs
+roster_cache:
+  enabled: true
+  file: "roster_cache.json"
 
 # ------------------------------------------------------------
 #  RAID SETTINGS
