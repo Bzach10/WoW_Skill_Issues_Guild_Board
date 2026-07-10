@@ -22,11 +22,13 @@ Required environment variables (set as GitHub Actions secrets):
 Everything else is configured in config.yml.
 """
 
+import json
 import os
 import sys
 import time
 from collections import defaultdict
 from datetime import datetime, timezone, timedelta
+from pathlib import Path
 
 import requests
 import yaml
@@ -37,6 +39,41 @@ RAIDERIO_URL = "https://raider.io/api/v1/characters/profile"
 
 DIFFICULTY_MAP = {"lfr": 1, "normal": 3, "heroic": 4, "mythic": 5}
 MEDALS = ["\U0001F947", "\U0001F948", "\U0001F949", "**4.**", "**5.**"]
+
+# Clean display names for classes from Raider.io/WCL data
+CLASS_NAME_MAP = {
+    "Warrior": "Warrior",
+    "Paladin": "Paladin",
+    "Hunter": "Hunter",
+    "Rogue": "Rogue",
+    "Priest": "Priest",
+    "Death Knight": "DK",
+    "Shaman": "Shaman",
+    "Mage": "Mage",
+    "Warlock": "Warlock",
+    "Monk": "Monk",
+    "Druid": "Druid",
+    "Demon Hunter": "DH",
+    "Evoker": "Evoker",
+}
+
+# Fallback class abbreviation map keyed by class_id
+CLASS_ID_MAP = {
+    1: "Warrior",
+    2: "Paladin",
+    3: "Hunter",
+    4: "Rogue",
+    5: "Priest",
+    6: "DK",
+    7: "Shaman",
+    8: "Mage",
+    9: "Warlock",
+    10: "Monk",
+    11: "Druid",
+    12: "DH",
+    13: "Evoker",
+    32: "Evoker",
+}
 
 # Two fights in different reports are the same pull if they match on
 # encounter, difficulty, and outcome, start within 60s of each other
@@ -95,6 +132,116 @@ def slugify_server(server):
         return None
     slug = server.strip().lower().replace("'", "").replace(" ", "-")
     return slug or None
+
+
+def clean_spec_name(spec, class_name=""):
+    """Return a clean 'Spec Class' display name from Raider.io/WCL spec data.
+
+    `spec` can be a dict with a 'name' key or a string. `class_name` is the
+    character class string (e.g. 'Demon Hunter').
+    """
+    if isinstance(spec, dict):
+        spec_name = spec.get("name") or spec.get("specName") or ""
+    elif isinstance(spec, str):
+        spec_name = spec
+    else:
+        spec_name = ""
+
+    # Normalize class name
+    clean_class = ""
+    if class_name:
+        clean_class = CLASS_NAME_MAP.get(class_name.title(), class_name)
+
+    if not clean_class and isinstance(spec, dict):
+        class_id = spec.get("class_id")
+        if class_id:
+            clean_class = CLASS_ID_MAP.get(class_id, "")
+
+    if not clean_class:
+        clean_class = ""
+
+    spec_name = spec_name.strip()
+    clean_class = clean_class.strip()
+
+    if spec_name and clean_class:
+        return f"{spec_name} {clean_class}"
+    if spec_name:
+        return spec_name
+    if clean_class:
+        return clean_class
+    return "Unknown"
+
+
+def get_roster_cache_path(cfg):
+    """Return the path to the roster cache file."""
+    cache_cfg = cfg.get("roster_cache", {})
+    return cache_cfg.get("file", "roster_cache.json")
+
+
+def load_roster_cache(cfg):
+    """Load the cached roster from disk. Returns a list of 'name-realm' entries."""
+    path = get_roster_cache_path(cfg)
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        return data.get("members", []), data.get("last_updated")
+    except (FileNotFoundError, json.JSONDecodeError):
+        return [], None
+
+
+def save_roster_cache(cfg, members):
+    """Save the roster to disk for future runs."""
+    path = get_roster_cache_path(cfg)
+    data = {
+        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "members": sorted(set(members)),
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+    print(f"[ROSTER CACHE] Saved {len(data['members'])} members to {path}")
+
+
+def resolve_roster(cfg, token, section_name="mplus"):
+    """Return a roster list for the given M+ section, using cache if available.
+
+    Priority: manual roster > cached roster > WCL auto-fetch.
+    """
+    sections = cfg.get("sections", {})
+    mplus_cfg = sections.get(section_name) if sections else cfg.get(section_name, {})
+    if not mplus_cfg and section_name == "mplus":
+        # Legacy fallback
+        mplus_cfg = cfg.get("mplus", {})
+
+    roster = mplus_cfg.get("roster", []) if mplus_cfg else []
+    auto_fetch = mplus_cfg.get("auto_fetch_roster", False) if mplus_cfg else False
+    cache_enabled = cfg.get("roster_cache", {}).get("enabled", True)
+
+    default_realm = cfg["guild"]["realm_slug"]
+
+    if roster:
+        print(f"[{section_name.upper()}] Using manual roster ({len(roster)} entries)")
+        return roster, False
+
+    if cache_enabled:
+        cached_roster, last_updated = load_roster_cache(cfg)
+        if cached_roster:
+            print(f"[{section_name.upper()}] Using cached roster ({len(cached_roster)} entries, last updated {last_updated})")
+            return cached_roster, False
+
+    if auto_fetch and token:
+        print(f"[{section_name.upper()}] Auto-fetching roster from WCL guild members...")
+        try:
+            guild_names = fetch_guild_member_names(token, cfg)
+            if guild_names:
+                roster = [f"{name}-{default_realm}" for name in guild_names]
+                print(f"[{section_name.upper()}] Fetched {len(roster)} guild members from WCL.")
+                if cache_enabled:
+                    save_roster_cache(cfg, roster)
+                return roster, True
+        except (RuntimeError, requests.RequestException) as exc:
+            print(f"[{section_name.upper()}] Failed to auto-fetch roster: {exc}")
+
+    return roster, False
 
 
 # ---------------------------------------------------------------------------
@@ -580,42 +727,25 @@ def fetch_realm_rank_leaders(token, cfg, participants, zone_id, difficulty):
 # ---------------------------------------------------------------------------
 
 def collect_mplus(cfg, token=None):
-    """Return list of (key_level, dungeon, name, timed) for the roster's best weekly runs.
-    
-    If token is provided and auto_fetch_roster is enabled, fetches roster from WCL guild API.
-    Otherwise uses manual roster from config.
+    """Return list of (key_level, dungeon, name, spec, timed) for the roster's best weekly runs.
+
+    Supports both `mplus` and `mplus_last_week` section names. Uses cached roster when available.
     """
-    print(f"[M+ WEEKLY] Collecting weekly M+ data...")
+    print(f"[M+ LAST WEEK] Collecting weekly M+ data...")
     results = []
     region = cfg["guild"]["region"]
-    default_realm = cfg["guild"]["realm_slug"]
-    
-    # Determine roster source
+
+    # Try new section name first, then legacy `mplus`
     sections = cfg.get("sections", {})
-    mplus_cfg = sections.get("mplus") if sections else cfg.get("mplus", {})
-    
-    roster = mplus_cfg.get("roster", [])
-    auto_fetch = mplus_cfg.get("auto_fetch_roster", False)
-    
-    # Auto-fetch roster from WCL if enabled and no manual roster provided
-    if auto_fetch and not roster and token:
-        try:
-            print("[M+ WEEKLY] Auto-fetching roster from guild members...")
-            guild_names = fetch_guild_member_names(token, cfg)
-            if guild_names:
-                # Format as Name-Realm for Raider.io
-                roster = [f"{name}-{default_realm}" for name in guild_names]
-                print(f"[M+ WEEKLY] Fetched {len(roster)} guild members for M+ roster.")
-        except (RuntimeError, requests.RequestException) as exc:
-            print(f"[M+ WEEKLY] Failed to auto-fetch roster: {exc}")
-            roster = []
-    
-    print(f"[M+ WEEKLY] Processing {len(roster)} characters...")
+    section_name = "mplus_last_week" if "mplus_last_week" in sections else "mplus"
+    roster, _ = resolve_roster(cfg, token, section_name)
+
+    print(f"[M+ LAST WEEK] Processing {len(roster)} characters...")
     for entry in roster:
         if "-" in entry:
             name, realm = entry.split("-", 1)
         else:
-            name, realm = entry, default_realm
+            name, realm = entry, cfg["guild"]["realm_slug"]
         try:
             resp = requests.get(RAIDERIO_URL, params={
                 "region": region,
@@ -624,23 +754,26 @@ def collect_mplus(cfg, token=None):
                 "fields": "mythic_plus_weekly_highest_level_runs",
             }, timeout=30)
             if resp.status_code != 200:
-                print(f"[M+ WEEKLY] Failed to fetch {name}: HTTP {resp.status_code}")
+                print(f"[M+ LAST WEEK] Failed to fetch {name}: HTTP {resp.status_code}")
                 continue
-            runs = resp.json().get("mythic_plus_weekly_highest_level_runs") or []
+            data = resp.json()
+            runs = data.get("mythic_plus_weekly_highest_level_runs") or []
             if runs:
                 best = max(runs, key=lambda r: r.get("mythic_level", 0))
+                spec = clean_spec_name(best.get("spec"), data.get("class", ""))
                 results.append((
                     best.get("mythic_level", 0),
                     best.get("dungeon", "?"),
                     name.strip(),
+                    spec,
                     (best.get("num_keystone_upgrades", 0) or 0) > 0,
                 ))
         except requests.RequestException as exc:
-            print(f"[M+ WEEKLY] Error fetching {name}: {exc}")
+            print(f"[M+ LAST WEEK] Error fetching {name}: {exc}")
             continue
         time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
-    print(f"[M+ WEEKLY] Found {len(results)} players with weekly runs.")
+    print(f"[M+ LAST WEEK] Found {len(results)} players with weekly runs.")
     return results
 
 
