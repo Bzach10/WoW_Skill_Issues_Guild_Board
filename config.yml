@@ -11,7 +11,7 @@ guild:
   region: "us"                   # us / eu / kr / tw
 
 # How many days of logs to include (7 = one raid week)
-lookback_days: 30
+lookback_days: 7
 
 # How many players shown per category (3, 4, or 5)
 top_n: 5
@@ -139,7 +139,7 @@ dedup:
 #  always_exclude = anyone who should never appear.
 # ------------------------------------------------------------
 filters:
-  guild_members_only: false
+  guild_members_only: true
   # false = pugs can appear on the board
   always_include: []
     # - Sometrialname
