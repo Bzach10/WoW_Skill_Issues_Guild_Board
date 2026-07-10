@@ -18,7 +18,7 @@ top_n: 5
 
 raid:
   enabled: true
-  difficulty: heroic             # normal / heroic / mythic
+  difficulty: mythic             # normal / heroic / mythic
 
 # ------------------------------------------------------------
 #  RANKINGS vs THE REGION — guild progress standing plus your
@@ -48,7 +48,7 @@ dedup:
 #  always_exclude = anyone who should never appear.
 # ------------------------------------------------------------
 filters:
-  guild_members_only: false      # false = pugs can appear on the board
+  guild_members_only: True      # false = pugs can appear on the board
   always_include: []
     # - Sometrialname
   always_exclude: []
@@ -60,9 +60,9 @@ filters:
 #  below, then run the workflow. Leave "roast" empty for none.
 # ------------------------------------------------------------
 roast_of_the_week:
-  winner: ""                     # who said it
-  target: ""                     # which healer got flamed (optional)
-  roast: ""                      # the roast itself
+  winner: "Rakdaddy"                     # who said it
+  target: "Healmates"                     # which healer got flamed (optional)
+  roast: "Healmates Sucks"                      # the roast itself
 
 # ------------------------------------------------------------
 #  MYTHIC+ BOARD (optional) — flip enabled to true and list
@@ -70,7 +70,7 @@ roast_of_the_week:
 #  listed plain; off-realm characters as Name-Realm.
 # ------------------------------------------------------------
 mplus:
-  enabled: false
+  enabled: True
   roster:
     # - Rakell
     # - Somewarrior-Proudmoore
