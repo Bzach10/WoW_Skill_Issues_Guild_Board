@@ -5,6 +5,7 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+from guild_board import board_image
 from guild_board import config as gb_config
 from guild_board import dedup, filters, formatters, main
 
@@ -47,6 +48,12 @@ def test_clean_spec_name():
 def test_get_class_color():
     assert gb_config.get_class_color("Shaman") == "#0070DE"
     assert gb_config.get_class_color("Enhancement Shaman") == "#0070DE"
+    # Case-insensitive spec strings and abbreviations
+    assert gb_config.get_class_color("Unholy DK") == "#C41E3A"
+    assert gb_config.get_class_color("beastmastery hunter") == "#ABD473"
+    # "Demon Hunter" must not fall through to "Hunter"
+    assert gb_config.get_class_color("Havoc Demon Hunter") == "#A330C9"
+    assert gb_config.get_class_color("") == "#CCCCCC"
 
 
 def test_roster_cache(tmp_path):
@@ -250,6 +257,86 @@ def test_main_loads_weekly_state(tmp_path):
     state = {"roast_of_the_week": {"roast": "State roast", "winner": "Bud"}}
     merged = main._merge_state(cfg, state)
     assert merged["roast_of_the_week"]["roast"] == "State roast"
+
+
+def _image_board_cfg():
+    return {
+        "guild": {"name": "Test Guild", "realm_slug": "bleeding-hollow", "region": "us"},
+        "raid": {"enabled": True, "difficulty": "mythic"},
+        "top_n": 3,
+        "lookback_days": 7,
+        "display": {"layout": "image_board"},
+        "sections": {
+            "raid_header": {"title": "Raid"},
+            "mplus_header": {"title": "Mythic Plus"},
+            "roast_of_the_week": {"enabled": True, "winner": "Rakdaddy", "target": "Healmates", "roast": "Test roast"},
+        },
+    }
+
+
+def _image_board_stats():
+    return {
+        "best_dps": {"Rakell": {"parse": 94.2, "amount": 1_850_000, "boss": "Some Boss, the Long Title", "spec": "Enhancement", "cls": "Shaman", "report_code": "abc"}},
+        "best_hps": {"Healmates": {"parse": 58.0, "amount": 134_000, "boss": "Some Boss", "spec": "Holy", "cls": "Priest", "report_code": "abc"}},
+        "deaths": {"Rakell": 7, "Healmates": 1},
+        "participants": {},
+        "pulls": 21,
+        "kills": 1,
+        "difficulty": 5,
+    }
+
+
+def test_generate_board_image(tmp_path):
+    from PIL import Image
+    cfg = _image_board_cfg()
+    standing = {"realm": 163, "region": 7924}
+    leaders = [{"name": "Rakell", "spec": "Enhancement Shaman", "realm_rank": 1, "region_rank": 892, "best_avg": 91.3, "boss": "Some Boss"}]
+    mplus = [(17, "Skyreach", "brewzleeh", "Brewmaster Monk", True)]
+    scores = [(2834.5, "Gravykin", "Protection Paladin")]
+    parses = [(473, "Pit of Saron", "shadoxii", "Mistweaver Monk", False)]
+    now = datetime.now(timezone.utc)
+    out = board_image.generate_board_image(
+        _image_board_cfg(), _image_board_stats(), standing, leaders, "Some Raid",
+        mplus, scores, parses, now - timedelta(days=7), now,
+        output_path=str(tmp_path / "board.png"))
+    img = Image.open(out)
+    assert img.width == board_image.WIDTH
+    assert img.height > 500
+
+
+def test_generate_board_image_no_data(tmp_path):
+    from PIL import Image
+    now = datetime.now(timezone.utc)
+    out = board_image.generate_board_image(
+        _image_board_cfg(), None, None, None, None,
+        None, None, None, now - timedelta(days=7), now, no_logs=True,
+        output_path=str(tmp_path / "board.png"))
+    img = Image.open(out)
+    assert img.width == board_image.WIDTH
+
+
+def test_build_image_embed():
+    cfg = _image_board_cfg()
+    cfg["sections"]["announcement"] = {"enabled": True, "text": "Hello guild!"}
+    now = datetime.now(timezone.utc)
+    embed = formatters.build_image_embed(cfg, _image_board_stats(), now - timedelta(days=7), now)
+    assert embed["image"]["url"] == "attachment://board.png"
+    assert "Hello guild!" in embed["description"]
+    assert "Raid week:" in embed["description"]
+    # singular kill, plural pulls
+    assert "1 kill / 21 pulls" in embed["footer"]["text"]
+    assert "fields" not in embed
+
+
+def test_build_board_image_layout(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = _image_board_cfg()
+    cfg["raid"]["enabled"] = False
+    now = datetime.now(timezone.utc)
+    embed, image_path = main.build_board(cfg, start_dt=now - timedelta(days=7), end_dt=now, preview=True)
+    assert image_path == "board.png"
+    assert os.path.exists(tmp_path / "board.png")
+    assert embed["image"]["url"] == "attachment://board.png"
 
 
 def test_main_preview_writes_html(tmp_path):

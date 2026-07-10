@@ -31,7 +31,8 @@ def _hex_to_rgb(hex_color):
 
 def generate_progress_image(cfg, stats, standing, zone_name, start_dt, end_dt, output_path="progress.png"):
     """Generate a static PNG progress card and save it."""
-    width, height = 900, 360
+    # Tall enough for the mini leaderboards drawn at y=320 (3 rows ≈ 70px).
+    width, height = 900, 420
     bg = (18, 18, 22)
     accent = (230, 180, 70)
     text = (220, 220, 220)

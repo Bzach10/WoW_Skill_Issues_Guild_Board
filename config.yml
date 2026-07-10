@@ -16,9 +16,13 @@ lookback_days: 7
 # How many players shown per category (3, 4, or 5)
 top_n: 3
 
-# Board layout: single_column or two_column (raid left, M+ right, guild achievements bottom)
+# Board layout:
+#   image_board   — the whole board is rendered as one image (recommended:
+#                   real aligned columns, class colors, identical on mobile)
+#   single_column — plain text embed, one section per field
+#   two_column    — legacy inline-field columns (Discord misaligns these; avoid)
 display:
-  layout: two_column
+  layout: image_board
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
@@ -33,7 +37,8 @@ sections:
     title: "📢 Guild Announcement"
     text: "Welcome to the weekly board!"
 
-  # Progress image (renders at the bottom of the embed, after Guild Achievements)
+  # Progress image (only used by single_column/two_column layouts;
+  # image_board renders its own full board image instead)
   progress_image:
     order: 1
     enabled: true

@@ -60,7 +60,15 @@ Run locally with no network calls:
 python leaderboard.py --preview
 ```
 
-This writes `preview.html` so you can see exactly how the board will look.
+This writes `preview.html` (and `board.png` in image-board mode) so you can see exactly how the board will look.
+
+## Board layout
+
+`display.layout` in `config.yml` controls how the board renders:
+
+- **`image_board` (default, recommended)** — the whole board is drawn as a single PNG: real side-by-side Raid and Mythic+ columns, class-colored player names, WCL-style parse colors, stat tiles, kill progress bar, and the roast card. It looks identical on desktop and mobile. The Discord embed carries only the title, announcement, and footer, plus the link buttons. If image generation ever fails, the run automatically falls back to a plain text embed instead of skipping the post.
+- **`single_column`** — classic text embed, one full-width field per section, with the smaller progress image attached.
+- **`two_column`** — legacy inline-field columns. Discord reflows inline fields unpredictably (especially on mobile), so this layout is kept only for backwards compatibility — avoid it.
 
 Other useful flags:
 

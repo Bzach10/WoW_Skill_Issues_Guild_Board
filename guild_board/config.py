@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -114,17 +115,23 @@ def clean_spec_name(spec, class_name=""):
 
 
 def get_class_color(class_name_or_spec):
-    """Return a hex class color for a class name or spec string."""
+    """Return a hex class color for a class name or spec string.
+
+    Matches case-insensitively so spec strings like "Unholy DK" or
+    "beastmastery hunter" resolve; longest class names win so
+    "Demon Hunter" isn't mistaken for "Hunter".
+    """
     if not class_name_or_spec:
         return "#CCCCCC"
-    text = class_name_or_spec.title()
-    # Try direct class name
-    if text in CLASS_COLORS:
-        return CLASS_COLORS[text]
-    # Try extracting class from "Spec Class" format
-    for cls in CLASS_NAME_MAP.values():
-        if cls in text:
-            return CLASS_COLORS.get(cls, "#CCCCCC")
+    lower = str(class_name_or_spec).lower()
+    tokens = re.split(r"[^a-z]+", lower)
+    for cls, color in sorted(CLASS_COLORS.items(), key=lambda kv: -len(kv[0])):
+        cls_lower = cls.lower()
+        if " " in cls_lower:
+            if cls_lower in lower:
+                return color
+        elif cls_lower in tokens:
+            return color
     return "#CCCCCC"
 
 

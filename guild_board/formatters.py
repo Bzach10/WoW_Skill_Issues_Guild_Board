@@ -9,6 +9,16 @@ logger = logging.getLogger(__name__)
 MEDALS = ["\U0001F947", "\U0001F948", "\U0001F949", "\U0001F536", "\U0001F537"]
 
 
+def plural(n, word):
+    return f"{n} {word}" if n == 1 else f"{n} {word}s"
+
+
+def week_label(cfg):
+    """'Raid week' for a normal 7-day window, 'Last N days' otherwise."""
+    lookback = int(cfg.get("lookback_days", 7))
+    return "Raid week" if lookback == 7 else f"Last {lookback} days"
+
+
 def fmt_amount(n):
     if n >= 1_000_000:
         return f"{n / 1_000_000:.2f}M"
@@ -622,12 +632,12 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
 
     footer_bits = []
     if stats is not None:
-        footer_bits.append(f"{stats['kills']} kills / {stats['pulls']} pulls this week")
+        footer_bits.append(f"{plural(stats['kills'], 'kill')} / {plural(stats['pulls'], 'pull')} this week")
     footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
 
     embed = {
         "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
-        "description": f"Raid week: **{date_range}**",
+        "description": f"{week_label(cfg)}: **{date_range}**",
         "color": 0xC69B6D,
         "fields": fields,
         "footer": {"text": " | ".join(footer_bits)},
@@ -638,3 +648,34 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
         embed["image"] = {"url": progress_image_url}
 
     return embed
+
+
+def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://board.png"):
+    """Minimal embed for image-board mode: title, announcement, the board image.
+
+    All stats live in the rendered image; the embed only carries what an
+    image can't — the title, the officer announcement, and the footer CTA.
+    """
+    guild_name = cfg["guild"]["name"]
+    difficulty = str(cfg["raid"]["difficulty"]).title()
+    date_range = f"{start_dt.strftime('%b %d')} – {end_dt.strftime('%b %d, %Y')}"
+
+    desc_lines = []
+    ann_cfg = cfg.get("sections", {}).get("announcement", {})
+    if ann_cfg.get("enabled", True) and ann_cfg.get("text"):
+        desc_lines.append(f"\U0001F4E2 {ann_cfg['text']}")
+    desc_lines.append(f"{week_label(cfg)}: **{date_range}**")
+
+    footer_bits = []
+    if stats is not None:
+        footer_bits.append(f"{plural(stats['kills'], 'kill')} / {plural(stats['pulls'], 'pull')} this week")
+    footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
+
+    return {
+        "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
+        "description": "\n".join(desc_lines),
+        "color": 0xC69B6D,
+        "image": {"url": image_url},
+        "footer": {"text": " | ".join(footer_bits)},
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+    }

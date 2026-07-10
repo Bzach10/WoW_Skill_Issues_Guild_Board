@@ -9,7 +9,8 @@ import requests
 from guild_board.config import load_config, require_env, resolve_roster, save_roster_cache
 from guild_board.discord import post_to_discord
 from guild_board.filters import apply_roster_filters
-from guild_board.formatters import build_embed
+from guild_board.board_image import generate_board_image
+from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
 from guild_board.wcl import (
@@ -197,33 +198,50 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     if mplus_season_parses_cfg.get("enabled", False):
         mplus_season_parses = collect_mplus_season_parses(cfg, token)
 
-    progress_image_path = None
-    progress_image_url = None
     sections = cfg.get("sections", {})
-    progress_cfg = sections.get("progress_image", {})
-    if progress_cfg.get("enabled", True):
-        progress_image_path = "progress.png"
-        try:
-            generate_progress_image(cfg, stats, standing, zone_name, start_dt, end_dt, progress_image_path)
-            progress_image_url = "attachment://progress.png"
-        except Exception as exc:
-            logger.warning("Failed to generate image: %s", exc)
-            progress_image_path = None
+    layout = (cfg.get("display") or {}).get("layout", "two_column")
 
-    embed = build_embed(cfg, stats, standing, leaders, zone_name,
-                        mplus_results, mplus_season_scores, mplus_season_parses,
-                        start_dt, end_dt, no_logs,
-                        progress_image_url=progress_image_url)
+    image_path = None
+    if layout == "image_board":
+        try:
+            image_path = generate_board_image(
+                cfg, stats, standing, leaders, zone_name,
+                mplus_results, mplus_season_scores, mplus_season_parses,
+                start_dt, end_dt, no_logs, output_path="board.png")
+        except Exception as exc:
+            logger.warning("Board image generation failed; falling back to text embed: %s", exc)
+            # two_column is unreadable in Discord; fall back to plain fields.
+            cfg.setdefault("display", {})["layout"] = "single_column"
+
+    if image_path:
+        embed = build_image_embed(cfg, stats, start_dt, end_dt,
+                                  image_url="attachment://board.png")
+    else:
+        progress_image_url = None
+        progress_cfg = sections.get("progress_image", {})
+        if progress_cfg.get("enabled", True):
+            image_path = "progress.png"
+            try:
+                generate_progress_image(cfg, stats, standing, zone_name, start_dt, end_dt, image_path)
+                progress_image_url = "attachment://progress.png"
+            except Exception as exc:
+                logger.warning("Failed to generate image: %s", exc)
+                image_path = None
+
+        embed = build_embed(cfg, stats, standing, leaders, zone_name,
+                            mplus_results, mplus_season_scores, mplus_season_parses,
+                            start_dt, end_dt, no_logs,
+                            progress_image_url=progress_image_url)
 
     if preview:
-        return embed, progress_image_path
+        return embed, image_path
 
     if not dry_run:
         webhook_url = require_env("DISCORD_WEBHOOK_URL")
-        post_to_discord(webhook_url, embed, image_path=progress_image_path, cfg=cfg)
+        post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg)
         logger.info("Board posted to Discord.")
 
-    return embed, progress_image_path
+    return embed, image_path
 
 
 def main(argv=None):
@@ -306,9 +324,11 @@ def _embed_to_html(embed, image_path):
         value = field.get("value", "").replace("\n", "<br>")
         field_html += f"<div class='field'><h3>{name}</h3><p>{value}</p></div>\n"
 
-    img_tag = f"<img src='{image_url}' alt='progress' />" if image_url else ""
+    if image_url.startswith("attachment://") and image_path:
+        image_url = image_path
+    img_tag = f"<img src='{image_url}' alt='board' />" if image_url else ""
     if image_path and not image_url:
-        img_tag = f"<img src='{image_path}' alt='progress' />"
+        img_tag = f"<img src='{image_path}' alt='board' />"
 
     return f"""<!DOCTYPE html>
 <html>
