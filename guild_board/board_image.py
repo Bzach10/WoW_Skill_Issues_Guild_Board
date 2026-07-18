@@ -24,7 +24,16 @@ MUTED = (150, 154, 164)
 FAINT = (95, 99, 110)
 RED = (229, 72, 77)
 
-MEDAL_FILLS = [(241, 196, 83), (176, 182, 192), (205, 127, 68)]
+# Gold, silver, bronze, then orange/blue mirroring the old 🥇🥈🥉🔶🔷 medals
+MEDAL_FILLS = [
+    (241, 196, 83),
+    (176, 182, 192),
+    (205, 127, 68),
+    (255, 172, 51),
+    (85, 172, 238),
+]
+
+DIFFICULTY_NAMES = {1: "LFR", 3: "Normal", 4: "Heroic", 5: "Mythic"}
 
 # --- layout constants ---------------------------------------------------------
 WIDTH = 1200
@@ -157,14 +166,17 @@ def _plural(n, word):
 # A section is {"title": str, "rows": [row]}; a row is either
 # {"name", "color", "detail", "value", "value_color"} or {"text": str}.
 
-def _parse_rows(best, unit, top_n):
+def _parse_rows(best, unit, top_n, diff_name=""):
     ranked = sorted(best.items(), key=lambda kv: kv[1]["parse"], reverse=True)[:top_n]
     rows = []
     for name, info in ranked:
         parse = info.get("parse") or 0
+        boss = _short_boss(info.get("boss", ""))
+        if boss and diff_name:
+            boss = f"{diff_name} {boss}"
         detail_bits = [
             info.get("spec") or "",
-            _short_boss(info.get("boss", "")),
+            boss,
             f"{_fmt_amount(info.get('amount') or 0)} {unit}",
         ]
         rows.append({
@@ -283,10 +295,13 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
             "rows": [{"text": message.format(lookback_days=cfg.get("lookback_days", 7))}],
         })
     if stats:
+        # Label bosses with the difficulty the data actually came from
+        # (the fallback may have downgraded mythic -> heroic -> normal).
+        diff_name = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")
         if _enabled(sections_cfg, "top_dps") and stats.get("best_dps"):
-            raid.append({"title": "TOP DPS PARSES", "rows": _parse_rows(stats["best_dps"], "DPS", top_n)})
+            raid.append({"title": "TOP DPS PARSES", "rows": _parse_rows(stats["best_dps"], "DPS", top_n, diff_name)})
         if _enabled(sections_cfg, "top_healing") and stats.get("best_hps"):
-            raid.append({"title": "TOP HEALING PARSES", "rows": _parse_rows(stats["best_hps"], "HPS", top_n)})
+            raid.append({"title": "TOP HEALING PARSES", "rows": _parse_rows(stats["best_hps"], "HPS", top_n, diff_name)})
     if leaders and _enabled(sections_cfg, "realm_rank_leaders"):
         raid.append({"title": "WEEKLY BOSS RANKS", "rows": _leader_rows(leaders, top_n)})
     if stats and _enabled(sections_cfg, "most_deaths") and stats.get("deaths"):
@@ -318,7 +333,7 @@ def _column_height(sections):
 
 def _draw_rank_badge(draw, x, cy, index, font):
     r = 11
-    if index < 3:
+    if index < len(MEDAL_FILLS):
         draw.ellipse([x, cy - r, x + 2 * r, cy + r], fill=MEDAL_FILLS[index])
         num_color = (20, 20, 24)
     else:
@@ -493,7 +508,10 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     dw = draw.textlength(date_range, font=fonts["date"])
     draw.text((WIDTH - MARGIN - dw, y + 18), date_range, font=fonts["date"], fill=MUTED)
 
-    difficulty = str(cfg.get("raid", {}).get("difficulty", "mythic")).upper()
+    difficulty = str(cfg.get("raid", {}).get("difficulty", "mythic"))
+    if stats and stats.get("difficulty") in DIFFICULTY_NAMES:
+        difficulty = DIFFICULTY_NAMES[stats["difficulty"]]
+    difficulty = difficulty.upper()
     subtitle = f"{difficulty} · {zone_name}" if zone_name else f"{difficulty} WEEKLY BOARD"
     draw.text((MARGIN, y + 52), subtitle, font=fonts["subtitle"], fill=MUTED)
     draw.line([MARGIN, y + 86, WIDTH - MARGIN, y + 86], fill=PANEL_BORDER, width=1)

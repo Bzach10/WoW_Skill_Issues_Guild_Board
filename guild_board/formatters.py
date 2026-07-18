@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timezone
 
 from guild_board.raiderio import raiderio_profile_url, raiderio_run_url
-from guild_board.wcl import wcl_character_url, wcl_guild_url, wcl_report_url
+from guild_board.wcl import DIFFICULTY_MAP, wcl_character_url, wcl_guild_url, wcl_report_url
 
 logger = logging.getLogger(__name__)
 
@@ -658,6 +658,10 @@ def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://boar
     """
     guild_name = cfg["guild"]["name"]
     difficulty = str(cfg["raid"]["difficulty"]).title()
+    if stats is not None:
+        # Reflect the difficulty the data actually came from (fallback may downgrade)
+        names = {num: name.title() for name, num in DIFFICULTY_MAP.items()}
+        difficulty = names.get(stats.get("difficulty"), difficulty)
     date_range = f"{start_dt.strftime('%b %d')} – {end_dt.strftime('%b %d, %Y')}"
 
     desc_lines = []
