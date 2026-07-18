@@ -265,7 +265,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                 improvement["dps"] = ranked[:int(imp_dps_cfg.get("top_n", 5))]
             if imp_heal_cfg.get("enabled", False):
                 ranked = [e for e in compute_improvement(history["hps"]) if keep(e["name"])]
-                improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 2))]
+                improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 5))]
             logger.info("Most Improved: %s DPS, %s healer(s)",
                         len(improvement.get("dps") or []),
                         len(improvement.get("hps") or []))
