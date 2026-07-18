@@ -5,9 +5,11 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
+import requests
+
 from guild_board import board_image
 from guild_board import config as gb_config
-from guild_board import dedup, filters, formatters, main
+from guild_board import dedup, discord as gb_discord, filters, formatters, main
 
 
 def test_deduper():
@@ -257,6 +259,75 @@ def test_main_loads_weekly_state(tmp_path):
     state = {"roast_of_the_week": {"roast": "State roast", "winner": "Bud"}}
     merged = main._merge_state(cfg, state)
     assert merged["roast_of_the_week"]["roast"] == "State roast"
+
+
+class _FakeResp:
+    def __init__(self, status_code=200, text="", json_data=None):
+        self.status_code = status_code
+        self.text = text
+        self._json = json_data or {}
+
+    def json(self):
+        return self._json
+
+    def raise_for_status(self):
+        if self.status_code >= 400:
+            raise requests.HTTPError(f"HTTP {self.status_code}", response=self)
+
+
+def _webhook_cfg():
+    return {"guild": {"name": "Test", "realm_slug": "bleeding-hollow", "region": "us"}}
+
+
+def test_post_to_discord_sends_with_components_param(monkeypatch):
+    calls = []
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        return _FakeResp(200)
+
+    monkeypatch.setattr(gb_discord.requests, "post", fake_post)
+    gb_discord.post_to_discord("https://discord.test/hook", {"title": "x"}, cfg=_webhook_cfg())
+
+    assert len(calls) == 1
+    url, kwargs = calls[0]
+    # Channel webhooks only accept link buttons with this query parameter
+    assert "with_components=true" in url
+    assert kwargs["json"]["components"][0]["components"][0]["label"] == "Guild Logs"
+
+
+def test_post_to_discord_retries_without_components_on_400(monkeypatch):
+    calls = []
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        if len(calls) == 1:
+            return _FakeResp(400, text='{"code": 50035}')
+        return _FakeResp(200)
+
+    monkeypatch.setattr(gb_discord.requests, "post", fake_post)
+    resp = gb_discord.post_to_discord("https://discord.test/hook", {"title": "x"}, cfg=_webhook_cfg())
+
+    assert resp.status_code == 200
+    assert len(calls) == 2
+    second_url, second_kwargs = calls[1]
+    assert "with_components" not in second_url
+    assert "components" not in second_kwargs["json"]
+
+
+def test_post_to_discord_no_components_without_cfg(monkeypatch):
+    calls = []
+
+    def fake_post(url, **kwargs):
+        calls.append((url, kwargs))
+        return _FakeResp(200)
+
+    monkeypatch.setattr(gb_discord.requests, "post", fake_post)
+    gb_discord.post_to_discord("https://discord.test/hook", {"title": "x"})
+
+    url, kwargs = calls[0]
+    assert "with_components" not in url
+    assert "components" not in kwargs["json"]
 
 
 def _image_board_cfg():

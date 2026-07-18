@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+# CI runs bare `pytest`, which does not put the repo root on sys.path.
+# pythonpath ensures `import guild_board` works everywhere.
+pythonpath = ["."]
+testpaths = ["tests"]
