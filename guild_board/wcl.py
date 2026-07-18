@@ -58,6 +58,7 @@ query ($code: String!, $difficulty: Int!) {
         name
         startTime
         endTime
+        keystoneLevel
       }
       dps: rankings(playerMetric: dps, difficulty: $difficulty)
       hps: rankings(playerMetric: hps, difficulty: $difficulty)
@@ -174,12 +175,17 @@ def detect_zone(cfg, reports):
     return latest["zone"]["id"], latest["zone"].get("name")
 
 
-def extract_parses(rankings_blob, role_key, best_parses):
-    """Walk a WCL rankings blob and keep each player's best parse."""
+def extract_parses(rankings_blob, role_key, best_parses, fight_levels=None):
+    """Walk a WCL rankings blob and keep each player's best parse.
+
+    fight_levels maps fight id -> keystone level so M+ parses can show
+    which key the parse happened in.
+    """
     if not rankings_blob:
         return
     for fight in (rankings_blob.get("data") or []):
         boss = ((fight.get("encounter") or {}).get("name")) or "Unknown boss"
+        key_level = (fight_levels or {}).get(fight.get("fightID"))
         roles = fight.get("roles") or {}
         characters = ((roles.get(role_key) or {}).get("characters")) or []
         for ch in characters:
@@ -193,6 +199,7 @@ def extract_parses(rankings_blob, role_key, best_parses):
                     "parse": parse,
                     "amount": ch.get("amount") or 0,
                     "boss": boss,
+                    "key_level": key_level,
                     "spec": ch.get("spec") or "",
                     "cls": ch.get("class") or "",
                     "report_code": None,
@@ -338,8 +345,13 @@ def collect_parses_only(token, cfg, reports, difficulty):
     for report in reports:
         data = gql(token, REPORT_DETAIL_QUERY, {"code": report["code"], "difficulty": difficulty})
         rep = ((data.get("reportData") or {}).get("report")) or {}
-        extract_parses(rep.get("dps"), "dps", best_dps)
-        extract_parses(rep.get("hps"), "healers", best_hps)
+        fight_levels = {
+            f["id"]: f.get("keystoneLevel")
+            for f in (rep.get("fights") or [])
+            if f.get("keystoneLevel")
+        }
+        extract_parses(rep.get("dps"), "dps", best_dps, fight_levels)
+        extract_parses(rep.get("hps"), "healers", best_hps, fight_levels)
         time.sleep(0.3)
     for info in best_dps.values():
         info["difficulty"] = difficulty

@@ -362,9 +362,11 @@ def _parse_rows(best, unit, top_n, diff_name=""):
         parse = info.get("parse") or 0
         boss = _short_boss(info.get("boss", ""))
         # Per-row difficulty wins: a fallback row stays labeled "Heroic ..."
-        # even in an otherwise-mythic week.
+        # even in an otherwise-mythic week. M+ rows show the key level.
         row_diff = DIFFICULTY_NAMES.get(info.get("difficulty"), diff_name)
-        if boss and row_diff:
+        if boss and info.get("key_level"):
+            boss = f"+{info['key_level']} {boss}"
+        elif boss and row_diff:
             boss = f"{row_diff} {boss}"
         detail_bits = [
             info.get("spec") or "",

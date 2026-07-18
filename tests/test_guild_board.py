@@ -397,6 +397,23 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_extract_parses_carries_keystone_level():
+    blob = {"data": [{
+        "fightID": 7,
+        "encounter": {"name": "Pit of Saron"},
+        "roles": {"dps": {"characters": [
+            {"name": "Brewzleeh", "rankPercent": 82, "amount": 190_000, "spec": "Windwalker", "class": "Monk"},
+        ]}},
+    }]}
+    best = {}
+    wcl.extract_parses(blob, "dps", best, fight_levels={7: 18})
+    assert best["Brewzleeh"]["key_level"] == 18
+    # Without a level map the field is simply None
+    best2 = {}
+    wcl.extract_parses(blob, "dps", best2)
+    assert best2["Brewzleeh"]["key_level"] is None
+
+
 def test_fill_missing_parses_uses_lower_difficulty():
     stats = {
         "best_dps": {"Rakell": {"parse": 90, "difficulty": 5}},
