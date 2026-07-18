@@ -230,6 +230,16 @@ def _wrap(draw, text, font, max_w):
     words = (text or "").split()
     lines, cur = [], ""
     for word in words:
+        # Hard-break single words wider than the panel (URLs, keyboard mash)
+        while draw.textlength(word, font=font) > max_w and len(word) > 1:
+            head = word
+            while head and draw.textlength(head, font=font) > max_w:
+                head = head[:-1]
+            if cur:
+                lines.append(cur)
+                cur = ""
+            lines.append(head)
+            word = word[len(head):]
         candidate = f"{cur} {word}".strip()
         if not cur or draw.textlength(candidate, font=font) <= max_w:
             cur = candidate
@@ -239,6 +249,20 @@ def _wrap(draw, text, font, max_w):
     if cur:
         lines.append(cur)
     return lines or [""]
+
+
+def _fit_bits(draw, bits, font, max_w):
+    """Fit ' · '-joined facts into max_w by dropping trailing facts whole,
+    so rows show complete information instead of mid-number ellipses."""
+    bits = [b for b in bits if b]
+    while bits:
+        text = " · ".join(bits)
+        if draw.textlength(text, font=font) <= max_w:
+            return text
+        if len(bits) == 1:
+            return _fit(draw, text, font, max_w)
+        bits = bits[:-1]
+    return ""
 
 
 def _norm_key(text):
@@ -353,6 +377,7 @@ def _parse_rows(best, unit, top_n, diff_name=""):
             "spec": info.get("spec") or "",
             "cls": info.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
+            "detail_bits": detail_bits,
             "value": f"{parse:.0f}%",
             "value_color": _parse_color(parse),
         })
@@ -376,6 +401,7 @@ def _leader_rows(leaders, top_n):
             "spec": entry.get("spec") or "",
             "cls": entry.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
+            "detail_bits": detail_bits,
             "value": f"Realm #{entry['realm_rank']:,}",
             "value_color": ACCENT if entry["realm_rank"] <= 3 else TEXT,
         })
@@ -412,6 +438,7 @@ def _mplus_week_rows(results, top_n):
             "color": _rgb(get_class_color(spec)),
             "spec": spec or "",
             "detail": " · ".join(b for b in detail_bits if b),
+            "detail_bits": detail_bits,
             "value": f"+{level}",
             "value_color": ACCENT,
         })
@@ -466,6 +493,7 @@ def _improve_rows(entries):
             "spec": e.get("spec") or "",
             "cls": e.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
+            "detail_bits": detail_bits,
             "value": f"+{e['delta']:.0f}%",
             "value_color": (76, 220, 86),
         })
@@ -592,7 +620,11 @@ def _draw_row(img, draw, x, y, w, index, row, fonts, icons=True):
         dx = nx + draw.textlength(name, font=fonts["name"]) + 10
         max_dw = x + w - vw - 16 - dx
         if max_dw > 40:
-            detail = _fit(draw, detail, fonts["detail"], max_dw)
+            bits = row.get("detail_bits")
+            if bits:
+                detail = _fit_bits(draw, bits, fonts["detail"], max_dw)
+            else:
+                detail = _fit(draw, detail, fonts["detail"], max_dw)
             draw.text((dx, cy - 9), detail, font=fonts["detail"], fill=MUTED)
 
 
