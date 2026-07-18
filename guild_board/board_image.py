@@ -7,12 +7,80 @@ so nothing ever gets clipped.
 """
 
 import logging
+from pathlib import Path
 
+import requests
 from PIL import Image, ImageDraw, ImageFont
 
 from guild_board.config import get_class_color
 
 logger = logging.getLogger(__name__)
+
+# --- class/spec icons --------------------------------------------------------
+ICON_CDN = "https://wow.zamimg.com/images/wow/icons/large/{}.jpg"
+ICON_SIZE = 22
+ICON_CACHE_DIR = ".icon_cache"
+_ICON_CACHE = {}
+
+CLASS_ICONS = {
+    "warrior": "classicon_warrior",
+    "paladin": "classicon_paladin",
+    "hunter": "classicon_hunter",
+    "rogue": "classicon_rogue",
+    "priest": "classicon_priest",
+    "deathknight": "classicon_deathknight",
+    "shaman": "classicon_shaman",
+    "mage": "classicon_mage",
+    "warlock": "classicon_warlock",
+    "monk": "classicon_monk",
+    "druid": "classicon_druid",
+    "demonhunter": "classicon_demonhunter",
+    "evoker": "classicon_evoker",
+}
+
+CLASS_KEY_ALIASES = {"dk": "deathknight", "dh": "demonhunter"}
+
+SPEC_ICONS = {
+    ("warrior", "arms"): "ability_warrior_savageblow",
+    ("warrior", "fury"): "ability_warrior_innerrage",
+    ("warrior", "protection"): "ability_warrior_defensivestance",
+    ("paladin", "holy"): "spell_holy_holybolt",
+    ("paladin", "protection"): "ability_paladin_shieldofthetemplar",
+    ("paladin", "retribution"): "spell_holy_auraoflight",
+    ("hunter", "beastmastery"): "ability_hunter_bestialdiscipline",
+    ("hunter", "marksmanship"): "ability_hunter_focusedaim",
+    ("hunter", "survival"): "ability_hunter_camouflage",
+    ("rogue", "assassination"): "ability_rogue_deadlybrew",
+    ("rogue", "outlaw"): "ability_rogue_waylay",
+    ("rogue", "subtlety"): "ability_stealth",
+    ("priest", "discipline"): "spell_holy_powerwordshield",
+    ("priest", "holy"): "spell_holy_guardianspirit",
+    ("priest", "shadow"): "spell_shadow_shadowwordpain",
+    ("deathknight", "blood"): "spell_deathknight_bloodpresence",
+    ("deathknight", "frost"): "spell_deathknight_frostpresence",
+    ("deathknight", "unholy"): "spell_deathknight_unholypresence",
+    ("shaman", "elemental"): "spell_nature_lightning",
+    ("shaman", "enhancement"): "spell_shaman_improvedstormstrike",
+    ("shaman", "restoration"): "spell_nature_magicimmunity",
+    ("mage", "arcane"): "spell_holy_magicalsentry",
+    ("mage", "fire"): "spell_fire_firebolt02",
+    ("mage", "frost"): "spell_frost_frostbolt02",
+    ("warlock", "affliction"): "spell_shadow_deathcoil",
+    ("warlock", "demonology"): "spell_shadow_metamorphosis",
+    ("warlock", "destruction"): "spell_shadow_rainoffire",
+    ("monk", "brewmaster"): "spell_monk_brewmaster_spec",
+    ("monk", "mistweaver"): "spell_monk_mistweaver_spec",
+    ("monk", "windwalker"): "spell_monk_windwalker_spec",
+    ("druid", "balance"): "spell_nature_starfall",
+    ("druid", "feral"): "ability_druid_catform",
+    ("druid", "guardian"): "ability_racial_bearform",
+    ("druid", "restoration"): "spell_nature_healingtouch",
+    ("demonhunter", "havoc"): "ability_demonhunter_specdps",
+    ("demonhunter", "vengeance"): "ability_demonhunter_spectank",
+    ("evoker", "devastation"): "classicon_evoker_devastation",
+    ("evoker", "preservation"): "classicon_evoker_preservation",
+    ("evoker", "augmentation"): "classicon_evoker_augmentation",
+}
 
 # --- palette -----------------------------------------------------------------
 BG = (17, 18, 23)
@@ -154,6 +222,68 @@ def _wrap(draw, text, font, max_w):
     return lines or [""]
 
 
+def _norm_key(text):
+    return "".join(ch for ch in (text or "").lower() if ch.isalpha())
+
+
+def _spec_class_keys(spec, cls):
+    """Split spec strings like "Brewmaster Monk" or "Unholy DK" into
+    normalized (spec_key, class_key) for icon lookup."""
+    tokens = [t for t in (spec or "").replace("-", " ").split() if t]
+    cls_key = CLASS_KEY_ALIASES.get(_norm_key(cls), _norm_key(cls)) if cls else ""
+    spec_tokens = tokens
+    if not cls_key and tokens:
+        for take in (2, 1):
+            if len(tokens) >= take:
+                cand = _norm_key("".join(tokens[-take:]))
+                cand = CLASS_KEY_ALIASES.get(cand, cand)
+                if cand in CLASS_ICONS:
+                    cls_key = cand
+                    spec_tokens = tokens[:-take]
+                    break
+    return _norm_key("".join(spec_tokens)), cls_key
+
+
+def _fetch_icon(name):
+    """Download (and disk-cache) an icon; return (image, mask) or None."""
+    if name in _ICON_CACHE:
+        return _ICON_CACHE[name]
+    icon = None
+    try:
+        cache_dir = Path(ICON_CACHE_DIR)
+        cache_dir.mkdir(exist_ok=True)
+        path = cache_dir / f"{name}.jpg"
+        if not path.exists():
+            resp = requests.get(ICON_CDN.format(name), timeout=10)
+            if resp.status_code == 200 and resp.content:
+                path.write_bytes(resp.content)
+        if path.exists():
+            img = Image.open(path).convert("RGB").resize((ICON_SIZE, ICON_SIZE), Image.LANCZOS)
+            mask = Image.new("L", (ICON_SIZE, ICON_SIZE), 0)
+            ImageDraw.Draw(mask).rounded_rectangle(
+                [0, 0, ICON_SIZE - 1, ICON_SIZE - 1], radius=5, fill=255)
+            icon = (img, mask)
+    except Exception as exc:
+        logger.debug("Icon %s unavailable: %s", name, exc)
+    _ICON_CACHE[name] = icon
+    return icon
+
+
+def _row_icon(row):
+    """Spec icon first, class icon as fallback, None if neither resolves."""
+    spec_key, cls_key = _spec_class_keys(row.get("spec"), row.get("cls"))
+    candidates = []
+    if (cls_key, spec_key) in SPEC_ICONS:
+        candidates.append(SPEC_ICONS[(cls_key, spec_key)])
+    if cls_key in CLASS_ICONS:
+        candidates.append(CLASS_ICONS[cls_key])
+    for name in candidates:
+        icon = _fetch_icon(name)
+        if icon:
+            return icon
+    return None
+
+
 def _enabled(sections, name, default=True):
     return (sections.get(name) or {}).get("enabled", default)
 
@@ -185,6 +315,8 @@ def _parse_rows(best, unit, top_n, diff_name=""):
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(info.get("cls") or info.get("spec"))),
+            "spec": info.get("spec") or "",
+            "cls": info.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
             "value": f"{parse:.0f}%",
             "value_color": _parse_color(parse),
@@ -206,6 +338,7 @@ def _leader_rows(leaders, top_n):
         rows.append({
             "name": _cap(entry["name"]),
             "color": _rgb(get_class_color(entry.get("spec"))),
+            "spec": entry.get("spec") or "",
             "detail": " · ".join(b for b in detail_bits if b),
             "value": f"Realm #{entry['realm_rank']:,}",
             "value_color": ACCENT if entry["realm_rank"] <= 3 else TEXT,
@@ -221,6 +354,7 @@ def _death_rows(deaths, top_n, class_lookup):
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(cls)) if cls else TEXT,
+            "cls": cls or "",
             "detail": "",
             "value": _plural(count, "death"),
             "value_color": RED,
@@ -240,6 +374,7 @@ def _mplus_week_rows(results, top_n):
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(spec)),
+            "spec": spec or "",
             "detail": " · ".join(b for b in detail_bits if b),
             "value": f"+{level}",
             "value_color": ACCENT,
@@ -253,6 +388,7 @@ def _season_score_rows(scores, top_n):
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(spec)),
+            "spec": spec or "",
             "detail": spec or "",
             "value": f"{score:.0f}",
             "value_color": ACCENT,
@@ -271,6 +407,7 @@ def _season_run_rows(parses, top_n):
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(spec)),
+            "spec": spec or "",
             "detail": " · ".join(b for b in [spec, dungeon] if b),
             "value": f"{value:.0f}%" if is_wcl else f"{value:.0f}",
             "value_color": _parse_color(value) if is_wcl else TEXT,
@@ -290,6 +427,8 @@ def _improve_rows(entries):
         rows.append({
             "name": _cap(e["name"]),
             "color": _rgb(get_class_color(e.get("cls") or e.get("spec"))),
+            "spec": e.get("spec") or "",
+            "cls": e.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
             "value": f"+{e['delta']:.0f}%",
             "value_color": (76, 220, 86),
@@ -366,7 +505,7 @@ def _draw_rank_badge(draw, x, cy, index, font):
     draw.text((x + r - w / 2, cy - 8), num, font=font, fill=num_color)
 
 
-def _draw_row(draw, x, y, w, index, row, fonts):
+def _draw_row(img, draw, x, y, w, index, row, fonts, icons=True):
     cy = y + ROW_H // 2
 
     if "text" in row:
@@ -381,7 +520,14 @@ def _draw_row(draw, x, y, w, index, row, fonts):
     draw.text((x + w - vw, cy - 10), value, font=fonts["name"], fill=row.get("value_color", TEXT))
 
     nx = x + 32
-    name = _fit(draw, row.get("name", ""), fonts["name"], w - 32 - vw - 16)
+    if icons:
+        # Reserve the icon slot even when unresolved so names stay aligned
+        icon = _row_icon(row)
+        if icon:
+            img.paste(icon[0], (int(nx), int(cy - ICON_SIZE // 2)), icon[1])
+        nx += ICON_SIZE + 8
+
+    name = _fit(draw, row.get("name", ""), fonts["name"], x + w - vw - 16 - nx)
     draw.text((nx, cy - 10), name, font=fonts["name"], fill=row.get("color", TEXT))
 
     detail = row.get("detail")
@@ -393,7 +539,8 @@ def _draw_row(draw, x, y, w, index, row, fonts):
             draw.text((dx, cy - 9), detail, font=fonts["detail"], fill=MUTED)
 
 
-def _draw_column(draw, x0, y0, height, title, sections, fonts, empty_text="No data this week"):
+def _draw_column(img, draw, x0, y0, height, title, sections, fonts,
+                 empty_text="No data this week", icons=True):
     draw.rounded_rectangle([x0, y0, x0 + COL_W, y0 + height], radius=12,
                            fill=PANEL, outline=PANEL_BORDER, width=1)
     x = x0 + COL_PAD
@@ -416,7 +563,7 @@ def _draw_column(draw, x0, y0, height, title, sections, fonts, empty_text="No da
         draw.line([x + title_w + 12, y + 9, x + w, y + 9], fill=PANEL_BORDER, width=1)
         y += SEC_TITLE_H
         for i, row in enumerate(section["rows"]):
-            _draw_row(draw, x, y, w, i, row, fonts)
+            _draw_row(img, draw, x, y, w, i, row, fonts, icons=icons)
             y += ROW_H
 
 
@@ -553,16 +700,17 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         _draw_hero(draw, y, hero_h, stats, standing, fonts)
         y += hero_h + GUTTER
 
-    _draw_column(draw, MARGIN, y, col_h, raid_title, raid_sections, fonts)
-    _draw_column(draw, MARGIN + COL_W + GUTTER, y, col_h, mplus_title, mplus_sections, fonts)
+    icons = bool((cfg.get("display") or {}).get("icons", True))
+    _draw_column(img, draw, MARGIN, y, col_h, raid_title, raid_sections, fonts, icons=icons)
+    _draw_column(img, draw, MARGIN + COL_W + GUTTER, y, col_h, mplus_title, mplus_sections, fonts, icons=icons)
     y += col_h
 
     if show_improvement:
         y += GUTTER
-        _draw_column(draw, MARGIN, y, imp_h, "MOST IMPROVED DPS", imp_dps, fonts,
-                     empty_text="Not enough season data yet")
-        _draw_column(draw, MARGIN + COL_W + GUTTER, y, imp_h, "MOST IMPROVED HEALERS", imp_heal, fonts,
-                     empty_text="Not enough season data yet")
+        _draw_column(img, draw, MARGIN, y, imp_h, "MOST IMPROVED DPS", imp_dps, fonts,
+                     empty_text="Not enough season data yet", icons=icons)
+        _draw_column(img, draw, MARGIN + COL_W + GUTTER, y, imp_h, "MOST IMPROVED HEALERS", imp_heal, fonts,
+                     empty_text="Not enough season data yet", icons=icons)
         y += imp_h
 
     if roast_lines:

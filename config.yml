@@ -23,6 +23,7 @@ top_n: 5
 #   two_column    — legacy inline-field columns (Discord misaligns these; avoid)
 display:
   layout: image_board
+  icons: true    # class/spec icons next to player names (fetched from Wowhead's CDN)
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control

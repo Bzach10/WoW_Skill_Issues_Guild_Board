@@ -66,7 +66,7 @@ This writes `preview.html` (and `board.png` in image-board mode) so you can see 
 
 `display.layout` in `config.yml` controls how the board renders:
 
-- **`image_board` (default, recommended)** — the whole board is drawn as a single PNG: real side-by-side Raid and Mythic+ columns, class-colored player names, WCL-style parse colors, stat tiles, kill progress bar, and the roast card. It looks identical on desktop and mobile. The Discord embed carries only the title, announcement, and footer, plus the link buttons. If image generation ever fails, the run automatically falls back to a plain text embed instead of skipping the post.
+- **`image_board` (default, recommended)** — the whole board is drawn as a single PNG: real side-by-side Raid and Mythic+ columns, class-colored player names with class/spec icons (fetched from Wowhead's icon CDN; if the CDN is unreachable the board just renders without icons — set `display.icons: false` to turn them off), WCL-style parse colors, stat tiles, kill progress bar, and the roast card. It looks identical on desktop and mobile. The Discord embed carries only the title, announcement, and footer, plus the link buttons. If image generation ever fails, the run automatically falls back to a plain text embed instead of skipping the post.
 - **`single_column`** — classic text embed, one full-width field per section, with the smaller progress image attached.
 - **`two_column`** — legacy inline-field columns. Discord reflows inline fields unpredictably (especially on mobile), so this layout is kept only for backwards compatibility — avoid it.
 

@@ -300,6 +300,33 @@ def test_compute_improvement_uses_best_of_early_window():
     assert results[0]["delta"] == 15
 
 
+def test_spec_class_keys():
+    assert board_image._spec_class_keys("Frost", "Mage") == ("frost", "mage")
+    assert board_image._spec_class_keys("Brewmaster Monk", "") == ("brewmaster", "monk")
+    assert board_image._spec_class_keys("Unholy DK", "") == ("unholy", "deathknight")
+    assert board_image._spec_class_keys("Havoc DH", "") == ("havoc", "demonhunter")
+    assert board_image._spec_class_keys("BeastMastery Hunter", "") == ("beastmastery", "hunter")
+    assert board_image._spec_class_keys("Unholy", "Death Knight") == ("unholy", "deathknight")
+    assert board_image._spec_class_keys("", "Priest") == ("", "priest")
+    # Unknown spec still resolves the class for the fallback icon
+    assert board_image._spec_class_keys("Devourer DH", "")[1] == "demonhunter"
+
+
+def test_row_icon_prefers_spec_then_class(monkeypatch):
+    fetched = []
+
+    def fake_fetch(name):
+        fetched.append(name)
+        return ("img", "mask") if name.startswith("classicon") else None
+
+    monkeypatch.setattr(board_image, "_fetch_icon", fake_fetch)
+    icon = board_image._row_icon({"spec": "Frost", "cls": "Mage"})
+    # Tried the spec icon first, fell back to the class icon
+    assert fetched == ["spell_frost_frostbolt02", "classicon_mage"]
+    assert icon == ("img", "mask")
+    assert board_image._row_icon({"spec": "", "cls": ""}) is None
+
+
 def test_fill_missing_parses_uses_lower_difficulty():
     stats = {
         "best_dps": {"Rakell": {"parse": 90, "difficulty": 5}},
@@ -454,7 +481,7 @@ def _image_board_cfg():
         "raid": {"enabled": True, "difficulty": "mythic"},
         "top_n": 3,
         "lookback_days": 7,
-        "display": {"layout": "image_board"},
+        "display": {"layout": "image_board", "icons": False},  # no network in tests
         "sections": {
             "raid_header": {"title": "Raid"},
             "mplus_header": {"title": "Mythic Plus"},
