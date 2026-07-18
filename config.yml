@@ -137,6 +137,12 @@ sections:
     zone_id: 0                     # 0 = auto-detect from this week's logs
     max_characters: 30             # how many raiders to look up (1 API call each)
 
+  # Weekly Mythic+ DPS/HPS — best dungeon parses from this week's WCL
+  # M+ logs (players must upload their M+ runs to Warcraft Logs to appear)
+  mplus_weekly_parses:
+    order: 15
+    enabled: true
+
   # Most Improved — biggest WCL parse gains across the season (early-season
   # best vs recent best, same raid zone; needs 2+ weeks of logs per player)
   most_improved_dps:

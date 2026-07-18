@@ -40,6 +40,25 @@ CLASS_ICONS = {
 
 CLASS_KEY_ALIASES = {"dk": "deathknight", "dh": "demonhunter"}
 
+# Specs whose name uniquely identifies the class — lets rows that only
+# know the spec (e.g. WCL All Stars) still resolve an icon and color.
+# Ambiguous specs (frost, holy, protection, restoration) are excluded.
+SPEC_TO_CLASS = {
+    "arms": "warrior", "fury": "warrior",
+    "retribution": "paladin",
+    "beastmastery": "hunter", "marksmanship": "hunter", "survival": "hunter",
+    "assassination": "rogue", "outlaw": "rogue", "subtlety": "rogue",
+    "discipline": "priest", "shadow": "priest",
+    "blood": "deathknight", "unholy": "deathknight",
+    "elemental": "shaman", "enhancement": "shaman",
+    "arcane": "mage", "fire": "mage",
+    "affliction": "warlock", "demonology": "warlock", "destruction": "warlock",
+    "brewmaster": "monk", "mistweaver": "monk", "windwalker": "monk",
+    "balance": "druid", "feral": "druid", "guardian": "druid",
+    "havoc": "demonhunter", "vengeance": "demonhunter",
+    "devastation": "evoker", "preservation": "evoker", "augmentation": "evoker",
+}
+
 SPEC_ICONS = {
     ("warrior", "arms"): "ability_warrior_savageblow",
     ("warrior", "fury"): "ability_warrior_innerrage",
@@ -101,7 +120,7 @@ MEDAL_FILLS = [
     (85, 172, 238),
 ]
 
-DIFFICULTY_NAMES = {1: "LFR", 3: "Normal", 4: "Heroic", 5: "Mythic"}
+DIFFICULTY_NAMES = {1: "LFR", 3: "Normal", 4: "Heroic", 5: "Mythic", 10: "M+"}
 
 # --- layout constants ---------------------------------------------------------
 WIDTH = 1200
@@ -241,7 +260,23 @@ def _spec_class_keys(spec, cls):
                     cls_key = cand
                     spec_tokens = tokens[:-take]
                     break
-    return _norm_key("".join(spec_tokens)), cls_key
+    spec_key = _norm_key("".join(spec_tokens))
+    if not cls_key and spec_key in SPEC_TO_CLASS:
+        cls_key = SPEC_TO_CLASS[spec_key]
+    return spec_key, cls_key
+
+
+_CLASS_KEY_DISPLAY = {"deathknight": "Death Knight", "demonhunter": "Demon Hunter"}
+
+
+def _class_color_for(spec, cls):
+    """Class color via the same spec/class inference the icons use, so
+    spec-only rows (e.g. WCL All Stars 'Unholy') still get colored names."""
+    _, cls_key = _spec_class_keys(spec, cls)
+    if cls_key:
+        display = _CLASS_KEY_DISPLAY.get(cls_key, cls_key.title())
+        return _rgb(get_class_color(display))
+    return _rgb(get_class_color(cls or spec))
 
 
 def _fetch_icon(name):
@@ -337,8 +372,9 @@ def _leader_rows(leaders, top_n):
             detail_bits.append(_short_boss(entry["boss"]))
         rows.append({
             "name": _cap(entry["name"]),
-            "color": _rgb(get_class_color(entry.get("spec"))),
+            "color": _class_color_for(entry.get("spec"), entry.get("cls")),
             "spec": entry.get("spec") or "",
+            "cls": entry.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
             "value": f"Realm #{entry['realm_rank']:,}",
             "value_color": ACCENT if entry["realm_rank"] <= 3 else TEXT,
@@ -436,7 +472,7 @@ def _improve_rows(entries):
     return rows
 
 
-def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs):
+def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs, mplus_weekly=None):
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
 
@@ -471,12 +507,33 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
     mplus = []
     if mplus_results and _enabled(sections_cfg, "mplus"):
         mplus.append({"title": "THIS WEEK'S KEYS", "rows": _mplus_week_rows(mplus_results, top_n)})
-    if season_scores and _enabled(sections_cfg, "mplus_season_scores"):
-        mplus.append({"title": "SEASON M+ SCORES", "rows": _season_score_rows(season_scores, top_n)})
-    if season_parses and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
-        mplus.append({"title": "BEST SEASON RUNS", "rows": _season_run_rows(season_parses, top_n)})
+    if mplus_weekly and _enabled(sections_cfg, "mplus_weekly_parses"):
+        if mplus_weekly.get("dps"):
+            mplus.append({"title": "TOP M+ DPS THIS WEEK",
+                          "rows": _parse_rows(mplus_weekly["dps"], "DPS", top_n)})
+        if mplus_weekly.get("hps"):
+            mplus.append({"title": "TOP M+ HPS THIS WEEK",
+                          "rows": _parse_rows(mplus_weekly["hps"], "HPS", top_n)})
 
     return raid, mplus
+
+
+def _build_seasonal(cfg, season_scores, season_parses, improvement):
+    """The bottom Seasonal band: two internal columns of season-long data."""
+    sections_cfg = cfg.get("sections", {})
+    top_n = int(cfg.get("top_n", 5))
+    imp = improvement or {}
+
+    left, right = [], []
+    if season_scores and _enabled(sections_cfg, "mplus_season_scores"):
+        left.append({"title": "SEASON M+ SCORES", "rows": _season_score_rows(season_scores, top_n)})
+    if imp.get("dps"):
+        left.append({"title": "MOST IMPROVED DPS", "rows": _improve_rows(imp["dps"])})
+    if season_parses and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
+        right.append({"title": "BEST SEASON RUNS", "rows": _season_run_rows(season_parses, top_n)})
+    if imp.get("hps"):
+        right.append({"title": "MOST IMPROVED HEALERS", "rows": _improve_rows(imp["hps"])})
+    return left, right
 
 
 # --- rendering --------------------------------------------------------------------
@@ -555,6 +612,10 @@ def _draw_column(img, draw, x0, y0, height, title, sections, fonts,
         draw.text((x, y + 8), empty_text, font=fonts["detail"], fill=FAINT)
         return
 
+    _draw_sections(img, draw, x, y, w, sections, fonts, icons)
+
+
+def _draw_sections(img, draw, x, y, w, sections, fonts, icons=True):
     for si, section in enumerate(sections):
         if si:
             y += SEC_GAP
@@ -565,6 +626,32 @@ def _draw_column(img, draw, x0, y0, height, title, sections, fonts,
         for i, row in enumerate(section["rows"]):
             _draw_row(img, draw, x, y, w, i, row, fonts, icons=icons)
             y += ROW_H
+
+
+def _seasonal_height(left_sections, right_sections):
+    def col_body(sections):
+        if not sections:
+            return 0
+        return sum(_section_height(s) for s in sections) + SEC_GAP * (len(sections) - 1)
+    return COL_HEADER_H + max(col_body(left_sections), col_body(right_sections)) + 2 * COL_PAD
+
+
+def _draw_seasonal(img, draw, y0, height, left_sections, right_sections, fonts, icons=True):
+    """Full-width Seasonal panel with two internal columns."""
+    x0, x1 = MARGIN, WIDTH - MARGIN
+    draw.rounded_rectangle([x0, y0, x1, y0 + height], radius=12,
+                           fill=PANEL, outline=PANEL_BORDER, width=1)
+    x = x0 + COL_PAD
+    y = y0 + COL_PAD
+    draw.rectangle([x, y + 2, x + 4, y + 24], fill=ACCENT)
+    draw.text((x + 14, y), "SEASONAL", font=fonts["col_header"], fill=TEXT)
+    y += COL_HEADER_H
+
+    inner_w = (x1 - x0 - 2 * COL_PAD - GUTTER) // 2
+    if left_sections:
+        _draw_sections(img, draw, x, y, inner_w, left_sections, fonts, icons)
+    if right_sections:
+        _draw_sections(img, draw, x + inner_w + GUTTER, y, inner_w, right_sections, fonts, icons)
 
 
 def _hero_tiles(stats, standing):
@@ -635,29 +722,27 @@ def _roast_lines(cfg, draw, fonts, max_w):
 def generate_board_image(cfg, stats, standing, leaders, zone_name,
                          mplus_results, mplus_season_scores, mplus_season_parses,
                          start_dt, end_dt, no_logs=False, output_path="board.png",
-                         improvement=None):
+                         improvement=None, mplus_weekly=None):
     """Render the full weekly board and save it as a PNG."""
     fonts = _fonts()
     measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
 
     raid_sections, mplus_sections = _build_columns(
-        cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses, no_logs)
+        cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
+        no_logs, mplus_weekly=mplus_weekly)
+    seasonal_left, seasonal_right = _build_seasonal(
+        cfg, mplus_season_scores, mplus_season_parses, improvement)
+    show_seasonal = bool(seasonal_left or seasonal_right)
 
     sections_cfg = cfg.get("sections", {})
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()
     mplus_title = (sections_cfg.get("mplus_header") or {}).get("title", "Mythic Plus").upper()
 
-    # Most Improved: two panels at the bottom (DPS left, healers right)
-    imp = improvement or {}
-    imp_dps = [{"title": "SEASON PARSE GAIN", "rows": _improve_rows(imp["dps"])}] if imp.get("dps") else []
-    imp_heal = [{"title": "SEASON PARSE GAIN", "rows": _improve_rows(imp["hps"])}] if imp.get("hps") else []
-    show_improvement = bool(imp_dps or imp_heal)
-
     header_h = 96
     show_hero = stats is not None or bool(standing)
     hero_h = 120 if show_hero else 0
     col_h = max(_column_height(raid_sections), _column_height(mplus_sections))
-    imp_h = max(_column_height(imp_dps), _column_height(imp_heal)) if show_improvement else 0
+    seasonal_h = _seasonal_height(seasonal_left, seasonal_right) if show_seasonal else 0
 
     quote_max_w = WIDTH - 2 * MARGIN - 2 * COL_PAD
     roast_lines, roast_attr = _roast_lines(cfg, measure, fonts, quote_max_w)
@@ -667,8 +752,8 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     if show_hero:
         height += hero_h + GUTTER
     height += col_h
-    if show_improvement:
-        height += GUTTER + imp_h
+    if show_seasonal:
+        height += GUTTER + seasonal_h
     if roast_lines:
         height += GUTTER + roast_h
     height += MARGIN
@@ -705,13 +790,10 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     _draw_column(img, draw, MARGIN + COL_W + GUTTER, y, col_h, mplus_title, mplus_sections, fonts, icons=icons)
     y += col_h
 
-    if show_improvement:
+    if show_seasonal:
         y += GUTTER
-        _draw_column(img, draw, MARGIN, y, imp_h, "MOST IMPROVED DPS", imp_dps, fonts,
-                     empty_text="Not enough season data yet", icons=icons)
-        _draw_column(img, draw, MARGIN + COL_W + GUTTER, y, imp_h, "MOST IMPROVED HEALERS", imp_heal, fonts,
-                     empty_text="Not enough season data yet", icons=icons)
-        y += imp_h
+        _draw_seasonal(img, draw, y, seasonal_h, seasonal_left, seasonal_right, fonts, icons=icons)
+        y += seasonal_h
 
     if roast_lines:
         y += GUTTER

@@ -16,7 +16,9 @@ from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
 from guild_board.wcl import (
     DIFFICULTY_MAP,
+    MPLUS_DIFFICULTY,
     collect_improvement_history,
+    collect_parses_only,
     collect_raid_stats,
     compute_improvement,
     detect_zone,
@@ -271,6 +273,22 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             logger.warning("Most Improved lookup failed; skipping the section: %s", exc)
             improvement = None
 
+    mplus_weekly = None
+    if (raid_enabled and not no_logs and token
+            and sections.get("mplus_weekly_parses", {}).get("enabled", True)):
+        try:
+            mdps, mhps = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
+            if roster_keep:
+                mdps = {n: v for n, v in mdps.items() if roster_keep(n)}
+                mhps = {n: v for n, v in mhps.items() if roster_keep(n)}
+            if mdps or mhps:
+                mplus_weekly = {"dps": mdps, "hps": mhps}
+                logger.info("Weekly M+ parses: %s DPS, %s HPS", len(mdps), len(mhps))
+            else:
+                logger.info("No M+ dungeon logs found this week (players must upload M+ runs to WCL).")
+        except (RuntimeError, requests.RequestException) as exc:
+            logger.warning("Weekly M+ parse lookup failed: %s", exc)
+
     mplus_results = None
     mplus_season_scores = None
     mplus_season_parses = None
@@ -298,7 +316,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                 cfg, stats, standing, leaders, zone_name,
                 mplus_results, mplus_season_scores, mplus_season_parses,
                 start_dt, end_dt, no_logs, output_path="board.png",
-                improvement=improvement)
+                improvement=improvement, mplus_weekly=mplus_weekly)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.

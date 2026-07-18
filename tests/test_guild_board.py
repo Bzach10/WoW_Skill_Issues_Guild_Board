@@ -374,6 +374,12 @@ def test_spec_class_keys():
     assert board_image._spec_class_keys("", "Priest") == ("", "priest")
     # Unknown spec still resolves the class for the fallback icon
     assert board_image._spec_class_keys("Devourer DH", "")[1] == "demonhunter"
+    # Spec-only strings infer the class when the spec is unambiguous
+    assert board_image._spec_class_keys("Augmentation", "") == ("augmentation", "evoker")
+    assert board_image._spec_class_keys("Demonology", "") == ("demonology", "warlock")
+    assert board_image._spec_class_keys("Brewmaster", "") == ("brewmaster", "monk")
+    # Ambiguous spec alone stays classless (no wrong icon)
+    assert board_image._spec_class_keys("Frost", "") == ("frost", "")
 
 
 def test_row_icon_prefers_spec_then_class(monkeypatch):
@@ -609,11 +615,18 @@ def test_generate_board_image(tmp_path):
                  "early_parse": 30, "late_parse": 58, "early_amount": 100_000,
                  "late_amount": 134_000, "delta": 28}],
     }
+    mplus_weekly = {
+        "dps": {"Brewzleeh": {"parse": 82, "spec": "Windwalker", "cls": "Monk",
+                              "amount": 190_000, "boss": "Pit of Saron", "difficulty": 10}},
+        "hps": {"Healmates": {"parse": 66, "spec": "Holy", "cls": "Priest",
+                              "amount": 90_000, "boss": "Skyreach", "difficulty": 10}},
+    }
     now = datetime.now(timezone.utc)
     out = board_image.generate_board_image(
         _image_board_cfg(), _image_board_stats(), standing, leaders, "Some Raid",
         mplus, scores, parses, now - timedelta(days=7), now,
-        output_path=str(tmp_path / "board.png"), improvement=improvement)
+        output_path=str(tmp_path / "board.png"), improvement=improvement,
+        mplus_weekly=mplus_weekly)
     img = Image.open(out)
     assert img.width == board_image.WIDTH
     assert img.height > 500

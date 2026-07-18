@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import requests
 
-from guild_board.config import clean_spec_name, slugify_server
+from guild_board.config import CLASS_ID_MAP, clean_spec_name, slugify_server
 from guild_board.dedup import FightDeduper, report_sort_key
 
 logger = logging.getLogger(__name__)
@@ -13,6 +13,9 @@ WCL_TOKEN_URL = "https://www.warcraftlogs.com/oauth/token"
 WCL_API_URL = "https://www.warcraftlogs.com/api/v2/client"
 
 DIFFICULTY_MAP = {"lfr": 1, "normal": 3, "heroic": 4, "mythic": 5}
+
+# WCL difficulty id for Mythic+ dungeon fights
+MPLUS_DIFFICULTY = 10
 
 REPORTS_QUERY = """
 query ($name: String!, $slug: String!, $region: String!, $start: Float!, $end: Float!, $limit: Int!) {
@@ -93,6 +96,7 @@ CHARACTER_ALLSTARS_QUERY = """
 query ($name: String!, $slug: String!, $region: String!, $zoneId: Int!, $difficulty: Int!) {
   characterData {
     character(name: $name, serverSlug: $slug, serverRegion: $region) {
+      classID
       zoneRankings(zoneID: $zoneId, metric: default, difficulty: $difficulty)
     }
   }
@@ -562,6 +566,7 @@ def fetch_realm_rank_leaders(token, cfg, participants, zone_id, difficulty):
         leaders.append({
             "name": name,
             "spec": best.get("spec") or "",
+            "cls": CLASS_ID_MAP.get(character.get("classID"), ""),
             "realm_rank": realm_rank,
             "region_rank": best.get("regionRank"),
             "best_avg": blob.get("bestPerformanceAverage"),
