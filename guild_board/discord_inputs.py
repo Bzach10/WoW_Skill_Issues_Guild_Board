@@ -48,8 +48,15 @@ def _collect_messages(bot_token, channel_id, max_threads=8):
     try:
         messages.extend(_get_messages(bot_token, channel_id))
     except requests.HTTPError as exc:
-        # Forum channels reject /messages; their threads below still work.
-        logger.debug("Channel %s message list unavailable: %s", channel_id, exc)
+        status = exc.response.status_code if exc.response is not None else "?"
+        if status in (401, 403, 404):
+            # Make missing access loud — it looks identical to an empty channel otherwise
+            logger.warning(
+                "Cannot read channel %s (HTTP %s). Check the bot has View Channel + "
+                "Read Message History there and the ID is right.", channel_id, status)
+        else:
+            # Forum channels reject /messages; their threads below still work.
+            logger.debug("Channel %s message list unavailable: %s", channel_id, exc)
 
     thread_ids = []
     try:
@@ -132,6 +139,9 @@ def fetch_top_roast(bot_token, channel_ids, since_ms, vote_emoji="\U0001F525", m
         if _snowflake_ms(message["id"]) < since_ms:
             continue
         candidates.append(message)
+
+    logger.info("Roast scan: %s message(s) found across %s channel(s), %s human post(s) this week",
+                len(messages), len(channel_ids), len(candidates))
 
     qualified = [m for m in candidates if _vote_count(m, vote_emoji) >= min_votes]
     if not qualified and min_votes <= 1:
