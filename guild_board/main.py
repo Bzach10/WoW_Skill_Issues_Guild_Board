@@ -86,12 +86,15 @@ def _apply_discord_inputs(cfg, start_ms):
 
     sections = cfg.setdefault("sections", {})
 
-    roast_channel = str(inputs_cfg.get("roast_channel_id") or "").strip()
+    roast_channels = inputs_cfg.get("roast_channel_ids") or inputs_cfg.get("roast_channel_id") or []
+    if isinstance(roast_channels, (str, int)):
+        roast_channels = [roast_channels]
+    roast_channels = [str(c).strip() for c in roast_channels if str(c).strip()]
     manual = (sections.get("roast_of_the_week") or {}).get("manual_override")
-    if roast_channel and not manual:
+    if roast_channels and not manual:
         try:
             top = fetch_top_roast(
-                bot_token, roast_channel, start_ms,
+                bot_token, roast_channels, start_ms,
                 vote_emoji=inputs_cfg.get("vote_emoji", "\U0001F525"),
                 min_votes=int(inputs_cfg.get("min_votes", 1)),
             )
@@ -112,6 +115,8 @@ def _apply_discord_inputs(cfg, start_ms):
             if ann:
                 logger.info("Announcement pulled from Discord (by %s)", ann["author"])
                 sections.setdefault("announcement", {})["text"] = ann["text"]
+            else:
+                logger.info("No announcement message found in the Discord channel; using config text.")
         except requests.RequestException as exc:
             logger.warning("Announcement channel read failed: %s", exc)
 
@@ -135,6 +140,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     zone_name = None
     no_logs = False
     token = None
+    roster_keep = None
 
     sections = cfg.get("sections", {})
     mplus_cfg = sections.get("mplus") or cfg.get("mplus", {})
@@ -197,8 +203,12 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                     logger.info("No data found")
 
             if stats:
-                stats = fill_missing_parses(token, cfg, reports, stats)
-                stats = apply_roster_filters(token, cfg, stats)
+                # Filter pugs out FIRST, then backfill a metric the filter
+                # emptied (e.g. all mythic healers were non-members) from a
+                # lower difficulty — with the same filter applied.
+                roster_keep = make_name_filter(token, cfg)
+                stats = apply_roster_filters(token, cfg, stats, keep=roster_keep)
+                stats = fill_missing_parses(token, cfg, reports, stats, keep=roster_keep)
                 logger.info("After roster filters: %s DPS, %s HPS",
                             len(stats.get("best_dps", {})),
                             len(stats.get("best_hps", {})))
@@ -246,7 +256,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         try:
             history = collect_improvement_history(
                 token, cfg, zone_id, stats["difficulty"], end_ms)
-            keep = make_name_filter(token, cfg)
+            keep = roster_keep or make_name_filter(token, cfg)
             improvement = {}
             if imp_dps_cfg.get("enabled", False):
                 ranked = [e for e in compute_improvement(history["dps"]) if keep(e["name"])]

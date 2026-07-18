@@ -344,12 +344,14 @@ def collect_parses_only(token, cfg, reports, difficulty):
     return best_dps, best_hps
 
 
-def fill_missing_parses(token, cfg, reports, stats, collector=None):
+def fill_missing_parses(token, cfg, reports, stats, collector=None, keep=None):
     """If DPS or HPS has no parses at the difficulty the week used, look one
     difficulty down (mythic -> heroic -> normal) for that metric only.
 
-    Entries carry a per-row "difficulty" tag so the board can label them
-    (e.g. "Heroic Rotmire" in an otherwise-mythic week)."""
+    Runs AFTER roster filtering, so `keep` must be applied to fallback
+    entries too — otherwise a pug-only heroic run would sneak onto the
+    board. Entries carry a per-row "difficulty" tag so the board can label
+    them (e.g. "Heroic Rotmire" in an otherwise-mythic week)."""
     if not stats:
         return stats
     order = [5, 4, 3, 1]
@@ -368,6 +370,8 @@ def fill_missing_parses(token, cfg, reports, stats, collector=None):
             except (RuntimeError, requests.RequestException) as exc:
                 logger.warning("Parse fallback at difficulty %s failed: %s", diff, exc)
                 continue
+            if keep:
+                found = {name: info for name, info in found.items() if keep(name)}
             if found:
                 logger.info("No %s parses at difficulty %s; using difficulty %s instead.",
                             metric, used, diff)

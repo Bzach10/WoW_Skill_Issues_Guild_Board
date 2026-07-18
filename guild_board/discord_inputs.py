@@ -22,15 +22,66 @@ DISCORD_API = "https://discord.com/api/v10"
 DISCORD_EPOCH_MS = 1_420_070_400_000
 
 
-def _get_messages(bot_token, channel_id, limit=100):
+def _get_json(bot_token, path, params=None):
     resp = requests.get(
-        f"{DISCORD_API}/channels/{channel_id}/messages",
+        f"{DISCORD_API}{path}",
         headers={"Authorization": f"Bot {bot_token}"},
-        params={"limit": limit},
+        params=params or {},
         timeout=30,
     )
     resp.raise_for_status()
     return resp.json()
+
+
+def _get_messages(bot_token, channel_id, limit=100):
+    return _get_json(bot_token, f"/channels/{channel_id}/messages", {"limit": limit})
+
+
+def _collect_messages(bot_token, channel_id, max_threads=8):
+    """Messages in a channel PLUS its recent threads.
+
+    Roasts often live in threads (the board footer literally says "drop
+    roasts in the thread"), and forum-style channels store every post as a
+    thread — so reading only the channel itself misses them all.
+    """
+    messages = []
+    try:
+        messages.extend(_get_messages(bot_token, channel_id))
+    except requests.HTTPError as exc:
+        # Forum channels reject /messages; their threads below still work.
+        logger.debug("Channel %s message list unavailable: %s", channel_id, exc)
+
+    thread_ids = []
+    try:
+        channel = _get_json(bot_token, f"/channels/{channel_id}")
+        guild_id = channel.get("guild_id")
+        if guild_id:
+            active = _get_json(bot_token, f"/guilds/{guild_id}/threads/active")
+            for thread in active.get("threads") or []:
+                if str(thread.get("parent_id")) == str(channel_id):
+                    thread_ids.append(str(thread["id"]))
+    except requests.HTTPError as exc:
+        logger.debug("Active thread lookup failed for %s: %s", channel_id, exc)
+
+    try:
+        archived = _get_json(bot_token, f"/channels/{channel_id}/threads/archived/public",
+                             {"limit": 25})
+        for thread in archived.get("threads") or []:
+            thread_ids.append(str(thread["id"]))
+    except requests.HTTPError as exc:
+        logger.debug("Archived thread lookup failed for %s: %s", channel_id, exc)
+
+    # Newest threads first, capped so one busy channel can't eat the run
+    thread_ids = list(dict.fromkeys(thread_ids))
+    thread_ids.sort(key=_snowflake_ms, reverse=True)
+    for thread_id in thread_ids[:max_threads]:
+        try:
+            messages.extend(_get_json(bot_token, f"/channels/{thread_id}/messages", {"limit": 50}))
+        except requests.HTTPError as exc:
+            logger.debug("Thread %s read failed: %s", thread_id, exc)
+
+    unique = {m["id"]: m for m in messages if m.get("id")}
+    return list(unique.values())
 
 
 def _snowflake_ms(snowflake):
@@ -50,11 +101,28 @@ def _vote_count(message, emoji):
     return 0
 
 
-def fetch_top_roast(bot_token, channel_id, since_ms, vote_emoji="\U0001F525", min_votes=1):
-    """Return the most-voted roast message posted since since_ms, or None."""
-    messages = _get_messages(bot_token, channel_id)
-    best = None
-    best_votes = min_votes - 1
+def fetch_top_roast(bot_token, channel_ids, since_ms, vote_emoji="\U0001F525", min_votes=1):
+    """Return the most-voted roast posted since since_ms across the given
+    channel(s) — including their threads — or None.
+
+    With min_votes <= 1, an unvoted submission still qualifies (newest
+    wins), so a fresh roast nobody reacted to isn't silently dropped.
+    With min_votes > 1, only genuinely voted roasts win.
+    """
+    if isinstance(channel_ids, (str, int)):
+        channel_ids = [channel_ids]
+
+    messages = []
+    for channel_id in channel_ids:
+        channel_id = str(channel_id).strip()
+        if not channel_id:
+            continue
+        try:
+            messages.extend(_collect_messages(bot_token, channel_id))
+        except requests.RequestException as exc:
+            logger.warning("Roast channel %s read failed: %s", channel_id, exc)
+
+    candidates = []
     for message in messages:
         content = (message.get("content") or "").strip()
         if not content:
@@ -63,12 +131,16 @@ def fetch_top_roast(bot_token, channel_id, since_ms, vote_emoji="\U0001F525", mi
             continue
         if _snowflake_ms(message["id"]) < since_ms:
             continue
-        votes = _vote_count(message, vote_emoji)
-        if votes > best_votes:
-            best, best_votes = message, votes
+        candidates.append(message)
 
-    if best is None:
+    qualified = [m for m in candidates if _vote_count(m, vote_emoji) >= min_votes]
+    if not qualified and min_votes <= 1:
+        qualified = candidates
+    if not qualified:
         return None
+
+    best = max(qualified, key=lambda m: (_vote_count(m, vote_emoji), _snowflake_ms(m["id"])))
+    best_votes = _vote_count(best, vote_emoji)
 
     target = ""
     mentions = best.get("mentions") or []

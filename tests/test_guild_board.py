@@ -65,12 +65,13 @@ def test_roster_cache(tmp_path):
     assert members == ["Bud-BleedingHollow", "Rakell-Area52"]
 
 
-def test_apply_roster_filters():
+def test_apply_roster_filters(tmp_path):
     original = filters.fetch_guild_member_names
     filters.fetch_guild_member_names = lambda token, cfg: {"rakell", "optout"}
     try:
         cfg = {
             "guild": {},
+            "roster_cache": {"file": str(tmp_path / "no_cache.json")},
             "filters": {
                 "guild_members_only": True,
                 "always_include": ["Trialguy"],
@@ -300,6 +301,69 @@ def test_compute_improvement_uses_best_of_early_window():
     assert results[0]["delta"] == 15
 
 
+def test_name_filter_unions_live_and_cached_roster(tmp_path):
+    """WCL's live roster drifts; cached members must not vanish off the board."""
+    cache_file = tmp_path / "roster.json"
+    gb_config.save_roster_cache({"roster_cache": {"file": str(cache_file)}},
+                                ["Healmates-Korgath", "Healyeah-Queldorei"])
+    original = filters.fetch_guild_member_names
+    filters.fetch_guild_member_names = lambda token, cfg: {"rakell"}  # live roster lost the healers
+    try:
+        cfg = {
+            "guild": {},
+            "roster_cache": {"file": str(cache_file)},
+            "filters": {"guild_members_only": True},
+        }
+        keep = filters.make_name_filter(None, cfg)
+        assert keep("Rakell")
+        assert keep("Healmates")     # rescued by the cache
+        assert keep("healyeah")
+        assert not keep("Randompug")
+    finally:
+        filters.fetch_guild_member_names = original
+
+
+def test_resolve_roster_refreshes_stale_cache(tmp_path, monkeypatch):
+    import guild_board.wcl as wcl_mod
+    cache_file = tmp_path / "roster.json"
+    cfg = {
+        "guild": {"realm_slug": "bleeding-hollow"},
+        "roster_cache": {"enabled": True, "file": str(cache_file), "max_age_days": 7},
+        "sections": {"mplus": {"enabled": True, "auto_fetch_roster": True, "roster": []}},
+    }
+    # Write a stale cache (9 days old)
+    stale = {"last_updated": (datetime.now(timezone.utc) - timedelta(days=9)).isoformat(),
+             "members": ["oldguy-bleeding-hollow"]}
+    cache_file.write_text(json.dumps(stale))
+
+    monkeypatch.setattr(wcl_mod, "fetch_guild_member_roster",
+                        lambda token, cfg: [("newguy", "bleeding-hollow")])
+    roster, fetched = gb_config.resolve_roster(cfg, token="tok", section_name="mplus")
+    assert fetched is True
+    # New member fetched AND old member kept (union)
+    assert "newguy-bleeding-hollow" in roster
+    assert "oldguy-bleeding-hollow" in roster
+
+    # Fresh cache now: no re-fetch
+    monkeypatch.setattr(wcl_mod, "fetch_guild_member_roster",
+                        lambda token, cfg: (_ for _ in ()).throw(AssertionError("should not fetch")))
+    roster2, fetched2 = gb_config.resolve_roster(cfg, token="tok", section_name="mplus")
+    assert fetched2 is False
+    assert set(roster2) == set(roster)
+
+
+def test_fill_missing_parses_applies_roster_filter():
+    stats = {"best_dps": {"A": {"parse": 1}}, "best_hps": {}, "difficulty": 5}
+
+    def collector(token, cfg, reports, difficulty):
+        return {}, {"Pughealer": {"parse": 80, "difficulty": difficulty},
+                    "Guildhealer": {"parse": 60, "difficulty": difficulty}}
+
+    keep = lambda name: name.lower() == "guildhealer"
+    out = wcl.fill_missing_parses(None, {}, [], stats, collector=collector, keep=keep)
+    assert set(out["best_hps"]) == {"Guildhealer"}
+
+
 def test_spec_class_keys():
     assert board_image._spec_class_keys("Frost", "Mage") == ("frost", "mage")
     assert board_image._spec_class_keys("Brewmaster Monk", "") == ("brewmaster", "monk")
@@ -378,7 +442,7 @@ def test_fetch_top_roast_picks_most_voted(monkeypatch):
         _roast_msg(week_start - 5000, "old roast from last week", 50),  # outside window
         _roast_msg(week_start + 7000, "bot spam", 99, bot=True),
     ]
-    monkeypatch.setattr(discord_inputs, "_get_messages", lambda *a, **k: messages)
+    monkeypatch.setattr(discord_inputs, "_collect_messages", lambda *a, **k: messages)
     top = discord_inputs.fetch_top_roast("token", "123", week_start)
     assert top["votes"] == 7
     assert top["winner"] == "Rakdaddy"
@@ -389,9 +453,36 @@ def test_fetch_top_roast_picks_most_voted(monkeypatch):
 def test_fetch_top_roast_respects_min_votes(monkeypatch):
     week_start = 1_000_000_000_000
     messages = [_roast_msg(week_start + 5000, "unloved roast", 1)]
-    monkeypatch.setattr(discord_inputs, "_get_messages", lambda *a, **k: messages)
+    monkeypatch.setattr(discord_inputs, "_collect_messages", lambda *a, **k: messages)
     assert discord_inputs.fetch_top_roast("token", "123", week_start, min_votes=3) is None
     assert discord_inputs.fetch_top_roast("token", "123", week_start, min_votes=1)["votes"] == 1
+
+
+def test_fetch_top_roast_unvoted_fallback(monkeypatch):
+    """With min_votes 1, a fresh roast nobody reacted to still wins (newest first)."""
+    week_start = 1_000_000_000_000
+    messages = [
+        _roast_msg(week_start + 5000, "first unloved roast", 0, author="Early"),
+        _roast_msg(week_start + 9000, "newest unloved roast", 0, author="Late"),
+    ]
+    monkeypatch.setattr(discord_inputs, "_collect_messages", lambda *a, **k: messages)
+    top = discord_inputs.fetch_top_roast("token", "123", week_start, min_votes=1)
+    assert top is not None
+    assert top["winner"] == "Late"
+    assert top["votes"] == 0
+
+
+def test_fetch_top_roast_scans_multiple_channels(monkeypatch):
+    week_start = 1_000_000_000_000
+    per_channel = {
+        "111": [_roast_msg(week_start + 5000, "channel one roast", 1, author="One")],
+        "222": [_roast_msg(week_start + 6000, "channel two roast", 4, author="Two")],
+    }
+    monkeypatch.setattr(discord_inputs, "_collect_messages",
+                        lambda token, cid, **k: per_channel[cid])
+    top = discord_inputs.fetch_top_roast("token", ["111", "222"], week_start)
+    assert top["winner"] == "Two"
+    assert top["votes"] == 4
 
 
 def test_fetch_latest_announcement_skips_bots(monkeypatch):

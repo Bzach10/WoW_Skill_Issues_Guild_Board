@@ -2,7 +2,7 @@ import json
 import os
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 import yaml
@@ -177,29 +177,45 @@ def resolve_roster(cfg, token=None, section_name="mplus"):
 
     roster = mplus_cfg.get("roster", []) if mplus_cfg else []
     auto_fetch = mplus_cfg.get("auto_fetch_roster", False) if mplus_cfg else False
-    cache_enabled = cfg.get("roster_cache", {}).get("enabled", True)
-
-    default_realm = cfg["guild"]["realm_slug"]
+    cache_cfg = cfg.get("roster_cache", {})
+    cache_enabled = cache_cfg.get("enabled", True)
+    max_age_days = float(cache_cfg.get("max_age_days", 7))
 
     if roster:
         return roster, False
 
+    cached_roster = []
+    cache_fresh = False
     if cache_enabled:
-        cached_roster, _ = load_roster_cache(cfg)
-        if cached_roster:
-            return cached_roster, False
+        cached_roster, last_updated = load_roster_cache(cfg)
+        if cached_roster and last_updated:
+            try:
+                age = datetime.now(timezone.utc) - datetime.fromisoformat(last_updated)
+                cache_fresh = age < timedelta(days=max_age_days)
+            except ValueError:
+                cache_fresh = False
 
+    if cached_roster and cache_fresh:
+        return cached_roster, False
+
+    # Cache is missing or stale: re-fetch so new members actually show up.
     if auto_fetch and token:
         from guild_board.wcl import fetch_guild_member_roster
 
         try:
             guild_roster = fetch_guild_member_roster(token, cfg)
             if guild_roster:
-                roster = [f"{name}-{realm}" for name, realm in guild_roster]
+                fetched = [f"{name}-{realm}" for name, realm in guild_roster]
                 if cache_enabled:
-                    save_roster_cache(cfg, roster)
-                return roster, True
+                    # Union with the old cache: WCL rosters drift, and a
+                    # member who's temporarily missing shouldn't vanish.
+                    merged = sorted(set(fetched) | set(cached_roster))
+                    save_roster_cache(cfg, merged)
+                    return merged, True
+                return fetched, True
         except Exception:
+            if cached_roster:
+                return cached_roster, False  # stale beats nothing
             raise
 
-    return roster, False
+    return cached_roster or roster, False

@@ -169,16 +169,24 @@ sections:
 #  Mode under Discord Settings -> Advanced).
 # ------------------------------------------------------------
 discord_inputs:
-  enabled: true               # flip to true once the bot + channels exist
-  roast_channel_id: "1528109811693260961"         # e.g. "1234567890123456789"
+  enabled: true
+  # Roast sources — channels AND their threads/forum posts are scanned.
+  # With min_votes 1, an unvoted roast still counts (newest wins);
+  # ties and votes are decided by 🔥 reactions.
+  roast_channel_ids:
+    - "1528109811693260961"   # roast submissions channel
+    - "1524921429760409620"   # guild-board channel (roast threads under the weekly post)
   vote_emoji: "🔥"
-  min_votes: 1                 # roasts need at least this many votes
+  min_votes: 1
   announcement_channel_id: "1528114032941207582"  # officers-only channel
 
-# Roster cache — keeps the auto-fetched guild roster between runs
+# Roster cache — keeps the auto-fetched guild roster between runs.
+# Refreshes automatically when older than max_age_days (new fetches are
+# UNIONED with the old cache, so members never silently vanish).
 roster_cache:
   enabled: true
   file: "roster_cache.json"
+  max_age_days: 7
 
 # ------------------------------------------------------------
 #  RAID SETTINGS
