@@ -169,11 +169,11 @@ sections:
 #  Mode under Discord Settings -> Advanced).
 # ------------------------------------------------------------
 discord_inputs:
-  enabled: false               # flip to true once the bot + channels exist
-  roast_channel_id: ""         # e.g. "1234567890123456789"
+  enabled: true               # flip to true once the bot + channels exist
+  roast_channel_id: "1528109811693260961"         # e.g. "1234567890123456789"
   vote_emoji: "🔥"
   min_votes: 1                 # roasts need at least this many votes
-  announcement_channel_id: ""  # officers-only channel
+  announcement_channel_id: "1528114032941207582"  # officers-only channel
 
 # Roster cache — keeps the auto-fetched guild roster between runs
 roster_cache:
