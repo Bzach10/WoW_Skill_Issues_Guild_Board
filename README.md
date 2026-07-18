@@ -80,9 +80,36 @@ python leaderboard.py --roast "..." --roast-winner Bud      # override roast for
 
 The GitHub Actions workflow also supports these as `workflow_dispatch` inputs.
 
+## Where to put manual inputs (cheat sheet)
+
+Three ways in, from most to least convenient:
+
+| Method | Good for | How |
+|---|---|---|
+| **Discord channels** (recommended, set up below) | Weekly roast voting, announcements | Members post + 🔥-vote in the roast channel; officers post in the announcement channel. The Tuesday run reads both automatically. |
+| **Run workflow form** | One-off overrides | Actions → Weekly Guild Board → Run workflow: roast fields, difficulty, lookback, dry run. A manually entered roast beats the Discord vote. |
+| **`weekly_state.json` / `config.yml`** | Standing config, roster overrides | Edit on the GitHub website (pencil icon), commit, run the workflow. |
+
+## Discord-powered inputs (roast voting + announcements)
+
+Turn Discord itself into the board's input form — no extra hosting, the weekly run just reads two channels:
+
+- **Roast channel** (e.g. `#roast-submissions`): anyone posts roasts during the week; the guild votes by reacting 🔥. The top-voted post since the week started is automatically crowned Roast of the Week (author = winner; if they @mention someone, that's the target).
+- **Announcement channel** (e.g. `#board-announcements`): lock posting to officers/GM in Discord permissions; the latest message there becomes the 📢 announcement at the top of the board.
+
+**One-time setup (~5 minutes):**
+
+1. Go to https://discord.com/developers/applications → New Application (name it "Guild Board Reader" or similar) → Bot tab. Turn OFF "Public Bot". Click "Reset Token" and copy the token.
+2. In the repo: Settings → Secrets and variables → Actions → New repository secret → name `DISCORD_BOT_TOKEN`, paste the token.
+3. Invite the bot: OAuth2 → URL Generator → scope `bot` → permissions **View Channels** and **Read Message History** only → open the generated URL and add it to your server.
+4. In Discord, enable Developer Mode (Settings → Advanced), then right-click each channel → **Copy Channel ID**.
+5. In `config.yml`, set `discord_inputs.enabled: true` and paste the two channel IDs.
+
+The bot never posts — the existing webhook still does that. If the token, channel IDs, or API are ever broken, the run logs a warning and falls back to whatever is in `weekly_state.json`/`config.yml`.
+
 ## The roast workflow
 
-The board's footer prompts people to drop healer roasts in a thread. During the week, members react to their favorites. Before Tuesday, an officer picks the winner (most reactions, or officer's choice) and pastes it into `weekly_state.json`. The Tuesday post crowns them.
+Members drop roasts in the roast channel all week and react 🔥 to their favorites. Tuesday's run counts the votes and crowns the winner automatically. No Discord bot set up yet? Old way still works: an officer pastes the winner into `weekly_state.json` before Tuesday, or uses the Run workflow form.
 
 ## Pugs and roster filtering
 
@@ -107,7 +134,7 @@ This also means partial logs are handled gracefully — if the backup logger sta
 ## How rankings work
 
 - **Guild Standing** shows your guild's progress rank vs other guilds — realm, region, and world — for the current raid tier, straight from Warcraft Logs. The raid zone is auto-detected from this week's logs (override with `zone_id` in config if needed).
-- **DPS/HPS** rank by each player's best parse percentile of the week (ilvl- and spec-normalized), so undergeared or off-meta players compete fairly. Parses only exist on kills.
+- **DPS/HPS** rank by each player's best parse percentile of the week (ilvl- and spec-normalized), so undergeared or off-meta players compete fairly. Parses only exist on kills. If one metric has no parses at the week's difficulty (e.g. mythic kills but no mythic healing parses), that metric alone falls back to heroic, then normal — and every line is labeled with the difficulty it came from ("Heroic Rotmire"), so nothing masquerades as mythic.
 - **Realm Rank Leaders** looks up every raider who appeared in this week's kills and ranks them by their WCL All Stars **realm rank** for the tier (at your configured difficulty), showing region rank and best-average parse too. This is season-long standing, not just this week.
 - **Deaths** count every death across all pulls of your configured difficulty, wipes included. Die in the fire, enter the leaderboard.
 - **M+** shows each listed character's highest key of the current week from Raider.io.

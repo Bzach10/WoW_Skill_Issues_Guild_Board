@@ -9,7 +9,7 @@ import requests
 
 from guild_board import board_image
 from guild_board import config as gb_config
-from guild_board import dedup, discord as gb_discord, filters, formatters, main, wcl
+from guild_board import dedup, discord as gb_discord, discord_inputs, filters, formatters, main, wcl
 
 
 def test_deduper():
@@ -298,6 +298,85 @@ def test_compute_improvement_uses_best_of_early_window():
     results = wcl.compute_improvement(history, min_span_days=14)
     assert results[0]["early_parse"] == 55
     assert results[0]["delta"] == 15
+
+
+def test_fill_missing_parses_uses_lower_difficulty():
+    stats = {
+        "best_dps": {"Rakell": {"parse": 90, "difficulty": 5}},
+        "best_hps": {},
+        "difficulty": 5,
+    }
+
+    def fake_collector(token, cfg, reports, difficulty):
+        if difficulty == 4:
+            return {}, {"Healmates": {"parse": 60, "difficulty": 4}}
+        return {}, {}
+
+    out = wcl.fill_missing_parses(None, {}, [], stats, collector=fake_collector)
+    assert out["best_dps"]["Rakell"]["difficulty"] == 5      # untouched
+    assert out["best_hps"]["Healmates"]["difficulty"] == 4   # heroic fallback, labeled
+    assert out["difficulty"] == 5                             # week stays mythic
+
+
+def test_fill_missing_parses_skips_when_present():
+    stats = {"best_dps": {"A": {"parse": 1}}, "best_hps": {"B": {"parse": 2}}, "difficulty": 5}
+
+    def exploding_collector(*args):
+        raise AssertionError("should not be called")
+
+    out = wcl.fill_missing_parses(None, {}, [], stats, collector=exploding_collector)
+    assert out is stats
+
+
+def _snowflake_for_ms(ms):
+    return str((ms - discord_inputs.DISCORD_EPOCH_MS) << 22)
+
+
+def _roast_msg(msg_id_ms, content, votes, author="Rakdaddy", bot=False, mentions=None):
+    return {
+        "id": _snowflake_for_ms(msg_id_ms),
+        "content": content,
+        "author": {"username": author, "bot": bot},
+        "reactions": [{"emoji": {"name": "\U0001F525"}, "count": votes}] if votes else [],
+        "mentions": mentions or [],
+    }
+
+
+def test_fetch_top_roast_picks_most_voted(monkeypatch):
+    week_start = 1_000_000_000_000
+    messages = [
+        _roast_msg(week_start + 5000, "mid roast", 2),
+        _roast_msg(week_start + 6000, "<@42> heals like a boss mod", 7,
+                   mentions=[{"username": "Healmates"}]),
+        _roast_msg(week_start - 5000, "old roast from last week", 50),  # outside window
+        _roast_msg(week_start + 7000, "bot spam", 99, bot=True),
+    ]
+    monkeypatch.setattr(discord_inputs, "_get_messages", lambda *a, **k: messages)
+    top = discord_inputs.fetch_top_roast("token", "123", week_start)
+    assert top["votes"] == 7
+    assert top["winner"] == "Rakdaddy"
+    assert top["target"] == "Healmates"
+    assert top["roast"] == "Healmates heals like a boss mod"
+
+
+def test_fetch_top_roast_respects_min_votes(monkeypatch):
+    week_start = 1_000_000_000_000
+    messages = [_roast_msg(week_start + 5000, "unloved roast", 1)]
+    monkeypatch.setattr(discord_inputs, "_get_messages", lambda *a, **k: messages)
+    assert discord_inputs.fetch_top_roast("token", "123", week_start, min_votes=3) is None
+    assert discord_inputs.fetch_top_roast("token", "123", week_start, min_votes=1)["votes"] == 1
+
+
+def test_fetch_latest_announcement_skips_bots(monkeypatch):
+    messages = [
+        {"id": "3", "content": "", "author": {"username": "Empty"}},
+        {"id": "2", "content": "posted by a bot", "author": {"username": "Bot", "bot": True}},
+        {"id": "1", "content": "Raid moved to 8pm Tuesday!", "author": {"username": "GMBoss"}},
+    ]
+    monkeypatch.setattr(discord_inputs, "_get_messages", lambda *a, **k: messages)
+    ann = discord_inputs.fetch_latest_announcement("token", "123")
+    assert ann["text"] == "Raid moved to 8pm Tuesday!"
+    assert ann["author"] == "GMBoss"
 
 
 class _FakeResp:

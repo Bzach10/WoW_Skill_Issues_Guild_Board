@@ -8,6 +8,7 @@ import requests
 
 from guild_board.config import load_config, require_env, resolve_roster, save_roster_cache
 from guild_board.discord import post_to_discord
+from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
 from guild_board.filters import apply_roster_filters, make_name_filter
 from guild_board.board_image import generate_board_image
 from guild_board.formatters import build_embed, build_image_embed
@@ -21,6 +22,7 @@ from guild_board.wcl import (
     detect_zone,
     fetch_guild_reports,
     fetch_guild_standing,
+    fill_missing_parses,
     fetch_realm_rank_leaders,
     get_wcl_token,
     try_difficulties,
@@ -67,6 +69,53 @@ def _setup_logging(level=logging.INFO):
     )
 
 
+def _apply_discord_inputs(cfg, start_ms):
+    """Pull the voted roast and officer announcement from Discord channels.
+
+    Everything fails open: a missing token, unset channel id, or API error
+    just leaves the config/weekly_state values in place.
+    """
+    inputs_cfg = cfg.get("discord_inputs") or {}
+    if not inputs_cfg.get("enabled", False):
+        return
+
+    bot_token = os.environ.get("DISCORD_BOT_TOKEN", "").strip()
+    if not bot_token:
+        logger.warning("discord_inputs is enabled but DISCORD_BOT_TOKEN is not set; skipping.")
+        return
+
+    sections = cfg.setdefault("sections", {})
+
+    roast_channel = str(inputs_cfg.get("roast_channel_id") or "").strip()
+    manual = (sections.get("roast_of_the_week") or {}).get("manual_override")
+    if roast_channel and not manual:
+        try:
+            top = fetch_top_roast(
+                bot_token, roast_channel, start_ms,
+                vote_emoji=inputs_cfg.get("vote_emoji", "\U0001F525"),
+                min_votes=int(inputs_cfg.get("min_votes", 1)),
+            )
+            if top:
+                logger.info("Roast voted from Discord: %s vote(s), by %s", top["votes"], top["winner"])
+                update = {"roast": top["roast"], "winner": top["winner"], "target": top["target"]}
+                sections.setdefault("roast_of_the_week", {}).update(update)
+                cfg.setdefault("roast_of_the_week", {}).update(update)
+            else:
+                logger.info("No qualifying roast submissions in Discord this week.")
+        except requests.RequestException as exc:
+            logger.warning("Roast channel read failed: %s", exc)
+
+    ann_channel = str(inputs_cfg.get("announcement_channel_id") or "").strip()
+    if ann_channel:
+        try:
+            ann = fetch_latest_announcement(bot_token, ann_channel)
+            if ann:
+                logger.info("Announcement pulled from Discord (by %s)", ann["author"])
+                sections.setdefault("announcement", {})["text"] = ann["text"]
+        except requests.RequestException as exc:
+            logger.warning("Announcement channel read failed: %s", exc)
+
+
 def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     """Collect data and build the Discord embed (and optionally post it)."""
     if start_dt is None or end_dt is None:
@@ -76,6 +125,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     start_ms = int(start_dt.timestamp() * 1000)
     end_ms = int(end_dt.timestamp() * 1000)
+
+    _apply_discord_inputs(cfg, start_ms)
 
     stats = None
     standing = None
@@ -146,6 +197,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                     logger.info("No data found")
 
             if stats:
+                stats = fill_missing_parses(token, cfg, reports, stats)
                 stats = apply_roster_filters(token, cfg, stats)
                 logger.info("After roster filters: %s DPS, %s HPS",
                             len(stats.get("best_dps", {})),
@@ -308,6 +360,8 @@ def main(argv=None):
             "roast": args.roast,
             "winner": args.roast_winner or "Anonymous",
             "target": args.roast_target or "",
+            # A manually entered roast beats the Discord vote
+            "manual_override": True,
         }
         cfg.setdefault("sections", {}).setdefault("roast_of_the_week", {}).update(roast)
         cfg.setdefault("roast_of_the_week", {}).update(roast)

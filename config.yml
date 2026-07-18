@@ -155,6 +155,25 @@ sections:
     target: "Healmates"                     # which healer got flamed (optional)
     roast: "Healmates Sucks"                # the roast itself
 
+# ------------------------------------------------------------
+#  DISCORD INPUTS — let the guild feed the board from Discord.
+#  Needs a bot token in the DISCORD_BOT_TOKEN repo secret and the
+#  bot invited with "View Channel" + "Read Message History"
+#  (see README "Discord-powered inputs" for the 5-minute setup).
+#  - Roast channel: members post roasts, 🔥 reactions are votes;
+#    the top-voted post of the week wins automatically.
+#  - Announcement channel: lock it to officers/GM in Discord;
+#    the latest message becomes the board announcement.
+#  Right-click a channel -> "Copy Channel ID" (needs Developer
+#  Mode under Discord Settings -> Advanced).
+# ------------------------------------------------------------
+discord_inputs:
+  enabled: false               # flip to true once the bot + channels exist
+  roast_channel_id: ""         # e.g. "1234567890123456789"
+  vote_emoji: "🔥"
+  min_votes: 1                 # roasts need at least this many votes
+  announcement_channel_id: ""  # officers-only channel
+
 # Roster cache — keeps the auto-fetched guild roster between runs
 roster_cache:
   enabled: true

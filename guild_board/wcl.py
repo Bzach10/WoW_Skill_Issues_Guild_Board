@@ -312,6 +312,11 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
     if not best_dps and not best_hps and pulls == 0:
         return None
 
+    for info in best_dps.values():
+        info["difficulty"] = difficulty
+    for info in best_hps.values():
+        info["difficulty"] = difficulty
+
     return {
         "best_dps": best_dps,
         "best_hps": best_hps,
@@ -321,6 +326,54 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
         "kills": kills,
         "difficulty": difficulty,
     }
+
+
+def collect_parses_only(token, cfg, reports, difficulty):
+    """Fetch just DPS/HPS parse rankings at a difficulty (no deaths/pulls)."""
+    best_dps, best_hps = {}, {}
+    for report in reports:
+        data = gql(token, REPORT_DETAIL_QUERY, {"code": report["code"], "difficulty": difficulty})
+        rep = ((data.get("reportData") or {}).get("report")) or {}
+        extract_parses(rep.get("dps"), "dps", best_dps)
+        extract_parses(rep.get("hps"), "healers", best_hps)
+        time.sleep(0.3)
+    for info in best_dps.values():
+        info["difficulty"] = difficulty
+    for info in best_hps.values():
+        info["difficulty"] = difficulty
+    return best_dps, best_hps
+
+
+def fill_missing_parses(token, cfg, reports, stats, collector=None):
+    """If DPS or HPS has no parses at the difficulty the week used, look one
+    difficulty down (mythic -> heroic -> normal) for that metric only.
+
+    Entries carry a per-row "difficulty" tag so the board can label them
+    (e.g. "Heroic Rotmire" in an otherwise-mythic week)."""
+    if not stats:
+        return stats
+    order = [5, 4, 3, 1]
+    used = stats.get("difficulty")
+    if used not in order:
+        return stats
+    lower = order[order.index(used) + 1:]
+    collector = collector or collect_parses_only
+
+    for metric, side in (("best_dps", 0), ("best_hps", 1)):
+        if stats.get(metric):
+            continue
+        for diff in lower:
+            try:
+                found = collector(token, cfg, reports, diff)[side]
+            except (RuntimeError, requests.RequestException) as exc:
+                logger.warning("Parse fallback at difficulty %s failed: %s", diff, exc)
+                continue
+            if found:
+                logger.info("No %s parses at difficulty %s; using difficulty %s instead.",
+                            metric, used, diff)
+                stats[metric] = found
+                break
+    return stats
 
 
 def _enrich_parse_links(best_parses, report_codes):
