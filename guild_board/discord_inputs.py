@@ -130,18 +130,26 @@ def fetch_top_roast(bot_token, channel_ids, since_ms, vote_emoji="\U0001F525", m
             logger.warning("Roast channel %s read failed: %s", channel_id, exc)
 
     candidates = []
+    empty_recent = 0
     for message in messages:
-        content = (message.get("content") or "").strip()
-        if not content:
-            continue
         if (message.get("author") or {}).get("bot"):
             continue
         if _snowflake_ms(message["id"]) < since_ms:
+            continue
+        content = (message.get("content") or "").strip()
+        if not content:
+            empty_recent += 1
             continue
         candidates.append(message)
 
     logger.info("Roast scan: %s message(s) found across %s channel(s), %s human post(s) this week",
                 len(messages), len(channel_ids), len(candidates))
+    if empty_recent and not candidates:
+        logger.warning(
+            "%s recent human message(s) came back with EMPTY content. Discord strips message "
+            "text unless the bot's 'Message Content Intent' is enabled — flip it on at "
+            "discord.com/developers -> your app -> Bot -> Privileged Gateway Intents.",
+            empty_recent)
 
     qualified = [m for m in candidates if _vote_count(m, vote_emoji) >= min_votes]
     if not qualified and min_votes <= 1:
@@ -172,8 +180,17 @@ def fetch_top_roast(bot_token, channel_ids, since_ms, vote_emoji="\U0001F525", m
 def fetch_latest_announcement(bot_token, channel_id):
     """Return the newest human-authored message in the announcement channel."""
     messages = _get_messages(bot_token, channel_id, limit=10)
+    empty_human = 0
     for message in messages:  # Discord returns newest first
+        if (message.get("author") or {}).get("bot"):
+            continue
         content = (message.get("content") or "").strip()
-        if content and not (message.get("author") or {}).get("bot"):
+        if content:
             return {"text": content, "author": _author_name(message)}
+        empty_human += 1
+    if empty_human:
+        logger.warning(
+            "Announcement channel has %s human message(s) with EMPTY content — enable the "
+            "bot's 'Message Content Intent' (Developer Portal -> Bot -> Privileged Gateway Intents).",
+            empty_human)
     return None
