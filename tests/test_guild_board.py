@@ -9,7 +9,7 @@ import requests
 
 from guild_board import board_image
 from guild_board import config as gb_config
-from guild_board import dedup, discord as gb_discord, filters, formatters, main
+from guild_board import dedup, discord as gb_discord, filters, formatters, main, wcl
 
 
 def test_deduper():
@@ -261,6 +261,45 @@ def test_main_loads_weekly_state(tmp_path):
     assert merged["roast_of_the_week"]["roast"] == "State roast"
 
 
+DAY_MS = 86_400_000
+
+
+def _sample(day, parse, amount=100_000, spec="Frost", cls="Mage"):
+    return {"ts": day * DAY_MS, "parse": parse, "amount": amount, "spec": spec, "cls": cls}
+
+
+def test_compute_improvement_ranks_by_parse_gain():
+    history = {
+        "Improver": [_sample(0, 20, 90_000), _sample(10, 35), _sample(30, 60, 140_000)],
+        "Steady": [_sample(0, 50), _sample(30, 52)],
+        "Decliner": [_sample(0, 80), _sample(30, 40)],
+        "OneNight": [_sample(0, 10), _sample(1, 90)],  # span too short
+        "NewGuy": [_sample(30, 70)],  # single data point
+    }
+    results = wcl.compute_improvement(history, min_span_days=14)
+    names = [r["name"] for r in results]
+    assert names[0] == "Improver"
+    assert "Decliner" not in names   # negative gains are not an award
+    assert "OneNight" not in names   # needs 2+ weeks between first and last log
+    assert "NewGuy" not in names
+    top = results[0]
+    assert top["early_parse"] == 20
+    assert top["late_parse"] == 60
+    assert top["delta"] == 40
+    assert top["early_amount"] == 90_000
+    assert top["late_amount"] == 140_000
+
+
+def test_compute_improvement_uses_best_of_early_window():
+    # Baseline is their best early form, not a single lucky low log
+    history = {
+        "Player": [_sample(0, 55), _sample(1, 30), _sample(40, 70)],
+    }
+    results = wcl.compute_improvement(history, min_span_days=14)
+    assert results[0]["early_parse"] == 55
+    assert results[0]["delta"] == 15
+
+
 class _FakeResp:
     def __init__(self, status_code=200, text="", json_data=None):
         self.status_code = status_code
@@ -365,11 +404,19 @@ def test_generate_board_image(tmp_path):
     mplus = [(17, "Skyreach", "brewzleeh", "Brewmaster Monk", True)]
     scores = [(2834.5, "Gravykin", "Protection Paladin")]
     parses = [(473, "Pit of Saron", "shadoxii", "Mistweaver Monk", False)]
+    improvement = {
+        "dps": [{"name": "Rakell", "spec": "Enhancement", "cls": "Shaman",
+                 "early_parse": 20, "late_parse": 60, "early_amount": 90_000,
+                 "late_amount": 140_000, "delta": 40}],
+        "hps": [{"name": "Healmates", "spec": "Holy", "cls": "Priest",
+                 "early_parse": 30, "late_parse": 58, "early_amount": 100_000,
+                 "late_amount": 134_000, "delta": 28}],
+    }
     now = datetime.now(timezone.utc)
     out = board_image.generate_board_image(
         _image_board_cfg(), _image_board_stats(), standing, leaders, "Some Raid",
         mplus, scores, parses, now - timedelta(days=7), now,
-        output_path=str(tmp_path / "board.png"))
+        output_path=str(tmp_path / "board.png"), improvement=improvement)
     img = Image.open(out)
     assert img.width == board_image.WIDTH
     assert img.height > 500

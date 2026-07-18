@@ -8,14 +8,16 @@ import requests
 
 from guild_board.config import load_config, require_env, resolve_roster, save_roster_cache
 from guild_board.discord import post_to_discord
-from guild_board.filters import apply_roster_filters
+from guild_board.filters import apply_roster_filters, make_name_filter
 from guild_board.board_image import generate_board_image
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
 from guild_board.wcl import (
     DIFFICULTY_MAP,
+    collect_improvement_history,
     collect_raid_stats,
+    compute_improvement,
     detect_zone,
     fetch_guild_reports,
     fetch_guild_standing,
@@ -78,6 +80,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     stats = None
     standing = None
     leaders = None
+    zone_id = None
     zone_name = None
     no_logs = False
     token = None
@@ -181,6 +184,31 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                 else:
                     logger.info("Could not detect raid zone; skipping rankings section.")
 
+    improvement = None
+    imp_dps_cfg = sections.get("most_improved_dps", {})
+    imp_heal_cfg = sections.get("most_improved_healers", {})
+    if (raid_enabled and stats
+            and (imp_dps_cfg.get("enabled", False) or imp_heal_cfg.get("enabled", False))):
+        if zone_id is None:
+            zone_id, _ = detect_zone(cfg, reports)
+        try:
+            history = collect_improvement_history(
+                token, cfg, zone_id, stats["difficulty"], end_ms)
+            keep = make_name_filter(token, cfg)
+            improvement = {}
+            if imp_dps_cfg.get("enabled", False):
+                ranked = [e for e in compute_improvement(history["dps"]) if keep(e["name"])]
+                improvement["dps"] = ranked[:int(imp_dps_cfg.get("top_n", 5))]
+            if imp_heal_cfg.get("enabled", False):
+                ranked = [e for e in compute_improvement(history["hps"]) if keep(e["name"])]
+                improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 2))]
+            logger.info("Most Improved: %s DPS, %s healer(s)",
+                        len(improvement.get("dps") or []),
+                        len(improvement.get("hps") or []))
+        except (RuntimeError, requests.RequestException) as exc:
+            logger.warning("Most Improved lookup failed; skipping the section: %s", exc)
+            improvement = None
+
     mplus_results = None
     mplus_season_scores = None
     mplus_season_parses = None
@@ -207,7 +235,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             image_path = generate_board_image(
                 cfg, stats, standing, leaders, zone_name,
                 mplus_results, mplus_season_scores, mplus_season_parses,
-                start_dt, end_dt, no_logs, output_path="board.png")
+                start_dt, end_dt, no_logs, output_path="board.png",
+                improvement=improvement)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.

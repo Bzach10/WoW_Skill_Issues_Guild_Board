@@ -15,7 +15,7 @@ WCL_API_URL = "https://www.warcraftlogs.com/api/v2/client"
 DIFFICULTY_MAP = {"lfr": 1, "normal": 3, "heroic": 4, "mythic": 5}
 
 REPORTS_QUERY = """
-query ($name: String!, $slug: String!, $region: String!, $start: Float!, $end: Float!) {
+query ($name: String!, $slug: String!, $region: String!, $start: Float!, $end: Float!, $limit: Int!) {
   reportData {
     reports(
       guildName: $name
@@ -23,7 +23,7 @@ query ($name: String!, $slug: String!, $region: String!, $start: Float!, $end: F
       guildServerRegion: $region
       startTime: $start
       endTime: $end
-      limit: 25
+      limit: $limit
     ) {
       data {
         code
@@ -144,7 +144,7 @@ def gql(token, query, variables):
     return payload.get("data", {})
 
 
-def fetch_guild_reports(token, cfg, start_ms, end_ms):
+def fetch_guild_reports(token, cfg, start_ms, end_ms, limit=25):
     guild = cfg["guild"]
     data = gql(token, REPORTS_QUERY, {
         "name": guild["name"],
@@ -152,6 +152,7 @@ def fetch_guild_reports(token, cfg, start_ms, end_ms):
         "region": guild["region"],
         "start": float(start_ms),
         "end": float(end_ms),
+        "limit": int(limit),
     })
     reports = (((data.get("reportData") or {}).get("reports") or {}).get("data")) or []
     return reports
@@ -327,6 +328,111 @@ def _enrich_parse_links(best_parses, report_codes):
     for name, info in best_parses.items():
         if report_codes:
             info["report_code"] = next(iter(report_codes))
+
+
+# ---------------------------------------------------------------------------
+# Most Improved — season-long parse history
+# ---------------------------------------------------------------------------
+
+IMPROVEMENT_MAX_DAYS = 180
+
+
+def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_reports=30):
+    """Collect each raider's best parse per report across the season.
+
+    The "season" is every guild report in the current raid zone (up to
+    IMPROVEMENT_MAX_DAYS back), so the award resets automatically when a
+    new tier starts. Returns {"dps": {name: [sample]}, "hps": ...} where a
+    sample is {ts, parse, amount, spec, cls}.
+    """
+    start_ms = end_ms - IMPROVEMENT_MAX_DAYS * 86_400_000
+    try:
+        reports = fetch_guild_reports(token, cfg, start_ms, end_ms, limit=100)
+    except (RuntimeError, requests.RequestException) as exc:
+        logger.warning("Season report sweep at limit=100 failed (%s); retrying with 25.", exc)
+        reports = fetch_guild_reports(token, cfg, start_ms, end_ms)
+
+    season = [r for r in reports if not zone_id or (r.get("zone") or {}).get("id") == zone_id]
+    season.sort(key=lambda r: r.get("startTime") or 0)
+    if len(season) > max_reports:
+        # Improvement compares early vs late form, so the middle matters least.
+        half = max_reports // 2
+        season = season[:half] + season[-half:]
+
+    logger.info("Most Improved: scanning %s season report(s)", len(season))
+    history = {"dps": defaultdict(list), "hps": defaultdict(list)}
+    for report in season:
+        code = report["code"]
+        ts = report.get("startTime") or 0
+        try:
+            data = gql(token, REPORT_DETAIL_QUERY, {"code": code, "difficulty": difficulty})
+        except (RuntimeError, requests.RequestException) as exc:
+            logger.warning("Skipping report %s in improvement scan: %s", code, exc)
+            continue
+        rep = ((data.get("reportData") or {}).get("report")) or {}
+        _extract_history(rep.get("dps"), "dps", ts, history["dps"])
+        _extract_history(rep.get("hps"), "healers", ts, history["hps"])
+        time.sleep(0.4)
+    return history
+
+
+def _extract_history(rankings_blob, role_key, ts, out):
+    """Record each player's best parse in this report into their timeline."""
+    if not rankings_blob:
+        return
+    best_this_report = {}
+    for fight in (rankings_blob.get("data") or []):
+        characters = (((fight.get("roles") or {}).get(role_key) or {}).get("characters")) or []
+        for ch in characters:
+            name = ch.get("name")
+            parse = ch.get("rankPercent")
+            if not name or parse is None:
+                continue
+            prev = best_this_report.get(name)
+            if prev is None or parse > prev["parse"]:
+                best_this_report[name] = {
+                    "parse": parse,
+                    "amount": ch.get("amount") or 0,
+                    "spec": ch.get("spec") or "",
+                    "cls": ch.get("class") or "",
+                }
+    for name, entry in best_this_report.items():
+        out[name].append({"ts": ts, **entry})
+
+
+def compute_improvement(player_history, min_span_days=14):
+    """Rank players by parse-percentile gain: best early-season parse vs
+    best recent parse. Players need data spanning min_span_days, and only
+    positive gains count — this is an award, not a shame list."""
+    results = []
+    for name, samples in player_history.items():
+        if len(samples) < 2:
+            continue
+        samples = sorted(samples, key=lambda s: s["ts"])
+        span = samples[-1]["ts"] - samples[0]["ts"]
+        if span < min_span_days * 86_400_000:
+            continue
+        early_cut = samples[0]["ts"] + span * 0.25
+        late_cut = samples[-1]["ts"] - span * 0.25
+        early = [s for s in samples if s["ts"] <= early_cut] or [samples[0]]
+        late = [s for s in samples if s["ts"] >= late_cut] or [samples[-1]]
+        baseline = max(early, key=lambda s: s["parse"])
+        current = max(late, key=lambda s: s["parse"])
+        delta = current["parse"] - baseline["parse"]
+        if delta <= 0:
+            continue
+        results.append({
+            "name": name,
+            "spec": current.get("spec") or "",
+            "cls": current.get("cls") or "",
+            "early_parse": baseline["parse"],
+            "late_parse": current["parse"],
+            "early_amount": baseline["amount"],
+            "late_amount": current["amount"],
+            "delta": delta,
+        })
+    results.sort(key=lambda r: r["delta"], reverse=True)
+    return results
 
 
 def fetch_guild_standing(token, cfg, zone_id):

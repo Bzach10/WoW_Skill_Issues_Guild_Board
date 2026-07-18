@@ -136,6 +136,17 @@ sections:
     zone_id: 0                     # 0 = auto-detect from this week's logs
     max_characters: 30             # how many raiders to look up (1 API call each)
 
+  # Most Improved — biggest WCL parse gains across the season (early-season
+  # best vs recent best, same raid zone; needs 2+ weeks of logs per player)
+  most_improved_dps:
+    order: 16
+    enabled: true
+    top_n: 5
+  most_improved_healers:
+    order: 17
+    enabled: true
+    top_n: 2
+
   # Roast of the week
   roast_of_the_week:
     order: 15

@@ -7,10 +7,10 @@ from guild_board.wcl import fetch_guild_member_names
 logger = logging.getLogger(__name__)
 
 
-def apply_roster_filters(token, cfg, stats):
-    """Optionally restrict the board to guild members (plus an allowlist),
-    and always honor the exclude list. Fails open: if the roster can't be
-    fetched, everyone stays on the board rather than posting a blank one."""
+def make_name_filter(token, cfg):
+    """Build a keep(name) predicate honoring guild_members_only plus the
+    include/exclude lists. Fails open: if the roster can't be fetched,
+    everyone passes rather than blanking the board."""
     filters = cfg.get("filters") or {}
     include = {n.strip().lower() for n in (filters.get("always_include") or [])}
     exclude = {n.strip().lower() for n in (filters.get("always_exclude") or [])}
@@ -25,9 +25,6 @@ def apply_roster_filters(token, cfg, stats):
             logger.warning("Guild roster lookup failed (%s); showing everyone this week.", exc)
             allowed = None
 
-    if allowed is None and not exclude:
-        return stats
-
     def keep(name):
         low = name.strip().lower()
         if low in exclude:
@@ -36,6 +33,13 @@ def apply_roster_filters(token, cfg, stats):
             return False
         return True
 
+    return keep
+
+
+def apply_roster_filters(token, cfg, stats):
+    """Optionally restrict the board to guild members (plus an allowlist),
+    and always honor the exclude list."""
+    keep = make_name_filter(token, cfg)
     for key in ("best_dps", "best_hps", "deaths", "participants"):
         stats[key] = {name: value for name, value in stats[key].items() if keep(name)}
     return stats

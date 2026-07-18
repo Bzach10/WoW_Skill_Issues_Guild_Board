@@ -275,6 +275,25 @@ def _season_run_rows(parses, top_n):
     return rows
 
 
+def _improve_rows(entries):
+    """Rows for the Most Improved panels: early → late parse, with throughput."""
+    rows = []
+    for e in entries:
+        detail_bits = [
+            e.get("spec") or "",
+            f"{e['early_parse']:.0f}% → {e['late_parse']:.0f}%",
+            f"{_fmt_amount(e.get('early_amount') or 0)} → {_fmt_amount(e.get('late_amount') or 0)}",
+        ]
+        rows.append({
+            "name": _cap(e["name"]),
+            "color": _rgb(get_class_color(e.get("cls") or e.get("spec"))),
+            "detail": " · ".join(b for b in detail_bits if b),
+            "value": f"+{e['delta']:.0f}%",
+            "value_color": (76, 220, 86),
+        })
+    return rows
+
+
 def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs):
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
@@ -371,7 +390,7 @@ def _draw_row(draw, x, y, w, index, row, fonts):
             draw.text((dx, cy - 9), detail, font=fonts["detail"], fill=MUTED)
 
 
-def _draw_column(draw, x0, y0, height, title, sections, fonts):
+def _draw_column(draw, x0, y0, height, title, sections, fonts, empty_text="No data this week"):
     draw.rounded_rectangle([x0, y0, x0 + COL_W, y0 + height], radius=12,
                            fill=PANEL, outline=PANEL_BORDER, width=1)
     x = x0 + COL_PAD
@@ -383,7 +402,7 @@ def _draw_column(draw, x0, y0, height, title, sections, fonts):
     y += COL_HEADER_H
 
     if not sections:
-        draw.text((x, y + 8), "No data this week", font=fonts["detail"], fill=FAINT)
+        draw.text((x, y + 8), empty_text, font=fonts["detail"], fill=FAINT)
         return
 
     for si, section in enumerate(sections):
@@ -465,7 +484,8 @@ def _roast_lines(cfg, draw, fonts, max_w):
 
 def generate_board_image(cfg, stats, standing, leaders, zone_name,
                          mplus_results, mplus_season_scores, mplus_season_parses,
-                         start_dt, end_dt, no_logs=False, output_path="board.png"):
+                         start_dt, end_dt, no_logs=False, output_path="board.png",
+                         improvement=None):
     """Render the full weekly board and save it as a PNG."""
     fonts = _fonts()
     measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
@@ -477,10 +497,17 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()
     mplus_title = (sections_cfg.get("mplus_header") or {}).get("title", "Mythic Plus").upper()
 
+    # Most Improved: two panels at the bottom (DPS left, healers right)
+    imp = improvement or {}
+    imp_dps = [{"title": "SEASON PARSE GAIN", "rows": _improve_rows(imp["dps"])}] if imp.get("dps") else []
+    imp_heal = [{"title": "SEASON PARSE GAIN", "rows": _improve_rows(imp["hps"])}] if imp.get("hps") else []
+    show_improvement = bool(imp_dps or imp_heal)
+
     header_h = 96
     show_hero = stats is not None or bool(standing)
     hero_h = 120 if show_hero else 0
     col_h = max(_column_height(raid_sections), _column_height(mplus_sections))
+    imp_h = max(_column_height(imp_dps), _column_height(imp_heal)) if show_improvement else 0
 
     quote_max_w = WIDTH - 2 * MARGIN - 2 * COL_PAD
     roast_lines, roast_attr = _roast_lines(cfg, measure, fonts, quote_max_w)
@@ -490,6 +517,8 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     if show_hero:
         height += hero_h + GUTTER
     height += col_h
+    if show_improvement:
+        height += GUTTER + imp_h
     if roast_lines:
         height += GUTTER + roast_h
     height += MARGIN
@@ -524,6 +553,14 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     _draw_column(draw, MARGIN, y, col_h, raid_title, raid_sections, fonts)
     _draw_column(draw, MARGIN + COL_W + GUTTER, y, col_h, mplus_title, mplus_sections, fonts)
     y += col_h
+
+    if show_improvement:
+        y += GUTTER
+        _draw_column(draw, MARGIN, y, imp_h, "MOST IMPROVED DPS", imp_dps, fonts,
+                     empty_text="Not enough season data yet")
+        _draw_column(draw, MARGIN + COL_W + GUTTER, y, imp_h, "MOST IMPROVED HEALERS", imp_heal, fonts,
+                     empty_text="Not enough season data yet")
+        y += imp_h
 
     if roast_lines:
         y += GUTTER

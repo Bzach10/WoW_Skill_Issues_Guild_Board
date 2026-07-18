@@ -111,6 +111,7 @@ This also means partial logs are handled gracefully — if the backup logger sta
 - **Realm Rank Leaders** looks up every raider who appeared in this week's kills and ranks them by their WCL All Stars **realm rank** for the tier (at your configured difficulty), showing region rank and best-average parse too. This is season-long standing, not just this week.
 - **Deaths** count every death across all pulls of your configured difficulty, wipes included. Die in the fire, enter the leaderboard.
 - **M+** shows each listed character's highest key of the current week from Raider.io.
+- **Most Improved** (DPS top 5, healers top 2) compares each raider's best WCL parse from early in the season against their recent best, using every guild log in the current raid zone (up to ~6 months back, so it resets automatically each tier). Parse percentiles are gear/spec-normalized, so this rewards playing better — not just gearing up. Players need logs spanning at least 2 weeks to qualify, and only positive gains appear. Configure via `most_improved_dps` / `most_improved_healers` in `config.yml`.
 
 **Important:** guild and player ranks on Warcraft Logs only reflect *logged* kills. If a boss kill never gets uploaded, WCL doesn't know it happened and your progress rank won't count it — one more reason consistent logging matters.
 
