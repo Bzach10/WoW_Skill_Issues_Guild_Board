@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import requests
 
-from guild_board.config import CLASS_ID_MAP, clean_spec_name, slugify_server
+from guild_board.config import clean_spec_name, slugify_server
 from guild_board.dedup import FightDeduper, report_sort_key
 
 logger = logging.getLogger(__name__)
@@ -16,6 +16,15 @@ DIFFICULTY_MAP = {"lfr": 1, "normal": 3, "heroic": 4, "mythic": 5}
 
 # WCL difficulty id for Mythic+ dungeon fights
 MPLUS_DIFFICULTY = 10
+
+# WCL numbers classes ALPHABETICALLY — not Blizzard's in-game order.
+# Using the in-game map here scrambled every boss-rank icon (a Priest at
+# WCL id 7 landed on Blizzard id 7 = Shaman).
+WCL_CLASS_IDS = {
+    1: "Death Knight", 2: "Druid", 3: "Hunter", 4: "Mage", 5: "Monk",
+    6: "Paladin", 7: "Priest", 8: "Rogue", 9: "Shaman", 10: "Warlock",
+    11: "Warrior", 12: "Demon Hunter", 13: "Evoker",
+}
 
 REPORTS_QUERY = """
 query ($name: String!, $slug: String!, $region: String!, $start: Float!, $end: Float!, $limit: Int!) {
@@ -122,6 +131,29 @@ query ($name: String!, $slug: String!, $region: String!, $page: Int!) {
   }
 }
 """
+
+
+# Report details are requested by several passes per run (weekly stats,
+# difficulty fallback, M+ weekly parses, the two-difficulty improvement
+# sweep). The same (report, difficulty) answer never changes mid-run, so
+# memoize it — this cuts ~30-40% of WCL calls and their rate-limit sleeps.
+_REPORT_CACHE = {}
+
+
+def clear_report_cache():
+    _REPORT_CACHE.clear()
+
+
+def fetch_report_detail(token, code, difficulty):
+    """Memoized fights + dps/hps rankings for one report at one difficulty."""
+    key = (code, int(difficulty))
+    if key in _REPORT_CACHE:
+        return _REPORT_CACHE[key]
+    data = gql(token, REPORT_DETAIL_QUERY, {"code": code, "difficulty": difficulty})
+    rep = ((data.get("reportData") or {}).get("report")) or {}
+    _REPORT_CACHE[key] = rep
+    time.sleep(0.3)
+    return rep
 
 
 def get_wcl_token(client_id, client_secret):
@@ -291,8 +323,7 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
     for report in ordered_reports:
         code = report["code"]
         report_start = report.get("startTime") or 0
-        data = gql(token, REPORT_DETAIL_QUERY, {"code": code, "difficulty": difficulty})
-        rep = ((data.get("reportData") or {}).get("report")) or {}
+        rep = fetch_report_detail(token, code, difficulty)
 
         extract_parses(rep.get("dps"), "dps", best_dps)
         extract_parses(rep.get("hps"), "healers", best_hps)
@@ -322,7 +353,8 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
         count_deaths(token, code, fight_ids, death_totals)
         if code not in report_codes:
             report_codes[code] = report
-        time.sleep(0.5)
+        if fight_ids:
+            time.sleep(0.3)  # only the deaths query needs pacing here
 
     if duplicates_skipped:
         logger.info("Deduplication: skipped %s duplicate pull(s)", duplicates_skipped)
@@ -354,8 +386,7 @@ def collect_parses_only(token, cfg, reports, difficulty):
     """Fetch just DPS/HPS parse rankings at a difficulty (no deaths/pulls)."""
     best_dps, best_hps = {}, {}
     for report in reports:
-        data = gql(token, REPORT_DETAIL_QUERY, {"code": report["code"], "difficulty": difficulty})
-        rep = ((data.get("reportData") or {}).get("report")) or {}
+        rep = fetch_report_detail(token, report["code"], difficulty)
         fight_levels = {
             f["id"]: f.get("keystoneLevel")
             for f in (rep.get("fights") or [])
@@ -363,7 +394,6 @@ def collect_parses_only(token, cfg, reports, difficulty):
         }
         extract_parses(rep.get("dps"), "dps", best_dps, fight_levels)
         extract_parses(rep.get("hps"), "healers", best_hps, fight_levels)
-        time.sleep(0.3)
     for info in best_dps.values():
         info["difficulty"] = difficulty
     for info in best_hps.values():
@@ -466,14 +496,12 @@ def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_rep
         code = report["code"]
         ts = report.get("startTime") or 0
         try:
-            data = gql(token, REPORT_DETAIL_QUERY, {"code": code, "difficulty": difficulty})
+            rep = fetch_report_detail(token, code, difficulty)
         except (RuntimeError, requests.RequestException) as exc:
             logger.warning("Skipping report %s in improvement scan: %s", code, exc)
             continue
-        rep = ((data.get("reportData") or {}).get("report")) or {}
         _extract_history(rep.get("dps"), "dps", ts, history["dps"])
         _extract_history(rep.get("hps"), "healers", ts, history["hps"])
-        time.sleep(0.4)
     return history
 
 
@@ -483,6 +511,7 @@ def _extract_history(rankings_blob, role_key, ts, out):
         return
     best_this_report = {}
     for fight in (rankings_blob.get("data") or []):
+        boss = ((fight.get("encounter") or {}).get("name")) or ""
         characters = (((fight.get("roles") or {}).get(role_key) or {}).get("characters")) or []
         for ch in characters:
             name = ch.get("name")
@@ -496,6 +525,7 @@ def _extract_history(rankings_blob, role_key, ts, out):
                     "amount": ch.get("amount") or 0,
                     "spec": ch.get("spec") or "",
                     "cls": ch.get("class") or "",
+                    "boss": boss,
                 }
     for name, entry in best_this_report.items():
         out[name].append({"ts": ts, **entry})
@@ -606,7 +636,7 @@ def fetch_realm_rank_leaders(token, cfg, participants, zone_id, difficulty):
         leaders.append({
             "name": name,
             "spec": best.get("spec") or "",
-            "cls": CLASS_ID_MAP.get(character.get("classID"), ""),
+            "cls": WCL_CLASS_IDS.get(character.get("classID"), ""),
             "realm_rank": realm_rank,
             "region_rank": best.get("regionRank"),
             "best_avg": blob.get("bestPerformanceAverage"),
