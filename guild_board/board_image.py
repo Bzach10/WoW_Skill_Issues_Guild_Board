@@ -129,9 +129,9 @@ GUTTER = 24
 COL_PAD = 22
 COL_W = (WIDTH - 2 * MARGIN - GUTTER) // 2
 ROW_H = 36
-HEADER_ART_H = 340   # theme art banner across the top (guild sign area)
+HEADER_ART_H = 560   # theme art banner across the top (full guild sign)
 ART_INFO_H = 48      # slim info strip under the header banner
-FOOTER_ART_H = 380   # theme art banner across the bottom
+FOOTER_ART_H = 560   # theme art banner across the bottom (full scene)
 SEC_TITLE_H = 32
 SEC_GAP = 16
 COL_HEADER_H = 46
@@ -164,17 +164,19 @@ def _load_font(size, bold=False):
         return ImageFont.load_default()
 
 
-def _load_theme_art(cfg):
-    """Optional artwork that frames the board (display.theme_art path).
-    Fails open: missing or unreadable art just renders the plain board."""
-    path = (cfg.get("display") or {}).get("theme_art") or ""
+def _load_art_file(path, what="art"):
+    """Open an optional art file; missing/unreadable fails open to None."""
     if not path:
         return None
     try:
         return Image.open(path).convert("RGB")
     except Exception as exc:
-        logger.info("Theme art %s not usable (%s); rendering without it.", path, exc)
+        logger.info("%s %s not usable (%s); rendering without it.", what, path, exc)
         return None
+
+
+def _load_theme_art(cfg):
+    return _load_art_file((cfg.get("display") or {}).get("theme_art"), "Theme art")
 
 
 def _paste_banner(img, art, y, h, anchor):
@@ -878,6 +880,39 @@ def _rank_delta(prev, cur):
     return f"\u25bc{-diff:,}", RED
 
 
+def _draw_item_art(img, draw, cfg, col_y, col_h, raid_sections, mplus_sections, fonts):
+    """Fun corner: render the guild's flavor item (display.item_art) in the
+    spare space of the shorter main column. Swap the file monthly."""
+    display_cfg = cfg.get("display") or {}
+    item = _load_art_file(display_cfg.get("item_art"), "Item art")
+    if item is None:
+        return
+    raid_h = _column_height(raid_sections)
+    mplus_h = _column_height(mplus_sections)
+    if raid_h < mplus_h:
+        short_h, x0 = raid_h, MARGIN
+    else:
+        short_h, x0 = mplus_h, MARGIN + COL_W + GUTTER
+    avail = col_h - short_h - SEC_GAP
+    if avail < 180:
+        return
+    inner_x = x0 + COL_PAD
+    inner_w = COL_W - 2 * COL_PAD
+    iy = col_y + short_h - COL_PAD + SEC_GAP
+
+    title = display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")
+    draw.text((inner_x, iy), title, font=fonts["sec_title"], fill=ACCENT)
+    tw = draw.textlength(title, font=fonts["sec_title"])
+    draw.line([inner_x + tw + 12, iy + 9, inner_x + inner_w, iy + 9], fill=PANEL_BORDER, width=1)
+    iy += SEC_TITLE_H
+
+    max_h = avail - SEC_TITLE_H
+    scale = min(inner_w / item.width, max_h / item.height, 1.0)
+    new_w, new_h = max(int(item.width * scale), 1), max(int(item.height * scale), 1)
+    scaled = item.resize((new_w, new_h), Image.LANCZOS)
+    img.paste(scaled, (inner_x + (inner_w - new_w) // 2, iy))
+
+
 def _hero_tiles(stats, standing, previous=None):
     prev_standing = (previous or {}).get("standing") or {}
     stale = bool((standing or {}).get("stale"))
@@ -1032,8 +1067,10 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         y += hero_h + GUTTER
 
     icons = bool((cfg.get("display") or {}).get("icons", True))
+    col_y = y
     _draw_column(img, draw, MARGIN, y, col_h, raid_title, raid_sections, fonts, icons=icons)
     _draw_column(img, draw, MARGIN + COL_W + GUTTER, y, col_h, mplus_title, mplus_sections, fonts, icons=icons)
+    _draw_item_art(img, draw, cfg, col_y, col_h, raid_sections, mplus_sections, fonts)
     y += col_h
 
     if show_seasonal:
