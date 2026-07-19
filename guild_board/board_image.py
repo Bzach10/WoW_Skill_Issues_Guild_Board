@@ -412,16 +412,19 @@ def _leader_rows(leaders, top_n):
     return rows
 
 
-def _death_rows(deaths, top_n, class_lookup):
+def _death_rows(deaths, top_n, class_lookup, pulls=0):
     ranked = sorted(deaths.items(), key=lambda kv: kv[1], reverse=True)[:top_n]
     rows = []
     for name, count in ranked:
         cls = class_lookup.get(name.lower())
+        # Rate context keeps the award fair: 14 deaths across 13 pulls is
+        # commitment; 14 deaths across 50 pulls is talent.
+        detail = f"{count / pulls:.1f} per pull" if pulls else ""
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(cls)) if cls else TEXT,
             "cls": cls or "",
-            "detail": "",
+            "detail": detail,
             "value": _plural(count, "death"),
             "value_color": RED,
         })
@@ -452,17 +455,27 @@ def _mplus_week_rows(results, top_n):
     return rows
 
 
-def _season_score_rows(scores, top_n):
+def _season_score_rows(scores, top_n, prev_scores=None):
+    prev_scores = prev_scores or {}
     rows = []
     for score, name, spec in scores[:top_n]:
-        rows.append({
+        row = {
             "name": _cap(name),
             "color": _rgb(get_class_color(spec)),
             "spec": spec or "",
             "detail": spec or "",
             "value": f"{score:.0f}",
             "value_color": ACCENT,
-        })
+        }
+        prev = prev_scores.get(name.strip().lower())
+        if prev_scores:
+            if prev is None:
+                row["value_suffix"] = "NEW"
+                row["value_suffix_color"] = ACCENT
+            elif score - prev >= 1:
+                row["value_suffix"] = f"\u25b2{score - prev:.0f}"
+                row["value_suffix_color"] = (76, 220, 86)
+        rows.append(row)
     return rows
 
 
@@ -543,7 +556,9 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
     if (stats or leaders) and _enabled(sections_cfg, "realm_rank_leaders"):
         raid.append(_sec("WEEKLY BOSS RANKS", _leader_rows(leaders or [], top_n)))
     if stats and _enabled(sections_cfg, "most_deaths"):
-        raid.append(_sec("GRAVEYARD CAMPERS", _death_rows(stats.get("deaths") or {}, top_n, class_lookup)))
+        raid.append(_sec("GRAVEYARD CAMPERS",
+                         _death_rows(stats.get("deaths") or {}, top_n, class_lookup,
+                                     pulls=stats.get("pulls") or 0)))
 
     mplus = []
     if mplus_results is not None and _enabled(sections_cfg, "mplus"):
@@ -559,16 +574,17 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
     return raid, mplus
 
 
-def _build_seasonal(cfg, season_scores, season_parses, improvement):
+def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=None):
     """The bottom Seasonal band: two internal columns of season-long data."""
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
     imp = improvement or {}
+    prev_scores = (previous or {}).get("season_scores") or {}
 
     improve_empty = "No qualifying gains yet — needs 2+ weeks of logs"
     left, right = [], []
     if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
-        left.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n)))
+        left.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
     if "dps" in imp:
         left.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
@@ -624,7 +640,8 @@ def _draw_row(img, draw, x, y, w, index, row, fonts, icons=True):
     vx = x + w - total_vw
     draw.text((vx, cy - 10), value, font=fonts["name"], fill=row.get("value_color", TEXT))
     if suffix:
-        draw.text((vx + vw, cy - 9), suffix, font=fonts["detail"], fill=MUTED)
+        draw.text((vx + vw, cy - 9), suffix, font=fonts["detail"],
+                  fill=row.get("value_suffix_color", MUTED))
     vw = total_vw
 
     nx = x + 32
@@ -709,34 +726,52 @@ def _draw_seasonal(img, draw, y0, height, left_sections, right_sections, fonts, 
         _draw_sections(img, draw, x + inner_w + GUTTER, y, inner_w, right_sections, fonts, icons)
 
 
-def _hero_tiles(stats, standing):
+def _rank_delta(prev, cur):
+    """Rank movement: climbing (a smaller number) is the good direction."""
+    if not prev or not cur or prev == cur:
+        return "", MUTED
+    diff = prev - cur
+    if diff > 0:
+        return f"\u25b2{diff:,}", (76, 220, 86)
+    return f"\u25bc{-diff:,}", RED
+
+
+def _hero_tiles(stats, standing, previous=None):
+    prev_standing = (previous or {}).get("standing") or {}
+    stale = bool((standing or {}).get("stale"))
     tiles = []
     if stats:
-        tiles.append(("KILLS", str(stats.get("kills", 0))))
-        tiles.append(("PULLS", str(stats.get("pulls", 0))))
-        tiles.append(("DEATHS", str(sum((stats.get("deaths") or {}).values()))))
+        tiles.append(("KILLS", str(stats.get("kills", 0)), "", MUTED))
+        tiles.append(("PULLS", str(stats.get("pulls", 0)), "", MUTED))
+        tiles.append(("DEATHS", str(sum((stats.get("deaths") or {}).values())), "", MUTED))
     if standing:
-        if standing.get("realm"):
-            tiles.append(("REALM RANK", f"#{standing['realm']:,}"))
-        if standing.get("region"):
-            tiles.append(("REGION RANK", f"#{standing['region']:,}"))
-        if standing.get("world"):
-            tiles.append(("WORLD RANK", f"#{standing['world']:,}"))
+        for key, label in (("realm", "REALM RANK"), ("region", "REGION RANK"), ("world", "WORLD RANK")):
+            if standing.get(key):
+                if stale:
+                    label += " \u00b7 LAST WK"
+                    delta, color = "", MUTED
+                else:
+                    delta, color = _rank_delta(prev_standing.get(key), standing[key])
+                tiles.append((label, f"#{standing[key]:,}", delta, color))
     return tiles[:6]
 
 
-def _draw_hero(draw, y0, height, stats, standing, fonts):
+def _draw_hero(draw, y0, height, stats, standing, fonts, previous=None):
     x0, x1 = MARGIN, WIDTH - MARGIN
     draw.rounded_rectangle([x0, y0, x1, y0 + height], radius=12,
                            fill=PANEL, outline=PANEL_BORDER, width=1)
     pad = 22
-    tiles = _hero_tiles(stats, standing)
+    tiles = _hero_tiles(stats, standing, previous)
     if tiles:
         tile_w = (x1 - x0 - 2 * pad) // len(tiles)
-        for i, (label, value) in enumerate(tiles):
+        for i, (label, value, delta, delta_color) in enumerate(tiles):
             tx = x0 + pad + i * tile_w
             draw.text((tx, y0 + 16), label, font=fonts["tile_label"], fill=MUTED)
             draw.text((tx, y0 + 34), value, font=fonts["tile_value"], fill=TEXT)
+            if delta:
+                value_w = draw.textlength(value, font=fonts["tile_value"])
+                draw.text((tx + value_w + 8, y0 + 44), delta,
+                          font=fonts["tile_label"], fill=delta_color)
 
     # kill progress bar
     kills = stats.get("kills", 0) if stats else 0
@@ -777,7 +812,7 @@ def _roast_lines(cfg, draw, fonts, max_w):
 def generate_board_image(cfg, stats, standing, leaders, zone_name,
                          mplus_results, mplus_season_scores, mplus_season_parses,
                          start_dt, end_dt, no_logs=False, output_path="board.png",
-                         improvement=None, mplus_weekly=None):
+                         improvement=None, mplus_weekly=None, previous=None):
     """Render the full weekly board and save it as a PNG."""
     fonts = _fonts()
     measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
@@ -786,7 +821,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
         no_logs, mplus_weekly=mplus_weekly)
     seasonal_left, seasonal_right = _build_seasonal(
-        cfg, mplus_season_scores, mplus_season_parses, improvement)
+        cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous)
     show_seasonal = bool(seasonal_left or seasonal_right)
 
     sections_cfg = cfg.get("sections", {})
@@ -837,7 +872,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     y += header_h
 
     if show_hero:
-        _draw_hero(draw, y, hero_h, stats, standing, fonts)
+        _draw_hero(draw, y, hero_h, stats, standing, fonts, previous=previous)
         y += hero_h + GUTTER
 
     icons = bool((cfg.get("display") or {}).get("icons", True))

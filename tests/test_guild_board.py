@@ -397,6 +397,51 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_board_state_round_trip(tmp_path, monkeypatch):
+    from guild_board import state as gb_state
+    path = str(tmp_path / "board_state.json")
+    gb_state.save_board_state(
+        {"realm": 163, "region": 7924, "stale": True, "world": None},
+        [(3880, "Amrevenge", "BM Hunter"), (3692, "Shadoxii", "MW Monk")],
+        path=path)
+    loaded = gb_state.load_board_state(path)
+    assert loaded["standing"] == {"realm": 163, "region": 7924}   # stale/None stripped
+    assert loaded["season_scores"] == {"amrevenge": 3880, "shadoxii": 3692}
+    assert gb_state.load_board_state(str(tmp_path / "missing.json")) == {}
+
+
+def test_hero_tiles_rank_deltas_and_stale():
+    stats = {"kills": 1, "pulls": 13, "deaths": {"A": 3}}
+    prev = {"standing": {"realm": 166, "region": 8018}}
+    tiles = board_image._hero_tiles(stats, {"realm": 163, "region": 8020}, prev)
+    by_label = {t[0]: t for t in tiles}
+    assert by_label["REALM RANK"][2] == "▲3"     # climbed 3 -> green up
+    assert by_label["REGION RANK"][2] == "▼2"    # dropped 2 -> down
+    # Stale standing: labeled, no delta arrows
+    tiles = board_image._hero_tiles(stats, {"realm": 163, "stale": True}, prev)
+    labels = [t[0] for t in tiles]
+    assert any("LAST WK" in label for label in labels)
+    assert all(t[2] == "" for t in tiles)
+
+
+def test_season_score_rows_deltas_and_new():
+    scores = [(3880, "Amrevenge", "BM Hunter"), (3692, "Shadoxii", "MW Monk")]
+    prev = {"shadoxii": 3650}
+    rows = board_image._season_score_rows(scores, 5, prev)
+    assert rows[0]["value_suffix"] == "NEW"           # Amrevenge debuts
+    assert rows[1]["value_suffix"] == "▲42"      # Shadoxii gained 42
+    # First-ever board (no history): no badges at all
+    rows = board_image._season_score_rows(scores, 5, {})
+    assert "value_suffix" not in rows[0]
+
+
+def test_death_rows_show_per_pull_rate():
+    rows = board_image._death_rows({"Maillo": 14}, 5, {}, pulls=13)
+    assert rows[0]["detail"] == "1.1 per pull"
+    rows = board_image._death_rows({"Maillo": 14}, 5, {}, pulls=0)
+    assert rows[0]["detail"] == ""
+
+
 def test_mplus_week_rows_only_timed():
     results = [
         (20, "Pit of Saron", "Amrevenge", "Beast Mastery Hunter", False),  # depleted

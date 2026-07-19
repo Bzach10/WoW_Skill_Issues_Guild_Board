@@ -14,6 +14,7 @@ from guild_board.board_image import generate_board_image
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
+from guild_board.state import load_board_state, save_board_state
 from guild_board.wcl import (
     DIFFICULTY_MAP,
     IMPROVEMENT_DIFFICULTIES,
@@ -250,6 +251,14 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                 else:
                     logger.info("Could not detect raid zone; skipping rankings section.")
 
+            # Standing memory: WCL's lookup flakes sometimes — show last
+            # week's rank labeled as such rather than dropping the tiles.
+            if not standing or not any(standing.get(k) for k in ("realm", "region", "world")):
+                prev_standing = (load_board_state().get("standing") or {})
+                if prev_standing:
+                    standing = {**prev_standing, "stale": True}
+                    logger.info("Standing lookup empty; showing last week's ranks.")
+
     improvement = None
     imp_dps_cfg = sections.get("most_improved_dps", {})
     imp_heal_cfg = sections.get("most_improved_healers", {})
@@ -321,13 +330,15 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     layout = (cfg.get("display") or {}).get("layout", "two_column")
 
     image_path = None
+    previous = load_board_state()
     if layout == "image_board":
         try:
             image_path = generate_board_image(
                 cfg, stats, standing, leaders, zone_name,
                 mplus_results, mplus_season_scores, mplus_season_parses,
                 start_dt, end_dt, no_logs, output_path="board.png",
-                improvement=improvement, mplus_weekly=mplus_weekly)
+                improvement=improvement, mplus_weekly=mplus_weekly,
+                previous=previous)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.
@@ -360,6 +371,10 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         webhook_url = require_env("DISCORD_WEBHOOK_URL")
         post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg)
         logger.info("Board posted to Discord.")
+        try:
+            save_board_state(standing, mplus_season_scores)
+        except OSError as exc:
+            logger.warning("Could not save board state: %s", exc)
 
     return embed, image_path
 

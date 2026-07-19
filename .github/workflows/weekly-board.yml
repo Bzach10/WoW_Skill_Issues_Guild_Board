@@ -80,22 +80,23 @@ jobs:
           fi
           python leaderboard.py "${args[@]}"
 
-      - name: Commit roster cache
+      - name: Commit roster cache and board state
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add roster_cache.json
+          [ -f board_state.json ] && git add board_state.json
           if git diff --cached --quiet; then
-            echo "No roster cache changes to commit."
+            echo "No cache/state changes to commit."
           else
-            git commit -m "Update roster cache [skip ci]"
+            git commit -m "Update roster cache and board state [skip ci]"
             if git pull --rebase origin ${{ github.ref_name }}; then
               git push
             else
-              git checkout --ours roster_cache.json
-              git add roster_cache.json
+              git checkout --ours roster_cache.json board_state.json
+              git add roster_cache.json board_state.json
               git rebase --continue
               git push
             fi
