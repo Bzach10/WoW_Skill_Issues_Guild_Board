@@ -368,10 +368,12 @@ def _parse_rows(best, unit, top_n, diff_name=""):
             boss = f"+{info['key_level']} {boss}"
         elif boss and row_diff:
             boss = f"{row_diff} {boss}"
+        # Amount before boss: when space runs out, the boss name is dropped
+        # first and the DPS/HPS number always stays visible.
         detail_bits = [
             info.get("spec") or "",
-            boss,
             f"{_fmt_amount(info.get('amount') or 0)} {unit}",
+            boss,
         ]
         rows.append({
             "name": _cap(name),
