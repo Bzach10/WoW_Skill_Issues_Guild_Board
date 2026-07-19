@@ -167,7 +167,7 @@ def test_build_embed():
     field_names = [f["name"] for f in embed["fields"]]
     assert any("Guild Standing" in n for n in field_names)
     assert any("Top DPS" in n for n in field_names)
-    assert any("Realm Rank Leaders" in n for n in field_names)
+    assert any("Boss Ranks" in n for n in field_names)
     assert any("Graveyard" in n for n in field_names)
     assert any("Roast" in n for n in field_names)
     assert "Realm #7" in embed["fields"][0]["value"]
@@ -197,15 +197,15 @@ def test_build_embed_modular_sections():
     now = datetime.now(timezone.utc)
     embed = formatters.build_embed(cfg, stats, standing, None, None, None, None, None, now, now, no_logs=True)
     field_names = [f["name"] for f in embed["fields"]]
-    # Announcement first, then two columns, then guild achievements, then roast
+    # two_column is retired: sections render single-column in config order
     assert "Announcement" in field_names[0]
-    assert "Raid" in field_names[1]
-    assert "Mythic Plus" in field_names[2]
-    assert "Guild Achievements" in field_names[3]
+    assert any("No Logs" in n for n in field_names)
+    assert any("Raid" in n for n in field_names)
+    assert any("Mythic Plus" in n for n in field_names)
+    assert any("Guild Achievements" in n for n in field_names)
     assert any("Overall Realm Rank" in n for n in field_names)
     assert "Roast" in field_names[-1]
-    # No logs notice should appear inside the Raid column
-    assert "No logs" in embed["fields"][1]["value"]
+    assert all(f["inline"] is False for f in embed["fields"])
     assert all(len(f["value"]) <= 1024 for f in embed["fields"])
 
 
@@ -516,9 +516,11 @@ def test_season_score_rows_deltas_and_new():
 
 def test_death_rows_show_per_pull_rate():
     rows = board_image._death_rows({"Maillo": 14}, 5, {}, pulls=13)
-    assert rows[0]["detail"] == "1.1 per pull"
+    assert rows[0]["value"] == "1.1/pull"          # red rate up front
+    assert rows[0]["value_suffix"] == "14 total"   # grey total beside it
     rows = board_image._death_rows({"Maillo": 14}, 5, {}, pulls=0)
-    assert rows[0]["detail"] == ""
+    assert rows[0]["value"] == "14 deaths"         # no pulls -> plain count
+    assert "value_suffix" not in rows[0]
 
 
 def test_mplus_week_rows_only_timed():
@@ -583,10 +585,33 @@ def test_empty_sections_show_placeholder(tmp_path):
     assert "TOP M+ DPS THIS WEEK" in titles
     healing = next(s for s in raid if s["title"] == "TOP HEALING PARSES")
     assert healing["rows"][0].get("text")
-    left, right = board_image._build_seasonal(cfg, [], [], {"dps": [], "hps": []})
-    seasonal_titles = [s["title"] for s in left + right]
+    pairs = board_image._build_seasonal(cfg, [], [], {"dps": [], "hps": []})
+    seasonal_titles = [s["title"] for pair in pairs for s in pair if s]
     assert "MOST IMPROVED DPS" in seasonal_titles
     assert "MOST IMPROVED HEALERS" in seasonal_titles
+    # The two Most Improved sections render side by side (same pair)
+    imp_pair = next(p for p in pairs if p[0] and p[0]["title"] == "MOST IMPROVED DPS")
+    assert imp_pair[1]["title"] == "MOST IMPROVED HEALERS"
+
+
+def test_report_detail_cache(monkeypatch):
+    calls = []
+
+    def fake_gql(token, query, variables):
+        calls.append(variables)
+        return {"reportData": {"report": {"fights": []}}}
+
+    monkeypatch.setattr(wcl, "gql", fake_gql)
+    monkeypatch.setattr(wcl.time, "sleep", lambda s: None)
+    wcl.clear_report_cache()
+    wcl.fetch_report_detail("tok", "abc", 5)
+    wcl.fetch_report_detail("tok", "abc", 5)   # cached — no second API call
+    wcl.fetch_report_detail("tok", "abc", 4)   # different difficulty — new call
+    wcl.fetch_report_detail("tok", "xyz", 5)
+    assert len(calls) == 3
+    wcl.clear_report_cache()
+    wcl.fetch_report_detail("tok", "abc", 5)
+    assert len(calls) == 4
 
 
 def test_extract_parses_carries_keystone_level():

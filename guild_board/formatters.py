@@ -188,12 +188,6 @@ def format_guild_standing(cfg, stats, standing, leaders, zone_name, mplus_result
     if not standing_cfg.get("enabled", True):
         return None
 
-    if not standing_cfg and cfg.get("rankings", {}).get("enabled", True):
-        standing_cfg = cfg.get("rankings", {})
-
-    if not standing_cfg.get("enabled", True):
-        return None
-
     if standing:
         value = guild_standing_value(standing, zone_name, cfg)
         if value:
@@ -226,12 +220,6 @@ def format_top_dps(cfg, stats, standing, leaders, zone_name, mplus_results, mplu
     if not dps_cfg.get("enabled", True):
         return None
 
-    if not dps_cfg and cfg.get("raid", {}).get("enabled", True):
-        dps_cfg = cfg.get("raid", {})
-
-    if not dps_cfg.get("enabled", True):
-        return None
-
     if stats is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
@@ -250,12 +238,6 @@ def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, 
     if not healing_cfg.get("enabled", True):
         return None
 
-    if not healing_cfg and cfg.get("raid", {}).get("enabled", True):
-        healing_cfg = cfg.get("raid", {})
-
-    if not healing_cfg.get("enabled", True):
-        return None
-
     if stats is not None:
         top_n = int(cfg.get("top_n", 5))
         return {
@@ -270,12 +252,6 @@ def format_top_healing(cfg, stats, standing, leaders, zone_name, mplus_results, 
 def format_realm_rank_leaders(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs):
     sections = cfg.get("sections", {})
     leaders_cfg = sections.get("realm_rank_leaders", {})
-
-    if not leaders_cfg.get("enabled", True):
-        return None
-
-    if not leaders_cfg and cfg.get("rankings", {}).get("enabled", True):
-        leaders_cfg = cfg.get("rankings", {})
 
     if not leaders_cfg.get("enabled", True):
         return None
@@ -446,99 +422,6 @@ SECTION_FORMATTERS = {
 }
 
 
-# ---------------------------------------------------------------------------
-# Layout helpers
-# ---------------------------------------------------------------------------
-
-def _section_group(section_name):
-    if section_name == "announcement":
-        return "announcement"
-    if section_name in {"guild_achievement_header", "guild_standing", "overall_realm_rank", "roast_of_the_week"}:
-        return "guild_achievement"
-    if section_name in {"mplus_header", "mplus", "mplus_last_week", "mplus_season_scores", "mplus_season_parses", "mplus_season_runs"}:
-        return "mplus"
-    if section_name in {"raid_header", "top_dps", "top_healing", "realm_rank_leaders", "most_deaths", "no_logs_notice"}:
-        return "raid"
-    return "other"
-
-
-def _build_two_column_fields(cfg, raw_fields):
-    """Arrange announcement, two side-by-side columns (Raid/M+), and guild achievements below."""
-    sections = cfg.get("sections", {})
-
-    groups = {"announcement": [], "raid": [], "mplus": [], "guild_achievement": [], "other": []}
-    for section_name, field in raw_fields:
-        group = _section_group(section_name)
-        if group in groups:
-            groups[group].append((section_name, field))
-        else:
-            groups["other"].append((section_name, field))
-
-    fields = []
-
-    # Announcement first, full width
-    for _, f in groups["announcement"]:
-        f["inline"] = False
-        fields.append(f)
-
-    # Build two inline columns. Drop header placeholders (empty values).
-    raid = [(n, f) for n, f in groups["raid"] if f["value"] != "\u200b"]
-    mplus = [(n, f) for n, f in groups["mplus"] if f["value"] != "\u200b"]
-
-    COLUMN_TITLES = {
-        "top_dps": "\u2694\uFE0F Top DPS",
-        "top_healing": "\U0001F489 Top Heals",
-        "realm_rank_leaders": "\u2B50 Weekly Raid Boss Ranks",
-        "most_deaths": "\U0001F480 Most Deaths",
-        "no_logs_notice": "\u26A0\uFE0F No Logs",
-        "mplus": "\U0001F5DD\uFE0F Last Week",
-        "mplus_last_week": "\U0001F5DD\uFE0F Last Week",
-        "mplus_season_scores": "\U0001F3C6 Season Scores",
-        "mplus_season_parses": "\U0001F525 Season Runs",
-        "mplus_season_runs": "\U0001F525 Season Runs",
-    }
-
-    def _column_value(col_fields):
-        parts = []
-        for name, f in col_fields:
-            title = COLUMN_TITLES.get(name, f["name"])
-            parts.append(f"**{title}**\n{f['value']}")
-        value = "\n\n".join(parts)
-        if len(value) > 1024:
-            value = value[:1021] + "..."
-        return value
-
-    raid_cfg = sections.get("raid_header", {})
-    mplus_cfg = sections.get("mplus_header", {})
-    raid_title = raid_cfg.get("title", "Raid")
-    mplus_title = mplus_cfg.get("title", "Mythic Plus")
-    raid_icon = raid_cfg.get("icon", "")
-    mplus_icon = mplus_cfg.get("icon", "")
-
-    if raid or mplus:
-        raid_value = _column_value(raid) if raid else "_No raid data this week_"
-        mplus_value = _column_value(mplus) if mplus else "_No M+ data this week_"
-        fields.append({"name": f"{raid_icon} {raid_title}".strip(), "value": raid_value, "inline": True})
-        fields.append({"name": f"{mplus_icon} {mplus_title}".strip(), "value": mplus_value, "inline": True})
-
-    # Guild achievements: full-width header, then body fields
-    ga_header = next((f for _, f in groups["guild_achievement"] if f["value"] == "\u200b"), None)
-    ga_body = [f for _, f in groups["guild_achievement"] if f["value"] != "\u200b"]
-    if ga_header:
-        ga_header["inline"] = False
-        fields.append(ga_header)
-    for f in ga_body:
-        f["inline"] = False
-        fields.append(f)
-
-    # Any other full-width fields
-    for _, f in groups["other"]:
-        f["inline"] = False
-        fields.append(f)
-
-    return fields
-
-
 def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, start_dt, end_dt, no_logs=False, progress_image_url=None):
     guild_name = cfg["guild"]["name"]
     difficulty = str(cfg["raid"]["difficulty"]).title()
@@ -546,89 +429,34 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
 
     sections = cfg.get("sections", {})
 
-    fields = []
     section_items = list(sections.items()) if sections else []
-
     if not section_items:
-        # Legacy behavior
-        if standing:
-            value = guild_standing_value(standing, zone_name, cfg)
-            if value:
-                fields.append({"name": "\U0001F30D Guild Standing", "value": value, "inline": False})
+        # No sections configured: use a sensible default board
+        default_order = ("guild_standing", "top_dps", "top_healing",
+                         "realm_rank_leaders", "most_deaths",
+                         "roast_of_the_week", "mplus")
+        section_items = [(name, {"order": i}) for i, name in enumerate(default_order)]
 
-        if stats is not None:
-            top_n = int(cfg.get("top_n", 5))
-            fields.append({
-                "name": "\u2694\uFE0F Top DPS Parses",
-                "value": rank_lines_parses(stats["best_dps"], top_n, "DPS", cfg),
-                "inline": False,
-            })
-            fields.append({
-                "name": "\U0001F489 Top Healing Parses",
-                "value": rank_lines_parses(stats["best_hps"], top_n, "HPS", cfg),
-                "inline": False,
-            })
+    layout = cfg.get("display", {}).get("layout", "single_column")
+    if layout == "two_column":
+        # Discord reflows inline fields unpredictably; this layout is retired.
+        logger.info("Layout 'two_column' is deprecated; rendering single_column.")
 
-        if leaders:
-            top_n = int(cfg.get("top_n", 5))
-            fields.append({
-                "name": "\u2B50 Realm Rank Leaders (Tier All Stars)",
-                "value": rank_lines_leaders(leaders, top_n, cfg),
-                "inline": False,
-            })
-
-        if stats is not None:
-            top_n = int(cfg.get("top_n", 5))
-            fields.append({
-                "name": "\U0001F480 Graveyard Camper Award (Most Deaths)",
-                "value": rank_lines_deaths(stats["deaths"], top_n),
-                "inline": False,
-            })
-
-        roast = cfg.get("roast_of_the_week") or {}
-        if roast.get("roast"):
-            winner = roast.get("winner", "Anonymous")
-            target = roast.get("target", "")
-            target_txt = f" (aimed at {target})" if target else ""
-            fields.append({
-                "name": "\U0001F525 Roast of the Week",
-                "value": f"\u201C{roast['roast']}\u201D\n\u2014 **{winner}**{target_txt}",
-                "inline": False,
-            })
-        else:
-            fields.append({
-                "name": "\U0001F525 Roast of the Week",
-                "value": "_No roast submitted. Healers live to see another week._",
-                "inline": False,
-            })
-
-        if mplus_results is not None:
-            top_n = int(cfg.get("top_n", 5))
-            fields.append({
-                "name": "\U0001F5DD\uFE0F Highest M+ Keys This Week",
-                "value": rank_lines_mplus(mplus_results, top_n, cfg),
-                "inline": False,
-            })
-    else:
-        sorted_sections = sorted(section_items, key=lambda x: x[1].get("order", 999))
-        raw_fields = []
-
-        for section_name, section_cfg in sorted_sections:
-            formatter = SECTION_FORMATTERS.get(section_name)
-            if formatter:
-                try:
-                    field = formatter(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_season_scores, mplus_season_parses, no_logs)
-                    if field:
-                        raw_fields.append((section_name, field))
-                except Exception as exc:
-                    logger.warning("Error formatting section '%s': %s", section_name, exc)
-                    continue
-
-        layout = cfg.get("display", {}).get("layout", "two_column")
-        if layout == "two_column":
-            fields = _build_two_column_fields(cfg, raw_fields)
-        else:
-            fields = [field for _, field in raw_fields]
+    fields = []
+    sorted_sections = sorted(section_items, key=lambda x: x[1].get("order", 999))
+    for section_name, section_cfg in sorted_sections:
+        formatter = SECTION_FORMATTERS.get(section_name)
+        if not formatter:
+            continue
+        try:
+            field = formatter(cfg, stats, standing, leaders, zone_name,
+                              mplus_results, mplus_season_scores, mplus_season_parses, no_logs)
+        except Exception as exc:
+            logger.warning("Error formatting section '%s': %s", section_name, exc)
+            continue
+        if field:
+            field["inline"] = False
+            fields.append(field)
 
     footer_bits = []
     if stats is not None:

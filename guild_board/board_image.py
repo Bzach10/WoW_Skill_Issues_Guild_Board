@@ -123,7 +123,7 @@ MEDAL_FILLS = [
 DIFFICULTY_NAMES = {1: "LFR", 3: "Normal", 4: "Heroic", 5: "Mythic", 10: "M+"}
 
 # --- layout constants ---------------------------------------------------------
-WIDTH = 1200
+WIDTH = 1500
 MARGIN = 36
 GUTTER = 24
 COL_PAD = 22
@@ -424,17 +424,19 @@ def _death_rows(deaths, top_n, class_lookup, pulls=0):
     rows = []
     for name, count in ranked:
         cls = class_lookup.get(name.lower())
-        # Rate context keeps the award fair: 14 deaths across 13 pulls is
-        # commitment; 14 deaths across 50 pulls is talent.
-        detail = f"{count / pulls:.1f} per pull" if pulls else ""
-        rows.append({
+        # Rate first (fair: dying a lot across many pulls is commitment),
+        # raw total in grey beside it.
+        row = {
             "name": _cap(name),
             "color": _rgb(get_class_color(cls)) if cls else TEXT,
             "cls": cls or "",
-            "detail": detail,
-            "value": _plural(count, "death"),
+            "detail": "",
+            "value": f"{count / pulls:.1f}/pull" if pulls else _plural(count, "death"),
             "value_color": RED,
-        })
+        }
+        if pulls:
+            row["value_suffix"] = f"{count} total"
+        rows.append(row)
     return rows
 
 
@@ -591,7 +593,18 @@ def _closest_race(season_scores):
     return f"{_cap(chaser)} trails {_cap(leader)} by {gap:.0f}"
 
 
-def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs, mplus_weekly=None, streaks=None):
+def _titled(base, pool):
+    """Append the difficulty the rows actually came from, when uniform —
+    "TOP HEALING PARSES · HEROIC" makes fallback sections honest."""
+    diffs = {info.get("difficulty") for info in (pool or {}).values()}
+    if len(diffs) == 1:
+        name = DIFFICULTY_NAMES.get(next(iter(diffs)), "")
+        if name and name != "M+":
+            return f"{base} \u00b7 {name.upper()}"
+    return base
+
+
+def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs, mplus_weekly=None, streaks=None, zone_name=None):
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
 
@@ -615,13 +628,21 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
         # (the fallback may have downgraded mythic -> heroic -> normal).
         diff_name = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")
         if _enabled(sections_cfg, "top_dps"):
-            raid.append(_sec("TOP DPS PARSES", _parse_rows(stats.get("best_dps") or {}, "DPS", top_n, diff_name, streaks)))
+            rows = _parse_rows(stats.get("best_dps") or {}, "DPS", top_n, diff_name, streaks)
+            raid.append(_sec(_titled("TOP DPS PARSES", stats.get("best_dps")), rows))
         if _enabled(sections_cfg, "top_healing"):
-            raid.append(_sec("TOP HEALING PARSES", _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name, streaks)))
+            rows = _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name, streaks)
+            raid.append(_sec(_titled("TOP HEALING PARSES", stats.get("best_hps")), rows))
     if (stats or leaders) and _enabled(sections_cfg, "realm_rank_leaders"):
         raid.append(_sec("WEEKLY BOSS RANKS", _leader_rows(leaders or [], top_n)))
     if stats and _enabled(sections_cfg, "most_deaths"):
-        raid.append(_sec("GRAVEYARD CAMPERS",
+        campers_title = "GRAVEYARD CAMPERS"
+        camper_diff = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")
+        camper_zone = (zone_name or "").strip()
+        context = " ".join(b for b in [camper_diff.upper(), camper_zone.upper()] if b)
+        if context:
+            campers_title += f" \u00b7 {context[:34]}"
+        raid.append(_sec(campers_title,
                          _death_rows(stats.get("deaths") or {}, top_n, class_lookup,
                                      pulls=stats.get("pulls") or 0)))
 
@@ -647,23 +668,27 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=Non
     prev_scores = (previous or {}).get("season_scores") or {}
 
     improve_empty = "No qualifying gains yet — needs 2+ weeks of logs"
-    left, right = [], []
+
+    scores_sec = runs_sec = race_sec = records_sec = dps_sec = hps_sec = None
     if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
-        left.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
+        scores_sec = _sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores))
         race = _closest_race(season_scores or [])
         if race and _enabled(sections_cfg, "closest_race"):
-            left.append(_sec("CLOSEST RACE", [{"text": race}]))
-    if "dps" in imp:
-        left.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
+            race_sec = _sec("CLOSEST RACE", [{"text": race}])
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
-        right.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
+        runs_sec = _sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n))
+    if "dps" in imp:
+        dps_sec = _sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty)
     if "hps" in imp:
-        right.append(_sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty))
+        hps_sec = _sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty)
     if records and _enabled(sections_cfg, "guild_records"):
         record_rows = _record_rows(records)
         if record_rows:
-            right.append(_sec("GUILD RECORDS \u00b7 SEASON", record_rows))
-    return left, right
+            records_sec = _sec("GUILD RECORDS \u00b7 SEASON", record_rows)
+
+    # Paired rows: each tuple renders at the same y, so partners align
+    pairs = [(scores_sec, runs_sec), (dps_sec, hps_sec), (race_sec, records_sec)]
+    return [pair for pair in pairs if pair[0] or pair[1]]
 
 
 # --- rendering --------------------------------------------------------------------
@@ -772,16 +797,14 @@ def _draw_sections(img, draw, x, y, w, sections, fonts, icons=True):
             y += ROW_H
 
 
-def _seasonal_height(left_sections, right_sections):
-    def col_body(sections):
-        if not sections:
-            return 0
-        return sum(_section_height(s) for s in sections) + SEC_GAP * (len(sections) - 1)
-    return COL_HEADER_H + max(col_body(left_sections), col_body(right_sections)) + 2 * COL_PAD
+def _seasonal_height(pairs):
+    body = sum(max(_section_height(s) if s else 0 for s in pair) for pair in pairs)
+    body += SEC_GAP * max(len(pairs) - 1, 0)
+    return COL_HEADER_H + body + 2 * COL_PAD
 
 
-def _draw_seasonal(img, draw, y0, height, left_sections, right_sections, fonts, icons=True):
-    """Full-width Seasonal panel with two internal columns."""
+def _draw_seasonal(img, draw, y0, height, pairs, fonts, icons=True):
+    """Full-width Seasonal panel: paired sections rendered side by side."""
     x0, x1 = MARGIN, WIDTH - MARGIN
     draw.rounded_rectangle([x0, y0, x1, y0 + height], radius=12,
                            fill=PANEL, outline=PANEL_BORDER, width=1)
@@ -792,10 +815,14 @@ def _draw_seasonal(img, draw, y0, height, left_sections, right_sections, fonts, 
     y += COL_HEADER_H
 
     inner_w = (x1 - x0 - 2 * COL_PAD - GUTTER) // 2
-    if left_sections:
-        _draw_sections(img, draw, x, y, inner_w, left_sections, fonts, icons)
-    if right_sections:
-        _draw_sections(img, draw, x + inner_w + GUTTER, y, inner_w, right_sections, fonts, icons)
+    for i, (left_sec, right_sec) in enumerate(pairs):
+        if i:
+            y += SEC_GAP
+        if left_sec:
+            _draw_sections(img, draw, x, y, inner_w, [left_sec], fonts, icons)
+        if right_sec:
+            _draw_sections(img, draw, x + inner_w + GUTTER, y, inner_w, [right_sec], fonts, icons)
+        y += max(_section_height(s) if s else 0 for s in (left_sec, right_sec))
 
 
 def _rank_delta(prev, cur):
@@ -892,11 +919,11 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 
     raid_sections, mplus_sections = _build_columns(
         cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
-        no_logs, mplus_weekly=mplus_weekly, streaks=streaks)
-    seasonal_left, seasonal_right = _build_seasonal(
+        no_logs, mplus_weekly=mplus_weekly, streaks=streaks, zone_name=zone_name)
+    seasonal_pairs = _build_seasonal(
         cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous,
         records=records)
-    show_seasonal = bool(seasonal_left or seasonal_right)
+    show_seasonal = bool(seasonal_pairs)
 
     sections_cfg = cfg.get("sections", {})
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()
@@ -906,7 +933,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     show_hero = stats is not None or bool(standing)
     hero_h = 120 if show_hero else 0
     col_h = max(_column_height(raid_sections), _column_height(mplus_sections))
-    seasonal_h = _seasonal_height(seasonal_left, seasonal_right) if show_seasonal else 0
+    seasonal_h = _seasonal_height(seasonal_pairs) if show_seasonal else 0
 
     quote_max_w = WIDTH - 2 * MARGIN - 2 * COL_PAD
     roast_lines, roast_attr = _roast_lines(cfg, measure, fonts, quote_max_w)
@@ -956,7 +983,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 
     if show_seasonal:
         y += GUTTER
-        _draw_seasonal(img, draw, y, seasonal_h, seasonal_left, seasonal_right, fonts, icons=icons)
+        _draw_seasonal(img, draw, y, seasonal_h, seasonal_pairs, fonts, icons=icons)
         y += seasonal_h
 
     if roast_lines:

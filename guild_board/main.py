@@ -19,6 +19,7 @@ from guild_board.wcl import (
     DIFFICULTY_MAP,
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
+    clear_report_cache,
     collect_improvement_history,
     merge_improvement,
     collect_parses_only,
@@ -126,6 +127,64 @@ def _apply_discord_inputs(cfg, start_ms):
             logger.warning("Announcement channel read failed: %s", exc)
 
 
+def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_ms):
+    """Season-long Most Improved data, or None when disabled/unavailable."""
+    sections = cfg.get("sections", {})
+    imp_dps_cfg = sections.get("most_improved_dps", {})
+    imp_heal_cfg = sections.get("most_improved_healers", {})
+    if not stats or not (imp_dps_cfg.get("enabled", False) or imp_heal_cfg.get("enabled", False)):
+        return None
+    if zone_id is None:
+        zone_id, _ = detect_zone(cfg, reports)
+    try:
+        keep = roster_keep or make_name_filter(token, cfg)
+        min_days = int(imp_dps_cfg.get("min_days", imp_heal_cfg.get("min_days", 14)))
+        per_diff_dps, per_diff_hps = [], []
+        for diff in IMPROVEMENT_DIFFICULTIES:
+            history = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
+            for role, bucket in (("dps", per_diff_dps), ("hps", per_diff_hps)):
+                ranked = compute_improvement(history[role], min_span_days=min_days)
+                for entry in ranked:
+                    entry["difficulty"] = diff
+                bucket.append(ranked)
+        improvement = {}
+        if imp_dps_cfg.get("enabled", False):
+            ranked = [e for e in merge_improvement(*per_diff_dps) if keep(e["name"])]
+            improvement["dps"] = ranked[:int(imp_dps_cfg.get("top_n", 5))]
+        if imp_heal_cfg.get("enabled", False):
+            ranked = [e for e in merge_improvement(*per_diff_hps) if keep(e["name"])]
+            improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 5))]
+        logger.info("Most Improved: %s DPS, %s healer(s)",
+                    len(improvement.get("dps") or []),
+                    len(improvement.get("hps") or []))
+        return improvement
+    except (RuntimeError, requests.RequestException) as exc:
+        logger.warning("Most Improved lookup failed; skipping the section: %s", exc)
+        return None
+
+
+def _collect_weekly_mplus(token, cfg, reports, roster_keep):
+    """This week's M+ dungeon parses, or None when disabled/unavailable."""
+    sections = cfg.get("sections", {})
+    if not sections.get("mplus_weekly_parses", {}).get("enabled", True):
+        return None
+    try:
+        mdps, mhps = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
+        if roster_keep:
+            mdps = {n: v for n, v in mdps.items() if roster_keep(n)}
+            mhps = {n: v for n, v in mhps.items() if roster_keep(n)}
+        if mdps or mhps:
+            logger.info("Weekly M+ parses: %s DPS, %s HPS", len(mdps), len(mhps))
+        else:
+            logger.info("No M+ dungeon logs found this week (players must upload M+ runs to WCL).")
+        # Keep the dict even when empty so the board shows the section
+        # title with a "no logs" placeholder instead of hiding it.
+        return {"dps": mdps, "hps": mhps}
+    except (RuntimeError, requests.RequestException) as exc:
+        logger.warning("Weekly M+ parse lookup failed: %s", exc)
+        return None
+
+
 def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     """Collect data and build the Discord embed (and optionally post it)."""
     if start_dt is None or end_dt is None:
@@ -136,6 +195,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     start_ms = int(start_dt.timestamp() * 1000)
     end_ms = int(end_dt.timestamp() * 1000)
 
+    clear_report_cache()
     _apply_discord_inputs(cfg, start_ms)
 
     stats = None
@@ -259,55 +319,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                     standing = {**prev_standing, "stale": True}
                     logger.info("Standing lookup empty; showing last week's ranks.")
 
-    improvement = None
-    imp_dps_cfg = sections.get("most_improved_dps", {})
-    imp_heal_cfg = sections.get("most_improved_healers", {})
-    if (raid_enabled and stats
-            and (imp_dps_cfg.get("enabled", False) or imp_heal_cfg.get("enabled", False))):
-        if zone_id is None:
-            zone_id, _ = detect_zone(cfg, reports)
-        try:
-            keep = roster_keep or make_name_filter(token, cfg)
-            min_days = int(imp_dps_cfg.get("min_days", imp_heal_cfg.get("min_days", 14)))
-            per_diff_dps, per_diff_hps = [], []
-            for diff in IMPROVEMENT_DIFFICULTIES:
-                history = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
-                for role, bucket in (("dps", per_diff_dps), ("hps", per_diff_hps)):
-                    ranked = compute_improvement(history[role], min_span_days=min_days)
-                    for entry in ranked:
-                        entry["difficulty"] = diff
-                    bucket.append(ranked)
-            improvement = {}
-            if imp_dps_cfg.get("enabled", False):
-                ranked = [e for e in merge_improvement(*per_diff_dps) if keep(e["name"])]
-                improvement["dps"] = ranked[:int(imp_dps_cfg.get("top_n", 5))]
-            if imp_heal_cfg.get("enabled", False):
-                ranked = [e for e in merge_improvement(*per_diff_hps) if keep(e["name"])]
-                improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 5))]
-            logger.info("Most Improved: %s DPS, %s healer(s)",
-                        len(improvement.get("dps") or []),
-                        len(improvement.get("hps") or []))
-        except (RuntimeError, requests.RequestException) as exc:
-            logger.warning("Most Improved lookup failed; skipping the section: %s", exc)
-            improvement = None
-
+    improvement = _collect_improvement(token, cfg, reports, stats, zone_id,
+                                       roster_keep, end_ms) if raid_enabled else None
     mplus_weekly = None
-    if (raid_enabled and not no_logs and token
-            and sections.get("mplus_weekly_parses", {}).get("enabled", True)):
-        try:
-            mdps, mhps = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
-            if roster_keep:
-                mdps = {n: v for n, v in mdps.items() if roster_keep(n)}
-                mhps = {n: v for n, v in mhps.items() if roster_keep(n)}
-            # Keep the dict even when empty so the board shows the section
-            # title with a "no logs" placeholder instead of hiding it.
-            mplus_weekly = {"dps": mdps, "hps": mhps}
-            if mdps or mhps:
-                logger.info("Weekly M+ parses: %s DPS, %s HPS", len(mdps), len(mhps))
-            else:
-                logger.info("No M+ dungeon logs found this week (players must upload M+ runs to WCL).")
-        except (RuntimeError, requests.RequestException) as exc:
-            logger.warning("Weekly M+ parse lookup failed: %s", exc)
+    if raid_enabled and not no_logs and token:
+        mplus_weekly = _collect_weekly_mplus(token, cfg, reports, roster_keep)
 
     mplus_results = None
     mplus_season_scores = None
