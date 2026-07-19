@@ -10,6 +10,7 @@ assets/ (see README.md in this handoff for the 6-line board_image.py patch).
 """
 
 import logging
+import math
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -99,6 +100,11 @@ def _fmt_g(n):
     return f"{n:,}"
 
 
+def _flicker(phase, k, lo=0.86, hi=1.14):
+    """Deterministic flame/glow wobble for animation frames (phase 0..1)."""
+    return lo + (hi - lo) * (0.5 + 0.5 * math.sin(2 * math.pi * (phase + k)))
+
+
 def _glow(img, cx, cy, rx, ry, color, alpha, steps=12):
     """Soft radial glow via stacked translucent ellipses."""
     overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
@@ -111,12 +117,17 @@ def _glow(img, cx, cy, rx, ry, color, alpha, steps=12):
     img.paste(Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB"), (0, 0))
 
 
-def _flame(img, cx, base_y):
-    """Small stylized campfire/torch flame: three stacked tongues."""
+def _flame(img, cx, base_y, phase=0.0):
+    """Small stylized campfire/torch flame: three stacked tongues.
+    phase animates the flicker (height wobble + slight sway per tongue)."""
     overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(overlay)
-    for w, h, color, a in ((56, 92, (224, 122, 40), 200), (36, 66, (246, 176, 78), 220), (18, 40, (255, 233, 168), 235)):
-        d.ellipse([cx - w // 2, base_y - h, cx + w // 2, base_y], fill=color + (a,))
+    for i, (w, h, color, a) in enumerate(((56, 92, (224, 122, 40), 200),
+                                          (36, 66, (246, 176, 78), 220),
+                                          (18, 40, (255, 233, 168), 235))):
+        hh = int(h * _flicker(phase, 0.37 * i))
+        sway = int(4 * math.sin(2 * math.pi * (phase + 0.21 * i)))
+        d.ellipse([cx + sway - w // 2, base_y - hh, cx + sway + w // 2, base_y], fill=color + (a,))
     img.paste(Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB"), (0, 0))
 
 
@@ -139,7 +150,7 @@ def _fetch_icon(name, size):
 
 # ---------------------------------------------------------------- header ----
 
-def draw_header_band(img, stats=None):
+def draw_header_band(img, stats=None, phase=0.0):
     W = img.width
     draw = ImageDraw.Draw(img)
     wall = _load(ASSET_DIR / "wall_header.png")
@@ -147,7 +158,8 @@ def draw_header_band(img, stats=None):
         img.paste(wall.resize((W, HEADER_BAND_H), Image.LANCZOS), (0, 0))
     else:
         draw.rectangle([0, 0, W, HEADER_BAND_H], fill=(38, 30, 23))
-    _glow(img, W // 2, HEADER_BAND_H + 60, int(W * 0.32), 220, (224, 122, 40), 70)
+    _glow(img, W // 2, HEADER_BAND_H + 60, int(W * 0.32), 220, (224, 122, 40),
+          int(70 * _flicker(phase, 0.5, 0.8, 1.15)))
 
     kills = (stats or {}).get("kills", 0)
     pulls = (stats or {}).get("pulls", 0)
@@ -217,9 +229,9 @@ def draw_header_band(img, stats=None):
 
     # --- torch + hanging GIT GUD shingle ------------------------------------
     tx = W - 470
-    _glow(img, tx, 210, 90, 110, (224, 122, 40), 110)
+    _glow(img, tx, 210, 90, 110, (224, 122, 40), int(110 * _flicker(phase, 0.15, 0.75, 1.2)))
     draw.rounded_rectangle([tx - 7, 190, tx + 7, 266], radius=7, fill=(58, 44, 30), outline=(32, 25, 18))
-    _flame(img, tx, 196)
+    _flame(img, tx, 196, phase)
 
     sx0 = W - 96 - 250
     for cxn in (sx0 + 50, sx0 + 200):
@@ -290,7 +302,7 @@ def _tooltip(draw, x, y, w, lines, outline):
     return h
 
 
-def draw_footer_band(img, y, stats=None, week_index=0):
+def draw_footer_band(img, y, stats=None, week_index=0, phase=0.0):
     W = img.width
     draw = ImageDraw.Draw(img)
     art_h = FOOTER_BAND_H - 52
@@ -310,7 +322,8 @@ def draw_footer_band(img, y, stats=None, week_index=0):
     fy = y + 62
     fh = art_h - 130
     draw.rounded_rectangle([mx0, fy, mx1, fy + fh], radius=10, fill=(14, 16, 20), outline=(150, 122, 62), width=3)
-    _glow(img, (mx0 + mx1) // 2, fy + fh, int(mw * 0.42), 150, (58, 220, 90), 60)
+    _glow(img, (mx0 + mx1) // 2, fy + fh, int(mw * 0.42), 150, (58, 220, 90),
+          int(60 * _flicker(phase, 0.66, 0.8, 1.2)))
 
     ranked = sorted(((stats or {}).get("deaths") or {}).items(), key=lambda kv: kv[1], reverse=True)[:4]
     if not ranked:
@@ -337,10 +350,11 @@ def draw_footer_band(img, y, stats=None, week_index=0):
         _center(draw, scx, top + 112, EPITAPHS[i % len(EPITAPHS)][:34], _font(12), (74, 70, 61))
         sx += stone_w + gap
     # reserved campfire plot
-    _glow(img, sx + 90, ground - 10, 90, 70, (224, 122, 40), 120)
+    _glow(img, sx + 90, ground - 10, 90, 70, (224, 122, 40),
+          int(120 * _flicker(phase, 0.05, 0.75, 1.2)))
     draw.polygon([(sx + 30, ground - 4), (sx + 92, ground - 18), (sx + 96, ground - 6), (sx + 34, ground + 6)], fill=(66, 47, 29))
     draw.polygon([(sx + 150, ground - 4), (sx + 88, ground - 18), (sx + 84, ground - 6), (sx + 146, ground + 6)], fill=(58, 42, 26))
-    _flame(img, sx + 90, ground - 14)
+    _flame(img, sx + 90, ground - 14, phase)
     draw.rounded_rectangle([sx + 14, ground + 10, sx + 166, ground + 40], radius=6, fill=(58, 44, 26), outline=(33, 24, 9), width=2)
     _center(draw, sx + 90, ground + 16, "RESERVED: HEALMATES", _font(13, bold=True), (217, 196, 154))
     _center(draw, (mx0 + mx1) // 2, fy + fh + 12, "Plots assigned by deaths-per-pull. The campfire is load-bearing.",

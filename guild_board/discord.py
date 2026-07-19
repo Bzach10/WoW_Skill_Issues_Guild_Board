@@ -49,7 +49,8 @@ def _execute_webhook(webhook_url, payload, image_path=None, _retried=False):
 
     if image_path and os.path.exists(image_path):
         with open(image_path, "rb") as f:
-            files = {"file": (os.path.basename(image_path), f, "image/png")}
+            mime = "image/gif" if image_path.lower().endswith(".gif") else "image/png"
+            files = {"file": (os.path.basename(image_path), f, mime)}
             data = {"payload_json": json.dumps(payload)}
             resp = requests.post(url, data=data, files=files, timeout=30)
     else:

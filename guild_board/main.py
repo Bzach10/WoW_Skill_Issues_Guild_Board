@@ -10,7 +10,7 @@ from guild_board.config import load_config, require_env, resolve_roster, save_ro
 from guild_board.discord import post_to_discord
 from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
 from guild_board.filters import apply_roster_filters, make_name_filter
-from guild_board.board_image import generate_board_image
+from guild_board.board_image import generate_board_animation, generate_board_image
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
@@ -391,12 +391,19 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     if layout == "image_board":
         try:
-            image_path = generate_board_image(
-                cfg, stats, standing, leaders, zone_name,
-                mplus_results, mplus_season_scores, mplus_season_parses,
-                start_dt, end_dt, no_logs, output_path="board.png",
-                improvement=improvement, mplus_weekly=mplus_weekly,
-                previous=previous, streaks=streaks, records=records)
+            display_cfg = cfg.get("display") or {}
+            board_args = (cfg, stats, standing, leaders, zone_name,
+                          mplus_results, mplus_season_scores, mplus_season_parses,
+                          start_dt, end_dt, no_logs)
+            board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
+                                previous=previous, streaks=streaks, records=records)
+            if display_cfg.get("animate", False):
+                image_path = generate_board_animation(
+                    *board_args, output_path="board.gif",
+                    frames=int(display_cfg.get("animate_frames", 6)), **board_kwargs)
+            if not image_path:
+                image_path = generate_board_image(
+                    *board_args, output_path="board.png", **board_kwargs)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.
@@ -404,7 +411,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     if image_path:
         embed = build_image_embed(cfg, stats, start_dt, end_dt,
-                                  image_url="attachment://board.png")
+                                  image_url=f"attachment://{os.path.basename(image_path)}")
     else:
         progress_image_url = None
         progress_cfg = sections.get("progress_image", {})

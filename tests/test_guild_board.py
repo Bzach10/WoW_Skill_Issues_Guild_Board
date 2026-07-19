@@ -436,6 +436,23 @@ def test_theme_art_banners(tmp_path):
     assert Image.open(out).height == plain_h
 
 
+def test_board_animation_gif(tmp_path):
+    from PIL import Image
+    art = Image.new("RGB", (800, 1000), (70, 40, 25))
+    art_path = tmp_path / "art.png"
+    art.save(art_path)
+    cfg = _image_board_cfg()
+    cfg["display"]["theme_art"] = str(art_path)   # flames need the themed bands
+    now = datetime.now(timezone.utc)
+    out = board_image.generate_board_animation(
+        cfg, _image_board_stats(), None, None, None, None, None, None,
+        now - timedelta(days=7), now, False,
+        output_path=str(tmp_path / "board.gif"), frames=2)
+    assert out and out.endswith(".gif")
+    gif = Image.open(out)
+    assert getattr(gif, "n_frames", 1) == 2
+
+
 def test_watermark_renders(tmp_path):
     from PIL import Image
     cfg = _image_board_cfg()
