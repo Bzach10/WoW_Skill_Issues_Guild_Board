@@ -51,15 +51,17 @@ def collect_mplus(cfg, token=None):
                 continue
             data = resp.json()
             runs = data.get("mythic_plus_weekly_highest_level_runs") or []
-            if runs:
-                best = max(runs, key=lambda r: r.get("mythic_level", 0))
+            # Only timed keys count — a depleted +20 doesn't beat a timed +16
+            timed_runs = [r for r in runs if (r.get("num_keystone_upgrades", 0) or 0) > 0]
+            if timed_runs:
+                best = max(timed_runs, key=lambda r: r.get("mythic_level", 0))
                 spec = clean_spec_name(best.get("spec"), data.get("class", ""))
                 results.append((
                     best.get("mythic_level", 0),
                     _normalize_dungeon_name(best.get("dungeon", "?")),
                     name.strip(),
                     spec,
-                    (best.get("num_keystone_upgrades", 0) or 0) > 0,
+                    True,
                 ))
         except requests.RequestException as exc:
             logger.warning("Error fetching %s: %s", name, exc)

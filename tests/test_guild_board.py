@@ -397,6 +397,18 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_mplus_week_rows_only_timed():
+    results = [
+        (20, "Pit of Saron", "Amrevenge", "Beast Mastery Hunter", False),  # depleted
+        (18, "Skyreach", "Brewzleeh", "Windwalker Monk", True),
+        (16, "Skyreach", "Healmates", "Holy Priest", True),
+    ]
+    rows = board_image._mplus_week_rows(results, 5)
+    names = [r["name"] for r in rows]
+    assert names == ["Brewzleeh", "Healmates"]   # the depleted +20 is out
+    assert all("over time" not in (r["detail"] or "") for r in rows)
+
+
 def test_detect_zone_skips_mplus_season_zones():
     reports = [
         {"zone": {"id": 44, "name": "Verdant Spire"}, "startTime": 100},

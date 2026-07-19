@@ -429,14 +429,17 @@ def _death_rows(deaths, top_n, class_lookup):
 
 
 def _mplus_week_rows(results, top_n):
+    # Only timed keys make the board (belt-and-braces: the collector
+    # already filters, but manual roster data may not).
+    timed_only = [item for item in results if item[-1]]
     rows = []
-    for item in results[:top_n]:
+    for item in timed_only[:top_n]:
         if len(item) == 4:
-            level, dungeon, name, timed = item
+            level, dungeon, name, _ = item
             spec = ""
         else:
-            level, dungeon, name, spec, timed = item
-        detail_bits = [spec, dungeon, "timed" if timed else "over time"]
+            level, dungeon, name, spec, _ = item
+        detail_bits = [spec, dungeon]
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(spec)),
@@ -444,9 +447,7 @@ def _mplus_week_rows(results, top_n):
             "detail": " · ".join(b for b in detail_bits if b),
             "detail_bits": detail_bits,
             "value": f"+{level}",
-            # Timed keys glow gold; depleted keys go muted — readable even
-            # when the "timed"/"over time" tag gets trimmed for space.
-            "value_color": ACCENT if timed else MUTED,
+            "value_color": ACCENT,
         })
     return rows
 
@@ -546,7 +547,8 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
 
     mplus = []
     if mplus_results is not None and _enabled(sections_cfg, "mplus"):
-        mplus.append(_sec("THIS WEEK'S KEYS", _mplus_week_rows(mplus_results, top_n)))
+        mplus.append(_sec("TOP TIMED KEYS THIS WEEK", _mplus_week_rows(mplus_results, top_n),
+                          "No timed keys this week"))
     if mplus_weekly is not None and _enabled(sections_cfg, "mplus_weekly_parses"):
         empty = "No M+ logs uploaded this week"
         mplus.append(_sec("TOP M+ DPS THIS WEEK",
