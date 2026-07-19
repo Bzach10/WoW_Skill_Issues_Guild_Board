@@ -123,18 +123,21 @@ MEDAL_FILLS = [
 DIFFICULTY_NAMES = {1: "LFR", 3: "Normal", 4: "Heroic", 5: "Mythic", 10: "M+"}
 
 # --- layout constants ---------------------------------------------------------
-WIDTH = 2200
+WIDTH = 2600
 MARGIN = 36
 GUTTER = 24
 COL_PAD = 22
-COL_W = (WIDTH - 2 * MARGIN - 2 * GUTTER) // 3   # Raid | Mythic+ | Seasonal
+COL_W = (WIDTH - 2 * MARGIN - 3 * GUTTER) // 4   # Raid | M+ | Seasonal M+ | Seasonal Guild
 ROW_H = 36
-# Banner heights scale with the art so the sign/scene never get cropped,
-# whatever the board width or the guild's art aspect.
-HEADER_ART_FRAC = 0.27
-FOOTER_ART_FRAC = 0.22
-ART_H_MIN, ART_H_MAX = 420, 920
+# Short composited art bands: crops float over the fire backdrop so the
+# banners stay compact whatever the art's aspect.
+HEADER_ART_H = 300
+FOOTER_ART_H = 320
 ART_INFO_H = 48      # slim info strip under the header banner
+# Art crop regions (fractions of the source image) for the composited bands
+ART_SIGN_BOX = (0.02, 0.03, 0.60, 0.28)    # the stone guild sign
+ART_ACCENT_BOX = (0.55, 0.00, 1.00, 0.33)  # the fist / right-side accent
+ART_SCENE_BOX = (0.00, 0.74, 1.00, 0.995)  # the bottom scene strip
 SEC_TITLE_H = 32
 SEC_GAP = 16
 COL_HEADER_H = 46
@@ -194,31 +197,45 @@ def _paint_backdrop(img, art):
               (0, 0), Image.new("L", (img.width, img.height), 182))
 
 
-def _paste_banner(img, art, y, h, anchor):
-    """Full-width slice of the art: top-anchored for the header (the guild
-    sign), bottom-anchored for the footer (the scene), with a dark tint
-    for cohesion and an edge fade into the page background."""
-    ratio = WIDTH / art.width
-    scaled = art.resize((WIDTH, max(int(art.height * ratio), h)), Image.LANCZOS)
-    if anchor == "top":
-        band = scaled.crop((0, 0, WIDTH, h))
-    else:
-        band = scaled.crop((0, scaled.height - h, WIDTH, scaled.height))
-    img.paste(band, (0, y))
+def _crop_frac(art, box):
+    l, t, r, b = box
+    return art.crop((int(l * art.width), int(t * art.height),
+                     int(r * art.width), int(b * art.height)))
 
-    img.paste(Image.new("RGB", (WIDTH, h), BG), (0, y), Image.new("L", (WIDTH, h), 70))
 
-    fade_h = min(90, h)
-    ramp = Image.new("L", (1, fade_h))
-    for i in range(fade_h):
-        alpha = int(200 * (i / max(fade_h - 1, 1)))
-        ramp.putpixel((0, i), alpha if anchor == "top" else 200 - alpha)
-    ramp = ramp.resize((WIDTH, fade_h))
-    solid = Image.new("RGB", (WIDTH, fade_h), (8, 8, 11))
-    if anchor == "top":
-        img.paste(solid, (0, y + h - fade_h), ramp)
-    else:
-        img.paste(solid, (0, y), ramp)
+def _feather_mask(size, fade=40):
+    """Alpha mask fading the left/right edges so crops melt into the backdrop."""
+    mask = Image.new("L", size, 255)
+    d = ImageDraw.Draw(mask)
+    for i in range(fade):
+        alpha = int(255 * i / fade)
+        d.line([(i, 0), (i, size[1])], fill=alpha)
+        d.line([(size[0] - 1 - i, 0), (size[0] - 1 - i, size[1])], fill=alpha)
+    return mask
+
+
+def _paste_fit(img, piece, h, x=None, y=0, anchor="left"):
+    """Scale a crop to height h (never distorting) and float it on the page."""
+    scale = h / piece.height
+    pw = max(int(piece.width * scale), 1)
+    scaled = piece.resize((pw, h), Image.LANCZOS)
+    if x is None:
+        x = 24 if anchor == "left" else (img.width - pw - 24 if anchor == "right"
+                                         else (img.width - pw) // 2)
+    img.paste(scaled, (int(x), int(y)), _feather_mask(scaled.size))
+    return pw
+
+
+def _draw_header_art(img, art, h):
+    """Compact header: guild sign anchored left, art accent anchored right,
+    embers (the backdrop) glowing between them."""
+    _paste_fit(img, _crop_frac(art, ART_SIGN_BOX), h - 20, y=10, anchor="left")
+    _paste_fit(img, _crop_frac(art, ART_ACCENT_BOX), h - 12, y=4, anchor="right")
+
+
+def _draw_footer_art(img, art, y, h):
+    """Compact footer: the bottom scene centered over the backdrop."""
+    _paste_fit(img, _crop_frac(art, ART_SCENE_BOX), h - 16, y=y + 8, anchor="center")
 
 
 def _fonts():
@@ -729,24 +746,24 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=Non
 
     improve_empty = "No qualifying gains yet — needs 2+ weeks of logs"
 
-    sections = []
+    mplus_side, guild_side = [], []
     if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
-        sections.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
+        mplus_side.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
-        sections.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
-    if "dps" in imp:
-        sections.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
-    if "hps" in imp:
-        sections.append(_sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty))
+        mplus_side.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
     if season_scores and _enabled(sections_cfg, "closest_race"):
         race = _closest_race(season_scores or [])
         if race:
-            sections.append(_sec("CLOSEST RACE", [{"text": race}]))
+            mplus_side.append(_sec("CLOSEST RACE", [{"text": race}]))
+    if "dps" in imp:
+        guild_side.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
+    if "hps" in imp:
+        guild_side.append(_sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty))
     if records and _enabled(sections_cfg, "guild_records"):
         record_rows = _record_rows(records)
         if record_rows:
-            sections.append(_sec("GUILD RECORDS \u00b7 SEASON", record_rows))
-    return sections
+            guild_side.append(_sec("GUILD RECORDS \u00b7 SEASON", record_rows))
+    return mplus_side, guild_side
 
 
 # --- rendering --------------------------------------------------------------------
@@ -986,7 +1003,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     raid_sections, mplus_sections = _build_columns(
         cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
         no_logs, mplus_weekly=mplus_weekly, streaks=streaks, zone_name=zone_name)
-    seasonal_sections = _build_seasonal(
+    seasonal_mp, seasonal_guild = _build_seasonal(
         cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous,
         records=records)
 
@@ -995,16 +1012,12 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     mplus_title = (sections_cfg.get("mplus_header") or {}).get("title", "Mythic Plus").upper()
 
     theme = _load_theme_art(cfg)
-    header_art_h = footer_art_h = 0
-    if theme:
-        scaled_art_h = int(theme.height * WIDTH / theme.width)
-        header_art_h = max(ART_H_MIN, min(int(scaled_art_h * HEADER_ART_FRAC), ART_H_MAX))
-        footer_art_h = max(ART_H_MIN, min(int(scaled_art_h * FOOTER_ART_FRAC), ART_H_MAX))
-    header_h = (header_art_h + ART_INFO_H) if theme else 96
+    header_h = (HEADER_ART_H + ART_INFO_H) if theme else 96
     show_hero = stats is not None or bool(standing)
     hero_h = 120 if show_hero else 0
     col_h = max(_column_height(raid_sections), _column_height(mplus_sections),
-                _column_height(seasonal_sections) if seasonal_sections else 0)
+                _column_height(seasonal_mp) if seasonal_mp else 0,
+                _column_height(seasonal_guild) if seasonal_guild else 0)
 
     quote_max_w = WIDTH - 2 * MARGIN - 2 * COL_PAD
     roast_lines, roast_attr = _roast_lines(cfg, measure, fonts, quote_max_w)
@@ -1017,7 +1030,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     if roast_lines:
         height += GUTTER + roast_h
     if theme:
-        height += GUTTER + footer_art_h   # footer art runs flush to the edge
+        height += GUTTER + FOOTER_ART_H   # footer art runs flush to the edge
     else:
         height += MARGIN
 
@@ -1037,14 +1050,14 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     subtitle = f"{difficulty} · {zone_name}" if zone_name else f"{difficulty} WEEKLY BOARD"
 
     if theme:
-        _paste_banner(img, theme, 0, header_art_h, "top")
-        strip_y = header_art_h + 2
+        _draw_header_art(img, theme, HEADER_ART_H)
+        strip_y = HEADER_ART_H + 2
         draw.text((MARGIN, strip_y + 6), subtitle, font=fonts["subtitle"], fill=MUTED)
         dw = draw.textlength(date_range, font=fonts["date"])
         draw.text((WIDTH - MARGIN - dw, strip_y + 8), date_range, font=fonts["date"], fill=MUTED)
         draw.line([MARGIN, strip_y + ART_INFO_H - 8, WIDTH - MARGIN, strip_y + ART_INFO_H - 8],
                   fill=PANEL_BORDER, width=1)
-        y = header_art_h + ART_INFO_H
+        y = HEADER_ART_H + ART_INFO_H
     else:
         y = MARGIN
         draw.text((MARGIN, y), cfg["guild"]["name"], font=fonts["title"], fill=ACCENT)
@@ -1060,14 +1073,16 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 
     icons = bool((cfg.get("display") or {}).get("icons", True))
     col_y = y
-    col_xs = [MARGIN, MARGIN + COL_W + GUTTER, MARGIN + 2 * (COL_W + GUTTER)]
+    col_xs = [MARGIN + i * (COL_W + GUTTER) for i in range(4)]
     _draw_column(img, draw, col_xs[0], y, col_h, raid_title, raid_sections, fonts, icons=icons)
     _draw_column(img, draw, col_xs[1], y, col_h, mplus_title, mplus_sections, fonts, icons=icons)
-    _draw_column(img, draw, col_xs[2], y, col_h, "SEASONAL", seasonal_sections, fonts,
+    _draw_column(img, draw, col_xs[2], y, col_h, "SEASONAL MYTHIC PLUS", seasonal_mp, fonts,
+                 icons=icons, empty_text="Season data still cooking")
+    _draw_column(img, draw, col_xs[3], y, col_h, "SEASONAL GUILD", seasonal_guild, fonts,
                  icons=icons, empty_text="Season data still cooking")
     _draw_item_art(img, draw, cfg, col_y, col_h,
                    [(col_xs[0], raid_sections), (col_xs[1], mplus_sections),
-                    (col_xs[2], seasonal_sections)], fonts)
+                    (col_xs[2], seasonal_mp), (col_xs[3], seasonal_guild)], fonts)
     y += col_h
 
     if roast_lines:
@@ -1086,7 +1101,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
             draw.text((x1 - COL_PAD - aw, ty - 2), roast_attr, font=fonts["detail"], fill=MUTED)
 
     if theme:
-        _paste_banner(img, theme, height - footer_art_h, footer_art_h, "bottom")
+        _draw_footer_art(img, theme, height - FOOTER_ART_H, FOOTER_ART_H)
 
     display_cfg = cfg.get("display") or {}
     if display_cfg.get("watermark"):
