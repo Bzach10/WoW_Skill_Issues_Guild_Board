@@ -437,7 +437,7 @@ def test_theme_art_banners(tmp_path):
 
 
 def test_board_animation_gif(tmp_path):
-    from PIL import Image
+    from PIL import Image, ImageChops
     art = Image.new("RGB", (800, 1000), (70, 40, 25))
     art_path = tmp_path / "art.png"
     art.save(art_path)
@@ -447,10 +447,22 @@ def test_board_animation_gif(tmp_path):
     out = board_image.generate_board_animation(
         cfg, _image_board_stats(), None, None, None, None, None, None,
         now - timedelta(days=7), now, False,
-        output_path=str(tmp_path / "board.gif"), frames=2)
+        output_path=str(tmp_path / "board.gif"), frames=10)
     assert out and out.endswith(".gif")
     gif = Image.open(out)
-    assert getattr(gif, "n_frames", 1) == 2
+    assert getattr(gif, "n_frames", 1) == 10
+
+    # Bands animate; the data columns must stay pixel-identical between
+    # frames (no shimmer). Compare frame 3 against frame 0.
+    gif.seek(0)
+    f0 = gif.convert("RGB")
+    gif.seek(3)
+    f3 = gif.convert("RGB")
+    diff = ImageChops.difference(f0, f3)
+    assert diff.getbbox() is not None   # something is actually animating
+    mid = diff.crop((0, board_image.HEADER_ART_H + 10, f0.width,
+                     f0.height - board_image.FOOTER_ART_H - 10))
+    assert mid.getbbox() is None        # ...but only inside the bands
 
 
 def test_watermark_renders(tmp_path):

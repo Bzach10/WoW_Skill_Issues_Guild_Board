@@ -852,45 +852,13 @@ def _rank_delta(prev, cur):
     return f"\u25bc{-diff:,}", RED
 
 
-def _draw_item_art(img, draw, cfg, col_y, col_h, columns, fonts):
-    """Fun corner: the guild's flavor item (display.item_art) rendered in
-    the spare space of the SHORTEST column. Swap the file monthly."""
+def _footer_band_kwargs(cfg):
+    """Item art rides in the footer band (where the recruiting poster was)."""
     display_cfg = cfg.get("display") or {}
-    item = _load_art_file(display_cfg.get("item_art"), "Item art")
-    if item is None:
-        return
-    # Bottom-right corner by request: prefer the LAST column; fall back to
-    # the shortest if the last one has no room.
-    ordered = [columns[-1]] + sorted(columns[:-1], key=lambda c: _column_height(c[1]))
-    x0 = short_h = None
-    for cx, sections in ordered:
-        h = _column_height(sections)
-        if col_h - h - SEC_GAP >= 170:
-            x0, short_h = cx, h
-            break
-    if x0 is None:
-        return
-    avail = col_h - short_h - SEC_GAP
-    inner_x = x0 + COL_PAD
-    inner_w = COL_W - 2 * COL_PAD
-
-    max_h = avail - SEC_TITLE_H - 8
-    scale = min(inner_w / item.width, max_h / item.height, 1.0)
-    new_w, new_h = max(int(item.width * scale), 1), max(int(item.height * scale), 1)
-
-    # Bottom-align the card inside the panel; title sits right above it
-    iy = col_y + col_h - COL_PAD - 6 - new_h
-    ty = iy - SEC_TITLE_H
-    title = display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")
-    draw.text((inner_x, ty), title, font=fonts["sec_title"], fill=ACCENT)
-    tw = draw.textlength(title, font=fonts["sec_title"])
-    draw.line([inner_x + tw + 12, ty + 9, inner_x + inner_w, ty + 9], fill=PANEL_BORDER, width=1)
-
-    scaled = item.resize((new_w, new_h), Image.LANCZOS)
-    ix = inner_x + (inner_w - new_w) // 2
-    img.paste(scaled, (ix, iy))
-    draw.rounded_rectangle([ix - 2, iy - 2, ix + new_w + 2, iy + new_h + 2],
-                           radius=8, outline=(150, 122, 62), width=2)
+    return {
+        "item_art": _load_art_file(display_cfg.get("item_art"), "Item art"),
+        "item_art_title": display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH"),
+    }
 
 
 def _hero_tiles(stats, standing, previous=None):
@@ -964,6 +932,23 @@ def _roast_lines(cfg, draw, fonts, max_w):
         quote = "No roast submitted. Healers live to see another week."
         attribution = ""
     return _wrap(draw, quote, fonts["quote"], max_w), attribution
+
+
+def _draw_watermark(img, cfg):
+    """Bottom-right credit line; a helper because the animation pipeline
+    repaints the footer band per frame and must re-stamp it after."""
+    display_cfg = cfg.get("display") or {}
+    if not display_cfg.get("watermark"):
+        return
+    text = display_cfg.get(
+        "watermark_text",
+        "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
+    draw = ImageDraw.Draw(img)
+    wfont = _load_font(12)
+    tw = draw.textlength(text, font=wfont)
+    wx, wy = WIDTH - MARGIN - tw, img.height - 24
+    draw.text((wx + 1, wy + 1), text, font=wfont, fill=(0, 0, 0))
+    draw.text((wx, wy), text, font=wfont, fill=FAINT)
 
 
 def generate_board_image(cfg, stats, standing, leaders, zone_name,
@@ -1057,9 +1042,6 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
                  icons=icons, empty_text="Season data still cooking")
     _draw_column(img, draw, col_xs[3], y, col_h, "SEASONAL GUILD", seasonal_guild, fonts,
                  icons=icons, empty_text="Season data still cooking")
-    _draw_item_art(img, draw, cfg, col_y, col_h,
-                   [(col_xs[0], raid_sections), (col_xs[1], mplus_sections),
-                    (col_xs[2], seasonal_mp), (col_xs[3], seasonal_guild)], fonts)
     y += col_h
 
     if roast_lines:
@@ -1079,19 +1061,11 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 
     if theme:
         theme_bands.draw_footer_band(img, height - FOOTER_ART_H, stats,
-                                     week_index=start_dt.isocalendar()[1], phase=phase)
+                                     week_index=start_dt.isocalendar()[1], phase=phase,
+                                     **_footer_band_kwargs(cfg))
         _band_seam(img, height - FOOTER_ART_H, FOOTER_ART_H, at_top=False)
 
-    display_cfg = cfg.get("display") or {}
-    if display_cfg.get("watermark"):
-        text = display_cfg.get(
-            "watermark_text",
-            "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
-        wfont = _load_font(12)
-        tw = draw.textlength(text, font=wfont)
-        wx, wy = WIDTH - MARGIN - tw, height - 24
-        draw.text((wx + 1, wy + 1), text, font=wfont, fill=(0, 0, 0))
-        draw.text((wx, wy), text, font=wfont, fill=FAINT)
+    _draw_watermark(img, cfg)
 
     if output_path is None:
         return img
@@ -1103,27 +1077,65 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 GIF_MAX_BYTES = 9_500_000   # stay under Discord's free-tier upload limit
 
 
-def generate_board_animation(cfg, *args, output_path="board.gif", frames=6,
-                             duration_ms=140, **kwargs):
-    """Animated board: the torches, campfire and ember glows flicker.
+def _redraw_bands(img, cfg, stats, week_index, phase):
+    """Repaint ONLY the animated regions onto a copy of the static board.
+    Every animated effect (glows, embers, sign swing) is clipped inside the
+    two bands, so nothing outside them ever changes between frames."""
+    theme_bands.draw_header_band(img, stats, phase=phase)
+    _band_seam(img, 0, HEADER_ART_H, at_top=True)
+    theme_bands.draw_footer_band(img, img.height - FOOTER_ART_H, stats,
+                                 week_index=week_index, phase=phase,
+                                 **_footer_band_kwargs(cfg))
+    _band_seam(img, img.height - FOOTER_ART_H, FOOTER_ART_H, at_top=False)
+    _draw_watermark(img, cfg)
 
-    Renders `frames` full boards at stepped phases and encodes an
-    optimized looping GIF. If even a downscaled GIF cannot fit under
-    Discord's upload limit, returns None so the caller falls back to the
-    static PNG."""
+
+def generate_board_animation(cfg, stats, standing, leaders, zone_name,
+                             mplus_results, mplus_season_scores, mplus_season_parses,
+                             start_dt, end_dt, no_logs=False, output_path="board.gif",
+                             frames=10, duration_ms=120, **kwargs):
+    """Seamless ~1.2s loop: embers rise, torches/campfire flicker, the GIT
+    GUD shingle swings, and the data columns stay pixel-identical (the board
+    body is rendered exactly once).
+
+    Every frame is quantized against ONE shared palette and the static
+    middle is copied verbatim from frame 0, so the text never re-dithers
+    (no shimmer) and the GIF compresses well. Returns None if even a
+    downscaled GIF cannot fit under Discord's upload limit, so the caller
+    falls back to the static PNG."""
+    kwargs.pop("phase", None)
     kwargs.pop("output_path", None)
-    imgs = []
-    for i in range(frames):
-        imgs.append(generate_board_image(cfg, *args, output_path=None,
-                                         phase=i / frames, **kwargs))
-    for scale in (1.0, 0.85, 0.7):
-        if scale < 1.0:
-            scaled = [im.resize((int(im.width * scale), int(im.height * scale)),
-                                Image.LANCZOS) for im in imgs]
-        else:
-            scaled = imgs
-        scaled[0].save(output_path, save_all=True, append_images=scaled[1:],
-                       duration=duration_ms, loop=0, optimize=True)
+    base = generate_board_image(
+        cfg, stats, standing, leaders, zone_name, mplus_results,
+        mplus_season_scores, mplus_season_parses, start_dt, end_dt,
+        no_logs=no_logs, output_path=None, phase=0.0, **kwargs)
+    if _load_theme_art(cfg) is None:
+        frames = 1   # no themed bands -> nothing animates
+    week_index = start_dt.isocalendar()[1]
+    frames_l = [base]
+    for i in range(1, frames):
+        im = base.copy()
+        _redraw_bands(im, cfg, stats, week_index, i / frames)
+        frames_l.append(im)
+
+    for scale in (1.0, 0.8, 0.65, 0.5):
+        imgs = frames_l if scale == 1.0 else [
+            im.resize((int(im.width * scale), int(im.height * scale)),
+                      Image.LANCZOS) for im in frames_l]
+        # ONE shared palette for every frame: no per-frame re-quantization.
+        pal = imgs[0].quantize(colors=255, method=Image.MEDIANCUT)
+        q = [im.quantize(palette=pal, dither=Image.FLOYDSTEINBERG)
+             for im in imgs]
+        # Error-diffusion dithering bleeds band changes into the body, so
+        # force the static middle byte-identical to frame 0's pixels.
+        mid_top = int(HEADER_ART_H * scale) + 8
+        mid_bot = int((base.height - FOOTER_ART_H) * scale) - 8
+        if mid_bot > mid_top:
+            still = q[0].crop((0, mid_top, imgs[0].width, mid_bot))
+            for frame in q[1:]:
+                frame.paste(still, (0, mid_top))
+        q[0].save(output_path, save_all=True, append_images=q[1:],
+                  duration=duration_ms, loop=0, optimize=True, disposal=1)
         size = os.path.getsize(output_path)
         if size <= GIF_MAX_BYTES:
             logger.info("Generated animated board at %s (%s frames, %.1fMB, scale %.0f%%)",

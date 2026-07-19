@@ -29,15 +29,17 @@ display:
   # (great when the art carries the guild name) and its bottom slice the
   # footer. Missing file = plain board, no error.
   theme_art: "assets/theme_art.png"
-  # Fun corner: the guild's flavor "item" rendered in the spare space of
-  # the shorter column. Swap the file monthly for a rotating gag.
+  # Fun corner: the guild's flavor "item" rendered as a card in the footer
+  # band (where the recruiting poster used to hang). Swap the file monthly
+  # for a rotating gag.
   item_art: "assets/item_art.png"
   item_art_title: "GUILD ITEM OF THE MONTH"
-  # Animated board: torches/campfire/embers flicker (looping GIF).
-  # Falls back to the static PNG automatically if the GIF would exceed
-  # Discord's upload limit.
+  # Animated board: rising embers, flickering torches/campfire, swinging
+  # sign, soul-wisps in the memorial (seamless looping GIF; 10 frames x
+  # 120ms = 1.2s loop). Falls back to the static PNG automatically if the
+  # GIF would exceed Discord's upload limit.
   animate: true
-  animate_frames: 6
+  animate_frames: 10
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
@@ -126,10 +128,11 @@ sections:
     enabled: true
     max_characters: 30
 
-  # Most deaths (Graveyard Camper award)
+  # Most deaths (Graveyard Camper award) — retired from the columns; the
+  # Graveyard Memorial tombstones in the footer tell this story now.
   most_deaths:
     order: 11
-    enabled: true
+    enabled: false
 
   # Guild Achievements section header
   guild_achievement_header:

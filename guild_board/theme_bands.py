@@ -11,6 +11,7 @@ assets/ (see README.md in this handoff for the 6-line board_image.py patch).
 
 import logging
 import math
+import random
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
@@ -105,8 +106,10 @@ def _flicker(phase, k, lo=0.86, hi=1.14):
     return lo + (hi - lo) * (0.5 + 0.5 * math.sin(2 * math.pi * (phase + k)))
 
 
-def _glow(img, cx, cy, rx, ry, color, alpha, steps=12):
-    """Soft radial glow via stacked translucent ellipses."""
+def _glow(img, cx, cy, rx, ry, color, alpha, steps=12, clip=None):
+    """Soft radial glow via stacked translucent ellipses. `clip` confines the
+    glow to a box — animated glows must stay inside their band so the GIF
+    pipeline can redraw bands alone without touching the static columns."""
     overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
     d = ImageDraw.Draw(overlay)
     for i in range(steps, 0, -1):
@@ -114,7 +117,39 @@ def _glow(img, cx, cy, rx, ry, color, alpha, steps=12):
         a = int(alpha * (1 - f) ** 2)
         d.ellipse([cx - rx * f, cy - ry * f, cx + rx * f, cy + ry * f],
                   fill=color + (a,))
-    img.paste(Image.alpha_composite(img.convert("RGBA"), overlay).convert("RGB"), (0, 0))
+    box = tuple(int(v) for v in clip) if clip else (0, 0, img.width, img.height)
+    region = Image.alpha_composite(img.crop(box).convert("RGBA"),
+                                   overlay.crop(box)).convert("RGB")
+    img.paste(region, box[:2])
+
+
+def _embers(img, x0, y0, x1, y1, phase, seed=7, n=22, color=(255, 200, 120)):
+    """Looping rising embers. Every particle's position/alpha is a pure
+    function of (phase + offset) mod 1, so ANY frame count loops seamlessly
+    and frame k is deterministic. Drawing is clipped to the given box."""
+    rng = random.Random(seed)
+    overlay = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(overlay)
+    h = (y1 - y0) + 40
+    for _ in range(n):
+        px = x0 + rng.random() * (x1 - x0)
+        off = rng.random()
+        drift = (rng.random() - 0.5) * 90
+        size = 2 + rng.random() * 4
+        t = (phase + off) % 1.0
+        y = y1 - t * h
+        x = px + drift * t
+        a = int(235 * min(t / 0.12, 1.0) * (1.0 - t) ** 1.5)
+        if a <= 0:
+            continue
+        d.ellipse([x - size, y - size, x + size, y + size],
+                  fill=(224, 122, 40, a // 2))
+        cs = size * 0.45
+        d.ellipse([x - cs, y - cs, x + cs, y + cs], fill=color + (a,))
+    box = (int(x0), int(y0), int(x1), int(y1))
+    region = Image.alpha_composite(img.crop(box).convert("RGBA"),
+                                   overlay.crop(box)).convert("RGB")
+    img.paste(region, box[:2])
 
 
 def _flame(img, cx, base_y, phase=0.0):
@@ -159,7 +194,8 @@ def draw_header_band(img, stats=None, phase=0.0):
     else:
         draw.rectangle([0, 0, W, HEADER_BAND_H], fill=(38, 30, 23))
     _glow(img, W // 2, HEADER_BAND_H + 60, int(W * 0.32), 220, (224, 122, 40),
-          int(70 * _flicker(phase, 0.5, 0.8, 1.15)))
+          int(70 * _flicker(phase, 0.5, 0.8, 1.15)), clip=(0, 0, W, HEADER_BAND_H))
+    _embers(img, 0, 0, W, HEADER_BAND_H, phase, seed=7, n=26)
 
     kills = (stats or {}).get("kills", 0)
     pulls = (stats or {}).get("pulls", 0)
@@ -236,11 +272,17 @@ def draw_header_band(img, stats=None, phase=0.0):
     sx0 = W - 96 - 250
     for cxn in (sx0 + 50, sx0 + 200):
         draw.line([cxn, 0, cxn, 74], fill=(42, 33, 22), width=4)
-    draw.rounded_rectangle([sx0, 74, sx0 + 250, 196], radius=8, fill=(90, 64, 40), outline=(43, 33, 23), width=3)
-    for py in range(96, 196, 24):
-        draw.line([sx0 + 4, py, sx0 + 246, py], fill=(69, 48, 29), width=2)
-    _center(draw, sx0 + 125, 92, "GIT GUD", _font(42, bold=True, display=True), (38, 28, 18))
-    _center(draw, sx0 + 125, 150, "MGMT IS NOT RESPONSIBLE", _font(12, bold=True), (46, 36, 24))
+    # plank drawn on its own tile so it can swing gently on its chains
+    plank = Image.new("RGBA", (290, 162), (0, 0, 0, 0))
+    pd = ImageDraw.Draw(plank)
+    pd.rounded_rectangle([20, 20, 270, 142], radius=8, fill=(90, 64, 40), outline=(43, 33, 23), width=3)
+    for py in range(42, 142, 24):
+        pd.line([24, py, 266, py], fill=(69, 48, 29), width=2)
+    _center(pd, 145, 38, "GIT GUD", _font(42, bold=True, display=True), (38, 28, 18))
+    _center(pd, 145, 96, "MGMT IS NOT RESPONSIBLE", _font(12, bold=True), (46, 36, 24))
+    angle = 1.5 * math.sin(2 * math.pi * phase)
+    plank = plank.rotate(angle, resample=Image.BICUBIC, center=(145, 20))
+    img.paste(plank, (sx0 - 20, 54), plank)
 
 
 # ---------------------------------------------------------------- footer ----
@@ -257,19 +299,6 @@ RULES = [
     ("Equip: Rule 4 — GBank tab 3 is not your personal bank.", UNCOMMON, 20, False),
     ("\u201cIf you die in the fire, you lose DKP we don't track.\u201d", GOLD_TEXT, 20, False),
     ("Requires: Skill (missing)", (255, 32, 32), 20, False),
-]
-
-RECRUIT = [
-    ("Now Recruiting: Anyone With Hands", LEGENDARY, 30, True),
-    ("Binds on invite", TEXT, 20, False),
-    ("Warm Body                                        Any Spec", TEXT, 20, False),
-    ("+100% Attendance Aura (aspirational)", TEXT, 20, False),
-    ("Equip: Knows what a swirly is. (preferred, not required)", UNCOMMON, 20, False),
-    ("Equip: Has released spirit at least once unassisted.", UNCOMMON, 20, False),
-    ("Use: Presses defensives before dying. (2 Min Cooldown)", UNCOMMON, 20, False),
-    ("\u201cHealmates needs backup. Or a replacement.", GOLD_TEXT, 20, False),
-    ("  Mostly a replacement.\u201d", GOLD_TEXT, 20, False),
-    ("Apply in #recruitment · literally no requirements", TEXT, 20, False),
 ]
 
 EPITAPHS = [
@@ -302,7 +331,32 @@ def _tooltip(draw, x, y, w, lines, outline):
     return h
 
 
-def draw_footer_band(img, y, stats=None, week_index=0, phase=0.0):
+def _item_card(img, draw, x, y0, w, item, title):
+    """Guild Item of the Month card — lives where the recruiting poster
+    used to hang. Swap assets/item_art.png monthly for a rotating gag."""
+    pad, title_h = 24, 58
+    if item is not None:
+        scale = min((w - 2 * pad) / item.width, 380 / item.height, 1.0)
+        iw, ih = max(int(item.width * scale), 1), max(int(item.height * scale), 1)
+    else:
+        iw, ih = 0, 110
+    card_h = title_h + ih + pad + 12
+    draw.rounded_rectangle([x, y0, x + w, y0 + card_h], radius=8,
+                           fill=(7, 7, 24), outline=(150, 122, 62), width=2)
+    _center(draw, x + w // 2, y0 + 16, title, _font(30, bold=True, display=True), GOLD_TEXT)
+    if item is not None:
+        scaled = item.resize((iw, ih), Image.LANCZOS)
+        ix = x + (w - iw) // 2
+        img.paste(scaled, (ix, y0 + title_h))
+        draw.rounded_rectangle([ix - 2, y0 + title_h - 2, ix + iw + 2, y0 + title_h + ih + 2],
+                               radius=6, outline=(150, 122, 62), width=2)
+    else:
+        _center(draw, x + w // 2, y0 + title_h + 38, "New item arriving soon™",
+                _font(20), MUTED)
+
+
+def draw_footer_band(img, y, stats=None, week_index=0, phase=0.0,
+                     item_art=None, item_art_title="GUILD ITEM OF THE MONTH"):
     W = img.width
     draw = ImageDraw.Draw(img)
     art_h = FOOTER_BAND_H - 52
@@ -311,9 +365,12 @@ def draw_footer_band(img, y, stats=None, week_index=0, phase=0.0):
         img.paste(wall.resize((W, art_h), Image.LANCZOS), (0, y))
     else:
         draw.rectangle([0, y, W, y + art_h], fill=(34, 27, 21))
+    _embers(img, 0, y, W, y + art_h, phase, seed=11, n=18)
 
     _tooltip(draw, 60, y + 46, 600, RULES, (67, 67, 92))
-    _tooltip(draw, W - 60 - 600, y + 60, 600, RECRUIT, (92, 74, 46))
+    if item_art is None:
+        item_art = _load(ASSET_DIR / "item_art.png")
+    _item_card(img, draw, W - 60 - 600, y + 60, 600, item_art, item_art_title)
 
     # --- graveyard memorial --------------------------------------------------
     mx0, mx1 = 60 + 600 + 44, W - 60 - 600 - 44
@@ -324,6 +381,9 @@ def draw_footer_band(img, y, stats=None, week_index=0, phase=0.0):
     draw.rounded_rectangle([mx0, fy, mx1, fy + fh], radius=10, fill=(14, 16, 20), outline=(150, 122, 62), width=3)
     _glow(img, (mx0 + mx1) // 2, fy + fh, int(mw * 0.42), 150, (58, 220, 90),
           int(60 * _flicker(phase, 0.66, 0.8, 1.2)))
+    # souls of the fallen drift up between the tombstones
+    _embers(img, mx0 + 20, fy + 20, mx1 - 20, fy + fh - 10, phase,
+            seed=9, n=14, color=(182, 255, 176))
 
     ranked = sorted(((stats or {}).get("deaths") or {}).items(), key=lambda kv: kv[1], reverse=True)[:4]
     if not ranked:

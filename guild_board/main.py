@@ -400,7 +400,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if display_cfg.get("animate", False):
                 image_path = generate_board_animation(
                     *board_args, output_path="board.gif",
-                    frames=int(display_cfg.get("animate_frames", 6)), **board_kwargs)
+                    frames=int(display_cfg.get("animate_frames", 10)), **board_kwargs)
             if not image_path:
                 image_path = generate_board_image(
                     *board_args, output_path="board.png", **board_kwargs)
