@@ -486,6 +486,7 @@ def _improve_rows(entries):
     for e in entries:
         detail_bits = [
             e.get("spec") or "",
+            DIFFICULTY_NAMES.get(e.get("difficulty"), ""),
             f"{e['early_parse']:.0f}% → {e['late_parse']:.0f}%",
             f"{_fmt_amount(e.get('early_amount') or 0)} → {_fmt_amount(e.get('late_amount') or 0)}",
         ]
@@ -500,6 +501,11 @@ def _improve_rows(entries):
             "value_color": (76, 220, 86),
         })
     return rows
+
+
+def _sec(title, rows, empty_text="No data pulled this week"):
+    """A section that keeps its title visible even when empty."""
+    return {"title": title, "rows": rows if rows else [{"text": empty_text}]}
 
 
 def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs, mplus_weekly=None):
@@ -525,25 +531,24 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
         # Label bosses with the difficulty the data actually came from
         # (the fallback may have downgraded mythic -> heroic -> normal).
         diff_name = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")
-        if _enabled(sections_cfg, "top_dps") and stats.get("best_dps"):
-            raid.append({"title": "TOP DPS PARSES", "rows": _parse_rows(stats["best_dps"], "DPS", top_n, diff_name)})
-        if _enabled(sections_cfg, "top_healing") and stats.get("best_hps"):
-            raid.append({"title": "TOP HEALING PARSES", "rows": _parse_rows(stats["best_hps"], "HPS", top_n, diff_name)})
-    if leaders and _enabled(sections_cfg, "realm_rank_leaders"):
-        raid.append({"title": "WEEKLY BOSS RANKS", "rows": _leader_rows(leaders, top_n)})
-    if stats and _enabled(sections_cfg, "most_deaths") and stats.get("deaths"):
-        raid.append({"title": "GRAVEYARD CAMPERS", "rows": _death_rows(stats["deaths"], top_n, class_lookup)})
+        if _enabled(sections_cfg, "top_dps"):
+            raid.append(_sec("TOP DPS PARSES", _parse_rows(stats.get("best_dps") or {}, "DPS", top_n, diff_name)))
+        if _enabled(sections_cfg, "top_healing"):
+            raid.append(_sec("TOP HEALING PARSES", _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name)))
+    if (stats or leaders) and _enabled(sections_cfg, "realm_rank_leaders"):
+        raid.append(_sec("WEEKLY BOSS RANKS", _leader_rows(leaders or [], top_n)))
+    if stats and _enabled(sections_cfg, "most_deaths"):
+        raid.append(_sec("GRAVEYARD CAMPERS", _death_rows(stats.get("deaths") or {}, top_n, class_lookup)))
 
     mplus = []
-    if mplus_results and _enabled(sections_cfg, "mplus"):
-        mplus.append({"title": "THIS WEEK'S KEYS", "rows": _mplus_week_rows(mplus_results, top_n)})
-    if mplus_weekly and _enabled(sections_cfg, "mplus_weekly_parses"):
-        if mplus_weekly.get("dps"):
-            mplus.append({"title": "TOP M+ DPS THIS WEEK",
-                          "rows": _parse_rows(mplus_weekly["dps"], "DPS", top_n)})
-        if mplus_weekly.get("hps"):
-            mplus.append({"title": "TOP M+ HPS THIS WEEK",
-                          "rows": _parse_rows(mplus_weekly["hps"], "HPS", top_n)})
+    if mplus_results is not None and _enabled(sections_cfg, "mplus"):
+        mplus.append(_sec("THIS WEEK'S KEYS", _mplus_week_rows(mplus_results, top_n)))
+    if mplus_weekly is not None and _enabled(sections_cfg, "mplus_weekly_parses"):
+        empty = "No M+ logs uploaded this week"
+        mplus.append(_sec("TOP M+ DPS THIS WEEK",
+                          _parse_rows(mplus_weekly.get("dps") or {}, "DPS", top_n), empty))
+        mplus.append(_sec("TOP M+ HPS THIS WEEK",
+                          _parse_rows(mplus_weekly.get("hps") or {}, "HPS", top_n), empty))
 
     return raid, mplus
 
@@ -554,15 +559,16 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement):
     top_n = int(cfg.get("top_n", 5))
     imp = improvement or {}
 
+    improve_empty = "No qualifying gains yet — needs 2+ weeks of logs"
     left, right = [], []
-    if season_scores and _enabled(sections_cfg, "mplus_season_scores"):
-        left.append({"title": "SEASON M+ SCORES", "rows": _season_score_rows(season_scores, top_n)})
-    if imp.get("dps"):
-        left.append({"title": "MOST IMPROVED DPS", "rows": _improve_rows(imp["dps"])})
-    if season_parses and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
-        right.append({"title": "BEST SEASON RUNS", "rows": _season_run_rows(season_parses, top_n)})
-    if imp.get("hps"):
-        right.append({"title": "MOST IMPROVED HEALERS", "rows": _improve_rows(imp["hps"])})
+    if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
+        left.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n)))
+    if "dps" in imp:
+        left.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
+    if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
+        right.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
+    if "hps" in imp:
+        right.append(_sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty))
     return left, right
 
 

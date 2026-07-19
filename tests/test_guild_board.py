@@ -397,6 +397,47 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_merge_improvement_keeps_best_gain_per_player():
+    mythic = [{"name": "Tommy", "delta": 29, "difficulty": 5}]
+    heroic = [
+        {"name": "tommy", "delta": 12, "difficulty": 4},   # worse gain, same player
+        {"name": "Maillo", "delta": 22, "difficulty": 4},
+        {"name": "Nokori", "delta": 8, "difficulty": 4},
+    ]
+    merged = wcl.merge_improvement(mythic, heroic)
+    names = [e["name"] for e in merged]
+    assert names == ["Tommy", "Maillo", "Nokori"]
+    assert merged[0]["difficulty"] == 5   # kept the mythic (bigger) gain
+
+
+def test_empty_sections_show_placeholder(tmp_path):
+    """Enabled-but-empty sections keep their title with a placeholder row."""
+    from PIL import Image
+    cfg = _image_board_cfg()
+    stats = _image_board_stats()
+    stats["best_hps"] = {}   # no healing parses at all
+    now = datetime.now(timezone.utc)
+    out = board_image.generate_board_image(
+        cfg, stats, None, [], None,
+        [], [], [], now - timedelta(days=7), now,
+        output_path=str(tmp_path / "board.png"),
+        improvement={"dps": [], "hps": []},
+        mplus_weekly={"dps": {}, "hps": {}})
+    assert Image.open(out).width == board_image.WIDTH
+    # Section builders keep titles with placeholder text rows
+    raid, mplus = board_image._build_columns(cfg, stats, [], [], [], [], False,
+                                             mplus_weekly={"dps": {}, "hps": {}})
+    titles = [s["title"] for s in raid + mplus]
+    assert "TOP HEALING PARSES" in titles
+    assert "TOP M+ DPS THIS WEEK" in titles
+    healing = next(s for s in raid if s["title"] == "TOP HEALING PARSES")
+    assert healing["rows"][0].get("text")
+    left, right = board_image._build_seasonal(cfg, [], [], {"dps": [], "hps": []})
+    seasonal_titles = [s["title"] for s in left + right]
+    assert "MOST IMPROVED DPS" in seasonal_titles
+    assert "MOST IMPROVED HEALERS" in seasonal_titles
+
+
 def test_extract_parses_carries_keystone_level():
     blob = {"data": [{
         "fightID": 7,

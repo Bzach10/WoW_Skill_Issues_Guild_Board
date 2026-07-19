@@ -409,6 +409,23 @@ def _enrich_parse_links(best_parses, report_codes):
 
 IMPROVEMENT_MAX_DAYS = 180
 
+# Difficulties swept for Most Improved: parses are only comparable within
+# one difficulty, so each is scanned separately and a player is credited
+# with their best gain at either. Mythic-only was too strict — most
+# raiders' log history lives at heroic.
+IMPROVEMENT_DIFFICULTIES = [5, 4]
+
+
+def merge_improvement(*ranked_lists):
+    """Merge per-difficulty improvement lists, keeping each player's best gain."""
+    best = {}
+    for ranked in ranked_lists:
+        for entry in ranked or []:
+            key = entry["name"].lower()
+            if key not in best or entry["delta"] > best[key]["delta"]:
+                best[key] = entry
+    return sorted(best.values(), key=lambda e: e["delta"], reverse=True)
+
 
 def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_reports=30):
     """Collect each raider's best parse per report across the season.

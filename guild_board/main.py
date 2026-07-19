@@ -16,8 +16,10 @@ from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
 from guild_board.wcl import (
     DIFFICULTY_MAP,
+    IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
     collect_improvement_history,
+    merge_improvement,
     collect_parses_only,
     collect_raid_stats,
     compute_improvement,
@@ -256,15 +258,22 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         if zone_id is None:
             zone_id, _ = detect_zone(cfg, reports)
         try:
-            history = collect_improvement_history(
-                token, cfg, zone_id, stats["difficulty"], end_ms)
             keep = roster_keep or make_name_filter(token, cfg)
+            min_days = int(imp_dps_cfg.get("min_days", imp_heal_cfg.get("min_days", 14)))
+            per_diff_dps, per_diff_hps = [], []
+            for diff in IMPROVEMENT_DIFFICULTIES:
+                history = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
+                for role, bucket in (("dps", per_diff_dps), ("hps", per_diff_hps)):
+                    ranked = compute_improvement(history[role], min_span_days=min_days)
+                    for entry in ranked:
+                        entry["difficulty"] = diff
+                    bucket.append(ranked)
             improvement = {}
             if imp_dps_cfg.get("enabled", False):
-                ranked = [e for e in compute_improvement(history["dps"]) if keep(e["name"])]
+                ranked = [e for e in merge_improvement(*per_diff_dps) if keep(e["name"])]
                 improvement["dps"] = ranked[:int(imp_dps_cfg.get("top_n", 5))]
             if imp_heal_cfg.get("enabled", False):
-                ranked = [e for e in compute_improvement(history["hps"]) if keep(e["name"])]
+                ranked = [e for e in merge_improvement(*per_diff_hps) if keep(e["name"])]
                 improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 5))]
             logger.info("Most Improved: %s DPS, %s healer(s)",
                         len(improvement.get("dps") or []),
@@ -281,8 +290,10 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if roster_keep:
                 mdps = {n: v for n, v in mdps.items() if roster_keep(n)}
                 mhps = {n: v for n, v in mhps.items() if roster_keep(n)}
+            # Keep the dict even when empty so the board shows the section
+            # title with a "no logs" placeholder instead of hiding it.
+            mplus_weekly = {"dps": mdps, "hps": mhps}
             if mdps or mhps:
-                mplus_weekly = {"dps": mdps, "hps": mhps}
                 logger.info("Weekly M+ parses: %s DPS, %s HPS", len(mdps), len(mhps))
             else:
                 logger.info("No M+ dungeon logs found this week (players must upload M+ runs to WCL).")
