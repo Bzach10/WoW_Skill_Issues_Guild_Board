@@ -64,7 +64,14 @@ CLASS_COLORS = {
 
 def load_config(path="config.yml"):
     with open(path, "r", encoding="utf-8") as f:
-        return yaml.safe_load(f)
+        cfg = yaml.safe_load(f)
+    guild_name = ((cfg or {}).get("guild") or {}).get("name", "")
+    if guild_name in ("", "Your Guild Name"):
+        sys.exit(
+            "Edit config.yml first: set guild.name, guild.realm_slug and "
+            "guild.region to YOUR guild (exactly as shown on Warcraft Logs), "
+            "then run again. See the README quick-start.")
+    return cfg
 
 
 def require_env(name):

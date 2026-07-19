@@ -397,6 +397,26 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_load_config_rejects_placeholder_guild(tmp_path):
+    cfg_file = tmp_path / "config.yml"
+    cfg_file.write_text('guild:\n  name: "Your Guild Name"\n', encoding="utf-8")
+    with pytest.raises(SystemExit):
+        gb_config.load_config(str(cfg_file))
+    cfg_file.write_text('guild:\n  name: "Real Guild"\n', encoding="utf-8")
+    assert gb_config.load_config(str(cfg_file))["guild"]["name"] == "Real Guild"
+
+
+def test_watermark_renders(tmp_path):
+    from PIL import Image
+    cfg = _image_board_cfg()
+    cfg["display"]["watermark"] = True
+    now = datetime.now(timezone.utc)
+    out = board_image.generate_board_image(
+        cfg, _image_board_stats(), None, None, None, None, None, None,
+        now - timedelta(days=7), now, output_path=str(tmp_path / "board.png"))
+    assert Image.open(out).width == board_image.WIDTH
+
+
 def test_advance_streaks():
     from guild_board.state import advance_streaks
     prev = {"brewzleeh": 2, "ghost": 4}

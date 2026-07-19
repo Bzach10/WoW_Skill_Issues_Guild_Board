@@ -974,6 +974,15 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
             aw = draw.textlength(roast_attr, font=fonts["detail"])
             draw.text((x1 - COL_PAD - aw, ty - 2), roast_attr, font=fonts["detail"], fill=MUTED)
 
+    display_cfg = cfg.get("display") or {}
+    if display_cfg.get("watermark"):
+        text = display_cfg.get(
+            "watermark_text",
+            "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
+        wfont = _load_font(12)
+        tw = draw.textlength(text, font=wfont)
+        draw.text((WIDTH - MARGIN - tw, height - 24), text, font=wfont, fill=FAINT)
+
     img.save(output_path, "PNG")
     logger.info("Generated board image at %s (%sx%s)", output_path, WIDTH, height)
     return output_path

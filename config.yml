@@ -23,7 +23,8 @@ top_n: 5
 #   two_column    — legacy inline-field columns (Discord misaligns these; avoid)
 display:
   layout: image_board
-  icons: true    # class/spec icons next to player names (fetched from Wowhead's CDN)
+  icons: true      # class/spec icons next to player names (fetched from Wowhead's CDN)
+  watermark: true  # small "Powered by Guild Board" credit in the image corner
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
