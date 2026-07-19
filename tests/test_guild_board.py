@@ -512,10 +512,12 @@ def test_streak_bits_and_closest_race():
     assert "3w streak" in rows[0]["detail"]
     assert "streak" not in rows[1]["detail"]   # 1 week is not a streak
 
-    race = board_image._closest_race([(3880, "Amrevenge", ""), (3692, "Shadoxii", ""),
-                                      (3686, "Brewzleeh", "")])
-    assert "Brewzleeh trails Shadoxii by just 6" in race
-    assert board_image._closest_race([(100, "Solo", "")]) is None
+    races = board_image._closest_races([(3880, "Amrevenge", ""), (3692, "Shadoxii", ""),
+                                        (3686, "Brewzleeh", "")])
+    # Tightest rivalry first, then the next ones
+    assert "Brewzleeh trails Shadoxii by just 6" in races[0]
+    assert "Shadoxii trails Amrevenge by 188" in races[1]
+    assert board_image._closest_races([(100, "Solo", "")]) == []
 
 
 def test_record_rows_render():
