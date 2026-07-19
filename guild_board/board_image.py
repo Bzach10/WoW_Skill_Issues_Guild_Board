@@ -12,6 +12,7 @@ from pathlib import Path
 import requests
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
+from guild_board import theme_bands
 from guild_board.config import get_class_color
 
 logger = logging.getLogger(__name__)
@@ -129,15 +130,10 @@ GUTTER = 24
 COL_PAD = 22
 COL_W = (WIDTH - 2 * MARGIN - 3 * GUTTER) // 4   # Raid | M+ | Seasonal M+ | Seasonal Guild
 ROW_H = 36
-# Short composited art bands: crops float over the fire backdrop so the
-# banners stay compact whatever the art's aspect.
-HEADER_ART_H = 300
-FOOTER_ART_H = 320
+# Band heights come from the design handoff (guild_board/theme_bands.py)
+HEADER_ART_H = theme_bands.HEADER_BAND_H
+FOOTER_ART_H = theme_bands.FOOTER_BAND_H
 ART_INFO_H = 48      # slim info strip under the header banner
-# Art crop regions (fractions of the source image) for the composited bands
-ART_SIGN_BOX = (0.02, 0.03, 0.60, 0.28)    # the stone guild sign
-ART_ACCENT_BOX = (0.55, 0.00, 1.00, 0.33)  # the fist / right-side accent
-ART_SCENE_BOX = (0.00, 0.74, 1.00, 0.995)  # the bottom scene strip
 SEC_TITLE_H = 32
 SEC_GAP = 16
 COL_HEADER_H = 46
@@ -197,53 +193,6 @@ def _paint_backdrop(img, art):
               (0, 0), Image.new("L", (img.width, img.height), 182))
 
 
-def _stone_band(art, w, h, seed=7):
-    """A full-width stone-wall band GENERATED to fit exactly: brick colors
-    sampled from the guild's art, ember glow sampled from its fire. The
-    sign/fist/scene crops are then set INTO this wall so nothing reads as
-    a floating splice."""
-    import random
-    rng = random.Random(seed)
-
-    probe = list(art.resize((48, 48)).getdata())
-    browns = [c for c in probe if c[0] >= c[2] and 35 < sum(c) / 3 < 160] or [(94, 74, 58)]
-    base = tuple(sum(c[i] for c in browns) // len(browns) for i in range(3))
-
-    band = Image.new("RGB", (w, h), tuple(int(v * 0.45) for v in base))
-    d = ImageDraw.Draw(band)
-    bh = max(h // 6, 34)
-    bw = int(bh * 2.0)
-    yy, row = 0, 0
-    while yy < h + bh:
-        xx = -(bw // 2 if row % 2 else 0)
-        while xx < w:
-            jitter = rng.randint(-16, 10)
-            c = tuple(max(0, min(255, int(v * 0.72) + jitter)) for v in base)
-            d.rectangle([xx + 2, yy + 2, xx + bw - 2, yy + bh - 2], fill=c)
-            xx += bw
-        yy += bh
-        row += 1
-    band = band.filter(ImageFilter.GaussianBlur(1.4))
-
-    fire_probe = list(art.crop((0, int(art.height * 0.36), art.width,
-                                int(art.height * 0.64))).resize((32, 8)).getdata())
-    embers = [c for c in fire_probe if c[0] > 120 and c[0] > c[2] * 1.4] or [(224, 122, 40)]
-    glow = tuple(sum(c[i] for c in embers) // len(embers) for i in range(3))
-
-    overlay = Image.new("L", (w, h), 0)
-    od = ImageDraw.Draw(overlay)
-    for g in range(7):
-        cx = int(w * (g + 0.5) / 7) + rng.randint(-60, 60)
-        cy = h + rng.randint(10, 40)
-        r = rng.randint(int(h * 0.8), int(h * 1.5))
-        for rad in range(r, 0, -8):
-            od.ellipse([cx - rad, cy - rad // 2, cx + rad, cy + rad // 2],
-                       fill=int(64 * (1 - rad / r)))
-    band.paste(Image.new("RGB", (w, h), glow), (0, 0), overlay)
-    band.paste(Image.new("RGB", (w, h), BG), (0, 0), Image.new("L", (w, h), 64))
-    return band
-
-
 def _band_seam(img, y, h, at_top):
     """Soft dark seam blending a band into the page content."""
     fade_h = 26
@@ -254,52 +203,6 @@ def _band_seam(img, y, h, at_top):
     ramp = ramp.resize((img.width, fade_h))
     solid = Image.new("RGB", (img.width, fade_h), (8, 8, 11))
     img.paste(solid, (0, (y + h - fade_h) if at_top else y), ramp)
-
-
-def _crop_frac(art, box):
-    l, t, r, b = box
-    return art.crop((int(l * art.width), int(t * art.height),
-                     int(r * art.width), int(b * art.height)))
-
-
-def _feather_mask(size, fade=40):
-    """Alpha mask fading the left/right edges so crops melt into the backdrop."""
-    mask = Image.new("L", size, 255)
-    d = ImageDraw.Draw(mask)
-    for i in range(fade):
-        alpha = int(255 * i / fade)
-        d.line([(i, 0), (i, size[1])], fill=alpha)
-        d.line([(size[0] - 1 - i, 0), (size[0] - 1 - i, size[1])], fill=alpha)
-    return mask
-
-
-def _paste_fit(img, piece, h, x=None, y=0, anchor="left"):
-    """Scale a crop to height h (never distorting) and float it on the page."""
-    scale = h / piece.height
-    pw = max(int(piece.width * scale), 1)
-    scaled = piece.resize((pw, h), Image.LANCZOS)
-    if x is None:
-        x = 24 if anchor == "left" else (img.width - pw - 24 if anchor == "right"
-                                         else (img.width - pw) // 2)
-    img.paste(scaled, (int(x), int(y)), _feather_mask(scaled.size))
-    return pw
-
-
-def _draw_header_art(img, art, h):
-    """Header band: a generated stone wall spanning the full width, with
-    the guild sign set into it left and the art accent right."""
-    img.paste(_stone_band(art, img.width, h, seed=7), (0, 0))
-    _paste_fit(img, _crop_frac(art, ART_SIGN_BOX), h - 36, y=16, anchor="left")
-    _paste_fit(img, _crop_frac(art, ART_ACCENT_BOX), h - 20, y=8, anchor="right")
-    _band_seam(img, 0, h, at_top=True)
-
-
-def _draw_footer_art(img, art, y, h):
-    """Footer band: the same generated wall with the bottom scene set in,
-    centered."""
-    img.paste(_stone_band(art, img.width, h, seed=11), (0, y))
-    _paste_fit(img, _crop_frac(art, ART_SCENE_BOX), h - 20, y=y + 10, anchor="center")
-    _band_seam(img, y, h, at_top=False)
 
 
 def _fonts():
@@ -1121,7 +1024,8 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     subtitle = f"{difficulty} · {zone_name}" if zone_name else f"{difficulty} WEEKLY BOARD"
 
     if theme:
-        _draw_header_art(img, theme, HEADER_ART_H)
+        theme_bands.draw_header_band(img, stats)
+        _band_seam(img, 0, HEADER_ART_H, at_top=True)
         strip_y = HEADER_ART_H + 2
         draw.text((MARGIN, strip_y + 6), subtitle, font=fonts["subtitle"], fill=MUTED)
         dw = draw.textlength(date_range, font=fonts["date"])
@@ -1172,7 +1076,9 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
             draw.text((x1 - COL_PAD - aw, ty - 2), roast_attr, font=fonts["detail"], fill=MUTED)
 
     if theme:
-        _draw_footer_art(img, theme, height - FOOTER_ART_H, FOOTER_ART_H)
+        theme_bands.draw_footer_band(img, height - FOOTER_ART_H, stats,
+                                     week_index=start_dt.isocalendar()[1])
+        _band_seam(img, height - FOOTER_ART_H, FOOTER_ART_H, at_top=False)
 
     display_cfg = cfg.get("display") or {}
     if display_cfg.get("watermark"):
