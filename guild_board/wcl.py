@@ -452,9 +452,9 @@ IMPROVEMENT_MAX_DAYS = 180
 
 # Difficulties swept for Most Improved: parses are only comparable within
 # one difficulty, so each is scanned separately and a player is credited
-# with their best gain at either. Mythic-only was too strict — most
-# raiders' log history lives at heroic.
-IMPROVEMENT_DIFFICULTIES = [5, 4]
+# with their best gain at any of them. Normal is included so early-season
+# progression logs count toward the whole roster qualifying.
+IMPROVEMENT_DIFFICULTIES = [5, 4, 3]
 
 
 def merge_improvement(*ranked_lists):

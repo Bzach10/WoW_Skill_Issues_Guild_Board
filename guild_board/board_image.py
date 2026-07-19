@@ -197,6 +197,65 @@ def _paint_backdrop(img, art):
               (0, 0), Image.new("L", (img.width, img.height), 182))
 
 
+def _stone_band(art, w, h, seed=7):
+    """A full-width stone-wall band GENERATED to fit exactly: brick colors
+    sampled from the guild's art, ember glow sampled from its fire. The
+    sign/fist/scene crops are then set INTO this wall so nothing reads as
+    a floating splice."""
+    import random
+    rng = random.Random(seed)
+
+    probe = list(art.resize((48, 48)).getdata())
+    browns = [c for c in probe if c[0] >= c[2] and 35 < sum(c) / 3 < 160] or [(94, 74, 58)]
+    base = tuple(sum(c[i] for c in browns) // len(browns) for i in range(3))
+
+    band = Image.new("RGB", (w, h), tuple(int(v * 0.45) for v in base))
+    d = ImageDraw.Draw(band)
+    bh = max(h // 6, 34)
+    bw = int(bh * 2.0)
+    yy, row = 0, 0
+    while yy < h + bh:
+        xx = -(bw // 2 if row % 2 else 0)
+        while xx < w:
+            jitter = rng.randint(-16, 10)
+            c = tuple(max(0, min(255, int(v * 0.72) + jitter)) for v in base)
+            d.rectangle([xx + 2, yy + 2, xx + bw - 2, yy + bh - 2], fill=c)
+            xx += bw
+        yy += bh
+        row += 1
+    band = band.filter(ImageFilter.GaussianBlur(1.4))
+
+    fire_probe = list(art.crop((0, int(art.height * 0.36), art.width,
+                                int(art.height * 0.64))).resize((32, 8)).getdata())
+    embers = [c for c in fire_probe if c[0] > 120 and c[0] > c[2] * 1.4] or [(224, 122, 40)]
+    glow = tuple(sum(c[i] for c in embers) // len(embers) for i in range(3))
+
+    overlay = Image.new("L", (w, h), 0)
+    od = ImageDraw.Draw(overlay)
+    for g in range(7):
+        cx = int(w * (g + 0.5) / 7) + rng.randint(-60, 60)
+        cy = h + rng.randint(10, 40)
+        r = rng.randint(int(h * 0.8), int(h * 1.5))
+        for rad in range(r, 0, -8):
+            od.ellipse([cx - rad, cy - rad // 2, cx + rad, cy + rad // 2],
+                       fill=int(64 * (1 - rad / r)))
+    band.paste(Image.new("RGB", (w, h), glow), (0, 0), overlay)
+    band.paste(Image.new("RGB", (w, h), BG), (0, 0), Image.new("L", (w, h), 64))
+    return band
+
+
+def _band_seam(img, y, h, at_top):
+    """Soft dark seam blending a band into the page content."""
+    fade_h = 26
+    ramp = Image.new("L", (1, fade_h))
+    for i in range(fade_h):
+        alpha = int(160 * (i / (fade_h - 1)))
+        ramp.putpixel((0, i), alpha if at_top else 160 - alpha)
+    ramp = ramp.resize((img.width, fade_h))
+    solid = Image.new("RGB", (img.width, fade_h), (8, 8, 11))
+    img.paste(solid, (0, (y + h - fade_h) if at_top else y), ramp)
+
+
 def _crop_frac(art, box):
     l, t, r, b = box
     return art.crop((int(l * art.width), int(t * art.height),
@@ -227,15 +286,20 @@ def _paste_fit(img, piece, h, x=None, y=0, anchor="left"):
 
 
 def _draw_header_art(img, art, h):
-    """Compact header: guild sign anchored left, art accent anchored right,
-    embers (the backdrop) glowing between them."""
-    _paste_fit(img, _crop_frac(art, ART_SIGN_BOX), h - 20, y=10, anchor="left")
-    _paste_fit(img, _crop_frac(art, ART_ACCENT_BOX), h - 12, y=4, anchor="right")
+    """Header band: a generated stone wall spanning the full width, with
+    the guild sign set into it left and the art accent right."""
+    img.paste(_stone_band(art, img.width, h, seed=7), (0, 0))
+    _paste_fit(img, _crop_frac(art, ART_SIGN_BOX), h - 36, y=16, anchor="left")
+    _paste_fit(img, _crop_frac(art, ART_ACCENT_BOX), h - 20, y=8, anchor="right")
+    _band_seam(img, 0, h, at_top=True)
 
 
 def _draw_footer_art(img, art, y, h):
-    """Compact footer: the bottom scene centered over the backdrop."""
-    _paste_fit(img, _crop_frac(art, ART_SCENE_BOX), h - 16, y=y + 8, anchor="center")
+    """Footer band: the same generated wall with the bottom scene set in,
+    centered."""
+    img.paste(_stone_band(art, img.width, h, seed=11), (0, y))
+    _paste_fit(img, _crop_frac(art, ART_SCENE_BOX), h - 20, y=y + 10, anchor="center")
+    _band_seam(img, y, h, at_top=False)
 
 
 def _fonts():
@@ -592,7 +656,6 @@ def _improve_rows(entries):
             e.get("spec") or "",
             DIFFICULTY_NAMES.get(e.get("difficulty"), ""),
             f"{e['early_parse']:.0f}% → {e['late_parse']:.0f}%",
-            f"{_fmt_amount(e.get('early_amount') or 0)} → {_fmt_amount(e.get('late_amount') or 0)}",
         ]
         rows.append({
             "name": _cap(e["name"]),
@@ -603,6 +666,7 @@ def _improve_rows(entries):
             "detail_bits": detail_bits,
             "value": f"+{e['delta']:.0f}%",
             "value_color": (76, 220, 86),
+            "value_suffix": f"{_fmt_amount(e.get('early_amount') or 0)} → {_fmt_amount(e.get('late_amount') or 0)}",
         })
     return rows
 
@@ -654,20 +718,22 @@ def _record_rows(records):
     return rows
 
 
-def _closest_race(season_scores):
-    """The tightest gap on the season ladder — rivalry fuel."""
+def _closest_races(season_scores, count=3):
+    """The tightest gaps on the season ladder — rivalry fuel, plural."""
     if not season_scores or len(season_scores) < 2:
-        return None
-    best = None
-    ladder = season_scores[:6]
+        return []
+    ladder = season_scores[:8]
+    races = []
     for (s1, n1, _), (s2, n2, _) in zip(ladder, ladder[1:]):
-        gap = s1 - s2
-        if best is None or gap < best[0]:
-            best = (gap, n1, n2)
-    gap, leader, chaser = best
-    if gap <= 50:
-        return f"{_cap(chaser)} trails {_cap(leader)} by just {gap:.0f} \u2014 one good key flips it"
-    return f"{_cap(chaser)} trails {_cap(leader)} by {gap:.0f}"
+        races.append((s1 - s2, n1, n2))
+    races.sort(key=lambda r: r[0])
+    out = []
+    for gap, leader, chaser in races[:count]:
+        if gap <= 50:
+            out.append(f"{_cap(chaser)} trails {_cap(leader)} by just {gap:.0f} \u2014 one good key flips it")
+        else:
+            out.append(f"{_cap(chaser)} trails {_cap(leader)} by {gap:.0f}")
+    return out
 
 
 def _titled(base, pool):
@@ -752,9 +818,9 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=Non
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
         mplus_side.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
     if season_scores and _enabled(sections_cfg, "closest_race"):
-        race = _closest_race(season_scores or [])
-        if race:
-            mplus_side.append(_sec("CLOSEST RACE", [{"text": race}]))
+        races = _closest_races(season_scores or [])
+        if races:
+            mplus_side.append(_sec("CLOSEST RACES", [{"text": t} for t in races]))
     if "dps" in imp:
         guild_side.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
     if "hps" in imp:
@@ -889,31 +955,36 @@ def _draw_item_art(img, draw, cfg, col_y, col_h, columns, fonts):
     item = _load_art_file(display_cfg.get("item_art"), "Item art")
     if item is None:
         return
-    short_h, x0 = None, None
-    for cx, sections in columns:
+    # Bottom-right corner by request: prefer the LAST column; fall back to
+    # the shortest if the last one has no room.
+    ordered = [columns[-1]] + sorted(columns[:-1], key=lambda c: _column_height(c[1]))
+    x0 = short_h = None
+    for cx, sections in ordered:
         h = _column_height(sections)
-        if short_h is None or h < short_h:
-            short_h, x0 = h, cx
-    avail = col_h - short_h - SEC_GAP
-    if avail < 170:
+        if col_h - h - SEC_GAP >= 170:
+            x0, short_h = cx, h
+            break
+    if x0 is None:
         return
+    avail = col_h - short_h - SEC_GAP
     inner_x = x0 + COL_PAD
     inner_w = COL_W - 2 * COL_PAD
-    iy = col_y + short_h - COL_PAD + SEC_GAP
 
-    title = display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")
-    draw.text((inner_x, iy), title, font=fonts["sec_title"], fill=ACCENT)
-    tw = draw.textlength(title, font=fonts["sec_title"])
-    draw.line([inner_x + tw + 12, iy + 9, inner_x + inner_w, iy + 9], fill=PANEL_BORDER, width=1)
-    iy += SEC_TITLE_H
-
-    max_h = avail - SEC_TITLE_H
+    max_h = avail - SEC_TITLE_H - 8
     scale = min(inner_w / item.width, max_h / item.height, 1.0)
     new_w, new_h = max(int(item.width * scale), 1), max(int(item.height * scale), 1)
+
+    # Bottom-align the card inside the panel; title sits right above it
+    iy = col_y + col_h - COL_PAD - 6 - new_h
+    ty = iy - SEC_TITLE_H
+    title = display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")
+    draw.text((inner_x, ty), title, font=fonts["sec_title"], fill=ACCENT)
+    tw = draw.textlength(title, font=fonts["sec_title"])
+    draw.line([inner_x + tw + 12, ty + 9, inner_x + inner_w, ty + 9], fill=PANEL_BORDER, width=1)
+
     scaled = item.resize((new_w, new_h), Image.LANCZOS)
     ix = inner_x + (inner_w - new_w) // 2
     img.paste(scaled, (ix, iy))
-    # dim-gold frame so the dark card pops off the dark panel
     draw.rounded_rectangle([ix - 2, iy - 2, ix + new_w + 2, iy + new_h + 2],
                            radius=8, outline=(150, 122, 62), width=2)
 
