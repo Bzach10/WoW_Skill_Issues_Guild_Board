@@ -355,7 +355,13 @@ def _plural(n, word):
 # A section is {"title": str, "rows": [row]}; a row is either
 # {"name", "color", "detail", "value", "value_color"} or {"text": str}.
 
-def _parse_rows(best, unit, top_n, diff_name=""):
+def _streak_bit(streaks, name):
+    """"3w streak" tag for players active multiple weeks running."""
+    count = (streaks or {}).get((name or "").strip().lower(), 0)
+    return f"{count}w streak" if count >= 2 else ""
+
+
+def _parse_rows(best, unit, top_n, diff_name="", streaks=None):
     ranked = sorted(best.items(), key=lambda kv: kv[1]["parse"], reverse=True)[:top_n]
     rows = []
     for name, info in ranked:
@@ -371,6 +377,7 @@ def _parse_rows(best, unit, top_n, diff_name=""):
         detail_bits = [
             info.get("spec") or "",
             boss,
+            _streak_bit(streaks, name),
         ]
         rows.append({
             "name": _cap(name),
@@ -431,7 +438,7 @@ def _death_rows(deaths, top_n, class_lookup, pulls=0):
     return rows
 
 
-def _mplus_week_rows(results, top_n):
+def _mplus_week_rows(results, top_n, streaks=None):
     # Only timed keys make the board (belt-and-braces: the collector
     # already filters, but manual roster data may not).
     timed_only = [item for item in results if item[-1]]
@@ -442,7 +449,7 @@ def _mplus_week_rows(results, top_n):
             spec = ""
         else:
             level, dungeon, name, spec, _ = item
-        detail_bits = [spec, dungeon]
+        detail_bits = [spec, dungeon, _streak_bit(streaks, name)]
         rows.append({
             "name": _cap(name),
             "color": _rgb(get_class_color(spec)),
@@ -526,7 +533,65 @@ def _sec(title, rows, empty_text="No data pulled this week"):
     return {"title": title, "rows": rows if rows else [{"text": empty_text}]}
 
 
-def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs, mplus_weekly=None):
+def _record_rows(records):
+    """The season record book: holder, what they hold, and NEW when broken."""
+    rows = []
+    key_rec = (records or {}).get("highest_timed_key")
+    if key_rec:
+        row = {
+            "name": _cap(key_rec.get("name", "")),
+            "color": _rgb(get_class_color(key_rec.get("spec"))),
+            "spec": key_rec.get("spec") or "",
+            "detail": " \u00b7 ".join(b for b in ["Highest timed key", key_rec.get("dungeon", "")] if b),
+            "value": f"+{key_rec.get('level', 0)}",
+            "value_color": ACCENT,
+        }
+        if key_rec.get("new"):
+            row["value_suffix"] = "NEW"
+            row["value_suffix_color"] = ACCENT
+        rows.append(row)
+    for state_key, label in (("best_dps_parse", "Best DPS parse"), ("best_hps_parse", "Best HPS parse")):
+        rec = (records or {}).get(state_key)
+        if not rec:
+            continue
+        diff = DIFFICULTY_NAMES.get(rec.get("difficulty"), "")
+        boss = _short_boss(rec.get("boss", ""))
+        if boss and diff:
+            boss = f"{diff} {boss}"
+        parse = rec.get("parse") or 0
+        row = {
+            "name": _cap(rec.get("name", "")),
+            "color": _rgb(get_class_color(rec.get("cls") or rec.get("spec"))),
+            "spec": rec.get("spec") or "",
+            "cls": rec.get("cls") or "",
+            "detail": " \u00b7 ".join(b for b in [label, boss] if b),
+            "value": f"{parse:.0f}%",
+            "value_color": _parse_color(parse),
+        }
+        if rec.get("new"):
+            row["value_suffix"] = "NEW"
+            row["value_suffix_color"] = ACCENT
+        rows.append(row)
+    return rows
+
+
+def _closest_race(season_scores):
+    """The tightest gap on the season ladder — rivalry fuel."""
+    if not season_scores or len(season_scores) < 2:
+        return None
+    best = None
+    ladder = season_scores[:6]
+    for (s1, n1, _), (s2, n2, _) in zip(ladder, ladder[1:]):
+        gap = s1 - s2
+        if best is None or gap < best[0]:
+            best = (gap, n1, n2)
+    gap, leader, chaser = best
+    if gap <= 50:
+        return f"{_cap(chaser)} trails {_cap(leader)} by just {gap:.0f} \u2014 one good key flips it"
+    return f"{_cap(chaser)} trails {_cap(leader)} by {gap:.0f}"
+
+
+def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_parses, no_logs, mplus_weekly=None, streaks=None):
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
 
@@ -550,9 +615,9 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
         # (the fallback may have downgraded mythic -> heroic -> normal).
         diff_name = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")
         if _enabled(sections_cfg, "top_dps"):
-            raid.append(_sec("TOP DPS PARSES", _parse_rows(stats.get("best_dps") or {}, "DPS", top_n, diff_name)))
+            raid.append(_sec("TOP DPS PARSES", _parse_rows(stats.get("best_dps") or {}, "DPS", top_n, diff_name, streaks)))
         if _enabled(sections_cfg, "top_healing"):
-            raid.append(_sec("TOP HEALING PARSES", _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name)))
+            raid.append(_sec("TOP HEALING PARSES", _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name, streaks)))
     if (stats or leaders) and _enabled(sections_cfg, "realm_rank_leaders"):
         raid.append(_sec("WEEKLY BOSS RANKS", _leader_rows(leaders or [], top_n)))
     if stats and _enabled(sections_cfg, "most_deaths"):
@@ -562,7 +627,7 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
 
     mplus = []
     if mplus_results is not None and _enabled(sections_cfg, "mplus"):
-        mplus.append(_sec("TOP TIMED KEYS THIS WEEK", _mplus_week_rows(mplus_results, top_n),
+        mplus.append(_sec("TOP TIMED KEYS THIS WEEK", _mplus_week_rows(mplus_results, top_n, streaks),
                           "No timed keys this week"))
     if mplus_weekly is not None and _enabled(sections_cfg, "mplus_weekly_parses"):
         empty = "No M+ logs uploaded this week"
@@ -574,7 +639,7 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
     return raid, mplus
 
 
-def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=None):
+def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=None, records=None):
     """The bottom Seasonal band: two internal columns of season-long data."""
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
@@ -585,12 +650,19 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=Non
     left, right = [], []
     if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
         left.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
+        race = _closest_race(season_scores or [])
+        if race and _enabled(sections_cfg, "closest_race"):
+            left.append(_sec("CLOSEST RACE", [{"text": race}]))
     if "dps" in imp:
         left.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
         right.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
     if "hps" in imp:
         right.append(_sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty))
+    if records and _enabled(sections_cfg, "guild_records"):
+        record_rows = _record_rows(records)
+        if record_rows:
+            right.append(_sec("GUILD RECORDS \u00b7 SEASON", record_rows))
     return left, right
 
 
@@ -812,16 +884,18 @@ def _roast_lines(cfg, draw, fonts, max_w):
 def generate_board_image(cfg, stats, standing, leaders, zone_name,
                          mplus_results, mplus_season_scores, mplus_season_parses,
                          start_dt, end_dt, no_logs=False, output_path="board.png",
-                         improvement=None, mplus_weekly=None, previous=None):
+                         improvement=None, mplus_weekly=None, previous=None,
+                         streaks=None, records=None):
     """Render the full weekly board and save it as a PNG."""
     fonts = _fonts()
     measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
 
     raid_sections, mplus_sections = _build_columns(
         cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
-        no_logs, mplus_weekly=mplus_weekly)
+        no_logs, mplus_weekly=mplus_weekly, streaks=streaks)
     seasonal_left, seasonal_right = _build_seasonal(
-        cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous)
+        cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous,
+        records=records)
     show_seasonal = bool(seasonal_left or seasonal_right)
 
     sections_cfg = cfg.get("sections", {})

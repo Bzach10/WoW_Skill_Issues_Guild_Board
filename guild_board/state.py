@@ -23,7 +23,7 @@ def load_board_state(path=STATE_FILE):
         return {}
 
 
-def save_board_state(standing, season_scores, path=STATE_FILE):
+def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE):
     """Persist what this board showed, for next week's comparisons."""
     clean_standing = {
         k: v for k, v in (standing or {}).items()
@@ -36,8 +36,64 @@ def save_board_state(standing, season_scores, path=STATE_FILE):
             name.strip().lower(): score
             for score, name, _ in (season_scores or [])
         },
+        "streaks": streaks or {},
+        "records": records or {},
     }
     with open(path, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
     logger.info("Board state saved for next week's deltas.")
     return path
+
+
+def advance_streaks(previous_streaks, active_names):
+    """Consecutive-week counter: active players tick up, absentees reset.
+
+    A player is "active" when they appear in any weekly dataset (raid
+    parses, timed keys, M+ parses)."""
+    previous_streaks = previous_streaks or {}
+    return {
+        name.strip().lower(): int(previous_streaks.get(name.strip().lower(), 0)) + 1
+        for name in active_names if name and name.strip()
+    }
+
+
+def update_records(previous_records, stats=None, mplus_results=None):
+    """Season records: highest timed key, best DPS parse, best HPS parse.
+
+    Returns the record book with a "new" flag on anything broken this
+    week (a first-ever record counts as new — it IS news)."""
+    records = {}
+    for key, value in (previous_records or {}).items():
+        value = dict(value)
+        value["new"] = False
+        records[key] = value
+
+    def consider(key, candidate, metric):
+        current = records.get(key)
+        if current is None or (candidate.get(metric) or 0) > (current.get(metric) or 0):
+            candidate = dict(candidate)
+            candidate["new"] = True
+            records[key] = candidate
+
+    if mplus_results:
+        best = max(mplus_results, key=lambda r: r[0])
+        spec = best[3] if len(best) >= 5 else ""
+        consider("highest_timed_key",
+                 {"name": best[2], "level": best[0], "dungeon": best[1], "spec": spec},
+                 "level")
+
+    if stats:
+        for key, pool in (("best_dps_parse", stats.get("best_dps")),
+                          ("best_hps_parse", stats.get("best_hps"))):
+            if pool:
+                name, info = max(pool.items(), key=lambda kv: kv[1].get("parse") or 0)
+                consider(key, {
+                    "name": name,
+                    "parse": info.get("parse") or 0,
+                    "boss": info.get("boss") or "",
+                    "spec": info.get("spec") or "",
+                    "cls": info.get("cls") or "",
+                    "difficulty": info.get("difficulty"),
+                }, "parse")
+
+    return records

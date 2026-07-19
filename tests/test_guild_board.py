@@ -397,6 +397,65 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_advance_streaks():
+    from guild_board.state import advance_streaks
+    prev = {"brewzleeh": 2, "ghost": 4}
+    streaks = advance_streaks(prev, {"Brewzleeh", "Newguy", ""})
+    assert streaks == {"brewzleeh": 3, "newguy": 1}   # absentee "ghost" reset
+
+
+def test_update_records_tracks_and_flags_new():
+    from guild_board.state import update_records
+    stats = {"best_dps": {"Rakdisc": {"parse": 70, "boss": "Rotmire", "spec": "Shadow", "cls": "Priest", "difficulty": 5}},
+             "best_hps": {}}
+    mplus = [(18, "Pit of Saron", "Brewzleeh", "Windwalker Monk", True)]
+    records = update_records({}, stats, mplus)
+    assert records["highest_timed_key"]["level"] == 18
+    assert records["highest_timed_key"]["new"] is True
+    assert records["best_dps_parse"]["new"] is True
+
+    # Next week: a lower key does NOT displace the record, flags reset
+    records2 = update_records(records, {"best_dps": {}, "best_hps": {}},
+                              [(16, "Skyreach", "Healmates", "Holy Priest", True)])
+    assert records2["highest_timed_key"]["level"] == 18
+    assert records2["highest_timed_key"]["new"] is False
+    assert records2["best_dps_parse"]["new"] is False
+
+    # A bigger key breaks it
+    records3 = update_records(records2, None, [(20, "Skyreach", "Amrevenge", "BM Hunter", True)])
+    assert records3["highest_timed_key"]["level"] == 20
+    assert records3["highest_timed_key"]["new"] is True
+
+
+def test_streak_bits_and_closest_race():
+    streaks = {"brewzleeh": 3, "healmates": 1}
+    rows = board_image._mplus_week_rows(
+        [(18, "Skyreach", "Brewzleeh", "Windwalker Monk", True),
+         (16, "Skyreach", "Healmates", "Holy Priest", True)], 5, streaks)
+    assert "3w streak" in rows[0]["detail"]
+    assert "streak" not in rows[1]["detail"]   # 1 week is not a streak
+
+    race = board_image._closest_race([(3880, "Amrevenge", ""), (3692, "Shadoxii", ""),
+                                      (3686, "Brewzleeh", "")])
+    assert "Brewzleeh trails Shadoxii by just 6" in race
+    assert board_image._closest_race([(100, "Solo", "")]) is None
+
+
+def test_record_rows_render():
+    records = {
+        "highest_timed_key": {"name": "Brewzleeh", "level": 18, "dungeon": "Pit of Saron",
+                              "spec": "Windwalker Monk", "new": True},
+        "best_dps_parse": {"name": "Rakdisc", "parse": 70, "boss": "Rotmire",
+                           "spec": "Shadow", "cls": "Priest", "difficulty": 5, "new": False},
+    }
+    rows = board_image._record_rows(records)
+    assert rows[0]["value"] == "+18"
+    assert rows[0]["value_suffix"] == "NEW"
+    assert rows[1]["value"] == "70%"
+    assert "value_suffix" not in rows[1]
+    assert "Mythic Rotmire" in rows[1]["detail"]
+
+
 def test_board_state_round_trip(tmp_path, monkeypatch):
     from guild_board import state as gb_state
     path = str(tmp_path / "board_state.json")

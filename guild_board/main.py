@@ -14,7 +14,7 @@ from guild_board.board_image import generate_board_image
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
-from guild_board.state import load_board_state, save_board_state
+from guild_board.state import advance_streaks, load_board_state, save_board_state, update_records
 from guild_board.wcl import (
     DIFFICULTY_MAP,
     IMPROVEMENT_DIFFICULTIES,
@@ -331,6 +331,22 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     image_path = None
     previous = load_board_state()
+
+    # Streaks: who was active in any weekly dataset this week
+    active_names = set()
+    if stats:
+        active_names |= set(stats.get("best_dps") or {})
+        active_names |= set(stats.get("best_hps") or {})
+    for run in (mplus_results or []):
+        active_names.add(run[2])
+    if mplus_weekly:
+        active_names |= set(mplus_weekly.get("dps") or {})
+        active_names |= set(mplus_weekly.get("hps") or {})
+    streaks = advance_streaks(previous.get("streaks"), active_names)
+
+    # Season record book (highest timed key, best parses)
+    records = update_records(previous.get("records"), stats, mplus_results)
+
     if layout == "image_board":
         try:
             image_path = generate_board_image(
@@ -338,7 +354,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                 mplus_results, mplus_season_scores, mplus_season_parses,
                 start_dt, end_dt, no_logs, output_path="board.png",
                 improvement=improvement, mplus_weekly=mplus_weekly,
-                previous=previous)
+                previous=previous, streaks=streaks, records=records)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.
@@ -372,7 +388,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg)
         logger.info("Board posted to Discord.")
         try:
-            save_board_state(standing, mplus_season_scores)
+            save_board_state(standing, mplus_season_scores, streaks=streaks, records=records)
         except OSError as exc:
             logger.warning("Could not save board state: %s", exc)
 
