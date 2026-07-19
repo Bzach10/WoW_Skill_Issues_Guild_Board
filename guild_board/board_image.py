@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 
 import requests
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from guild_board.config import get_class_color
 
@@ -123,15 +123,18 @@ MEDAL_FILLS = [
 DIFFICULTY_NAMES = {1: "LFR", 3: "Normal", 4: "Heroic", 5: "Mythic", 10: "M+"}
 
 # --- layout constants ---------------------------------------------------------
-WIDTH = 1500
+WIDTH = 2200
 MARGIN = 36
 GUTTER = 24
 COL_PAD = 22
-COL_W = (WIDTH - 2 * MARGIN - GUTTER) // 2
+COL_W = (WIDTH - 2 * MARGIN - 2 * GUTTER) // 3   # Raid | Mythic+ | Seasonal
 ROW_H = 36
-HEADER_ART_H = 560   # theme art banner across the top (full guild sign)
+# Banner heights scale with the art so the sign/scene never get cropped,
+# whatever the board width or the guild's art aspect.
+HEADER_ART_FRAC = 0.27
+FOOTER_ART_FRAC = 0.22
+ART_H_MIN, ART_H_MAX = 420, 920
 ART_INFO_H = 48      # slim info strip under the header banner
-FOOTER_ART_H = 560   # theme art banner across the bottom (full scene)
 SEC_TITLE_H = 32
 SEC_GAP = 16
 COL_HEADER_H = 46
@@ -179,6 +182,18 @@ def _load_theme_art(cfg):
     return _load_art_file((cfg.get("display") or {}).get("theme_art"), "Theme art")
 
 
+def _paint_backdrop(img, art):
+    """The fiery middle of the theme art, stretched, blurred, and heavily
+    darkened, replaces the flat grey page background — panels float over
+    embers instead of void."""
+    band = art.crop((0, int(art.height * 0.28), art.width, int(art.height * 0.78)))
+    band = band.resize((img.width, img.height), Image.LANCZOS)
+    band = band.filter(ImageFilter.GaussianBlur(10))
+    img.paste(band, (0, 0))
+    img.paste(Image.new("RGB", (img.width, img.height), BG),
+              (0, 0), Image.new("L", (img.width, img.height), 182))
+
+
 def _paste_banner(img, art, y, h, anchor):
     """Full-width slice of the art: top-anchored for the header (the guild
     sign), bottom-anchored for the footer (the scene), with a dark tint
@@ -196,10 +211,10 @@ def _paste_banner(img, art, y, h, anchor):
     fade_h = min(90, h)
     ramp = Image.new("L", (1, fade_h))
     for i in range(fade_h):
-        alpha = int(255 * (i / max(fade_h - 1, 1)))
-        ramp.putpixel((0, i), alpha if anchor == "top" else 255 - alpha)
+        alpha = int(200 * (i / max(fade_h - 1, 1)))
+        ramp.putpixel((0, i), alpha if anchor == "top" else 200 - alpha)
     ramp = ramp.resize((WIDTH, fade_h))
-    solid = Image.new("RGB", (WIDTH, fade_h), BG)
+    solid = Image.new("RGB", (WIDTH, fade_h), (8, 8, 11))
     if anchor == "top":
         img.paste(solid, (0, y + h - fade_h), ramp)
     else:
@@ -714,26 +729,24 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=Non
 
     improve_empty = "No qualifying gains yet — needs 2+ weeks of logs"
 
-    scores_sec = runs_sec = race_sec = records_sec = dps_sec = hps_sec = None
+    sections = []
     if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
-        scores_sec = _sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores))
-        race = _closest_race(season_scores or [])
-        if race and _enabled(sections_cfg, "closest_race"):
-            race_sec = _sec("CLOSEST RACE", [{"text": race}])
+        sections.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
-        runs_sec = _sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n))
+        sections.append(_sec("BEST SEASON RUNS", _season_run_rows(season_parses or [], top_n)))
     if "dps" in imp:
-        dps_sec = _sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty)
+        sections.append(_sec("MOST IMPROVED DPS", _improve_rows(imp.get("dps") or []), improve_empty))
     if "hps" in imp:
-        hps_sec = _sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty)
+        sections.append(_sec("MOST IMPROVED HEALERS", _improve_rows(imp.get("hps") or []), improve_empty))
+    if season_scores and _enabled(sections_cfg, "closest_race"):
+        race = _closest_race(season_scores or [])
+        if race:
+            sections.append(_sec("CLOSEST RACE", [{"text": race}]))
     if records and _enabled(sections_cfg, "guild_records"):
         record_rows = _record_rows(records)
         if record_rows:
-            records_sec = _sec("GUILD RECORDS \u00b7 SEASON", record_rows)
-
-    # Paired rows: each tuple renders at the same y, so partners align
-    pairs = [(scores_sec, runs_sec), (dps_sec, hps_sec), (race_sec, records_sec)]
-    return [pair for pair in pairs if pair[0] or pair[1]]
+            sections.append(_sec("GUILD RECORDS \u00b7 SEASON", record_rows))
+    return sections
 
 
 # --- rendering --------------------------------------------------------------------
@@ -842,34 +855,6 @@ def _draw_sections(img, draw, x, y, w, sections, fonts, icons=True):
             y += ROW_H
 
 
-def _seasonal_height(pairs):
-    body = sum(max(_section_height(s) if s else 0 for s in pair) for pair in pairs)
-    body += SEC_GAP * max(len(pairs) - 1, 0)
-    return COL_HEADER_H + body + 2 * COL_PAD
-
-
-def _draw_seasonal(img, draw, y0, height, pairs, fonts, icons=True):
-    """Full-width Seasonal panel: paired sections rendered side by side."""
-    x0, x1 = MARGIN, WIDTH - MARGIN
-    draw.rounded_rectangle([x0, y0, x1, y0 + height], radius=12,
-                           fill=PANEL, outline=PANEL_BORDER, width=1)
-    x = x0 + COL_PAD
-    y = y0 + COL_PAD
-    draw.rectangle([x, y + 2, x + 4, y + 24], fill=ACCENT)
-    draw.text((x + 14, y), "SEASONAL", font=fonts["col_header"], fill=TEXT)
-    y += COL_HEADER_H
-
-    inner_w = (x1 - x0 - 2 * COL_PAD - GUTTER) // 2
-    for i, (left_sec, right_sec) in enumerate(pairs):
-        if i:
-            y += SEC_GAP
-        if left_sec:
-            _draw_sections(img, draw, x, y, inner_w, [left_sec], fonts, icons)
-        if right_sec:
-            _draw_sections(img, draw, x + inner_w + GUTTER, y, inner_w, [right_sec], fonts, icons)
-        y += max(_section_height(s) if s else 0 for s in (left_sec, right_sec))
-
-
 def _rank_delta(prev, cur):
     """Rank movement: climbing (a smaller number) is the good direction."""
     if not prev or not cur or prev == cur:
@@ -880,21 +865,20 @@ def _rank_delta(prev, cur):
     return f"\u25bc{-diff:,}", RED
 
 
-def _draw_item_art(img, draw, cfg, col_y, col_h, raid_sections, mplus_sections, fonts):
-    """Fun corner: render the guild's flavor item (display.item_art) in the
-    spare space of the shorter main column. Swap the file monthly."""
+def _draw_item_art(img, draw, cfg, col_y, col_h, columns, fonts):
+    """Fun corner: the guild's flavor item (display.item_art) rendered in
+    the spare space of the SHORTEST column. Swap the file monthly."""
     display_cfg = cfg.get("display") or {}
     item = _load_art_file(display_cfg.get("item_art"), "Item art")
     if item is None:
         return
-    raid_h = _column_height(raid_sections)
-    mplus_h = _column_height(mplus_sections)
-    if raid_h < mplus_h:
-        short_h, x0 = raid_h, MARGIN
-    else:
-        short_h, x0 = mplus_h, MARGIN + COL_W + GUTTER
+    short_h, x0 = None, None
+    for cx, sections in columns:
+        h = _column_height(sections)
+        if short_h is None or h < short_h:
+            short_h, x0 = h, cx
     avail = col_h - short_h - SEC_GAP
-    if avail < 180:
+    if avail < 170:
         return
     inner_x = x0 + COL_PAD
     inner_w = COL_W - 2 * COL_PAD
@@ -910,7 +894,11 @@ def _draw_item_art(img, draw, cfg, col_y, col_h, raid_sections, mplus_sections, 
     scale = min(inner_w / item.width, max_h / item.height, 1.0)
     new_w, new_h = max(int(item.width * scale), 1), max(int(item.height * scale), 1)
     scaled = item.resize((new_w, new_h), Image.LANCZOS)
-    img.paste(scaled, (inner_x + (inner_w - new_w) // 2, iy))
+    ix = inner_x + (inner_w - new_w) // 2
+    img.paste(scaled, (ix, iy))
+    # dim-gold frame so the dark card pops off the dark panel
+    draw.rounded_rectangle([ix - 2, iy - 2, ix + new_w + 2, iy + new_h + 2],
+                           radius=8, outline=(150, 122, 62), width=2)
 
 
 def _hero_tiles(stats, standing, previous=None):
@@ -998,21 +986,25 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     raid_sections, mplus_sections = _build_columns(
         cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
         no_logs, mplus_weekly=mplus_weekly, streaks=streaks, zone_name=zone_name)
-    seasonal_pairs = _build_seasonal(
+    seasonal_sections = _build_seasonal(
         cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous,
         records=records)
-    show_seasonal = bool(seasonal_pairs)
 
     sections_cfg = cfg.get("sections", {})
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()
     mplus_title = (sections_cfg.get("mplus_header") or {}).get("title", "Mythic Plus").upper()
 
     theme = _load_theme_art(cfg)
-    header_h = (HEADER_ART_H + ART_INFO_H) if theme else 96
+    header_art_h = footer_art_h = 0
+    if theme:
+        scaled_art_h = int(theme.height * WIDTH / theme.width)
+        header_art_h = max(ART_H_MIN, min(int(scaled_art_h * HEADER_ART_FRAC), ART_H_MAX))
+        footer_art_h = max(ART_H_MIN, min(int(scaled_art_h * FOOTER_ART_FRAC), ART_H_MAX))
+    header_h = (header_art_h + ART_INFO_H) if theme else 96
     show_hero = stats is not None or bool(standing)
     hero_h = 120 if show_hero else 0
-    col_h = max(_column_height(raid_sections), _column_height(mplus_sections))
-    seasonal_h = _seasonal_height(seasonal_pairs) if show_seasonal else 0
+    col_h = max(_column_height(raid_sections), _column_height(mplus_sections),
+                _column_height(seasonal_sections) if seasonal_sections else 0)
 
     quote_max_w = WIDTH - 2 * MARGIN - 2 * COL_PAD
     roast_lines, roast_attr = _roast_lines(cfg, measure, fonts, quote_max_w)
@@ -1022,17 +1014,17 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     if show_hero:
         height += hero_h + GUTTER
     height += col_h
-    if show_seasonal:
-        height += GUTTER + seasonal_h
     if roast_lines:
         height += GUTTER + roast_h
     if theme:
-        height += GUTTER + FOOTER_ART_H   # footer art runs flush to the edge
+        height += GUTTER + footer_art_h   # footer art runs flush to the edge
     else:
         height += MARGIN
 
     img = Image.new("RGB", (WIDTH, height), BG)
     draw = ImageDraw.Draw(img)
+    if theme and (cfg.get("display") or {}).get("backdrop", True):
+        _paint_backdrop(img, theme)
 
     # header
     lookback = int(cfg.get("lookback_days", 7))
@@ -1045,14 +1037,14 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     subtitle = f"{difficulty} · {zone_name}" if zone_name else f"{difficulty} WEEKLY BOARD"
 
     if theme:
-        _paste_banner(img, theme, 0, HEADER_ART_H, "top")
-        strip_y = HEADER_ART_H + 2
+        _paste_banner(img, theme, 0, header_art_h, "top")
+        strip_y = header_art_h + 2
         draw.text((MARGIN, strip_y + 6), subtitle, font=fonts["subtitle"], fill=MUTED)
         dw = draw.textlength(date_range, font=fonts["date"])
         draw.text((WIDTH - MARGIN - dw, strip_y + 8), date_range, font=fonts["date"], fill=MUTED)
         draw.line([MARGIN, strip_y + ART_INFO_H - 8, WIDTH - MARGIN, strip_y + ART_INFO_H - 8],
                   fill=PANEL_BORDER, width=1)
-        y = HEADER_ART_H + ART_INFO_H
+        y = header_art_h + ART_INFO_H
     else:
         y = MARGIN
         draw.text((MARGIN, y), cfg["guild"]["name"], font=fonts["title"], fill=ACCENT)
@@ -1068,15 +1060,15 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 
     icons = bool((cfg.get("display") or {}).get("icons", True))
     col_y = y
-    _draw_column(img, draw, MARGIN, y, col_h, raid_title, raid_sections, fonts, icons=icons)
-    _draw_column(img, draw, MARGIN + COL_W + GUTTER, y, col_h, mplus_title, mplus_sections, fonts, icons=icons)
-    _draw_item_art(img, draw, cfg, col_y, col_h, raid_sections, mplus_sections, fonts)
+    col_xs = [MARGIN, MARGIN + COL_W + GUTTER, MARGIN + 2 * (COL_W + GUTTER)]
+    _draw_column(img, draw, col_xs[0], y, col_h, raid_title, raid_sections, fonts, icons=icons)
+    _draw_column(img, draw, col_xs[1], y, col_h, mplus_title, mplus_sections, fonts, icons=icons)
+    _draw_column(img, draw, col_xs[2], y, col_h, "SEASONAL", seasonal_sections, fonts,
+                 icons=icons, empty_text="Season data still cooking")
+    _draw_item_art(img, draw, cfg, col_y, col_h,
+                   [(col_xs[0], raid_sections), (col_xs[1], mplus_sections),
+                    (col_xs[2], seasonal_sections)], fonts)
     y += col_h
-
-    if show_seasonal:
-        y += GUTTER
-        _draw_seasonal(img, draw, y, seasonal_h, seasonal_pairs, fonts, icons=icons)
-        y += seasonal_h
 
     if roast_lines:
         y += GUTTER
@@ -1094,7 +1086,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
             draw.text((x1 - COL_PAD - aw, ty - 2), roast_attr, font=fonts["detail"], fill=MUTED)
 
     if theme:
-        _paste_banner(img, theme, height - FOOTER_ART_H, FOOTER_ART_H, "bottom")
+        _paste_banner(img, theme, height - footer_art_h, footer_art_h, "bottom")
 
     display_cfg = cfg.get("display") or {}
     if display_cfg.get("watermark"):

@@ -642,13 +642,13 @@ def test_empty_sections_show_placeholder(tmp_path):
     assert "TOP M+ DPS THIS WEEK" in titles
     healing = next(s for s in raid if s["title"] == "TOP HEALING PARSES")
     assert healing["rows"][0].get("text")
-    pairs = board_image._build_seasonal(cfg, [], [], {"dps": [], "hps": []})
-    seasonal_titles = [s["title"] for pair in pairs for s in pair if s]
+    seasonal = board_image._build_seasonal(cfg, [], [], {"dps": [], "hps": []})
+    seasonal_titles = [s["title"] for s in seasonal]
     assert "MOST IMPROVED DPS" in seasonal_titles
     assert "MOST IMPROVED HEALERS" in seasonal_titles
-    # The two Most Improved sections render side by side (same pair)
-    imp_pair = next(p for p in pairs if p[0] and p[0]["title"] == "MOST IMPROVED DPS")
-    assert imp_pair[1]["title"] == "MOST IMPROVED HEALERS"
+    # Placeholder rows keep the section shape even with no qualifiers
+    imp = next(s for s in seasonal if s["title"] == "MOST IMPROVED DPS")
+    assert imp["rows"][0].get("text")
 
 
 def test_report_detail_cache(monkeypatch):
