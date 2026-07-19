@@ -129,6 +129,9 @@ GUTTER = 24
 COL_PAD = 22
 COL_W = (WIDTH - 2 * MARGIN - GUTTER) // 2
 ROW_H = 36
+HEADER_ART_H = 340   # theme art banner across the top (guild sign area)
+ART_INFO_H = 48      # slim info strip under the header banner
+FOOTER_ART_H = 380   # theme art banner across the bottom
 SEC_TITLE_H = 32
 SEC_GAP = 16
 COL_HEADER_H = 46
@@ -159,6 +162,46 @@ def _load_font(size, bold=False):
         return ImageFont.load_default(size=size)
     except TypeError:
         return ImageFont.load_default()
+
+
+def _load_theme_art(cfg):
+    """Optional artwork that frames the board (display.theme_art path).
+    Fails open: missing or unreadable art just renders the plain board."""
+    path = (cfg.get("display") or {}).get("theme_art") or ""
+    if not path:
+        return None
+    try:
+        return Image.open(path).convert("RGB")
+    except Exception as exc:
+        logger.info("Theme art %s not usable (%s); rendering without it.", path, exc)
+        return None
+
+
+def _paste_banner(img, art, y, h, anchor):
+    """Full-width slice of the art: top-anchored for the header (the guild
+    sign), bottom-anchored for the footer (the scene), with a dark tint
+    for cohesion and an edge fade into the page background."""
+    ratio = WIDTH / art.width
+    scaled = art.resize((WIDTH, max(int(art.height * ratio), h)), Image.LANCZOS)
+    if anchor == "top":
+        band = scaled.crop((0, 0, WIDTH, h))
+    else:
+        band = scaled.crop((0, scaled.height - h, WIDTH, scaled.height))
+    img.paste(band, (0, y))
+
+    img.paste(Image.new("RGB", (WIDTH, h), BG), (0, y), Image.new("L", (WIDTH, h), 70))
+
+    fade_h = min(90, h)
+    ramp = Image.new("L", (1, fade_h))
+    for i in range(fade_h):
+        alpha = int(255 * (i / max(fade_h - 1, 1)))
+        ramp.putpixel((0, i), alpha if anchor == "top" else 255 - alpha)
+    ramp = ramp.resize((WIDTH, fade_h))
+    solid = Image.new("RGB", (WIDTH, fade_h), BG)
+    if anchor == "top":
+        img.paste(solid, (0, y + h - fade_h), ramp)
+    else:
+        img.paste(solid, (0, y), ramp)
 
 
 def _fonts():
@@ -929,7 +972,8 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()
     mplus_title = (sections_cfg.get("mplus_header") or {}).get("title", "Mythic Plus").upper()
 
-    header_h = 96
+    theme = _load_theme_art(cfg)
+    header_h = (HEADER_ART_H + ART_INFO_H) if theme else 96
     show_hero = stats is not None or bool(standing)
     hero_h = 120 if show_hero else 0
     col_h = max(_column_height(raid_sections), _column_height(mplus_sections))
@@ -939,7 +983,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     roast_lines, roast_attr = _roast_lines(cfg, measure, fonts, quote_max_w)
     roast_h = (20 + 24 + len(roast_lines) * 28 + 26) if roast_lines else 0
 
-    height = MARGIN + header_h
+    height = (0 if theme else MARGIN) + header_h
     if show_hero:
         height += hero_h + GUTTER
     height += col_h
@@ -947,30 +991,41 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         height += GUTTER + seasonal_h
     if roast_lines:
         height += GUTTER + roast_h
-    height += MARGIN
+    if theme:
+        height += GUTTER + FOOTER_ART_H   # footer art runs flush to the edge
+    else:
+        height += MARGIN
 
     img = Image.new("RGB", (WIDTH, height), BG)
     draw = ImageDraw.Draw(img)
 
     # header
-    y = MARGIN
-    guild_name = cfg["guild"]["name"]
-    draw.text((MARGIN, y), guild_name, font=fonts["title"], fill=ACCENT)
-
     lookback = int(cfg.get("lookback_days", 7))
     range_label = "Raid week" if lookback == 7 else f"Last {lookback} days"
     date_range = f"{range_label}: {start_dt.strftime('%b %d')} – {end_dt.strftime('%b %d, %Y')}"
-    dw = draw.textlength(date_range, font=fonts["date"])
-    draw.text((WIDTH - MARGIN - dw, y + 18), date_range, font=fonts["date"], fill=MUTED)
-
     difficulty = str(cfg.get("raid", {}).get("difficulty", "mythic"))
     if stats and stats.get("difficulty") in DIFFICULTY_NAMES:
         difficulty = DIFFICULTY_NAMES[stats["difficulty"]]
     difficulty = difficulty.upper()
     subtitle = f"{difficulty} · {zone_name}" if zone_name else f"{difficulty} WEEKLY BOARD"
-    draw.text((MARGIN, y + 52), subtitle, font=fonts["subtitle"], fill=MUTED)
-    draw.line([MARGIN, y + 86, WIDTH - MARGIN, y + 86], fill=PANEL_BORDER, width=1)
-    y += header_h
+
+    if theme:
+        _paste_banner(img, theme, 0, HEADER_ART_H, "top")
+        strip_y = HEADER_ART_H + 2
+        draw.text((MARGIN, strip_y + 6), subtitle, font=fonts["subtitle"], fill=MUTED)
+        dw = draw.textlength(date_range, font=fonts["date"])
+        draw.text((WIDTH - MARGIN - dw, strip_y + 8), date_range, font=fonts["date"], fill=MUTED)
+        draw.line([MARGIN, strip_y + ART_INFO_H - 8, WIDTH - MARGIN, strip_y + ART_INFO_H - 8],
+                  fill=PANEL_BORDER, width=1)
+        y = HEADER_ART_H + ART_INFO_H
+    else:
+        y = MARGIN
+        draw.text((MARGIN, y), cfg["guild"]["name"], font=fonts["title"], fill=ACCENT)
+        dw = draw.textlength(date_range, font=fonts["date"])
+        draw.text((WIDTH - MARGIN - dw, y + 18), date_range, font=fonts["date"], fill=MUTED)
+        draw.text((MARGIN, y + 52), subtitle, font=fonts["subtitle"], fill=MUTED)
+        draw.line([MARGIN, y + 86, WIDTH - MARGIN, y + 86], fill=PANEL_BORDER, width=1)
+        y += header_h
 
     if show_hero:
         _draw_hero(draw, y, hero_h, stats, standing, fonts, previous=previous)
@@ -1001,6 +1056,9 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
             aw = draw.textlength(roast_attr, font=fonts["detail"])
             draw.text((x1 - COL_PAD - aw, ty - 2), roast_attr, font=fonts["detail"], fill=MUTED)
 
+    if theme:
+        _paste_banner(img, theme, height - FOOTER_ART_H, FOOTER_ART_H, "bottom")
+
     display_cfg = cfg.get("display") or {}
     if display_cfg.get("watermark"):
         text = display_cfg.get(
@@ -1008,7 +1066,9 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
             "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
         wfont = _load_font(12)
         tw = draw.textlength(text, font=wfont)
-        draw.text((WIDTH - MARGIN - tw, height - 24), text, font=wfont, fill=FAINT)
+        wx, wy = WIDTH - MARGIN - tw, height - 24
+        draw.text((wx + 1, wy + 1), text, font=wfont, fill=(0, 0, 0))
+        draw.text((wx, wy), text, font=wfont, fill=FAINT)
 
     img.save(output_path, "PNG")
     logger.info("Generated board image at %s (%sx%s)", output_path, WIDTH, height)

@@ -406,6 +406,36 @@ def test_load_config_rejects_placeholder_guild(tmp_path):
     assert gb_config.load_config(str(cfg_file))["guild"]["name"] == "Real Guild"
 
 
+def test_theme_art_banners(tmp_path):
+    from PIL import Image
+    art = Image.new("RGB", (800, 1000), (70, 40, 25))
+    art_path = tmp_path / "art.png"
+    art.save(art_path)
+    now = datetime.now(timezone.utc)
+
+    cfg = _image_board_cfg()
+    plain = board_image.generate_board_image(
+        cfg, _image_board_stats(), None, None, None, None, None, None,
+        now - timedelta(days=7), now, output_path=str(tmp_path / "plain.png"))
+    plain_h = Image.open(plain).height
+
+    cfg = _image_board_cfg()
+    cfg["display"]["theme_art"] = str(art_path)
+    themed = board_image.generate_board_image(
+        cfg, _image_board_stats(), None, None, None, None, None, None,
+        now - timedelta(days=7), now, output_path=str(tmp_path / "themed.png"))
+    themed_h = Image.open(themed).height
+    # Header banner + info strip + footer banner grow the canvas substantially
+    assert themed_h > plain_h + 500
+
+    # Missing art file: renders the plain board rather than crashing
+    cfg["display"]["theme_art"] = str(tmp_path / "missing.png")
+    out = board_image.generate_board_image(
+        cfg, _image_board_stats(), None, None, None, None, None, None,
+        now - timedelta(days=7), now, output_path=str(tmp_path / "fallback.png"))
+    assert Image.open(out).height == plain_h
+
+
 def test_watermark_renders(tmp_path):
     from PIL import Image
     cfg = _image_board_cfg()

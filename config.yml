@@ -25,6 +25,10 @@ display:
   layout: image_board
   icons: true      # class/spec icons next to player names (fetched from Wowhead's CDN)
   watermark: true  # small "Powered by Guild Board" credit in the image corner
+  # Artwork that frames the board: its top slice becomes the header banner
+  # (great when the art carries the guild name) and its bottom slice the
+  # footer. Missing file = plain board, no error.
+  theme_art: "assets/theme_art.png"
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
