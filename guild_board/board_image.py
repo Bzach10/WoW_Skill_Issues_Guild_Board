@@ -444,7 +444,9 @@ def _mplus_week_rows(results, top_n):
             "detail": " · ".join(b for b in detail_bits if b),
             "detail_bits": detail_bits,
             "value": f"+{level}",
-            "value_color": ACCENT,
+            # Timed keys glow gold; depleted keys go muted — readable even
+            # when the "timed"/"over time" tag gets trimmed for space.
+            "value_color": ACCENT if timed else MUTED,
         })
     return rows
 

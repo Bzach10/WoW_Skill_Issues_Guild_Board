@@ -164,14 +164,25 @@ def fetch_guild_reports(token, cfg, start_ms, end_ms, limit=25):
 
 
 def detect_zone(cfg, reports):
-    """Pick the raid zone: config override if set, else the most recent report's zone."""
+    """Pick the raid zone: config override if set, else the most recent
+    RAID report's zone.
+
+    M+ dungeon reports carry zones named like "Mythic+ Season 1"; if the
+    newest upload is an M+ log, naively taking its zone breaks the guild
+    standing lookup, Weekly Boss Ranks, the Most Improved season sweep,
+    and the board subtitle all at once — so season zones are skipped
+    unless they're all we have.
+    """
     override = int((cfg.get("rankings") or {}).get("zone_id", 0) or 0)
     if override > 0:
         return override, None
     zoned = [r for r in reports if (r.get("zone") or {}).get("id")]
     if not zoned:
         return None, None
-    latest = max(zoned, key=lambda r: r.get("startTime") or 0)
+    raid_zoned = [r for r in zoned
+                  if "season" not in ((r["zone"].get("name") or "").lower())]
+    pool = raid_zoned or zoned
+    latest = max(pool, key=lambda r: r.get("startTime") or 0)
     return latest["zone"]["id"], latest["zone"].get("name")
 
 

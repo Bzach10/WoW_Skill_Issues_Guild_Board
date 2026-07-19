@@ -397,6 +397,21 @@ def test_row_icon_prefers_spec_then_class(monkeypatch):
     assert board_image._row_icon({"spec": "", "cls": ""}) is None
 
 
+def test_detect_zone_skips_mplus_season_zones():
+    reports = [
+        {"zone": {"id": 44, "name": "Verdant Spire"}, "startTime": 100},
+        {"zone": {"id": 45, "name": "Mythic+ Season 1"}, "startTime": 200},  # newest, but M+
+    ]
+    zone_id, zone_name = wcl.detect_zone({}, reports)
+    assert zone_id == 44
+    assert zone_name == "Verdant Spire"
+    # If M+ logs are ALL we have, fall back to them rather than nothing
+    only_mplus = [{"zone": {"id": 45, "name": "Mythic+ Season 1"}, "startTime": 200}]
+    assert wcl.detect_zone({}, only_mplus)[0] == 45
+    # Config override still wins
+    assert wcl.detect_zone({"rankings": {"zone_id": 99}}, reports)[0] == 99
+
+
 def test_merge_improvement_keeps_best_gain_per_player():
     mythic = [{"name": "Tommy", "delta": 29, "difficulty": 5}]
     heroic = [
