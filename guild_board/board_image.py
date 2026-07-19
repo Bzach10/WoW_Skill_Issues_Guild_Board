@@ -7,6 +7,7 @@ so nothing ever gets clipped.
 """
 
 import logging
+import os
 from pathlib import Path
 
 import requests
@@ -969,8 +970,9 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
                          mplus_results, mplus_season_scores, mplus_season_parses,
                          start_dt, end_dt, no_logs=False, output_path="board.png",
                          improvement=None, mplus_weekly=None, previous=None,
-                         streaks=None, records=None):
-    """Render the full weekly board and save it as a PNG."""
+                         streaks=None, records=None, phase=0.0):
+    """Render the full weekly board; save as PNG, or return the Image
+    when output_path is None (used by the GIF animation pipeline)."""
     fonts = _fonts()
     measure = ImageDraw.Draw(Image.new("RGB", (1, 1)))
 
@@ -1024,7 +1026,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     subtitle = f"{difficulty} · {zone_name}" if zone_name else f"{difficulty} WEEKLY BOARD"
 
     if theme:
-        theme_bands.draw_header_band(img, stats)
+        theme_bands.draw_header_band(img, stats, phase=phase)
         _band_seam(img, 0, HEADER_ART_H, at_top=True)
         strip_y = HEADER_ART_H + 2
         draw.text((MARGIN, strip_y + 6), subtitle, font=fonts["subtitle"], fill=MUTED)
@@ -1077,7 +1079,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 
     if theme:
         theme_bands.draw_footer_band(img, height - FOOTER_ART_H, stats,
-                                     week_index=start_dt.isocalendar()[1])
+                                     week_index=start_dt.isocalendar()[1], phase=phase)
         _band_seam(img, height - FOOTER_ART_H, FOOTER_ART_H, at_top=False)
 
     display_cfg = cfg.get("display") or {}
@@ -1091,6 +1093,41 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         draw.text((wx + 1, wy + 1), text, font=wfont, fill=(0, 0, 0))
         draw.text((wx, wy), text, font=wfont, fill=FAINT)
 
+    if output_path is None:
+        return img
     img.save(output_path, "PNG")
     logger.info("Generated board image at %s (%sx%s)", output_path, WIDTH, height)
     return output_path
+
+
+GIF_MAX_BYTES = 9_500_000   # stay under Discord's free-tier upload limit
+
+
+def generate_board_animation(cfg, *args, output_path="board.gif", frames=6,
+                             duration_ms=140, **kwargs):
+    """Animated board: the torches, campfire and ember glows flicker.
+
+    Renders `frames` full boards at stepped phases and encodes an
+    optimized looping GIF. If even a downscaled GIF cannot fit under
+    Discord's upload limit, returns None so the caller falls back to the
+    static PNG."""
+    kwargs.pop("output_path", None)
+    imgs = []
+    for i in range(frames):
+        imgs.append(generate_board_image(cfg, *args, output_path=None,
+                                         phase=i / frames, **kwargs))
+    for scale in (1.0, 0.85, 0.7):
+        if scale < 1.0:
+            scaled = [im.resize((int(im.width * scale), int(im.height * scale)),
+                                Image.LANCZOS) for im in imgs]
+        else:
+            scaled = imgs
+        scaled[0].save(output_path, save_all=True, append_images=scaled[1:],
+                       duration=duration_ms, loop=0, optimize=True)
+        size = os.path.getsize(output_path)
+        if size <= GIF_MAX_BYTES:
+            logger.info("Generated animated board at %s (%s frames, %.1fMB, scale %.0f%%)",
+                        output_path, frames, size / 1e6, scale * 100)
+            return output_path
+    logger.info("Animated board too large even downscaled; falling back to static PNG.")
+    return None

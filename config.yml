@@ -33,6 +33,11 @@ display:
   # the shorter column. Swap the file monthly for a rotating gag.
   item_art: "assets/item_art.png"
   item_art_title: "GUILD ITEM OF THE MONTH"
+  # Animated board: torches/campfire/embers flicker (looping GIF).
+  # Falls back to the static PNG automatically if the GIF would exceed
+  # Discord's upload limit.
+  animate: true
+  animate_frames: 6
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
