@@ -368,11 +368,8 @@ def _parse_rows(best, unit, top_n, diff_name=""):
             boss = f"+{info['key_level']} {boss}"
         elif boss and row_diff:
             boss = f"{row_diff} {boss}"
-        # Amount before boss: when space runs out, the boss name is dropped
-        # first and the DPS/HPS number always stays visible.
         detail_bits = [
             info.get("spec") or "",
-            f"{_fmt_amount(info.get('amount') or 0)} {unit}",
             boss,
         ]
         rows.append({
@@ -384,6 +381,9 @@ def _parse_rows(best, unit, top_n, diff_name=""):
             "detail_bits": detail_bits,
             "value": f"{parse:.0f}%",
             "value_color": _parse_color(parse),
+            # The raw throughput sits beside the parse in the value column,
+            # where nothing ever gets trimmed away.
+            "value_suffix": _fmt_amount(info.get("amount") or 0),
         })
     return rows
 
@@ -612,7 +612,16 @@ def _draw_row(img, draw, x, y, w, index, row, fonts, icons=True):
 
     value = row.get("value", "")
     vw = draw.textlength(value, font=fonts["name"])
-    draw.text((x + w - vw, cy - 10), value, font=fonts["name"], fill=row.get("value_color", TEXT))
+    total_vw = vw
+    suffix = row.get("value_suffix") or ""
+    if suffix:
+        suffix = f" · {suffix}"
+        total_vw += draw.textlength(suffix, font=fonts["detail"])
+    vx = x + w - total_vw
+    draw.text((vx, cy - 10), value, font=fonts["name"], fill=row.get("value_color", TEXT))
+    if suffix:
+        draw.text((vx + vw, cy - 9), suffix, font=fonts["detail"], fill=MUTED)
+    vw = total_vw
 
     nx = x + 32
     if icons:
