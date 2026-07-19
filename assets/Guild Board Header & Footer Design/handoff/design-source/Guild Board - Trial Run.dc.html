@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  body { margin:0; background:#0b0c10; font-family:'Segoe UI',Helvetica,Arial,sans-serif; color:#ebecf0; }
+  a { color:#e6b446; } a:hover { color:#f3cf7d; }
+  @keyframes emberRise { 0%{transform:translate(0,0);opacity:0} 8%{opacity:.95} 100%{transform:translate(var(--drift,0px),-420px);opacity:0} }
+  @keyframes flamePulse { 0%{transform:scaleY(1) scaleX(1) rotate(-2deg)} 50%{transform:scaleY(1.18) scaleX(.9) rotate(2deg)} 100%{transform:scaleY(.94) scaleX(1.06) rotate(-1deg)} }
+  @keyframes tickerMove { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  @keyframes glowPulse { 0%{opacity:.35} 100%{opacity:.7} }
+  @keyframes signSwing { 0%{transform:rotate(-.6deg)} 100%{transform:rotate(.6deg)} }
+</style>
+</helmet>
+<div style="width:2600px; margin:0 auto; background:#111217;">
+  <!-- ================= HEADER (2a) ================= -->
+  <div style="position:relative; width:2600px; height:380px; overflow:hidden; background:url('assets/wall_header.png');" data-screen-label="Header">
+    <div style="position:absolute; left:0; right:0; bottom:-60px; height:220px; background:radial-gradient(ellipse 55% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%); animation:glowPulse 2.6s ease-in-out infinite alternate; pointer-events:none;"></div>
+    <sc-if value="{{ embersOn }}" hint-placeholder-val="{{ true }}">{{ embersA }}</sc-if>
+    <div style="position:absolute; left:44px; top:36px; width:600px; height:308px; padding:14px; border-radius:12px; background:linear-gradient(160deg, #6b5943, #3d3123); box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 2px 2px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.5); transform:rotate(-0.8deg);">
+      <div style="position:relative; width:100%; height:100%; border-radius:6px; background:url('assets/plaque.png') center/cover; box-shadow:inset 0 5px 10px rgba(255,255,255,.22), inset 0 -8px 16px rgba(0,0,0,.45); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; overflow:hidden;">
+        <div style="font-family:Cinzel,serif; font-size:88px; font-weight:900; line-height:.98; letter-spacing:.1em; color:#43352a; text-shadow:0 2px 1px rgba(255,244,214,.4), 0 -2px 3px rgba(0,0,0,.55);">SKILL</div>
+        <div style="font-family:Cinzel,serif; font-size:88px; font-weight:900; line-height:.98; letter-spacing:.06em; color:#43352a; text-shadow:0 2px 1px rgba(255,244,214,.4), 0 -2px 3px rgba(0,0,0,.55);">ISSUES</div>
+        <div style="font-size:15px; letter-spacing:.4em; color:#5a4a38; font-weight:700; margin-top:8px; text-shadow:0 1px 0 rgba(255,244,214,.35);">BLEEDING HOLLOW · US</div>
+        <div style="position:absolute; left:14px; top:12px; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%); box-shadow:0 1px 2px rgba(255,255,255,.25);"></div>
+        <div style="position:absolute; right:14px; top:12px; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%); box-shadow:0 1px 2px rgba(255,255,255,.25);"></div>
+        <div style="position:absolute; left:16px; bottom:12px; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%); box-shadow:0 1px 2px rgba(255,255,255,.25);"></div>
+        <div style="position:absolute; right:16px; bottom:12px; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%); box-shadow:0 1px 2px rgba(255,255,255,.25);"></div>
+      </div>
+    </div>
+    <div style="position:absolute; left:700px; top:44px; display:flex; gap:26px;">
+      <div style="width:380px; background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:20px 24px;">
+        <div style="font-size:14px; letter-spacing:.14em; font-weight:700; color:{{ wipeLabelColor }};">{{ wipeLabel }}</div>
+        <div style="font-size:52px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:6px; color:{{ wipeClockColor }};">{{ wipeClock }}</div>
+        <div style="font-size:14px; color:#969aa4; margin-top:4px;">wipes this session: <b style="color:#e5484d;">{{ sessionWipes }}</b> · personal best: 4m 12s</div>
+      </div>
+      <div style="width:400px; background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:20px 24px;">
+        <div style="font-size:14px; letter-spacing:.14em; font-weight:700; color:#e6b446;">SEASON REPAIR BILL</div>
+        <div style="display:flex; align-items:baseline; gap:10px; margin-top:6px; font-variant-numeric:tabular-nums;">
+          <span style="font-size:52px; font-weight:800; color:#ebecf0;">{{ repairGold }}</span><span style="width:18px; height:18px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420); display:inline-block;"></span>
+          <span style="font-size:30px; font-weight:700; color:#b0b6c0;">{{ repairSilver }}</span><span style="width:13px; height:13px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #e8ecf2, #b0b6c0 55%, #6a707c); display:inline-block;"></span>
+        </div>
+        <div style="font-size:14px; color:#969aa4; margin-top:4px;">{{ repairNote }}</div>
+      </div>
+      <div style="width:330px; background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:20px 24px;">
+        <div style="font-size:14px; letter-spacing:.14em; font-weight:700; color:#e6b446;">“GO AGANE” COUNTER</div>
+        <div style="font-size:52px; font-weight:800; font-variant-numeric:tabular-nums; color:#ebecf0; margin-top:6px;">{{ goAgane }}</div>
+        <div style="font-size:14px; color:#969aa4; margin-top:4px;">morale: unaffected · copium: stable</div>
+      </div>
+    </div>
+    <div style="position:absolute; left:700px; top:266px; display:flex; gap:20px; align-items:center;">
+      <span style="font-size:13px; letter-spacing:.14em; color:#b8bcc6; font-weight:700; text-shadow:0 1px 3px #000;">ACTIVE RAID DEBUFFS</span>
+      <div style="display:flex; gap:12px;">
+        <div style="position:relative; width:52px; height:52px; border:2px solid #e5484d; border-radius:8px; overflow:hidden; box-shadow:0 0 14px rgba(229,72,77,.35);" title="Skill Issue — 40 stacks"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg" alt="Skill Issue" style="width:100%; height:100%; object-fit:cover;"><span style="position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;">40</span></div>
+        <div style="position:relative; width:52px; height:52px; border:2px solid #e5484d; border-radius:8px; overflow:hidden; box-shadow:0 0 14px rgba(229,72,77,.35);" title="Standing in Fire — Healmates only"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_fire_fire.jpg" alt="Standing in Fire" style="width:100%; height:100%; object-fit:cover;"><span style="position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;">6w</span></div>
+        <div style="position:relative; width:52px; height:52px; border:2px solid #e5484d; border-radius:8px; overflow:hidden; box-shadow:0 0 14px rgba(229,72,77,.35);" title="Graveyard Timeshare"><img src="https://wow.zamimg.com/images/wow/icons/large/inv_misc_bone_humanskull_01.jpg" alt="Graveyard Timeshare" style="width:100%; height:100%; object-fit:cover;"><span style="position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;">98</span></div>
+        <div style="position:relative; width:52px; height:52px; border:2px solid #4cdc56; border-radius:8px; overflow:hidden; box-shadow:0 0 14px rgba(76,220,86,.3);" title="Coping (buff)"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_nature_sleep.jpg" alt="Coping" style="width:100%; height:100%; object-fit:cover;"><span style="position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;">∞</span></div>
+        <div style="position:relative; width:52px; height:52px; border:2px solid #4cdc56; border-radius:8px; overflow:hidden; box-shadow:0 0 14px rgba(76,220,86,.3);" title="Healer Diff (aura)"><img src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_layonhands.jpg" alt="Healer Diff" style="width:100%; height:100%; object-fit:cover;"><span style="position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;">1</span></div>
+      </div>
+    </div>
+    <div style="position:absolute; right:420px; top:64px;">{{ torch }}</div>
+    <div style="position:absolute; right:96px; top:0; display:flex; flex-direction:column; align-items:center; animation:signSwing 4.5s ease-in-out infinite alternate; transform-origin:top center;">
+      <div style="display:flex; gap:150px;">
+        <div style="width:4px; height:74px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;"></div>
+        <div style="width:4px; height:74px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;"></div>
+      </div>
+      <div style="width:250px; padding:18px 0 22px; border-radius:8px; background:repeating-linear-gradient(180deg, #5a4028 0 22px, #4c3520 22px 24px, #63482d 24px 46px, #45301d 46px 48px); border:3px solid #2b2117; box-shadow:0 14px 34px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.12); display:flex; flex-direction:column; align-items:center; gap:2px;">
+        <div style="font-family:Cinzel,serif; font-size:44px; font-weight:900; letter-spacing:.1em; color:#251a10; text-shadow:0 1px 0 rgba(255,220,160,.28), 0 -1px 2px rgba(0,0,0,.6);">GIT GUD</div>
+        <div style="font-size:12px; letter-spacing:.3em; color:#2e2114; font-weight:700;">MGMT IS NOT RESPONSIBLE</div>
+      </div>
+    </div>
+    <div style="position:absolute; left:0; right:0; bottom:0; height:26px; background:linear-gradient(180deg, transparent, rgba(8,8,11,.85));"></div>
+  </div>
+  <div style="height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 36px; border-bottom:1px solid #2d303a; background:#111217;">
+    <span style="color:#969aa4; font-size:19px;">MYTHIC · VS / DR / MQD</span>
+    <span style="color:#969aa4; font-size:17px;">Raid week: Jul 12 – Jul 19, 2026</span>
+  </div>
+
+  <!-- ================= LIVE BOARD DATA (this week's real render) ================= -->
+  <img src="assets/board_middle.png" alt="This week's board data" style="display:block; width:2600px;" data-screen-label="Board data">
+
+  <!-- ================= FOOTER (2b) ================= -->
+  <div style="position:relative; width:2600px; height:520px; overflow:hidden; background:url('assets/wall_footer.png');" data-screen-label="Footer">
+    <div style="position:absolute; left:0; right:0; bottom:-40px; height:200px; background:radial-gradient(ellipse 50% 100% at 50% 100%, rgba(58,220,90,.16), transparent 70%); animation:glowPulse 3.4s ease-in-out infinite alternate; pointer-events:none;"></div>
+    <sc-if value="{{ embersOn }}" hint-placeholder-val="{{ true }}">{{ embersC }}</sc-if>
+    <div style="position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:44px; padding:0 60px;">
+      <div style="width:600px; background:rgba(7,7,24,.94); border:1px solid #43435c; border-radius:8px; box-shadow:inset 0 0 0 1px rgba(120,120,180,.15), 0 14px 40px rgba(0,0,0,.6); padding:26px 30px; font-size:20px; line-height:1.55;">
+        <div style="font-family:Cinzel,serif; font-size:32px; font-weight:800; color:#a335ee;">Codex of Conduct</div>
+        <div style="color:#ebecf0;">Binds when you join</div>
+        <div style="display:flex; justify-content:space-between; color:#ebecf0;"><span>Guild Charter</span><span>Unique</span></div>
+        <div style="color:#ebecf0;">+10 Blaming the Healer</div>
+        <div style="color:#ebecf0;">+5 Ignoring Swirlies</div>
+        <div style="color:#1eff00;">Equip: Rule 1 — It is always Healmates' fault.</div>
+        <div style="color:#1eff00;">Equip: Rule 2 — The swirly is a suggestion.</div>
+        <div style="color:#1eff00;">Equip: Rule 3 — “One more pull” legally means five.</div>
+        <div style="color:#1eff00;">Equip: Rule 4 — GBank tab 3 is not your personal bank.</div>
+        <div style="color:#ffd100; font-style:italic; margin-top:8px;">“If you die in the fire, you lose DKP we don't track.”</div>
+        <div style="color:#ff2020; margin-top:6px;">Requires: Skill (missing)</div>
+      </div>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:8px;">
+        <div style="font-size:15px; letter-spacing:.3em; color:#e6b446; font-weight:700; text-shadow:0 1px 4px #000;">GRAVEYARD CAMPERS MEMORIAL · WEEK OF JUL 12</div>
+        <div style="position:relative; width:1080px; height:390px; border:3px solid #967a3e; border-radius:10px; overflow:hidden; background:linear-gradient(180deg, #0d0f14 0%, #131720 55%, #10130c 100%); box-shadow:0 0 0 1px #2d303a, 0 18px 50px rgba(0,0,0,.65);">
+          <div style="position:absolute; left:0; right:0; bottom:-90px; height:260px; background:radial-gradient(ellipse 70% 100% at 50% 100%, rgba(58,220,90,.28), transparent 70%); animation:glowPulse 3s ease-in-out infinite alternate;"></div>
+          {{ wispsGreen }}
+          <div style="position:absolute; left:0; right:0; bottom:0; height:74px; background:linear-gradient(180deg, transparent, #171a10 40%, #0e1009);"></div>
+          <div style="position:absolute; left:0; right:0; bottom:26px; display:flex; align-items:flex-end; justify-content:center; gap:38px;">
+            <div style="width:170px; height:216px; background:linear-gradient(165deg, #767268 0%, #56534b 55%, #3e3c36 100%); border-radius:85px 85px 6px 6px; box-shadow:inset 0 4px 6px rgba(255,255,255,.14), inset 0 -10px 18px rgba(0,0,0,.5), 0 12px 26px rgba(0,0,0,.6); transform:rotate(-2.5deg); display:flex; flex-direction:column; align-items:center; padding-top:34px; gap:5px;">
+              <div style="font-family:Cinzel,serif; font-size:22px; font-weight:900; color:#2e2c27; text-shadow:0 1px 0 rgba(255,255,255,.18);">R.I.P.</div>
+              <div style="font-size:20px; font-weight:800; color:#2e2c27;">MAILLO</div>
+              <div style="font-size:14px; font-weight:700; color:#463f2e;">21 DEATHS · 0.7/PULL</div>
+              <div style="font-size:12.5px; color:#4a463d; text-align:center; padding:0 14px; font-style:italic;">“Found the one-shot. Twenty-one times.”</div>
+            </div>
+            <div style="width:180px; height:238px; background:linear-gradient(165deg, #7c786d 0%, #5a574f 55%, #403e38 100%); border-radius:14px 14px 6px 6px; box-shadow:inset 0 4px 6px rgba(255,255,255,.14), inset 0 -10px 18px rgba(0,0,0,.5), 0 12px 26px rgba(0,0,0,.6); transform:rotate(1.6deg); display:flex; flex-direction:column; align-items:center; padding-top:26px; gap:5px;">
+              <div style="width:26px; height:56px; position:relative; margin-bottom:2px;"><div style="position:absolute; left:10px; top:0; width:7px; height:56px; background:#34322c; border-radius:3px;"></div><div style="position:absolute; left:0; top:13px; width:26px; height:7px; background:#34322c; border-radius:3px;"></div></div>
+              <div style="font-size:20px; font-weight:800; color:#2e2c27;">BUCHALTER</div>
+              <div style="font-size:14px; font-weight:700; color:#463f2e;">20 DEATHS · 0.7/PULL</div>
+              <div style="font-size:12.5px; color:#4a463d; text-align:center; padding:0 14px; font-style:italic;">“Died to the same swirly twice. Times ten.”</div>
+            </div>
+            <div style="width:158px; height:196px; background:linear-gradient(165deg, #6e6a60 0%, #514e46 55%, #3a3832 100%); border-radius:79px 79px 6px 6px; box-shadow:inset 0 4px 6px rgba(255,255,255,.14), inset 0 -10px 18px rgba(0,0,0,.5), 0 12px 26px rgba(0,0,0,.6); transform:rotate(-1.2deg); display:flex; flex-direction:column; align-items:center; padding-top:30px; gap:5px;">
+              <div style="font-family:Cinzel,serif; font-size:20px; font-weight:900; color:#2e2c27;">R.I.P.</div>
+              <div style="font-size:19px; font-weight:800; color:#2e2c27;">BREWZLEEH</div>
+              <div style="font-size:13.5px; font-weight:700; color:#463f2e;">9 DEATHS</div>
+              <div style="font-size:12.5px; color:#4a463d; text-align:center; padding:0 12px; font-style:italic;">“Did the mechanics. Mechanics did him back.”</div>
+            </div>
+            <div style="width:158px; height:182px; background:linear-gradient(165deg, #6e6a60 0%, #514e46 55%, #3a3832 100%); border-radius:12px 12px 6px 6px; box-shadow:inset 0 4px 6px rgba(255,255,255,.14), inset 0 -10px 18px rgba(0,0,0,.5), 0 12px 26px rgba(0,0,0,.6); transform:rotate(2.2deg); display:flex; flex-direction:column; align-items:center; padding-top:26px; gap:5px;">
+              <div style="font-family:Cinzel,serif; font-size:20px; font-weight:900; color:#2e2c27;">R.I.P.</div>
+              <div style="font-size:19px; font-weight:800; color:#2e2c27;">NOKORI</div>
+              <div style="font-size:13.5px; font-weight:700; color:#463f2e;">9 DEATHS</div>
+              <div style="font-size:12.5px; color:#4a463d; text-align:center; padding:0 12px; font-style:italic;">“The healer. Yes, the healer.”</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:center; gap:6px; width:190px;">
+              <div style="position:relative; width:120px; height:120px;">
+                <div style="position:absolute; left:50%; bottom:6px; transform:translateX(-50%);">{{ campfire }}</div>
+                <div style="position:absolute; left:14px; bottom:2px; width:64px; height:12px; background:linear-gradient(180deg, #5a4028, #2b2117); border-radius:6px; transform:rotate(-14deg);"></div>
+                <div style="position:absolute; right:14px; bottom:2px; width:64px; height:12px; background:linear-gradient(180deg, #5a4028, #2b2117); border-radius:6px; transform:rotate(14deg);"></div>
+              </div>
+              <div style="background:#3a2c1a; border:2px solid #211809; border-radius:6px; padding:6px 12px; font-size:13px; font-weight:800; letter-spacing:.08em; color:#d9c49a; box-shadow:0 6px 16px rgba(0,0,0,.5);">RESERVED: HEALMATES</div>
+              <div style="font-size:12px; color:#7d8290; font-style:italic;">6 consecutive weeks in the fire</div>
+            </div>
+          </div>
+        </div>
+        <div style="font-size:16px; color:#969aa4; font-style:italic; text-shadow:0 1px 4px #000;">Plots assigned by deaths-per-pull. The campfire is load-bearing.</div>
+      </div>
+      <div style="width:600px; background:rgba(7,7,24,.94); border:1px solid #5c4a2e; border-radius:8px; box-shadow:inset 0 0 0 1px rgba(230,180,70,.18), 0 14px 40px rgba(0,0,0,.6); padding:26px 30px; font-size:20px; line-height:1.55;">
+        <div style="font-family:Cinzel,serif; font-size:32px; font-weight:800; color:#ff8000;">Now Recruiting: {{ recruitTitle }}</div>
+        <div style="color:#ebecf0;">Binds on invite</div>
+        <div style="display:flex; justify-content:space-between; color:#ebecf0;"><span>Warm Body</span><span>Any Spec</span></div>
+        <div style="color:#ebecf0;">+100% Attendance Aura (aspirational)</div>
+        <div style="color:#1eff00;">Equip: Knows what a swirly is. (preferred, not required)</div>
+        <div style="color:#1eff00;">Equip: Has released spirit at least once unassisted.</div>
+        <div style="color:#1eff00;">Use: Presses defensives before dying, not after. (2 Min Cooldown)</div>
+        <div style="color:#ffd100; font-style:italic; margin-top:8px;">“Healmates needs backup. Or a replacement. Mostly a replacement.”</div>
+        <div style="color:#ebecf0; margin-top:6px;">Apply in <span style="color:#e6b446;">#recruitment</span> · literally no requirements</div>
+      </div>
+    </div>
+  </div>
+  <div style="height:52px; display:flex; align-items:stretch; border-top:1px solid #2d303a; background:#0d0e13;">
+    <div style="display:flex; align-items:center; padding:0 24px; background:#1a1c23; border-right:1px solid #2d303a; font-weight:800; letter-spacing:.16em; color:#e6b446; font-size:15px;">MOTD</div>
+    <div style="flex:1; overflow:hidden; display:flex; align-items:center;">
+      <div style="display:flex; white-space:nowrap; animation:tickerMove 70s linear infinite; font-size:19px; color:#e6b446;" style-hover="animation-play-state:paused">
+        <span style="padding-right:70px;">MORE DOTS. MORE DOTS. … OK STOP DOTS.</span><span style="padding-right:70px;">That's a 50 DKP MINUS.</span><span style="padding-right:70px;">Healmates has now stood in the fire for 6 consecutive weeks — a new guild record.</span><span style="padding-right:70px;">Key depleted? That is a you problem.</span><span style="padding-right:70px;">At least Leeroy had a plan.</span><span style="padding-right:70px;">Raid times: Tue/Thu, 8 PM to whenever Rakdisc stops blaming people.</span><span style="padding-right:70px;">Repair bills are self-inflicted and therefore not reimbursable.</span><span style="padding-right:70px;">MORE DOTS. MORE DOTS. … OK STOP DOTS.</span><span style="padding-right:70px;">That's a 50 DKP MINUS.</span><span style="padding-right:70px;">Healmates has now stood in the fire for 6 consecutive weeks — a new guild record.</span><span style="padding-right:70px;">Key depleted? That is a you problem.</span><span style="padding-right:70px;">At least Leeroy had a plan.</span><span style="padding-right:70px;">Raid times: Tue/Thu, 8 PM to whenever Rakdisc stops blaming people.</span><span style="padding-right:70px;">Repair bills are self-inflicted and therefore not reimbursable.</span>
+      </div>
+    </div>
+  </div>
+  <div style="height:40px; display:flex; align-items:center; justify-content:space-between; padding:0 36px; background:#0b0c10;">
+    <span style="color:#5f636e; font-size:14px;">“Git Gud.” — ancient guild proverb</span>
+    <span style="color:#5f636e; font-size:14px;">Powered by Guild Board · github.com/Bzach10/wow-guild-board</span>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;embers&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Atmosphere&quot;}, &quot;recruitTarget&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;Anyone With Hands&quot;, &quot;options&quot;: [&quot;Anyone With Hands&quot;, &quot;Healers (urgent)&quot;, &quot;A Tank Who Presses Buttons&quot;, &quot;Emotional Support DPS&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Recruiting&quot;}}">
+class Component extends DCLogic {
+  state = { sec: 12, wipes: 3, wiping: false, gold: 24817, silver: 43, goAgane: 847, spike: false };
+  constructor(props) {
+    super(props);
+    this.embersA = this._makeEmbers(26, 7, 380);
+    this.embersC = this._makeEmbers(22, 3, 520);
+    this.torch = this._makeTorch(0);
+    this.wispsGreen = this._makeEmbers(16, 9, 390, 'radial-gradient(circle, #b6ffb0, #3adc5a 60%, transparent)');
+    this.campfire = this._makeFire();
+  }
+  componentDidMount() {
+    this.timer = setInterval(() => {
+      this.setState(s => {
+        const next = { sec: s.sec + 1, gold: s.gold + 4 + Math.floor(Math.random() * 9), silver: (s.silver + 17) % 100, spike: false };
+        if (s.sec > 8 && Math.random() < 0.07) { next.sec = 0; next.wipes = s.wipes + 1; next.wiping = true; next.gold = s.gold + 247; next.spike = true; next.goAgane = s.goAgane + 1; setTimeout(() => this.setState({ wiping: false }), 1600); }
+        return next;
+      });
+    }, 1000);
+  }
+  componentWillUnmount() { clearInterval(this.timer); }
+  _makeFire() {
+    const flame = (w, h, colors, dur) => React.createElement('div', { style: {
+      position: 'absolute', bottom: 0, left: '50%', marginLeft: -w / 2, width: w, height: h,
+      borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%', background: colors, filter: 'blur(3px)',
+      transformOrigin: 'bottom center', animation: 'flamePulse ' + dur + 's ease-in-out infinite alternate'
+    }});
+    return React.createElement('div', { style: { position: 'relative', width: 60, height: 90 } },
+      flame(56, 84, 'radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%)', 0.85),
+      flame(36, 64, 'radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%)', 0.65),
+      flame(18, 40, 'radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%)', 0.5)
+    );
+  }
+  _makeTorch(delay) {
+    const flame = (w, h, colors, dur, d) => React.createElement('div', { style: {
+      position: 'absolute', bottom: 0, left: '50%', marginLeft: -w / 2, width: w, height: h,
+      borderRadius: '50% 50% 45% 45% / 70% 70% 30% 30%', background: colors, filter: 'blur(4px)',
+      transformOrigin: 'bottom center', animation: 'flamePulse ' + dur + 's ease-in-out ' + d + 's infinite alternate'
+    }});
+    return React.createElement('div', { style: { position: 'relative', width: 70, height: 210 } },
+      React.createElement('div', { style: { position: 'absolute', inset: 0 } },
+        flame(64, 130, 'radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%)', 0.9, delay),
+        flame(42, 100, 'radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%)', 0.7, delay + 0.15),
+        flame(22, 62, 'radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%)', 0.55, delay + 0.3)
+      ),
+      React.createElement('div', { style: { position: 'absolute', bottom: -58, left: '50%', width: 14, height: 76, marginLeft: -7, borderRadius: 7, background: 'linear-gradient(180deg, #4a3826, #2b2117)', boxShadow: '0 0 24px rgba(224,122,40,.5)' } })
+    );
+  }
+  _makeEmbers(n, seed, height, gradient) {
+    const spans = []; let r = seed;
+    const rnd = () => ((r = (r * 9301 + 49297) % 233280) / 233280);
+    for (let i = 0; i < n; i++) {
+      const size = 3 + rnd() * 5;
+      spans.push(React.createElement('span', { key: i, style: {
+        position: 'absolute', left: (rnd() * 100) + '%', bottom: '-12px', width: size, height: size,
+        borderRadius: '50%', background: gradient || 'radial-gradient(circle, #ffd27a, #e07a28 60%, transparent)',
+        opacity: 0, animation: 'emberRise ' + (4 + rnd() * 7).toFixed(1) + 's linear ' + (-rnd() * 11).toFixed(1) + 's infinite',
+        '--drift': ((rnd() - 0.5) * 120).toFixed(0) + 'px'
+      }}));
+    }
+    return React.createElement('div', { style: { position: 'absolute', inset: 0, overflow: 'hidden', pointerEvents: 'none' } }, spans);
+  }
+  renderVals() {
+    const s = this.state;
+    const mm = String(Math.floor(s.sec / 60)).padStart(2, '0'), ss = String(s.sec % 60).padStart(2, '0');
+    return {
+      embersOn: this.props.embers ?? true,
+      embersA: this.embersA, embersC: this.embersC, torch: this.torch,
+      wispsGreen: this.wispsGreen, campfire: this.campfire,
+      wipeClock: mm + ':' + ss,
+      wipeClockColor: s.wiping ? '#e5484d' : '#ebecf0',
+      wipeLabel: s.wiping ? '✝ WIPED. GO AGANE.' : 'TIME SINCE LAST WIPE',
+      wipeLabelColor: s.wiping ? '#e5484d' : '#e6b446',
+      sessionWipes: s.wipes,
+      repairGold: s.gold.toLocaleString(), repairSilver: s.silver,
+      repairNote: s.spike ? '+247g — Healmates died again' : 'donations welcome · thoughts & prayers accepted',
+      goAgane: s.goAgane.toLocaleString(),
+      recruitTitle: this.props.recruitTarget ?? 'Anyone With Hands',
+    };
+  }
+}
+</script>
+</body>
+</html>
