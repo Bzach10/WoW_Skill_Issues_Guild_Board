@@ -1062,6 +1062,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
     if theme:
         theme_bands.draw_footer_band(img, height - FOOTER_ART_H, stats,
                                      week_index=start_dt.isocalendar()[1], phase=phase,
+                                     week_label=start_dt.strftime("%b %d"),
                                      **_footer_band_kwargs(cfg))
         _band_seam(img, height - FOOTER_ART_H, FOOTER_ART_H, at_top=False)
 
@@ -1077,7 +1078,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
 GIF_MAX_BYTES = 9_500_000   # stay under Discord's free-tier upload limit
 
 
-def _redraw_bands(img, cfg, stats, week_index, phase):
+def _redraw_bands(img, cfg, stats, week_index, phase, week_label=None):
     """Repaint ONLY the animated regions onto a copy of the static board.
     Every animated effect (glows, embers, sign swing) is clipped inside the
     two bands, so nothing outside them ever changes between frames."""
@@ -1085,6 +1086,7 @@ def _redraw_bands(img, cfg, stats, week_index, phase):
     _band_seam(img, 0, HEADER_ART_H, at_top=True)
     theme_bands.draw_footer_band(img, img.height - FOOTER_ART_H, stats,
                                  week_index=week_index, phase=phase,
+                                 week_label=week_label,
                                  **_footer_band_kwargs(cfg))
     _band_seam(img, img.height - FOOTER_ART_H, FOOTER_ART_H, at_top=False)
     _draw_watermark(img, cfg)
@@ -1112,10 +1114,11 @@ def generate_board_animation(cfg, stats, standing, leaders, zone_name,
     if _load_theme_art(cfg) is None:
         frames = 1   # no themed bands -> nothing animates
     week_index = start_dt.isocalendar()[1]
+    week_label = start_dt.strftime("%b %d")
     frames_l = [base]
     for i in range(1, frames):
         im = base.copy()
-        _redraw_bands(im, cfg, stats, week_index, i / frames)
+        _redraw_bands(im, cfg, stats, week_index, i / frames, week_label=week_label)
         frames_l.append(im)
 
     for scale in (1.0, 0.8, 0.65, 0.5):
