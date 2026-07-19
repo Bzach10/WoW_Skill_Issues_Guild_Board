@@ -447,6 +447,33 @@ def test_update_records_tracks_and_flags_new():
     assert records3["highest_timed_key"]["new"] is True
 
 
+def test_update_records_season_sweep_beats_weekly():
+    from guild_board.state import update_records
+    weekly_stats = {"best_dps": {"Rakdisc": {"parse": 70, "boss": "Rotmire", "spec": "Shadow", "cls": "Priest", "difficulty": 5}},
+                    "best_hps": {}}
+    season_bests = {"dps": {"name": "Pyro", "parse": 95, "boss": "Old Boss", "spec": "Fire", "cls": "Mage", "difficulty": 5},
+                    "hps": None}
+    season_key = {"name": "Amrevenge", "level": 21, "dungeon": "Pit of Saron", "spec": "BM Hunter"}
+    records = update_records({}, weekly_stats, None,
+                             season_parses=season_bests, season_key=season_key)
+    # The 95% from three weeks ago outranks this week's 70%
+    assert records["best_dps_parse"]["name"] == "Pyro"
+    assert records["best_dps_parse"]["parse"] == 95
+    assert records["highest_timed_key"]["level"] == 21
+
+
+def test_best_timed_run_picks_highest_timed():
+    from guild_board.raiderio import _best_timed_run
+    runs = [
+        {"mythic_level": 22, "score": 500, "num_keystone_upgrades": 0},  # depleted
+        {"mythic_level": 19, "score": 470, "num_keystone_upgrades": 1},
+        {"mythic_level": 19, "score": 480, "num_keystone_upgrades": 2},
+    ]
+    best = _best_timed_run(runs)
+    assert best["mythic_level"] == 19 and best["score"] == 480
+    assert _best_timed_run([{"mythic_level": 20, "num_keystone_upgrades": 0}]) is None
+
+
 def test_streak_bits_and_closest_race():
     streaks = {"brewzleeh": 3, "healmates": 1}
     rows = board_image._mplus_week_rows(

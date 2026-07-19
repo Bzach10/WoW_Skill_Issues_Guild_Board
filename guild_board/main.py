@@ -128,18 +128,23 @@ def _apply_discord_inputs(cfg, start_ms):
 
 
 def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_ms):
-    """Season-long Most Improved data, or None when disabled/unavailable."""
+    """Season-long Most Improved data plus season-best parse candidates.
+
+    Returns (improvement, season_bests) where season_bests holds the
+    highest parse per role seen anywhere in the season sweep — the Guild
+    Records candidates, free of extra API calls."""
     sections = cfg.get("sections", {})
     imp_dps_cfg = sections.get("most_improved_dps", {})
     imp_heal_cfg = sections.get("most_improved_healers", {})
     if not stats or not (imp_dps_cfg.get("enabled", False) or imp_heal_cfg.get("enabled", False)):
-        return None
+        return None, None
     if zone_id is None:
         zone_id, _ = detect_zone(cfg, reports)
     try:
         keep = roster_keep or make_name_filter(token, cfg)
         min_days = int(imp_dps_cfg.get("min_days", imp_heal_cfg.get("min_days", 14)))
         per_diff_dps, per_diff_hps = [], []
+        season_bests = {"dps": None, "hps": None}
         for diff in IMPROVEMENT_DIFFICULTIES:
             history = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
             for role, bucket in (("dps", per_diff_dps), ("hps", per_diff_hps)):
@@ -147,6 +152,20 @@ def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_m
                 for entry in ranked:
                     entry["difficulty"] = diff
                 bucket.append(ranked)
+                for name, samples in history[role].items():
+                    if not keep(name):
+                        continue
+                    top = max(samples, key=lambda s: s.get("parse") or 0)
+                    best = season_bests[role]
+                    if best is None or (top.get("parse") or 0) > best["parse"]:
+                        season_bests[role] = {
+                            "name": name,
+                            "parse": top.get("parse") or 0,
+                            "boss": top.get("boss") or "",
+                            "spec": top.get("spec") or "",
+                            "cls": top.get("cls") or "",
+                            "difficulty": diff,
+                        }
         improvement = {}
         if imp_dps_cfg.get("enabled", False):
             ranked = [e for e in merge_improvement(*per_diff_dps) if keep(e["name"])]
@@ -157,10 +176,10 @@ def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_m
         logger.info("Most Improved: %s DPS, %s healer(s)",
                     len(improvement.get("dps") or []),
                     len(improvement.get("hps") or []))
-        return improvement
+        return improvement, season_bests
     except (RuntimeError, requests.RequestException) as exc:
         logger.warning("Most Improved lookup failed; skipping the section: %s", exc)
-        return None
+        return None, None
 
 
 def _collect_weekly_mplus(token, cfg, reports, roster_keep):
@@ -319,8 +338,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                     standing = {**prev_standing, "stale": True}
                     logger.info("Standing lookup empty; showing last week's ranks.")
 
-    improvement = _collect_improvement(token, cfg, reports, stats, zone_id,
-                                       roster_keep, end_ms) if raid_enabled else None
+    improvement = None
+    season_parse_bests = None
+    if raid_enabled:
+        improvement, season_parse_bests = _collect_improvement(
+            token, cfg, reports, stats, zone_id, roster_keep, end_ms)
     mplus_weekly = None
     if raid_enabled and not no_logs and token:
         mplus_weekly = _collect_weekly_mplus(token, cfg, reports, roster_keep)
@@ -339,8 +361,9 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     if mplus_season_scores_cfg.get("enabled", False):
         mplus_season_scores = collect_mplus_season_scores(cfg, token)
 
+    season_key_record = None
     if mplus_season_parses_cfg.get("enabled", False):
-        mplus_season_parses = collect_mplus_season_parses(cfg, token)
+        mplus_season_parses, season_key_record = collect_mplus_season_parses(cfg, token)
 
     sections = cfg.get("sections", {})
     layout = (cfg.get("display") or {}).get("layout", "two_column")
@@ -360,8 +383,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         active_names |= set(mplus_weekly.get("hps") or {})
     streaks = advance_streaks(previous.get("streaks"), active_names)
 
-    # Season record book (highest timed key, best parses)
-    records = update_records(previous.get("records"), stats, mplus_results)
+    # Season record book: weekly data plus the full-season sweeps, so
+    # records reflect the entire season rather than weeks since launch
+    records = update_records(previous.get("records"), stats, mplus_results,
+                             season_parses=season_parse_bests,
+                             season_key=season_key_record)
 
     if layout == "image_board":
         try:

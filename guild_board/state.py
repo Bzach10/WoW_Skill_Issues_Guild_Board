@@ -57,9 +57,14 @@ def advance_streaks(previous_streaks, active_names):
     }
 
 
-def update_records(previous_records, stats=None, mplus_results=None):
+def update_records(previous_records, stats=None, mplus_results=None,
+                   season_parses=None, season_key=None):
     """Season records: highest timed key, best DPS parse, best HPS parse.
 
+    Candidates come from this week's data AND full-season sweeps
+    (season_parses = {"dps": entry, "hps": entry} from the WCL season
+    scan; season_key from the Raider.io season scan), so the book truly
+    reflects the whole season, not just weeks since the feature shipped.
     Returns the record book with a "new" flag on anything broken this
     week (a first-ever record counts as new — it IS news)."""
     records = {}
@@ -82,6 +87,14 @@ def update_records(previous_records, stats=None, mplus_results=None):
                  {"name": best[2], "level": best[0], "dungeon": best[1], "spec": spec},
                  "level")
 
+    if season_key:
+        consider("highest_timed_key", {
+            "name": season_key.get("name", ""),
+            "level": season_key.get("level", 0),
+            "dungeon": season_key.get("dungeon", ""),
+            "spec": season_key.get("spec", ""),
+        }, "level")
+
     if stats:
         for key, pool in (("best_dps_parse", stats.get("best_dps")),
                           ("best_hps_parse", stats.get("best_hps"))):
@@ -95,5 +108,17 @@ def update_records(previous_records, stats=None, mplus_results=None):
                     "cls": info.get("cls") or "",
                     "difficulty": info.get("difficulty"),
                 }, "parse")
+
+    for role, key in (("dps", "best_dps_parse"), ("hps", "best_hps_parse")):
+        candidate = (season_parses or {}).get(role)
+        if candidate:
+            consider(key, {
+                "name": candidate.get("name", ""),
+                "parse": candidate.get("parse") or 0,
+                "boss": candidate.get("boss") or "",
+                "spec": candidate.get("spec") or "",
+                "cls": candidate.get("cls") or "",
+                "difficulty": candidate.get("difficulty"),
+            }, "parse")
 
     return records

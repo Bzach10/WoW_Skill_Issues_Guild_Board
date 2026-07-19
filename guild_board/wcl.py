@@ -511,6 +511,7 @@ def _extract_history(rankings_blob, role_key, ts, out):
         return
     best_this_report = {}
     for fight in (rankings_blob.get("data") or []):
+        boss = ((fight.get("encounter") or {}).get("name")) or ""
         characters = (((fight.get("roles") or {}).get(role_key) or {}).get("characters")) or []
         for ch in characters:
             name = ch.get("name")
@@ -524,6 +525,7 @@ def _extract_history(rankings_blob, role_key, ts, out):
                     "amount": ch.get("amount") or 0,
                     "spec": ch.get("spec") or "",
                     "cls": ch.get("class") or "",
+                    "boss": boss,
                 }
     for name, entry in best_this_report.items():
         out[name].append({"ts": ts, **entry})

@@ -128,7 +128,7 @@ def collect_mplus_season_scores(cfg, token=None):
 
 
 def collect_mplus_season_parses(cfg, token=None):
-    """Return list of (parse/score, dungeon, name, spec, is_wcl) for best season M+ runs."""
+    """Return (list of (parse/score, dungeon, name, spec, is_wcl), top_timed_key)."""
     logger.info("Collecting season-long M+ runs...")
     sections = cfg.get("sections", {})
     mplus_cfg = sections.get("mplus_season_parses") or sections.get("mplus_season_runs", {})
@@ -139,7 +139,7 @@ def collect_mplus_season_parses(cfg, token=None):
     section_key = "mplus_season_parses" if "mplus_season_parses" in sections else "mplus_season_runs"
     roster, _ = resolve_roster(cfg, token, section_key)
 
-    results = collect_mplus_raiderio_season_runs(cfg, roster)
+    results, top_key = collect_mplus_raiderio_season_runs(cfg, roster)
 
     if use_wcl and token and results:
         logger.info("Attempting WCL parse enrichment on top Raider.io entries...")
@@ -156,13 +156,25 @@ def collect_mplus_season_parses(cfg, token=None):
 
     results.sort(key=lambda r: r[0], reverse=True)
     logger.info("Found %s players with season runs", len(results))
-    return results
+    return results, top_key
+
+
+def _best_timed_run(runs):
+    """Highest timed run in a Raider.io best-runs list, or None."""
+    timed = [r for r in runs if (r.get("num_keystone_upgrades", 0) or 0) > 0]
+    if not timed:
+        return None
+    return max(timed, key=lambda r: (r.get("mythic_level", 0), r.get("score", 0)))
 
 
 def collect_mplus_raiderio_season_runs(cfg, roster):
-    """Return list of (score, dungeon, name, spec) from Raider.io best runs."""
+    """Return (list of (score, dungeon, name, spec, is_wcl), top_timed_key).
+
+    top_timed_key is the season's highest timed key across the roster —
+    the Guild Records candidate."""
     logger.info("Processing %s characters for Raider.io season runs", len(roster))
     results = []
+    top_key = None
     region = cfg["guild"]["region"]
 
     for entry in roster:
@@ -189,11 +201,23 @@ def collect_mplus_raiderio_season_runs(cfg, roster):
                     spec,
                     False,
                 ))
+                best_timed = _best_timed_run(runs)
+                if best_timed:
+                    level = best_timed.get("mythic_level", 0)
+                    score = best_timed.get("score", 0)
+                    if top_key is None or (level, score) > (top_key["level"], top_key.get("score", 0)):
+                        top_key = {
+                            "name": name.strip(),
+                            "level": level,
+                            "score": score,
+                            "dungeon": _normalize_dungeon_name(best_timed.get("dungeon", "?")),
+                            "spec": clean_spec_name(best_timed.get("spec"), data.get("class", "")),
+                        }
         except requests.RequestException as exc:
             logger.warning("Error fetching %s: %s", name, exc)
             continue
         time.sleep(0.3)
-    return results
+    return results, top_key
 
 
 WCL_MPLUS_QUERY = """
