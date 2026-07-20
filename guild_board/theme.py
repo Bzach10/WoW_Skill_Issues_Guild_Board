@@ -68,6 +68,7 @@ DEFAULT_THEME = {
         "middle": "assets/theme_art.png",
         "middle_tint": 0.87,    # 0 = art at full strength, 1 = solid color
         "footer": "assets/wall_footer.png",
+        "poster": None,         # parchment image behind each WANTED column
     },
     "header": {
         "sign_text": "GIT GUD",

@@ -78,9 +78,14 @@
   .cols{display:flex; gap:26px; align-items:stretch;}
   .col{flex:1; min-width:0; position:relative; padding:34px 24px 24px;
     background:
+      {%- if theme.backgrounds.poster %}
+      linear-gradient(rgba(22,15,8,.84), rgba(20,13,7,.88)),
+      url("{{ theme.backgrounds.poster }}") center/cover;
+      {%- else %}
       radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.07), transparent 62%),
       repeating-linear-gradient(4deg, rgba(0,0,0,.13) 0 3px, transparent 3px 8px),
       linear-gradient(172deg, #2c2214 0%, #251c10 55%, #1d150b 100%);
+      {%- endif %}
     border:2px solid #7c6136; border-radius:3px 12px 4px 14px;
     box-shadow: inset 0 0 80px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,214,150,.06),
       0 14px 34px rgba(0,0,0,.6);

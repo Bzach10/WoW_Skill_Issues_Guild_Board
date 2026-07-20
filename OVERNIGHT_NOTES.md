@@ -21,3 +21,11 @@ On 2.0 only — say "merge" to put it on the 9 AM post.
 Theme plumbing tests: font URL weight axes (caught + fixed a real edge —
 partial theme dicts dropped Cinzel's weights), deep-merge list-replace
 semantics, custom header/footer height overrides. 95 tests total.
+
+## User request (~4 AM): first AI artwork, generated locally
+ComfyUI Desktop + SDXL running on the 4080 (driven via its local API —
+the Electron window screenshots black, the server is what matters).
+Generated three pieces in assets/generated/: wanted_parchment (now the
+real texture behind the WANTED columns, theme key backgrounds.poster),
+wall_header_art (candlelit stone wall, ready for the header), and
+guild_crest (golden skull + crossed swords, ready for web masthead).
