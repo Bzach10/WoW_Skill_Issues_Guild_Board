@@ -100,14 +100,37 @@ jobs:
             echo "display.web_board.repo not set in config.yml; skipping."
             exit 0
           fi
-          cd site
-          git init -q -b gh-pages
-          git config user.email "action@github.com"
-          git config user.name "GitHub Action"
+          remote="https://x-access-token:${WEB_BOARD_TOKEN}@github.com/${repo}.git"
+          # Preserve history: build on the existing gh-pages so the week
+          # archive accumulates instead of being wiped every Tuesday.
+          if git clone -q --depth 1 --branch gh-pages "$remote" pages 2>/dev/null; then
+            echo "Extending existing gh-pages."
+          else
+            mkdir -p pages
+            git -C pages init -q -b gh-pages
+            echo "Starting a fresh gh-pages."
+          fi
+          git -C pages config user.email "action@github.com"
+          git -C pages config user.name "GitHub Action"
+          mkdir -p pages/archive pages/data
+          week=$(date -u +%F)
+          cp site/index.html pages/index.html
+          cp site/index.html "pages/archive/${week}.html"
+          # State snapshot per week — raw material for future trend graphs
+          [ -f board_state.json ] && cp board_state.json "pages/data/${week}-state.json"
+          # Manifest the archive dropdown reads (newest first)
+          (cd pages/archive && ls -1 *.html 2>/dev/null | sed 's/\.html$//' | sort -r \
+            | python -c "import json,sys; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))" \
+            > index.json)
+          cd pages
           git add -A
-          git commit -q -m "Weekly web board $(date -u +%F)"
-          git push -q -f "https://x-access-token:${WEB_BOARD_TOKEN}@github.com/${repo}.git" gh-pages
-          echo "Web board published to https://github.com/${repo} (gh-pages)."
+          if git diff --cached --quiet; then
+            echo "Web board unchanged; nothing to publish."
+          else
+            git commit -q -m "Weekly web board ${week}"
+            git push -q "$remote" gh-pages
+            echo "Web board published (archive week ${week})."
+          fi
 
       - name: Commit roster cache and board state
         env:
