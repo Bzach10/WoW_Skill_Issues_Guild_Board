@@ -374,6 +374,9 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     image_path = None
     previous = load_board_state()
+    # Delta displays (▲ arrows, NEW badges, Biggest Climb) compare against
+    # LAST WEEK's finals — never the last post, or reposts zero them out.
+    previous_view = baselines_view(previous)
 
     # Attendance streaks: RAID nights only — showing up to raid is what
     # Iron Attendance rewards, not spamming keys. Keyed to the actual
@@ -386,7 +389,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     # records reflect the entire season rather than weeks since launch
     records = update_records(previous.get("records"), stats, mplus_results,
                              season_parses=season_parse_bests,
-                             season_key=season_key_record)
+                             season_key=season_key_record,
+                             baseline_records=previous_view.get("records"))
 
     # Diagnostic: the raw tank pool, so any board/text discrepancy can be
     # traced to the data rather than guessed at from the rendered image.
@@ -403,7 +407,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                           mplus_results, mplus_season_scores, mplus_season_parses,
                           start_dt, end_dt, no_logs)
             board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
-                                previous=previous, streaks=streaks, records=records)
+                                previous=previous_view, streaks=streaks, records=records)
             animate = bool(display_cfg.get("animate", False))
             frames = int(display_cfg.get("animate_frames", 10))
             if display_cfg.get("renderer", "pillow") == "html":
