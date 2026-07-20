@@ -1280,3 +1280,22 @@ def test_image_embed_title_links_to_web_board():
     assert embed["url"] == "https://x.github.io/b/"
     cfg["display"]["web_board"]["enabled"] = False
     assert "url" not in formatters.build_image_embed(cfg, None, now, now)
+
+
+def test_parse_records_self_correct_from_season_sweep():
+    """A stale inflated percentile (early-bracket ~100%) must fall back to
+    the sweep's CURRENT value instead of being immortalized."""
+    from guild_board.state import update_records
+    previous = {"best_dps_parse": {"name": "Tommybravoo", "parse": 100,
+                                   "boss": "Chimaerus", "spec": "Unholy",
+                                   "cls": "DeathKnight", "difficulty": 5, "new": False}}
+    sweep = {"dps": {"name": "Tommybravoo", "parse": 59, "boss": "Chimaerus",
+                     "spec": "Unholy", "cls": "DeathKnight", "difficulty": 5},
+             "hps": None}
+    records = update_records(previous, {"best_dps": {}, "best_hps": {}},
+                             None, season_parses=sweep)
+    assert records["best_dps_parse"]["parse"] == 59      # corrected DOWN
+    assert records["best_dps_parse"]["new"] is False     # a correction is not news
+    # without a sweep, the stored record is carried forward (fail-safe)
+    records2 = update_records(previous, {"best_dps": {}, "best_hps": {}}, None)
+    assert records2["best_dps_parse"]["parse"] == 100

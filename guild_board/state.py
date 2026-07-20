@@ -109,30 +109,44 @@ def update_records(previous_records, stats=None, mplus_results=None,
             "spec": season_key.get("spec", ""),
         }, "level")
 
-    if stats:
-        for key, pool in (("best_dps_parse", stats.get("best_dps")),
-                          ("best_hps_parse", stats.get("best_hps"))):
-            if pool:
-                name, info = max(pool.items(), key=lambda kv: kv[1].get("parse") or 0)
-                consider(key, {
-                    "name": name,
-                    "parse": info.get("parse") or 0,
-                    "boss": info.get("boss") or "",
-                    "spec": info.get("spec") or "",
-                    "cls": info.get("cls") or "",
-                    "difficulty": info.get("difficulty"),
-                }, "parse")
-
+    # Parse records DRIFT: WCL percentiles are relative to every log
+    # uploaded, so an early-progression kill can briefly read ~100% and
+    # settle far lower once the bracket fills in. When the season sweep
+    # ran this week (it re-reads all season logs with TODAY'S percentiles),
+    # parse records are rebuilt fresh from it — never compared against a
+    # frozen snapshot that can immortalize a stale number. Without a sweep
+    # (section disabled / lookup failed) the old cumulative behavior keeps
+    # the record book alive.
     for role, key in (("dps", "best_dps_parse"), ("hps", "best_hps_parse")):
-        candidate = (season_parses or {}).get(role)
-        if candidate:
-            consider(key, {
-                "name": candidate.get("name", ""),
-                "parse": candidate.get("parse") or 0,
-                "boss": candidate.get("boss") or "",
-                "spec": candidate.get("spec") or "",
-                "cls": candidate.get("cls") or "",
-                "difficulty": candidate.get("difficulty"),
-            }, "parse")
+        pool = (stats or {}).get(f"best_{role}") or {}
+        weekly = None
+        if pool:
+            name, info = max(pool.items(), key=lambda kv: kv[1].get("parse") or 0)
+            weekly = {
+                "name": name,
+                "parse": info.get("parse") or 0,
+                "boss": info.get("boss") or "",
+                "spec": info.get("spec") or "",
+                "cls": info.get("cls") or "",
+                "difficulty": info.get("difficulty"),
+            }
+        sweep = (season_parses or {}).get(role)
+        if sweep:
+            sweep = {
+                "name": sweep.get("name", ""),
+                "parse": sweep.get("parse") or 0,
+                "boss": sweep.get("boss") or "",
+                "spec": sweep.get("spec") or "",
+                "cls": sweep.get("cls") or "",
+                "difficulty": sweep.get("difficulty"),
+            }
+            fresh = max((c for c in (sweep, weekly) if c),
+                        key=lambda c: c.get("parse") or 0)
+            prev = records.get(key)
+            fresh["new"] = bool(prev is None
+                                or (fresh.get("parse") or 0) > (prev.get("parse") or 0))
+            records[key] = fresh
+        elif weekly:
+            consider(key, weekly, "parse")
 
     return records
