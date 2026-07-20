@@ -1,0 +1,418 @@
+{#
+  LAYOUT: ember_terminal — "the scrying console"
+
+  The board as a piece of arcane machinery: a scrying terminal that the
+  guild queries for the week's results. Structurally the opposite of the
+  poster grid — no equal columns. A full-bleed art backdrop sits behind a
+  CRT-lit console frame; the week's story is a broadcast band; the four
+  data columns become LOG BLOCKS on an asymmetric 6-track grid (4/2/3/3),
+  each one offset vertically so nothing lines up in a rigid row.
+
+  Every ranking line is a log entry: [03] icon NAME ...... value, with
+  the class color carrying a soft glow instead of sitting flat.
+
+  All colors, fonts and art come from theme.yml. Missing art degrades to
+  the gradient underneath it; a missing mono font falls back to the
+  system monospace stack.
+#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Weekly Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --bg-rgb:{{ bg_rgb }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+    --font-mono:'{{ theme.fonts.mono }}','JetBrains Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text); font-family:var(--font-body); font-size:16px;
+    background:var(--bg); position:relative; min-height:100vh; overflow-x:hidden;}
+
+  /* --- full-bleed art backdrop, fixed so the console scrolls over it --- */
+  {%- if theme.backgrounds.middle %}
+  .backdrop{position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:url("{{ theme.backgrounds.middle }}") center/cover no-repeat;
+    opacity:.62; filter:saturate(1.12);}
+  {%- else %}
+  .backdrop{position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.06), transparent 70%);}
+  {%- endif %}
+  /* vignette + tint keeps every theme's art readable under text. The
+     panels below carry their own scrim, so this stays light enough to
+     let the artwork actually read. */
+  .veil{position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:
+      radial-gradient(125% 95% at 50% 0%, transparent 6%, rgba(var(--bg-rgb),.42) 55%, rgba(var(--bg-rgb),.86) 100%),
+      linear-gradient(180deg, rgba(var(--bg-rgb),.18), rgba(var(--bg-rgb),.62));}
+
+  /* ------------------- masthead art band (header art) ------------------ */
+  .band{position:relative; z-index:3; overflow:hidden;}
+  {%- if theme.backgrounds.header %}
+  .band .art{position:absolute; inset:0; pointer-events:none;
+    background:url("{{ theme.backgrounds.header }}") center 42%/cover no-repeat;}
+  .band .art::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.34) 0%, rgba(var(--bg-rgb),.52) 55%, rgba(var(--bg-rgb),.97) 100%);}
+  {%- endif %}
+  .band .inner{position:relative; max-width:1660px; margin:0 auto;
+    padding:0 clamp(10px,2.5vw,26px);}
+  /* CRT scanlines — the "it's a machine" tell */
+  .scan{position:fixed; inset:0; z-index:2; pointer-events:none; opacity:.5;
+    background:repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);}
+  .motes{position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden;}
+  .motes i{position:absolute; bottom:-12px; width:3px; height:3px; border-radius:50%;
+    background:var(--accent); opacity:.55; filter:blur(.4px);
+    animation:rise 9s linear infinite;}
+  @keyframes rise{to{transform:translateY(-102vh) translateX(var(--dx,0)); opacity:0;}}
+  @media (prefers-reduced-motion:reduce){.motes{display:none;}}
+
+  .page{position:relative; z-index:3; max-width:1660px; margin:0 auto; padding:0 clamp(10px,2.5vw,26px) 40px;}
+
+  /* ------------------------------ masthead ----------------------------- */
+  .mast{display:flex; align-items:center; gap:clamp(12px,2.5vw,26px);
+    padding:clamp(48px,9vw,112px) 4px clamp(30px,5vw,58px); flex-wrap:wrap;}
+  {%- if theme.backgrounds.crest %}
+  .sigil{width:clamp(58px,10vw,104px); height:clamp(58px,10vw,104px); flex:none;
+    border-radius:50%; background:url("{{ theme.backgrounds.crest }}") center/cover;
+    box-shadow:0 0 0 1px var(--hairline), 0 0 38px -6px var(--accent);}
+  {%- endif %}
+  .mast .id{min-width:0; flex:1;}
+  .mast h1{font-family:var(--font-display); font-weight:900; line-height:1;
+    font-size:clamp(28px,6.4vw,64px); letter-spacing:.06em;
+    text-shadow:0 0 34px rgba(0,0,0,.9);}
+  .mast .realm{margin-top:8px; font-family:var(--font-mono); font-size:clamp(10px,2.2vw,13px);
+    letter-spacing:.28em; color:var(--accent); text-transform:uppercase;}
+  .mast .meta{font-family:var(--font-mono); font-size:12px; color:var(--muted);
+    text-align:right; line-height:1.9; white-space:nowrap;}
+  .mast .meta .on{color:var(--green);}
+
+  /* ------------------------- command bar (sticky) ---------------------- */
+  .cmd{position:sticky; top:0; z-index:9; display:flex; align-items:center; gap:8px;
+    flex-wrap:wrap; padding:10px 12px; margin-bottom:20px;
+    font-family:var(--font-mono); font-size:12.5px;
+    background:rgba(var(--bg-rgb),.9); backdrop-filter:blur(10px);
+    border:1px solid var(--hairline); border-radius:4px;
+    box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 14px 34px rgba(0,0,0,.45);}
+  .cmd .caret{color:var(--accent); font-weight:700;}
+  .cmd a,.cmd button{font:inherit; color:var(--muted); background:none; cursor:pointer;
+    text-decoration:none; padding:5px 10px; border:1px solid transparent; border-radius:3px;
+    white-space:nowrap; transition:color .15s, border-color .15s, background .15s;}
+  .cmd a:hover,.cmd button:hover{color:var(--accent); border-color:var(--hairline);
+    background:rgba(255,255,255,.04);}
+  .cmd button.on{color:var(--bg); background:var(--accent); border-color:var(--accent);}
+  .cmd .sp{flex:1;}
+  .cmd input,.cmd select{font:inherit; color:var(--text); background:rgba(0,0,0,.35);
+    border:1px solid var(--hairline); border-radius:3px; padding:5px 10px; outline:none;}
+  .cmd input{width:160px;} .cmd input:focus,.cmd select:focus{border-color:var(--accent);}
+  .filters{display:contents;}
+
+  /* --------------------------- broadcast band -------------------------- */
+  .cast{position:relative; padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px); margin-bottom:22px;
+    border:1px solid var(--hairline); border-left:3px solid var(--accent); border-radius:4px;
+    background:linear-gradient(100deg, rgba(var(--bg-rgb),.86), rgba(var(--bg-rgb),.58));
+    box-shadow:0 18px 44px rgba(0,0,0,.5);}
+  .cast .lbl{font-family:var(--font-mono); font-size:11px; letter-spacing:.3em;
+    color:var(--accent); text-transform:uppercase;}
+  .cast h2{font-family:var(--font-display); font-weight:900; margin-top:10px;
+    font-size:clamp(19px,3.9vw,40px); line-height:1.16; letter-spacing:.01em;}
+  .cast .prog{margin-top:16px; height:6px; border-radius:3px; background:rgba(0,0,0,.5);
+    overflow:hidden; border:1px solid var(--hairline);}
+  .cast .prog i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),transparent);
+    box-shadow:0 0 14px var(--accent);}
+  .cast .progcap{margin-top:7px; font-family:var(--font-mono); font-size:11.5px; color:var(--muted);}
+
+  /* --------------------------- diagnostics row ------------------------- */
+  .diag{display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+    gap:1px; margin-bottom:22px; background:var(--hairline);
+    border:1px solid var(--hairline); border-radius:4px; overflow:hidden;}
+  .diag .d{padding:14px 16px; background:rgba(var(--bg-rgb),.86);}
+  .diag .k{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.16em;
+    color:var(--faint); text-transform:uppercase;}
+  .diag .v{font-family:var(--font-mono); font-weight:700; margin-top:5px;
+    font-size:clamp(19px,3vw,27px); font-variant-numeric:tabular-nums;}
+  .diag .v small{font-size:.5em; margin-left:6px; font-weight:400;}
+
+  /* ------------------- log blocks: the asymmetric grid ------------------ */
+  .logs{display:grid; grid-template-columns:repeat(6,1fr); gap:18px; align-items:start;}
+  .log{position:relative; min-width:0; padding:18px 16px 14px;
+    border:1px solid var(--hairline); border-radius:4px;
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.72));
+    box-shadow:0 16px 40px rgba(0,0,0,.46);}
+  /* deliberately unequal spans + offsets — the anti-grid */
+  .log:nth-child(1){grid-column:span 4;}
+  .log:nth-child(2){grid-column:span 2; transform:translateY(26px);}
+  .log:nth-child(3){grid-column:span 3;}
+  .log:nth-child(4){grid-column:span 3; transform:translateY(18px);}
+  .log::before{content:""; position:absolute; inset:0 auto 0 0; width:2px;
+    background:linear-gradient(180deg,var(--accent),transparent); opacity:.75;}
+  .log > .h{display:flex; align-items:baseline; gap:9px; padding-bottom:10px;
+    margin-bottom:12px; border-bottom:1px solid var(--hairline);
+    font-family:var(--font-mono); font-size:clamp(12px,1.9vw,15px);}
+  .log > .h .caret{color:var(--accent);}
+  .log > .h .t{font-weight:700; letter-spacing:.06em; text-transform:lowercase;}
+  .log > .h .n{margin-left:auto; font-size:11px; color:var(--faint);}
+
+  .sec{margin-bottom:16px;} .sec:last-child{margin-bottom:0;}
+  .sec-h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:7px; opacity:.92;}
+  .sec-h::before{content:"// ";  color:var(--faint);}
+
+  /* ------------------------------ log rows ----------------------------- */
+  .row{display:flex; align-items:center; gap:9px; min-height:34px; padding:3px 8px;
+    margin:0 -8px; border-radius:3px; min-width:0; font-family:var(--font-mono);
+    transition:background .15s;}
+  .row:hover{background:rgba(255,255,255,.055);}
+  .row .rk{flex:none; font-size:11px; color:var(--faint); width:22px;}
+  .row .rk.top{color:var(--accent);}
+  .row .icon{width:20px; height:20px; border-radius:3px; flex:none;
+    box-shadow:0 0 0 1px rgba(255,255,255,.14);}
+  .row .name{font-family:var(--font-body); font-size:14.5px; font-weight:700;
+    text-decoration:none; white-space:nowrap;}
+  .row a.name:hover{text-decoration:underline;}
+  .row .dot{flex:1; min-width:10px; height:1px; opacity:.3;
+    background:repeating-linear-gradient(90deg,var(--faint) 0 2px,transparent 2px 5px);}
+  .row .detail{font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; max-width:38%;}
+  .row .value{font-size:14px; font-weight:700; white-space:nowrap;
+    font-variant-numeric:tabular-nums;}
+  .row .value small{font-size:11px; font-weight:400; color:var(--muted);}
+  .row.textrow{font-size:12px; color:var(--muted); font-family:var(--font-body);}
+  .empty{font-family:var(--font-mono); font-size:12px; color:var(--faint); padding:6px 0;}
+  .nohit{display:none !important;}
+
+  /* --------------------------- culture panels -------------------------- */
+  .strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));
+    gap:18px; margin-top:44px;}
+  .panel{padding:18px 18px 16px; border:1px solid var(--hairline); border-radius:4px;
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.7));
+    box-shadow:0 16px 40px rgba(0,0,0,.46); min-width:0;}
+  .panel > .h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:12px;}
+  .panel > .h::before{content:"◆ ";}
+
+  /* debt daemon */
+  .debt .amt{font-family:var(--font-mono); font-weight:700; color:var(--red);
+    font-size:clamp(26px,5vw,44px); line-height:1; font-variant-numeric:tabular-nums;
+    text-shadow:0 0 26px rgba(0,0,0,.8);}
+  .debt .amt sup{font-size:.42em; margin-left:4px; vertical-align:super; color:var(--muted);}
+  .debt .note{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-top:6px;}
+  .debt .title{font-family:var(--font-display); font-size:16px; margin:12px 0 8px;}
+  .debt ul{list-style:none; font-size:12.5px; line-height:1.75;}
+  .debt li{display:flex; gap:10px;}
+  .debt li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
+  .debt li.g{color:var(--green);}
+  .debt .flav{font-style:italic; color:var(--muted); font-size:12px; margin-top:10px;}
+  .debt .req{color:var(--red); font-size:11.5px; margin-top:4px;}
+
+  /* casualty log / graveyard */
+  .grave .stones{display:flex; flex-wrap:wrap; gap:10px;}
+  .grave .st{flex:1 1 108px; min-width:0; text-align:center; padding:10px 6px 8px;
+    border:1px solid var(--hairline); border-radius:10px 10px 3px 3px;
+    background:linear-gradient(180deg, rgba(255,255,255,.09), rgba(0,0,0,.35));}
+  .grave .st .n{font-family:var(--font-display); font-size:12px; font-weight:700;
+    letter-spacing:.03em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .grave .st .d{font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:5px;}
+  .grave .cap{font-size:11.5px; color:var(--faint); margin-top:10px;}
+  .grave .res{font-family:var(--font-mono); font-size:11px; color:var(--accent); margin-top:8px;}
+
+  /* transmission / roast */
+  .roast .q{font-family:var(--font-display); font-size:clamp(15px,2.6vw,21px); line-height:1.5;}
+  .roast .attr{font-family:var(--font-mono); font-size:11.5px; color:var(--muted);
+    margin-top:10px; text-align:right;}
+
+  /* item of the month */
+  .item img{width:100%; height:auto; border-radius:3px; display:block;
+    border:1px solid var(--hairline);}
+  .item .cap{font-family:var(--font-mono); font-size:11px; color:var(--faint); margin-top:8px;}
+
+  /* ------------------------------ footer ------------------------------- */
+  .motd{display:flex; align-items:center; gap:12px; margin-top:34px; padding:14px 16px;
+    border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
+    font-family:var(--font-mono); font-size:13px; color:var(--accent);}
+  .motd .chip{flex:none; font-size:10px; letter-spacing:.24em; padding:5px 9px;
+    border:1px solid var(--accent); border-radius:3px;}
+  .credits{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+    padding:18px 4px 0; font-family:var(--font-mono); font-size:11px; color:var(--faint);}
+
+  /* ------------------------------- phone ------------------------------- */
+  @media (max-width:900px){
+    .logs{grid-template-columns:1fr;}
+    .log:nth-child(n){grid-column:span 1; transform:none;}   /* no offsets on phones */
+    .mast .meta{text-align:left;}
+  }
+  @media (max-width:520px){
+    .row .detail{display:none;}    /* name + number is the story on a phone */
+    .cmd{position:static;}         /* a 3-row sticky bar would eat the screen */
+    .cmd input{width:120px;}
+  }
+</style>
+</head>
+<body>
+  <div class="backdrop"></div><div class="veil"></div><div class="scan"></div>
+  <div class="motes" aria-hidden="true">
+    {%- for w in wisps %}
+    <i style="left:{{ w.left }}%; --dx:{{ w.drift }}px; animation-delay:{{ w.delay }}s;
+              width:{{ w.size }}px; height:{{ w.size }}px;"></i>
+    {%- endfor %}
+  </div>
+
+  <div class="band">
+    <div class="art" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="mast">
+        {%- if theme.backgrounds.crest %}<div class="sigil"></div>{% endif %}
+        <div class="id">
+          <h1>{{ guild_name.upper() }}</h1>
+          <div class="realm">{{ realm_label }}</div>
+        </div>
+        <div class="meta">
+          <div><span class="on">●</span> {{ subtitle }}</div>
+          <div>{{ date_range }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+    <nav class="cmd">
+      <span class="caret">&gt;</span>
+      {%- for col in columns %}
+      <a href="#log-{{ loop.index }}">{{ col.title | lower }}</a>
+      {%- endfor %}
+      {%- if roast %}<a href="#roast">roast</a>{% endif %}
+      <span class="sp"></span>
+      <span class="filters" id="filters" hidden>
+        <button class="on" data-role="all">all</button>
+        <button data-role="dps">dps</button>
+        <button data-role="healer">healers</button>
+        <button data-role="tank">tanks</button>
+      </span>
+      <input id="search" type="search" placeholder="find a player…" hidden>
+      <select id="weeksel" hidden><option value="">this week</option></select>
+    </nav>
+
+    {%- if headline %}
+    <div class="cast">
+      <div class="lbl">▲ broadcast · week of {{ week_label }}</div>
+      <h2>{{ headline }}</h2>
+      <div class="prog"><i style="width:{{ bar_pct }}%;"></i></div>
+      <div class="progcap">{{ bar_label }}</div>
+    </div>
+    {%- endif %}
+
+    {%- if hero_tiles %}
+    <div class="diag">
+      {%- for t in hero_tiles %}
+      <div class="d">
+        <div class="k">{{ t.label }}</div>
+        <div class="v">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+
+    <div class="logs">
+      {%- for col in columns %}
+      <section class="log" id="log-{{ loop.index }}" style="scroll-margin-top:70px;">
+        <div class="h"><span class="caret">&gt;</span><span class="t">query {{ col.title | lower | replace(' ', '_') }}</span>
+          <span class="n">--week</span></div>
+        {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
+        {%- for sec in col.sections %}
+        <div class="sec">
+          <div class="sec-h">{{ sec.title }}</div>
+          {%- for row in sec.rows %}
+          {%- if row.text is defined %}
+          <div class="row textrow">{{ row.text }}</div>
+          {%- else %}
+          <div class="row" data-name="{{ row.name | lower }}"
+               data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
+            <span class="rk{{ ' top' if row.medal }}">{{ '%02d' % row.rank }}</span>
+            {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
+            <a class="name" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
+               target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
+               style="color:{{ row.color }}; text-shadow:0 0 16px {{ row.color }}55;">{{ row.name }}</a>
+            <span class="detail">{{ row.detail }}</span>
+            <span class="dot"></span>
+            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>{{ row.value_suffix }}</small>{% endif %}</span>
+          </div>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endfor %}
+      </section>
+      {%- endfor %}
+    </div>
+
+    {# --- the load-bearing guild culture: debt, graveyard, roast, item --- #}
+    <div class="strip">
+      {%- if debt_card %}
+      <div class="panel debt">
+        <div class="h">daemon: gambling_debt · status running</div>
+        <div class="amt">{{ "{:,}".format(debt_card.amount) }}<sup>g</sup></div>
+        <div class="note">{{ debt_card.climbing_note }} · {{ debt_card.interest_note }}</div>
+        <div class="title">{{ debt_card.title }}</div>
+        <ul>
+          {%- for line in debt_card.lines %}
+          <li class="{{ 'g' if line.green }}"><span>{{ line.left }}</span>{% if line.right %}<span class="r">{{ line.right }}</span>{% endif %}</li>
+          {%- endfor %}
+        </ul>
+        {%- if debt_card.flavor %}<div class="flav">{{ debt_card.flavor }}</div>{% endif %}
+        {%- if debt_card.requires %}<div class="req">{{ debt_card.requires }}</div>{% endif %}
+      </div>
+      {%- endif %}
+
+      {%- if stones %}
+      <div class="panel grave">
+        <div class="h">{{ theme.footer.graveyard.title }}</div>
+        <div class="stones">
+          {%- for s in stones %}
+          <div class="st">
+            <div class="n" style="color:{{ s.color }};">{{ s.name }}</div>
+            <div class="d">{{ s.deaths }}</div>
+          </div>
+          {%- endfor %}
+        </div>
+        <div class="cap">{{ theme.footer.graveyard.caption }}</div>
+        {%- if theme.footer.graveyard.reserved %}
+        <div class="res">◆ plot reserved: {{ theme.footer.graveyard.reserved }} — {{ theme.footer.graveyard.reserved_note }}</div>
+        {%- endif %}
+      </div>
+      {%- endif %}
+
+      {%- if roast %}
+      <div class="panel roast" id="roast" style="scroll-margin-top:70px;">
+        <div class="h">incoming transmission · roast of the week</div>
+        <div class="q">{{ roast.quote }}</div>
+        {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+      </div>
+      {%- endif %}
+
+      {%- if item_src %}
+      <div class="panel item">
+        <div class="h">{{ item_title }}</div>
+        <img src="{{ item_src }}" alt="{{ item_title }}" loading="lazy">
+      </div>
+      {%- endif %}
+    </div>
+
+    <div class="motd"><span class="chip">MOTD</span><span>{{ motd }}</span></div>
+    <div class="credits">
+      <span>{{ theme.credits }}</span>
+      <span>{{ watermark }}</span>
+    </div>
+  </div>
+{% include "web/_interactive.html.j2" %}
+</body>
+</html>

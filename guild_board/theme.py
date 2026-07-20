@@ -68,6 +68,7 @@ DEFAULT_THEME = {
         "display": "Cinzel",        # big carved titles (any Google Font name)
         "display_weights": "700;900",  # weights the display font actually ships
         "body": "Inter",            # all the data text
+        "mono": "JetBrains Mono",   # console/ledger numerals (ember_terminal)
     },
     "backgrounds": {
         "header": "assets/wall_header.png",
@@ -227,9 +228,16 @@ def font_css_url(theme):
     weights = str(fonts.get("display_weights",
                             DEFAULT_THEME["fonts"]["display_weights"]) or "").strip()
     display_spec = f"{display}:wght@{weights}" if weights else display
+    # The mono family is only used by console-style layouts; an empty
+    # value simply drops it and those layouts fall back to the system
+    # monospace stack.
+    mono = (fonts.get("mono", DEFAULT_THEME["fonts"]["mono"]) or "").strip()
+    mono_spec = (f"&family={mono.replace(' ', '+')}:wght@400;700"
+                 if mono else "")
     return ("https://fonts.googleapis.com/css2?"
             f"family={display_spec}&"
-            f"family={body}:wght@400;500;600;700;800&display=swap")
+            f"family={body}:wght@400;500;600;700;800"
+            f"{mono_spec}&display=swap")
 
 
 def hex_to_rgb(value, fallback=(17, 18, 23)):
