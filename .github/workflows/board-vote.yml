@@ -1,0 +1,41 @@
+name: Board Skin Vote
+
+# One-off / occasional: renders Board A (current pipeline, live data,
+# animated) via a dry run, then posts it together with Board B
+# (assets/competition/board_b.png, pre-rendered contender skin) as a
+# single Discord vote message. Does not touch board state.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  post-vote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install fonts for board rendering
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core
+
+      - name: Render Board A (dry run, no post)
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: python leaderboard.py --dry-run
+
+      - name: Post the vote
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: |
+          if [ -f board.gif ]; then A=board.gif; else A=board.png; fi
+          python scripts/post_vote.py "$A" assets/competition/board_b.png
