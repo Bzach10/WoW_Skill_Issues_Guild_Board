@@ -85,10 +85,35 @@
     font-size:12px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.6);}
   .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
   .col{position:relative; padding:26px 18px 16px; min-width:0;
+    {%- if theme.backgrounds.poster %}
+    background:
+      linear-gradient(rgba(240,228,201,.62), rgba(235,221,190,.68)),
+      url("{{ theme.backgrounds.poster }}") center/cover !important;
+    border:2px solid #5c4526 !important;
+    box-shadow: inset 0 0 0 5px rgba(74,54,26,.22), 0 12px 30px rgba(0,0,0,.5) !important;
+    {%- else %}
     background:
       radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.06), transparent 62%),
       linear-gradient(172deg, #2b2114 0%, #241b10 55%, #1c140b 100%) !important;
-    border:2px solid #7c6136 !important; border-radius:3px 10px 4px 12px !important;}
+    border:2px solid #7c6136 !important;
+    {%- endif %}
+    border-radius:3px 10px 4px 12px !important;}
+  {%- if theme.backgrounds.poster %}
+  /* ink-on-paper: match the image board's Imperial Bounty posters */
+  .col .col-h{border-bottom-color:#5c4526;}
+  .col .col-h .eyebrow{color:#4a3113;}
+  .col .col-h .t{color:#2c2010;}
+  .col .col-h .bounty{color:#6b5433;}
+  .col .sec-h .t{color:#4a3113;}
+  .col .sec-h .rule{background:linear-gradient(90deg, #6d5433, transparent);}
+  .col .row.alt{background:rgba(74,49,19,.10);}
+  .col .row:hover{background:rgba(74,49,19,.16);}
+  .col .row .detail{color:#5f4a2e;}
+  .col .row .value small{color:#5f4a2e;}
+  .col .row .badge.plain{border-color:#6d5433; color:#5f4a2e;}
+  .col .row.textrow{color:#5f4a2e;}
+  .col .empty{color:#7a6244;}
+  {%- endif %}
   .col::before{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
     width:10px; height:10px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
@@ -98,7 +123,7 @@
   .col-h .eyebrow{display:block; font-family:var(--font-display); font-size:11px;
     letter-spacing:.45em; text-indent:.45em; color:#c8a55f;}
   .col-h .t{display:block; font-family:var(--font-display); font-size:19px; font-weight:400;
-    color:#ecd9b0; letter-spacing:.04em; margin-top:4px;}
+    color:#ecd9b0; letter-spacing:.04em; word-spacing:.35em; margin-top:4px;}
   .col-h .bounty{display:block; font-size:9px; letter-spacing:.28em; text-indent:.28em;
     color:#94794c; margin-top:5px; font-weight:700;}
   .sec{margin-bottom:16px;}
@@ -203,6 +228,7 @@
         {%- for sec in col.sections %}
         <div class="sec">
           <div class="sec-h"><span class="t">{{ sec.title }}</span><span class="rule"></span></div>
+          {%- set paper = theme.backgrounds.poster %}
           {%- for row in sec.rows %}
           {%- if row.text is defined %}
           <div class="row textrow">{{ row.text }}</div>
@@ -213,9 +239,9 @@
             {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
             <a class="name" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
                target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
-               style="color:{{ row.color }};">{{ row.name }}</a>
+               style="color:{{ row.ink if paper else row.color }};">{{ row.name }}</a>
             <span class="detail">{{ row.detail }}</span>
-            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
+            <span class="value" style="color:{{ row.value_ink if paper else row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
           </div>
           {%- endif %}
           {%- endfor %}

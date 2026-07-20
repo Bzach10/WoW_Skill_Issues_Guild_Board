@@ -43,3 +43,8 @@ I built the missing architecture: posters render as REAL light paper
 colors darkened to ink weight, sepia details, engraved ink titles.
 Dramatic contrast against the purple ruin backdrop. Unless told
 otherwise, merging to main ~8:15 AM so the 9 AM post carries it.
+
+## Iteration 4 (~4:45 AM)
+Ported the Imperial Bounty ink-on-paper poster mode to the web board so
+both surfaces match: light parchment cards, inked class colors, sepia
+details, word-spacing fix for Cinzel Decorative. Playwright-verified.
