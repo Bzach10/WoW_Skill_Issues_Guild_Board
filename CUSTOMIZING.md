@@ -43,11 +43,37 @@ the data.
 ```yaml
 fonts:
   display: "UnifrakturMaguntia"   # the big carved titles
+  display_weights: "400"          # the weights that family actually ships
   body: "Rubik"                   # all the stats text
 ```
 
 Any name from [fonts.google.com](https://fonts.google.com), spelled exactly as
-shown there.
+shown there. `display_weights` matters: Google Fonts rejects requests for
+weights a family doesn't ship (many display fonts are 400-only), so check the
+font's page and list what exists (e.g. `"700;900"` for Cinzel).
+
+### The WANTED posters
+
+The four ranking columns render as posters. Three knobs:
+
+```yaml
+board:
+  poster_eyebrow: "★ WANTED ★"                 # small line above the title
+  poster_reward: "DEAD OR ALIVE · REWARD: GLORY"  # small line below it
+backgrounds:
+  poster: "assets/generated/wanted_parchment.png" # the paper itself
+```
+
+When `backgrounds.poster` points at an image, the columns become REAL
+light-paper posters: the art shows at full strength under a light glaze and
+every name/number automatically prints as ink (class colors darkened to ink
+weight). Remove the line and the columns fall back to a dark CSS parchment
+with normal screen colors. If the image path doesn't exist, the build heals
+back to the fallback and logs a warning — it never renders blank.
+
+Monthly theme concepts (art + palette + poster dressing) are staged by the
+art-director scheduled task and logged in `THEME_JOURNAL.md`; generating your
+own art locally is covered in `assets/ART_GUIDE.md`.
 
 ### Swap the background art
 
@@ -104,8 +130,9 @@ board still posts.
 ### Tune the weekly awards
 
 Rotating spotlights that mid-pack players can win — IRON ATTENDANCE (longest
-streak of active weeks) and BIGGEST CLIMB (largest M+ score gain since the
-last board):
+streak of consecutive RAID weeks attended, derived from the season's actual
+guild logs every run) and BIGGEST CLIMB (largest M+ score gain since last
+week's board):
 
 ```yaml
 awards:

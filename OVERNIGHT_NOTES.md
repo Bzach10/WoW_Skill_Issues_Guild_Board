@@ -60,3 +60,9 @@ New integrity guard: theme background paths are verified at build time —
 a typo'd or uncommitted asset (the art-director failure mode) heals to
 the shipped default (walls) or the CSS parchment (poster) with a loud
 warning, instead of rendering a silent blank. 98 tests.
+
+## Iteration 7 (~6:08 AM)
+CUSTOMIZING.md caught up with the night: WANTED poster knobs (eyebrow,
+reward line, backgrounds.poster + ink mode explained), fonts.display_weights,
+season-derived Iron Attendance wording, pointers to THEME_JOURNAL and
+ART_GUIDE. Docs now match the board the guild actually has.
