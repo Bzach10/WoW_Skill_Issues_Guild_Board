@@ -23,6 +23,10 @@ top_n: 5
 #   two_column    — legacy inline-field columns (Discord misaligns these; avoid)
 display:
   layout: image_board
+  # Renderer: "html" screenshots the design's own HTML template in headless
+  # Chromium (pixel-identical to the mockup); anything else, or any render
+  # failure, falls back to the built-in Pillow painter automatically.
+  renderer: html
   icons: true      # class/spec icons next to player names (fetched from Wowhead's CDN)
   watermark: true  # small "Powered by Guild Board" credit in the image corner
   # Artwork that frames the board: its top slice becomes the header banner
