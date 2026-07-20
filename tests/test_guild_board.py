@@ -481,6 +481,9 @@ def test_html_board_context_and_template():
     assert "GRAVEYARD CAMPERS MEMORIAL" in html
     assert "GIT GUD" in html
     assert "Voidspire" in html
+    assert "Gambling Debt" in html
+    assert "data-count" in html and "__setPhase" in html
+    assert ctx["debt"] > 137_000   # compounds weekly, never shrinks
     # every animation in the template must divide the GIF loop so any
     # frame count loops seamlessly
     import re
