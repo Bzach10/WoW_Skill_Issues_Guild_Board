@@ -297,7 +297,7 @@
             <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
             {%- if icons_on %}{% if row.icon %}<img class="icon" src="{{ row.icon }}" alt="">{% else %}<span class="icon blank"></span>{% endif %}{% endif %}
             <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
-            <span class="detail">{{ row.detail }}</span>
+            <span class="detail"{% if row.detail_bits %} data-bits='{{ row.detail_bits | tojson }}'{% endif %}>{{ row.detail }}</span>
             <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small {% if row.value_suffix_color %}style="color:{{ row.value_suffix_color }};"{% endif %}>· {{ row.value_suffix }}</small>{% endif %}</span>
           </div>
           {%- endif %}
@@ -415,6 +415,22 @@
       var ticks = parseInt(el.dataset.ticks, 10) || 3;
       var v = base + Math.floor(ph * ticks) * step;
       el.textContent = v.toLocaleString('en-US');
+    });
+  };
+
+  /* Whole-fact fitting: instead of CSS ellipsis chopping mid-word, drop
+     trailing " · "-joined facts until the line fits — the renderer calls
+     this once after fonts load, before any capture. */
+  window.__fitDetails = function () {
+    document.querySelectorAll('.detail[data-bits]').forEach(function (el) {
+      var bits;
+      try { bits = JSON.parse(el.dataset.bits); } catch (e) { return; }
+      bits = bits.filter(Boolean);
+      el.textContent = bits.join(' · ');
+      while (bits.length > 1 && el.scrollWidth > el.clientWidth + 1) {
+        bits.pop();
+        el.textContent = bits.join(' · ');
+      }
     });
   };
 </script>
