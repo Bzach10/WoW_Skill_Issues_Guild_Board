@@ -13,6 +13,10 @@
 board:
   header: stone_torchlight   # header module: stone_torchlight or banner
   footer: graveyard          # footer module: graveyard or simple
+  # The four ranking columns are WANTED posters — these two lines dress
+  # them (set to "" to hide either)
+  poster_eyebrow: "★ WANTED ★"
+  poster_reward: "DEAD OR ALIVE · REWARD: GLORY"
   # Making your own module? Drop a file in board_templates/headers/
   # or board_templates/footers/ and put its name here (CUSTOMIZING.md
   # has a copy-paste recipe).
@@ -37,7 +41,8 @@ colors:
 #  carved titles, body = all the stats text.
 # ------------------------------------------------------------------
 fonts:
-  display: "Cinzel"
+  display: "Rye"          # classic wanted-poster slab — titles, signs, tombstones
+  display_weights: "400"  # Rye ships one weight (Google Fonts rejects fake ones)
   body: "Inter"
 
 # ------------------------------------------------------------------

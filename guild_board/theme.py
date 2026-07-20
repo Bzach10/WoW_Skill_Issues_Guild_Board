@@ -43,6 +43,9 @@ DEFAULT_THEME = {
         "width": 3000,
         "header_height": None,          # only needed for custom modules
         "footer_height": None,
+        # Wanted-poster column dressing (empty strings hide the lines)
+        "poster_eyebrow": "★ WANTED ★",
+        "poster_reward": "DEAD OR ALIVE · REWARD: GLORY",
     },
     "colors": {
         "background": "#111217",
@@ -56,8 +59,9 @@ DEFAULT_THEME = {
         "green": "#4cdc56",
     },
     "fonts": {
-        "display": "Cinzel",    # big carved titles (any Google Font name)
-        "body": "Inter",        # all the data text
+        "display": "Cinzel",        # big carved titles (any Google Font name)
+        "display_weights": "700;900",  # weights the display font actually ships
+        "body": "Inter",            # all the data text
     },
     "backgrounds": {
         "header": "assets/wall_header.png",
@@ -207,8 +211,12 @@ def font_css_url(theme):
     fonts = theme.get("fonts", {})
     display = (fonts.get("display") or "Cinzel").replace(" ", "+")
     body = (fonts.get("body") or "Inter").replace(" ", "+")
+    # Google Fonts rejects requests for weights a family doesn't ship
+    # (e.g. Rye only has 400), so the display axis is theme-declared.
+    weights = str(fonts.get("display_weights") or "").strip()
+    display_spec = f"{display}:wght@{weights}" if weights else display
     return ("https://fonts.googleapis.com/css2?"
-            f"family={display}:wght@700;900&"
+            f"family={display_spec}&"
             f"family={body}:wght@400;500;600;700;800&display=swap")
 
 

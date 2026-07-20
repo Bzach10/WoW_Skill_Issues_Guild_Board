@@ -8,3 +8,11 @@ morning and say "merge" to take what you like.
 Added the first tests for the Discord delivery layer: multi-file
 attachment shape (files[0]/files[1] + mime by extension), 429 rate-limit
 retry, and the missing-file fallback to a clean JSON post. 92 tests total.
+
+## User request (~3:30 AM): WANTED posters
+The four ranking columns are now weathered WANTED posters (nail, tattered
+border, alternating tilt, ★ WANTED ★ eyebrow + "DEAD OR ALIVE · REWARD:
+GLORY" bounty line — both editable in theme.yml). Display font switched
+to Rye (classic wanted-poster slab) across board and web; theme.py grew
+fonts.display_weights so single-weight Google Fonts load correctly.
+On 2.0 only — say "merge" to put it on the 9 AM post.

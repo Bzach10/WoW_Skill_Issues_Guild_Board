@@ -74,24 +74,43 @@
   .bar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:10px; background:var(--accent);}
   .bar .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:15px; color:var(--text);}
-  .cols{display:flex; gap:24px; align-items:stretch;}
-  .col{flex:1; min-width:0; background:var(--panel); border:1px solid var(--hairline);
-    border-radius:12px; padding:24px; display:flex; flex-direction:column;}
-  /* Fixed rhythm: every section sits a consistent 28px below the last.
-     space-between stretched short columns into awkward mid-column voids;
-     a steady beat with quiet space at the bottom reads far cleaner. */
+  /* ===== WANTED posters: each ranking column is a weathered poster ===== */
+  .cols{display:flex; gap:26px; align-items:stretch;}
+  .col{flex:1; min-width:0; position:relative; padding:34px 24px 24px;
+    background:
+      radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.07), transparent 62%),
+      repeating-linear-gradient(4deg, rgba(0,0,0,.13) 0 3px, transparent 3px 8px),
+      linear-gradient(172deg, #2c2214 0%, #251c10 55%, #1d150b 100%);
+    border:2px solid #7c6136; border-radius:3px 12px 4px 14px;
+    box-shadow: inset 0 0 80px rgba(0,0,0,.55), inset 0 0 0 1px rgba(255,214,150,.06),
+      0 14px 34px rgba(0,0,0,.6);
+    display:flex; flex-direction:column;}
+  .col:nth-child(odd){transform:rotate(-.4deg);}
+  .col:nth-child(even){transform:rotate(.35deg);}
+  .col::before{content:""; position:absolute; top:11px; left:50%; margin-left:-7px;
+    width:14px; height:14px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
+    box-shadow:0 2px 5px rgba(0,0,0,.75);}
+  /* Fixed rhythm: every section sits a consistent 28px below the last. */
   .secs{flex:1; display:flex; flex-direction:column; justify-content:flex-start; gap:28px;}
-  .col-h{display:flex; align-items:center; gap:14px; padding-bottom:16px; margin-bottom:18px;
-    border-bottom:1px solid var(--hairline);}
-  .col-h .tick{width:5px; height:26px; background:var(--accent);}
-  .col-h .t{font-size:25px; font-weight:700; color:var(--text); letter-spacing:.03em;}
+  .col-h{display:block; text-align:center; padding:4px 0 14px; margin-bottom:18px;
+    border-bottom:3px double #7c6136;}
+  .col-h .eyebrow{display:block; font-family:var(--font-display); font-size:15px;
+    letter-spacing:.5em; text-indent:.5em; color:#c8a55f;}
+  .col-h .t{display:block; font-family:var(--font-display); font-size:31px; font-weight:400;
+    color:#ecd9b0; letter-spacing:.05em; margin-top:6px;
+    text-shadow:0 2px 0 rgba(0,0,0,.6), 0 0 26px rgba(230,180,70,.18);}
+  .col-h .bounty{display:block; font-size:12px; letter-spacing:.3em; text-indent:.3em;
+    color:#94794c; margin-top:8px; font-weight:700;}
   .sec{margin-bottom:0;}
   .sec-h{display:flex; align-items:center; gap:12px; height:38px;}
-  .sec-h .t{font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap; letter-spacing:.05em;}
-  .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
+  .sec-h .t{font-family:var(--font-display); font-size:17px; font-weight:400;
+    color:#c8a55f; white-space:nowrap; letter-spacing:.08em;}
+  .sec-h .rule{flex:1; height:1px;
+    background:linear-gradient(90deg, #7c6136, transparent);}
   .row{display:flex; align-items:center; height:46px; min-width:0;
     padding:0 12px; margin:0 -12px; border-radius:8px;}
-  .row.alt{background:rgba(255,255,255,.032);}
+  .row.alt{background:rgba(255,220,160,.045);}
   .row .badge{width:27px; height:27px; border-radius:50%; flex:none;
     display:flex; align-items:center; justify-content:center;
     font-size:15px; font-weight:700; color:#14141a; margin-right:11px;}
@@ -153,7 +172,11 @@
     <div class="cols">
       {%- for col in columns %}
       <div class="col">
-        <div class="col-h"><div class="tick"></div><div class="t">{{ col.title }}</div></div>
+        <div class="col-h">
+          {%- if theme.board.poster_eyebrow %}<span class="eyebrow">{{ theme.board.poster_eyebrow }}</span>{% endif %}
+          <span class="t">{{ col.title }}</span>
+          {%- if theme.board.poster_reward %}<span class="bounty">{{ theme.board.poster_reward }}</span>{% endif %}
+        </div>
         {%- if not col.sections %}
         <div class="empty">{{ col.empty }}</div>
         {%- endif %}

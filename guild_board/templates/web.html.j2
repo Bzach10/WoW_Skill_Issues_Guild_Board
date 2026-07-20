@@ -84,12 +84,23 @@
   .bar2 .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:12px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.6);}
   .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
-  .col{padding:16px 18px; min-width:0;}
-  .col-h{display:flex; align-items:center; gap:10px; padding-bottom:10px; margin-bottom:12px;
-    border-bottom:1px solid var(--hairline);}
-  .col-h .tick{width:4px; height:20px; border-radius:2px; flex:none;
-    background:linear-gradient(180deg, var(--accent), #a97f28);}
-  .col-h .t{font-size:18px; font-weight:800; letter-spacing:.03em;}
+  .col{position:relative; padding:26px 18px 16px; min-width:0;
+    background:
+      radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.06), transparent 62%),
+      linear-gradient(172deg, #2b2114 0%, #241b10 55%, #1c140b 100%) !important;
+    border:2px solid #7c6136 !important; border-radius:3px 10px 4px 12px !important;}
+  .col::before{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
+    width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
+    box-shadow:0 2px 4px rgba(0,0,0,.7);}
+  .col-h{display:block; text-align:center; padding-bottom:10px; margin-bottom:12px;
+    border-bottom:3px double #7c6136;}
+  .col-h .eyebrow{display:block; font-family:var(--font-display); font-size:11px;
+    letter-spacing:.45em; text-indent:.45em; color:#c8a55f;}
+  .col-h .t{display:block; font-family:var(--font-display); font-size:19px; font-weight:400;
+    color:#ecd9b0; letter-spacing:.04em; margin-top:4px;}
+  .col-h .bounty{display:block; font-size:9px; letter-spacing:.28em; text-indent:.28em;
+    color:#94794c; margin-top:5px; font-weight:700;}
   .sec{margin-bottom:16px;}
   .sec:last-child{margin-bottom:0;}
   .sec-h{display:flex; align-items:center; gap:10px; height:30px;}
@@ -183,7 +194,11 @@
     <div class="cols">
       {%- for col in columns %}
       <div class="card col" id="col-{{ loop.index }}" style="scroll-margin-top:64px;">
-        <div class="col-h"><div class="tick"></div><div class="t">{{ col.title }}</div></div>
+        <div class="col-h">
+          {%- if theme.board.poster_eyebrow %}<span class="eyebrow">{{ theme.board.poster_eyebrow }}</span>{% endif %}
+          <span class="t">{{ col.title }}</span>
+          {%- if theme.board.poster_reward %}<span class="bounty">{{ theme.board.poster_reward }}</span>{% endif %}
+        </div>
         {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
         {%- for sec in col.sections %}
         <div class="sec">
