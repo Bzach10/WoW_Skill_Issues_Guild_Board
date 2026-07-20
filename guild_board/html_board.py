@@ -35,6 +35,11 @@ from guild_board.config import get_class_color
 
 logger = logging.getLogger(__name__)
 
+# The TL;DR lines shown in the Discord post text, derived from the EXACT
+# rows the rendered board shows — set by build_context so the text and the
+# image can never disagree. main.py reads this after a successful render.
+LAST_TLDR = None
+
 LOOP_MS = 1200
 TEMPLATE_DIR = Path(__file__).parent / "templates"
 RENDER_HTML = "board_render.html"          # written to cwd so relative assets/ paths work
@@ -243,6 +248,37 @@ def _headline(stats, standing, previous, records):
     return None
 
 
+def _tldr_from_columns(columns, standing):
+    """Phone-readable callouts sourced from the very rows the board shows.
+    One computation, three surfaces (image, web, post text) — they can
+    never drift apart again."""
+    def first_row(title_prefix, role=None):
+        for col in columns:
+            for sec in col.get("sections", []):
+                if not sec["title"].startswith(title_prefix):
+                    continue
+                for row in sec["rows"]:
+                    if "text" in row:
+                        continue
+                    if role and (row.get("detail_bits") or [""])[0] != role:
+                        continue
+                    return row
+        return None
+
+    lines = []
+    for title, icon, label, role in (
+            ("TOP DPS PARSES", "\U0001F5E1️", "Top DPS", None),
+            ("TOP HEALING PARSES", "\U0001F49A", "Top heals", None),
+            ("TOP PARSES", "\U0001F6E1️", "Top tank", "Tank")):
+        row = first_row(title, role)
+        if row:
+            lines.append(f"{icon} {label}: **{row['name']}** {row['value']}")
+    if standing and standing.get("realm"):
+        suffix = " (last wk)" if standing.get("stale") else ""
+        lines.append(f"\U0001F3F0 Realm rank **#{standing['realm']:,}**{suffix}")
+    return lines
+
+
 def _debt_card(theme, week_index):
     """The compounding-debt tooltip, fully theme-driven. Returns None when
     the guild retires the gag (footer.debt.enabled: false)."""
@@ -383,6 +419,9 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     debt_card = _debt_card(theme, week_index)
     quips = theme.get("motd_quips") or ["Git Gud."]
 
+    global LAST_TLDR
+    LAST_TLDR = _tldr_from_columns(columns, standing)
+
     wipes_sub = str((theme.get("header") or {}).get("wipes_sub", ""))
     try:
         wipes_sub = wipes_sub.format(deaths=deaths_total, pulls=pulls, wipes=wipes)
@@ -392,6 +431,10 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     return {
         "guild_name": guild.get("name", "Guild"),
         "realm_label": f"{realm} · {region}" if realm else region,
+        "profile_base": ("https://www.warcraftlogs.com/character/"
+                         f"{(guild.get('region') or 'us').lower()}/"
+                         f"{(guild.get('realm_slug') or '').lower()}/"),
+        "tldr": LAST_TLDR,
         "subtitle": subtitle,
         "date_range": date_range,
         "wipes": wipes,

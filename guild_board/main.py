@@ -391,6 +391,13 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                              season_parses=season_parse_bests,
                              season_key=season_key_record)
 
+    # Diagnostic: the raw tank pool, so any board/text discrepancy can be
+    # traced to the data rather than guessed at from the rendered image.
+    if stats and "best_tanks" in stats:
+        logger.info("Tank parse pool: %s",
+                    {n: f"{(i.get('parse') or 0):.1f}% {i.get('spec','')} d{i.get('difficulty')}"
+                     for n, i in (stats.get("best_tanks") or {}).items()})
+
     mobile_path = None
     if layout == "image_board":
         try:
@@ -405,7 +412,9 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if display_cfg.get("renderer", "pillow") == "html":
                 # The design IS the render: headless-Chromium screenshot of
                 # the HTML template. Falls back to Pillow on any failure.
+                from guild_board import html_board
                 from guild_board.html_board import generate_board_html
+                html_board.LAST_TLDR = None   # never reuse a stale one
                 want_mobile = bool(display_cfg.get("mobile_companion", True))
                 image_path = generate_board_html(
                     *board_args,
@@ -434,9 +443,22 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     if image_path:
         from guild_board.formatters import tldr_lines
+        try:
+            from guild_board import html_board
+            tldr = html_board.LAST_TLDR
+        except ImportError:
+            tldr = None
+        # Prefer the lines derived from the rendered rows themselves; the
+        # independent computation is only the Pillow-path fallback.
+        tldr = list(tldr) if tldr else tldr_lines(stats, standing)
+        web_cfg = (cfg.get("display") or {}).get("web_board") or {}
+        if web_cfg.get("enabled") and web_cfg.get("url"):
+            # Link buttons on channel webhooks get dropped silently when
+            # Discord rejects them — a markdown link in the text always shows.
+            tldr.append(f"\U0001F4F1 [**Open the Web Board**]({web_cfg['url']}) — scales to any screen")
         embed = build_image_embed(cfg, stats, start_dt, end_dt,
                                   image_url=f"attachment://{os.path.basename(image_path)}",
-                                  tldr=tldr_lines(stats, standing))
+                                  tldr=tldr)
     else:
         progress_image_url = None
         progress_cfg = sections.get("progress_image", {})

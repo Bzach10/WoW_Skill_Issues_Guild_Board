@@ -81,7 +81,9 @@
     </div>
     <div class="widget" style="width:400px;">
       <div class="lbl">{{ theme.header.repair_label }}</div>
-      <div class="val"><span data-count data-base="{{ repair }}" data-step="57" data-ticks="3">{{ "{:,}".format(repair) }}</span>
+      {#- factual numbers stay STATIC in the GIF — only the debt gag ticks.
+          A counter that animates makes the real stat wrong in most frames. #}
+      <div class="val"><span>{{ "{:,}".format(repair) }}</span>
         <span class="coin" style="width:18px; height:18px; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420);"></span>
         <span style="font-size:28px; font-weight:700; color:#b0b6c0;">43</span>
         <span class="coin" style="width:13px; height:13px; background:radial-gradient(circle at 35% 30%, #e8ecf2, #b0b6c0 55%, #6a707c);"></span>
@@ -90,7 +92,7 @@
     </div>
     <div class="widget" style="width:330px;">
       <div class="lbl">{{ theme.header.counter_label }}</div>
-      <div class="val"><span data-count data-base="{{ pulls }}" data-step="1" data-ticks="2">{{ pulls }}</span></div>
+      <div class="val"><span>{{ pulls }}</span></div>
       <div class="sub">{{ theme.header.counter_sub }}</div>
     </div>
   </div>

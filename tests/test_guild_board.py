@@ -1240,3 +1240,20 @@ def test_link_buttons_include_web_board():
     cfg["display"] = {}
     labels = [b["label"] for b in gb_discord._build_link_buttons(cfg)[0]["components"]]
     assert not any("Web Board" in l for l in labels)
+
+
+def test_tldr_matches_rendered_rows():
+    """The post text derives from the exact rows the board renders."""
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    stats = _image_board_stats()
+    stats["best_tanks"] = {"Brewz": {"parse": 88.0, "amount": 90_000, "boss": "Some Boss",
+                                     "spec": "Brewmaster", "cls": "Monk"}}
+    ctx = html_board.build_context(
+        _image_board_cfg(), stats, {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    tldr = html_board.LAST_TLDR
+    assert any("Rakell" in l and "94%" in l for l in tldr)      # top DPS row verbatim
+    assert any("Top tank" in l and "Brewz" in l and "88%" in l for l in tldr)
+    assert any("#49" in l for l in tldr)
+    assert ctx["tldr"] == tldr

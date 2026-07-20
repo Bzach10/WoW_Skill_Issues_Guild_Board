@@ -60,9 +60,20 @@
   .sec-h{display:flex; align-items:center; gap:10px; height:30px;}
   .sec-h .t{font-size:13px; font-weight:800; color:var(--accent); letter-spacing:.05em; white-space:nowrap;}
   .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
+  .nav{position:sticky; top:0; z-index:5; display:flex; gap:8px; overflow-x:auto;
+    padding:10px 16px; background:rgba(11,12,16,.92); backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--hairline);}
+  .nav a{flex:none; font-size:13px; font-weight:700; letter-spacing:.04em; color:var(--muted);
+    text-decoration:none; padding:6px 12px; border:1px solid var(--hairline); border-radius:999px;}
+  .nav a:hover{color:var(--accent); border-color:var(--accent);}
+  html{scroll-behavior:smooth;}
+  .col{scroll-margin-top:64px;}
   .row{display:flex; align-items:center; min-height:38px; padding:2px 8px; margin:0 -8px;
     border-radius:7px; min-width:0;}
   .row.alt{background:rgba(255,255,255,.032);}
+  .row:hover{background:rgba(230,180,70,.07);}
+  .row a.nm{text-decoration:none;}
+  .row a.nm:hover{text-decoration:underline;}
   .row .badge{width:22px; height:22px; border-radius:50%; flex:none; display:flex;
     align-items:center; justify-content:center; font-size:12px; font-weight:800;
     color:#14141a; margin-right:9px;}
@@ -99,6 +110,12 @@
     <div class="sub">{{ realm_label }}</div>
   </div>
   <div class="info"><span>{{ subtitle }}</span><span>{{ date_range }}</span></div>
+  <nav class="nav">
+    {%- for col in columns %}
+    <a href="#col-{{ loop.index }}">{{ col.title }}</a>
+    {%- endfor %}
+    {%- if roast %}<a href="#roast">ROAST</a>{% endif %}
+  </nav>
   <div class="wrap">
     {%- if hero_tiles %}
     <div class="hero">
@@ -119,7 +136,7 @@
     {%- endif %}
     <div class="cols">
       {%- for col in columns %}
-      <div class="col">
+      <div class="col" id="col-{{ loop.index }}">
         <div class="col-h"><div class="tick"></div><div class="t">{{ col.title }}</div></div>
         {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
         {%- for sec in col.sections %}
@@ -132,7 +149,9 @@
           <div class="row{{ ' alt' if loop.index % 2 == 0 }}">
             <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
             {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
-            <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
+            <a class="name nm" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
+               target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
+               style="color:{{ row.color }};">{{ row.name }}</a>
             <span class="detail">{{ row.detail }}</span>
             <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
           </div>
@@ -144,7 +163,7 @@
       {%- endfor %}
     </div>
     {%- if roast %}
-    <div class="roast">
+    <div class="roast" id="roast">
       <div class="t">ROAST OF THE WEEK</div>
       <div class="q">{{ roast.quote }}</div>
       {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}

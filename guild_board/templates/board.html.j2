@@ -77,9 +77,10 @@
   .cols{display:flex; gap:24px; align-items:stretch;}
   .col{flex:1; min-width:0; background:var(--panel); border:1px solid var(--hairline);
     border-radius:12px; padding:24px; display:flex; flex-direction:column;}
-  /* short columns breathe: sections spread evenly instead of clumping at
-     the top and leaving a dead void at the bottom */
-  .secs{flex:1; display:flex; flex-direction:column; justify-content:space-between; gap:18px;}
+  /* Fixed rhythm: every section sits a consistent 28px below the last.
+     space-between stretched short columns into awkward mid-column voids;
+     a steady beat with quiet space at the bottom reads far cleaner. */
+  .secs{flex:1; display:flex; flex-direction:column; justify-content:flex-start; gap:28px;}
   .col-h{display:flex; align-items:center; gap:14px; padding-bottom:16px; margin-bottom:18px;
     border-bottom:1px solid var(--hairline);}
   .col-h .tick{width:5px; height:26px; background:var(--accent);}
