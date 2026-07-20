@@ -57,7 +57,7 @@ SPEC_TO_CLASS = {
     "affliction": "warlock", "demonology": "warlock", "destruction": "warlock",
     "brewmaster": "monk", "mistweaver": "monk", "windwalker": "monk",
     "balance": "druid", "feral": "druid", "guardian": "druid",
-    "havoc": "demonhunter", "vengeance": "demonhunter",
+    "havoc": "demonhunter", "vengeance": "demonhunter", "devourer": "demonhunter",
     "devastation": "evoker", "preservation": "evoker", "augmentation": "evoker",
 }
 
@@ -426,7 +426,7 @@ def _parse_rows(best, unit, top_n, diff_name="", streaks=None):
         ]
         rows.append({
             "name": _cap(name),
-            "color": _rgb(get_class_color(info.get("cls") or info.get("spec"))),
+            "color": _class_color_for(info.get("spec"), info.get("cls")),
             "spec": info.get("spec") or "",
             "cls": info.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
@@ -499,7 +499,7 @@ def _mplus_week_rows(results, top_n, streaks=None):
         detail_bits = [spec, dungeon, _streak_bit(streaks, name)]
         rows.append({
             "name": _cap(name),
-            "color": _rgb(get_class_color(spec)),
+            "color": _class_color_for(spec, None),
             "spec": spec or "",
             "detail": " · ".join(b for b in detail_bits if b),
             "detail_bits": detail_bits,
@@ -515,7 +515,7 @@ def _season_score_rows(scores, top_n, prev_scores=None):
     for score, name, spec in scores[:top_n]:
         row = {
             "name": _cap(name),
-            "color": _rgb(get_class_color(spec)),
+            "color": _class_color_for(spec, None),
             "spec": spec or "",
             "detail": spec or "",
             "value": f"{score:.0f}",
@@ -543,7 +543,7 @@ def _season_run_rows(parses, top_n):
             is_wcl = False
         rows.append({
             "name": _cap(name),
-            "color": _rgb(get_class_color(spec)),
+            "color": _class_color_for(spec, None),
             "spec": spec or "",
             "detail": " · ".join(b for b in [spec, dungeon] if b),
             "value": f"{value:.0f}%" if is_wcl else f"{value:.0f}",
@@ -565,7 +565,7 @@ def _improve_rows(entries):
         ]
         rows.append({
             "name": _cap(e["name"]),
-            "color": _rgb(get_class_color(e.get("cls") or e.get("spec"))),
+            "color": _class_color_for(e.get("spec"), e.get("cls")),
             "spec": e.get("spec") or "",
             "cls": e.get("cls") or "",
             "detail": " · ".join(b for b in detail_bits if b),
@@ -589,7 +589,7 @@ def _record_rows(records):
     if key_rec:
         row = {
             "name": _cap(key_rec.get("name", "")),
-            "color": _rgb(get_class_color(key_rec.get("spec"))),
+            "color": _class_color_for(key_rec.get("spec"), None),
             "spec": key_rec.get("spec") or "",
             "detail": " \u00b7 ".join(b for b in ["Highest timed key", key_rec.get("dungeon", "")] if b),
             "value": f"+{key_rec.get('level', 0)}",
@@ -610,7 +610,7 @@ def _record_rows(records):
         parse = rec.get("parse") or 0
         row = {
             "name": _cap(rec.get("name", "")),
-            "color": _rgb(get_class_color(rec.get("cls") or rec.get("spec"))),
+            "color": _class_color_for(rec.get("spec"), rec.get("cls")),
             "spec": rec.get("spec") or "",
             "cls": rec.get("cls") or "",
             "detail": " \u00b7 ".join(b for b in [label, boss] if b),

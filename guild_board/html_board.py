@@ -42,10 +42,10 @@ FOOTER_TOTAL = 430 + 52 + 40
 # tombstone geometry (w, h, arched, cross, rotation) — stones are pure art
 # now; names/deaths live on high-contrast plates beneath them
 STONES = [
-    (170, 150, True, False, -2.5, ("#7c7869", "#5c594c", "#403e37")),
-    (180, 168, False, True, 1.6, ("#827e6e", "#605d50", "#434139")),
-    (158, 134, True, False, -1.2, ("#746f61", "#575447", "#3c3a33")),
-    (158, 122, False, False, 2.2, ("#746f61", "#575447", "#3c3a33")),
+    (170, 178, True, False, -2.5, ("#7c7869", "#5c594c", "#403e37")),
+    (180, 196, False, True, 1.6, ("#827e6e", "#605d50", "#434139")),
+    (158, 162, True, False, -1.2, ("#746f61", "#575447", "#3c3a33")),
+    (158, 150, False, False, 2.2, ("#746f61", "#575447", "#3c3a33")),
 ]
 
 DEBUFFS = [
@@ -72,7 +72,9 @@ def _icon_url(row):
     return None
 
 
-DEFAULT_TEXT = (235, 236, 240)   # board_image's "no class known" name color
+# colors that mean "class unknown": board_image's TEXT default and
+# get_class_color's #CCCCCC fallback — both eligible for lookup backfill
+UNKNOWN_COLORS = (None, (235, 236, 240), (204, 204, 204))
 
 
 def _cls_color(cls_key):
@@ -163,9 +165,11 @@ def _html_rows(sections, lookup=None):
                 rows.append({"text": row["text"]})
                 continue
             key = (row.get("name") or "").strip().lower()
-            color = row.get("color", DEFAULT_TEXT)
-            if color in (None, DEFAULT_TEXT) and key in lookup:
+            color = row.get("color")
+            if color in UNKNOWN_COLORS and key in lookup:
                 color = _cls_color(lookup[key])
+            if color in UNKNOWN_COLORS:
+                color = (235, 236, 240)
             icon = _icon_url(row)
             if icon is None and key in lookup:
                 icon = ICON_CDN.format(CLASS_ICONS[lookup[key]])
@@ -261,11 +265,22 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         w, h, arched, cross, rot, (light, mid, dark) = STONES[i % len(STONES)]
         rate = f" · {count / pulls:.1f}/PULL" if pulls else ""
         cls_key = lookup.get(name.strip().lower())
+        carved = name.upper()[:16]
+        # engraved name sized to the stone's width; darkened class color
+        # keeps the carved look while still reading as the player's class
+        carve_size = max(13, min(22, int((w - 38) / (0.62 * max(len(carved), 1)))))
+        if cls_key:
+            r, g_, b = _cls_color(cls_key)
+            carve_color = f"rgb({int(r * 0.55)},{int(g_ * 0.55)},{int(b * 0.55)})"
+        else:
+            carve_color = "#3a362d"
         stones.append({
             "w": w, "h": h, "arched": arched, "cross": cross, "rot": rot,
             "light": light, "mid": mid, "dark": dark,
             "radius": (f"{w // 2}px {w // 2}px 6px 6px" if arched else "14px 14px 6px 6px"),
-            "name": name.upper()[:16],
+            "name": carved,
+            "carve_size": carve_size,
+            "carve_color": carve_color,
             "color": _css(_cls_color(cls_key)) if cls_key else "#f4f0e4",
             "deaths": f"{count} DEATHS{rate}",
         })
