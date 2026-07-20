@@ -1547,3 +1547,43 @@ def test_resolve_templates_honors_custom_heights():
     assert mods["footer_total"] == 500 + theme_mod.FOOTER_EXTRA
     defaults = theme_mod.resolve_templates({})
     assert defaults["header_h"] == theme_mod.HEADER_HEIGHTS["stone_torchlight"]
+
+
+# --- ink-on-paper poster mode -----------------------------------------------------
+
+
+def test_ink_darkens_screen_colors_for_paper():
+    from guild_board.html_board import _ink
+    # class colors keep their hue at ink weight
+    assert _ink("rgb(171,212,115)") == "rgb(88,110,59)"      # hunter green -> ink green
+    assert _ink("rgb(196,30,58)") == "rgb(101,15,30)"        # DK red -> deep maroon
+    # whitish (Priest) becomes dark sepia, not washed gray
+    assert _ink("rgb(255,255,255)") == "rgb(52,44,34)"
+    assert _ink("rgb(235,236,240)") == "rgb(52,44,34)"
+    # non-rgb strings pass through untouched
+    assert _ink("#abc123") == "#abc123"
+    assert _ink(None) is None
+
+
+def test_poster_mode_renders_ink_names(tmp_path):
+    from guild_board import html_board
+    theme_file = tmp_path / "theme.yml"
+    theme_file.write_text("backgrounds:\n  poster: 'assets/generated/poster.png'\n",
+                          encoding="utf-8")
+    cfg = _image_board_cfg()
+    cfg["display"]["theme_file"] = str(theme_file)
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        cfg, _image_board_stats(), None, None, "Voidspire", None, None, None,
+        now - timedelta(days=7), now)
+    html = html_board.render_html(ctx)
+    web = html_board.render_html(ctx, template="web.html.j2")
+    # Rakell is a Shaman: screen rgb(0,112,222) must print as ink rgb(0,58,115)
+    for surface in (html, web):
+        assert "rgb(0,58,115)" in surface
+    # and without a poster, the screen color is used verbatim
+    cfg2 = _image_board_cfg()
+    ctx2 = html_board.build_context(
+        cfg2, _image_board_stats(), None, None, "Voidspire", None, None, None,
+        now - timedelta(days=7), now)
+    assert "rgb(0,112,222)" in html_board.render_html(ctx2)

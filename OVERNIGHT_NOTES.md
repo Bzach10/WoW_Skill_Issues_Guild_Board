@@ -48,3 +48,9 @@ otherwise, merging to main ~8:15 AM so the 9 AM post carries it.
 Ported the Imperial Bounty ink-on-paper poster mode to the web board so
 both surfaces match: light parchment cards, inked class colors, sepia
 details, word-spacing fix for Cinzel Decorative. Playwright-verified.
+
+## Iteration 5 (~5:10 AM)
+Locked down the new ink pipeline with tests: class-color darkening,
+whitish->sepia special case, non-rgb passthrough, and a full render
+assertion that poster mode prints ink while plain mode keeps screen
+colors — on both board and web surfaces. 97 tests.
