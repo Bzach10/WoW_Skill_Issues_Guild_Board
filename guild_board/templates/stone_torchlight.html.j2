@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ guild_name }} — Guild Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  /* ============ Stone & Torchlight — the design IS the render ============ */
+  :root{
+    --bg:#111217; --panel:#1a1c23; --hairline:#2d303a;
+    --accent:#e6b446; --text:#ebecf0; --muted:#969aa4; --faint:#5f636e;
+    --red:#e5484d; --green:#4cdc56; --epic:#a335ee; --legendary:#ff8000;
+    --uncommon:#1eff00; --goldtext:#ffd100;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{width:2600px; background:var(--bg); color:var(--text);
+       font-family:'Inter','Segoe UI',sans-serif; font-size:15px;}
+  .board{position:relative; width:2600px; overflow:hidden;}
+
+  /* --------- animation set: every period divides the {{ loop_ms }}ms loop --------- */
+  @keyframes emberRise { 0%{transform:translate(0,0); opacity:0} 8%{opacity:.95}
+                         100%{transform:translate(var(--drift,0px),-420px); opacity:0} }
+  @keyframes flamePulse { 0%{transform:scaleY(1) scaleX(1) rotate(-2deg)}
+                          50%{transform:scaleY(1.18) scaleX(.9) rotate(2deg)}
+                          100%{transform:scaleY(.94) scaleX(1.06) rotate(-1deg)} }
+  @keyframes glowPulse { 0%{opacity:.35} 100%{opacity:.7} }
+  @keyframes signSwing { 0%{transform:rotate(-.6deg)} 100%{transform:rotate(.6deg)} }
+
+  .embers{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
+  .embers span{position:absolute; bottom:-12px; border-radius:50%; opacity:0;
+    background:radial-gradient(circle, #ffd27a, #e07a28 60%, transparent);
+    animation:emberRise {{ '%.1f'|format(loop_ms/1000) }}s linear infinite;}
+  .embers.wisps span{background:radial-gradient(circle, #b6ffb0, #3adc5a 60%, transparent);}
+
+  .flame{position:absolute; bottom:0; left:50%; border-radius:50% 50% 45% 45% / 70% 70% 30% 30%;
+         filter:blur(4px); transform-origin:bottom center;
+         animation:flamePulse .6s ease-in-out infinite alternate;}
+
+  /* ================================ HEADER ================================ */
+  .hdr{position:relative; width:2600px; height:380px; overflow:hidden;
+       background:url("assets/wall_header.png");}
+  .hdr-glow{position:absolute; left:0; right:0; bottom:-60px; height:220px;
+    background:radial-gradient(ellipse 55% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
+    animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
+  .plaque{position:absolute; left:44px; top:36px; width:600px; height:308px; padding:14px;
+    border-radius:12px; background:linear-gradient(160deg, #6b5943, #3d3123);
+    box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 2px 2px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.5);
+    transform:rotate(-0.8deg);}
+  .plaque-in{position:relative; width:100%; height:100%; border-radius:6px;
+    background:url("assets/plaque.png") center/cover;
+    box-shadow:inset 0 5px 10px rgba(255,255,255,.22), inset 0 -8px 16px rgba(0,0,0,.45);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; overflow:hidden;}
+  .plaque-word{font-family:Cinzel,serif; font-size:88px; font-weight:900; line-height:.98;
+    letter-spacing:.1em; color:#43352a;
+    text-shadow:0 2px 1px rgba(255,244,214,.4), 0 -2px 3px rgba(0,0,0,.55);}
+  .plaque-sub{font-size:15px; letter-spacing:.4em; color:#5a4a38; font-weight:700; margin-top:8px;
+    text-shadow:0 1px 0 rgba(255,244,214,.35);}
+  .nail{position:absolute; width:16px; height:16px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%);
+    box-shadow:0 1px 2px rgba(255,255,255,.25);}
+  .widgets{position:absolute; left:700px; top:44px; display:flex; gap:26px;}
+  .widget{background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:20px 24px;}
+  .widget .lbl{font-size:14px; letter-spacing:.14em; font-weight:700; color:var(--accent);}
+  .widget .val{font-size:52px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:6px;}
+  .widget .sub{font-size:14px; color:var(--muted); margin-top:4px;}
+  .coin{display:inline-block; border-radius:50%; vertical-align:baseline;}
+  .debuffs{position:absolute; left:700px; top:266px; display:flex; gap:20px; align-items:center;}
+  .debuffs .lbl{font-size:13px; letter-spacing:.14em; color:#b8bcc6; font-weight:700; text-shadow:0 1px 3px #000;}
+  .debuff{position:relative; width:52px; height:52px; border-radius:8px; overflow:hidden; border:2px solid;}
+  .debuff img{width:100%; height:100%; object-fit:cover;}
+  .debuff .stack{position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;}
+  .debuff.bad{border-color:var(--red); box-shadow:0 0 14px rgba(229,72,77,.35);}
+  .debuff.good{border-color:var(--green); box-shadow:0 0 14px rgba(76,220,86,.3);}
+  .torch{position:absolute; right:420px; top:64px; width:70px; height:210px;}
+  .torch .handle{position:absolute; bottom:-58px; left:50%; width:14px; height:76px; margin-left:-7px;
+    border-radius:7px; background:linear-gradient(180deg, #4a3826, #2b2117);
+    box-shadow:0 0 24px rgba(224,122,40,.5);}
+  .sign{position:absolute; right:96px; top:0; display:flex; flex-direction:column; align-items:center;
+    animation:signSwing .6s ease-in-out infinite alternate; transform-origin:top center;}
+  .sign .chains{display:flex; gap:150px;}
+  .sign .chain{width:4px; height:74px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;}
+  .sign .plank{width:250px; padding:18px 0 22px; border-radius:8px;
+    background:repeating-linear-gradient(180deg, #5a4028 0 22px, #4c3520 22px 24px, #63482d 24px 46px, #45301d 46px 48px);
+    border:3px solid #2b2117; box-shadow:0 14px 34px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.12);
+    display:flex; flex-direction:column; align-items:center; gap:2px;}
+  .sign .big{font-family:Cinzel,serif; font-size:44px; font-weight:900; letter-spacing:.1em; color:#251a10;
+    text-shadow:0 1px 0 rgba(255,220,160,.28), 0 -1px 2px rgba(0,0,0,.6);}
+  .sign .small{font-size:11px; letter-spacing:.22em; color:#2e2114; font-weight:700; white-space:nowrap;}
+  .hdr-fade{position:absolute; left:0; right:0; bottom:0; height:26px;
+    background:linear-gradient(180deg, transparent, rgba(8,8,11,.85));}
+
+  /* ============================== INFO STRIP ============================== */
+  .info{height:48px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 36px; border-bottom:1px solid var(--hairline); background:var(--bg);}
+  .info .l{color:var(--muted); font-size:19px;}
+  .info .r{color:var(--muted); font-size:17px;}
+
+  /* ================================ MIDDLE ================================ */
+  .mid{position:relative; padding:24px 36px 24px;
+    background:linear-gradient(rgba(17,18,23,.78), rgba(17,18,23,.78)), url("assets/theme_art.png") center 40%/cover;}
+  .hero{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:16px 22px 14px; margin-bottom:24px;}
+  .tiles{display:flex;}
+  .tile{flex:1;}
+  .tile .lbl{font-size:13px; color:var(--muted);}
+  .tile .val{font-size:28px; font-weight:700; margin-top:2px;}
+  .tile .val small{font-size:13px; font-weight:600; margin-left:8px;}
+  .bar{position:relative; height:18px; margin-top:12px; border-radius:9px; background:#262830; overflow:hidden;}
+  .bar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:9px; background:var(--accent);}
+  .bar .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:13px; color:var(--text);}
+  .cols{display:flex; gap:24px; align-items:stretch;}
+  .col{flex:1; min-width:0; background:var(--panel); border:1px solid var(--hairline);
+    border-radius:12px; padding:22px;}
+  .col-h{display:flex; align-items:center; gap:14px; height:24px; margin-bottom:22px;}
+  .col-h .tick{width:4px; height:22px; background:var(--accent);}
+  .col-h .t{font-size:21px; font-weight:700; color:var(--text); letter-spacing:.02em;}
+  .sec{margin-bottom:16px;}
+  .sec:last-child{margin-bottom:0;}
+  .sec-h{display:flex; align-items:center; gap:12px; height:32px;}
+  .sec-h .t{font-size:15px; font-weight:700; color:var(--accent); white-space:nowrap;}
+  .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
+  .row{display:flex; align-items:center; height:36px; min-width:0;}
+  .row .badge{width:22px; height:22px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    font-size:13px; font-weight:700; color:#14141a; margin-right:10px;}
+  .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted);}
+  .row .icon{width:22px; height:22px; border-radius:5px; flex:none; margin-right:8px;}
+  .row .icon.blank{visibility:hidden;}
+  .row .name{font-size:17px; font-weight:700; white-space:nowrap;}
+  .row .detail{font-size:15px; color:var(--muted); margin-left:10px; flex:1; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row .value{font-size:17px; font-weight:700; white-space:nowrap; margin-left:16px;}
+  .row .value small{font-size:15px; font-weight:400; color:var(--muted);}
+  .row.textrow{font-size:15px; color:var(--muted);}
+  .empty{font-size:15px; color:var(--faint); padding-top:8px;}
+  .roast{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:20px 22px 22px; margin-top:24px;}
+  .roast .t{font-size:15px; font-weight:700; color:var(--accent); margin-bottom:6px;}
+  .roast .q{font-size:20px; color:var(--text); line-height:1.4;}
+  .roast .attr{font-size:15px; color:var(--muted); text-align:right; margin-top:2px;}
+
+  /* ================================ FOOTER ================================ */
+  .ftr{position:relative; width:2600px; height:520px; overflow:hidden;
+    background:url("assets/wall_footer.png");}
+  .ftr-glow{position:absolute; left:0; right:0; bottom:-40px; height:200px;
+    background:radial-gradient(ellipse 50% 100% at 50% 100%, rgba(58,220,90,.16), transparent 70%);
+    animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
+  .ftr-in{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    gap:44px; padding:0 60px;}
+  .tooltip{width:600px; background:rgba(7,7,24,.94); border-radius:8px; padding:26px 30px;
+    font-size:20px; line-height:1.55;}
+  .tooltip.codex{border:1px solid #43435c; box-shadow:inset 0 0 0 1px rgba(120,120,180,.15), 0 14px 40px rgba(0,0,0,.6);}
+  .tooltip.item{border:1px solid #5c4a2e; box-shadow:inset 0 0 0 1px rgba(230,180,70,.18), 0 14px 40px rgba(0,0,0,.6);}
+  .tooltip .tt{font-family:Cinzel,serif; font-size:32px; font-weight:800;}
+  .tooltip .split{display:flex; justify-content:space-between;}
+  .item-img{display:block; margin:12px auto 0; border:2px solid #967a3e; border-radius:6px; max-width:540px;}
+  .memorial{display:flex; flex-direction:column; align-items:center; gap:8px;}
+  .memorial .mt{font-size:15px; letter-spacing:.3em; color:var(--accent); font-weight:700; text-shadow:0 1px 4px #000;}
+  .gy{position:relative; width:1080px; height:390px; border:3px solid #967a3e; border-radius:10px; overflow:hidden;
+    background:linear-gradient(180deg, #0d0f14 0%, #131720 55%, #10130c 100%);
+    box-shadow:0 0 0 1px #2d303a, 0 18px 50px rgba(0,0,0,.65);}
+  .gy-glow{position:absolute; left:0; right:0; bottom:-90px; height:260px;
+    background:radial-gradient(ellipse 70% 100% at 50% 100%, rgba(58,220,90,.28), transparent 70%);
+    animation:glowPulse .6s ease-in-out infinite alternate;}
+  .gy-fog{position:absolute; left:0; right:0; bottom:0; height:74px;
+    background:linear-gradient(180deg, transparent, #171a10 40%, #0e1009);}
+  .gy-row{position:absolute; left:0; right:0; bottom:26px; display:flex; align-items:flex-end;
+    justify-content:center; gap:38px;}
+  .stone{display:flex; flex-direction:column; align-items:center; padding-top:26px; gap:5px;
+    box-shadow:inset 0 4px 6px rgba(255,255,255,.14), inset 0 -10px 18px rgba(0,0,0,.5), 0 12px 26px rgba(0,0,0,.6);}
+  .stone .rip{font-family:Cinzel,serif; font-size:21px; font-weight:900; color:#2e2c27; text-shadow:0 1px 0 rgba(255,255,255,.18);}
+  .stone .cross{width:26px; height:56px; position:relative; margin-bottom:2px;}
+  .stone .cross i{position:absolute; background:#34322c; border-radius:3px;}
+  .stone .nm{font-size:20px; font-weight:800; color:#2e2c27;}
+  .stone .dd{font-size:14px; font-weight:700; color:#463f2e;}
+  .stone .ep{font-size:12.5px; color:#4a463d; text-align:center; padding:0 14px; font-style:italic;}
+  .plot{display:flex; flex-direction:column; align-items:center; gap:6px; width:190px;}
+  .fire{position:relative; width:120px; height:120px;}
+  .fire .log{position:absolute; bottom:2px; width:64px; height:12px; border-radius:6px;
+    background:linear-gradient(180deg, #5a4028, #2b2117);}
+  .reserved{background:#3a2c1a; border:2px solid #211809; border-radius:6px; padding:6px 12px;
+    font-size:13px; font-weight:800; letter-spacing:.08em; color:#d9c49a; box-shadow:0 6px 16px rgba(0,0,0,.5);}
+  .plot .weeks{font-size:12px; color:#7d8290; font-style:italic;}
+  .gy-cap{font-size:16px; color:var(--muted); font-style:italic; text-shadow:0 1px 4px #000;}
+  .motd{height:52px; display:flex; align-items:stretch; border-top:1px solid var(--hairline); background:#0d0e13;}
+  .motd .chip{display:flex; align-items:center; padding:0 24px; background:#1a1c23;
+    border-right:1px solid var(--hairline); font-weight:800; letter-spacing:.16em; color:var(--accent); font-size:15px;}
+  .motd .q{flex:1; display:flex; align-items:center; padding:0 26px; font-size:19px; color:var(--accent);
+    white-space:nowrap; overflow:hidden;}
+  .credits{height:40px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 36px; background:#0b0c10;}
+  .credits span{color:var(--faint); font-size:14px;}
+</style>
+</head>
+<body>
+<div class="board">
+
+  <!-- ================================ HEADER ================================ -->
+  <div class="hdr">
+    <div class="hdr-glow"></div>
+    <div class="embers">
+      {%- for e in header_embers %}
+      <span style="left:{{ e.left }}%; width:{{ e.size }}px; height:{{ e.size }}px; animation-delay:{{ e.delay }}s; --drift:{{ e.drift }}px;"></span>
+      {%- endfor %}
+    </div>
+    <div class="plaque"><div class="plaque-in">
+      {%- set words = guild_name.upper().split() %}
+      {%- for w in words %}<div class="plaque-word">{{ w }}</div>{% endfor %}
+      <div class="plaque-sub">{{ realm_label }}</div>
+      <div class="nail" style="left:14px; top:12px;"></div><div class="nail" style="right:14px; top:12px;"></div>
+      <div class="nail" style="left:16px; bottom:12px;"></div><div class="nail" style="right:16px; bottom:12px;"></div>
+    </div></div>
+    <div class="widgets">
+      <div class="widget" style="width:380px;">
+        <div class="lbl">WIPES THIS WEEK</div>
+        <div class="val" style="color:{{ 'var(--red)' if wipes else 'var(--green)' }};">{{ wipes }}</div>
+        <div class="sub">deaths: {{ deaths_total }} · personal best: still zero</div>
+      </div>
+      <div class="widget" style="width:400px;">
+        <div class="lbl">SEASON REPAIR BILL (EST.)</div>
+        <div class="val">{{ "{:,}".format(repair) }}
+          <span class="coin" style="width:18px; height:18px; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420);"></span>
+          <span style="font-size:30px; font-weight:700; color:#b0b6c0;">43</span>
+          <span class="coin" style="width:13px; height:13px; background:radial-gradient(circle at 35% 30%, #e8ecf2, #b0b6c0 55%, #6a707c);"></span>
+        </div>
+        <div class="sub">donations welcome · thoughts &amp; prayers accepted</div>
+      </div>
+      <div class="widget" style="width:330px;">
+        <div class="lbl">“GO AGANE” COUNTER</div>
+        <div class="val">{{ pulls }}</div>
+        <div class="sub">morale: unaffected · copium: stable</div>
+      </div>
+    </div>
+    <div class="debuffs">
+      <span class="lbl">ACTIVE RAID DEBUFFS</span>
+      {%- for d in debuffs %}
+      <div class="debuff {{ d.kind }}" title="{{ d.title }}">
+        <img src="{{ d.url }}" alt=""><span class="stack">{{ d.stack }}</span>
+      </div>
+      {%- endfor %}
+    </div>
+    <div class="torch">
+      <div class="flame" style="width:64px; height:130px; margin-left:-32px; background:radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%); animation-duration:.6s;"></div>
+      <div class="flame" style="width:42px; height:100px; margin-left:-21px; background:radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%); animation-duration:.3s;"></div>
+      <div class="flame" style="width:22px; height:62px; margin-left:-11px; background:radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%); animation-duration:.2s;"></div>
+      <div class="handle"></div>
+    </div>
+    <div class="sign">
+      <div class="chains"><div class="chain"></div><div class="chain"></div></div>
+      <div class="plank"><div class="big">GIT GUD</div><div class="small">MGMT IS NOT RESPONSIBLE</div></div>
+    </div>
+    <div class="hdr-fade"></div>
+  </div>
+
+  <!-- ============================== INFO STRIP ============================== -->
+  <div class="info"><span class="l">{{ subtitle }}</span><span class="r">{{ date_range }}</span></div>
+
+  <!-- ================================ MIDDLE ================================ -->
+  <div class="mid">
+    {%- if hero_tiles %}
+    <div class="hero">
+      <div class="tiles">
+        {%- for t in hero_tiles %}
+        <div class="tile"><div class="lbl">{{ t.label }}</div>
+          <div class="val">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div></div>
+        {%- endfor %}
+      </div>
+      <div class="bar">
+        {%- if bar_pct %}<div class="fill" style="width:{{ bar_pct }}%;"></div>{% endif %}
+        <div class="cap">{{ bar_label }}</div>
+      </div>
+    </div>
+    {%- endif %}
+    <div class="cols">
+      {%- for col in columns %}
+      <div class="col">
+        <div class="col-h"><div class="tick"></div><div class="t">{{ col.title }}</div></div>
+        {%- if not col.sections %}
+        <div class="empty">{{ col.empty }}</div>
+        {%- endif %}
+        {%- for sec in col.sections %}
+        <div class="sec">
+          <div class="sec-h"><span class="t">{{ sec.title }}</span><span class="rule"></span></div>
+          {%- for row in sec.rows %}
+          {%- if row.text is defined %}
+          <div class="row textrow">{{ row.text }}</div>
+          {%- else %}
+          <div class="row">
+            <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
+            {%- if icons_on %}{% if row.icon %}<img class="icon" src="{{ row.icon }}" alt="">{% else %}<span class="icon blank"></span>{% endif %}{% endif %}
+            <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
+            <span class="detail">{{ row.detail }}</span>
+            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small {% if row.value_suffix_color %}style="color:{{ row.value_suffix_color }};"{% endif %}>· {{ row.value_suffix }}</small>{% endif %}</span>
+          </div>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endfor %}
+      </div>
+      {%- endfor %}
+    </div>
+    {%- if roast %}
+    <div class="roast">
+      <div class="t">ROAST OF THE WEEK</div>
+      <div class="q">{{ roast.quote }}</div>
+      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    </div>
+    {%- endif %}
+  </div>
+
+  <!-- ================================ FOOTER ================================ -->
+  <div class="ftr">
+    <div class="ftr-glow"></div>
+    <div class="embers">
+      {%- for e in footer_embers %}
+      <span style="left:{{ e.left }}%; width:{{ e.size }}px; height:{{ e.size }}px; animation-delay:{{ e.delay }}s; --drift:{{ e.drift }}px;"></span>
+      {%- endfor %}
+    </div>
+    <div class="ftr-in">
+      <div class="tooltip codex">
+        <div class="tt" style="color:var(--epic);">Codex of Conduct</div>
+        <div>Binds when you join</div>
+        <div class="split"><span>Guild Charter</span><span>Unique</span></div>
+        <div>+10 Blaming the Healer</div>
+        <div>+5 Ignoring Swirlies</div>
+        <div style="color:var(--uncommon);">Equip: Rule 1 — It is always Healmates' fault.</div>
+        <div style="color:var(--uncommon);">Equip: Rule 2 — The swirly is a suggestion.</div>
+        <div style="color:var(--uncommon);">Equip: Rule 3 — “One more pull” legally means five.</div>
+        <div style="color:var(--uncommon);">Equip: Rule 4 — GBank tab 3 is not your personal bank.</div>
+        <div style="color:var(--goldtext); font-style:italic; margin-top:8px;">“If you die in the fire, you lose DKP we don't track.”</div>
+        <div style="color:#ff2020; margin-top:6px;">Requires: Skill (missing)</div>
+      </div>
+      <div class="memorial">
+        <div class="mt">GRAVEYARD CAMPERS MEMORIAL{% if week_label %} · WEEK OF {{ week_label.upper() }}{% endif %}</div>
+        <div class="gy">
+          <div class="gy-glow"></div>
+          <div class="embers wisps">
+            {%- for e in wisps %}
+            <span style="left:{{ e.left }}%; width:{{ e.size }}px; height:{{ e.size }}px; animation-delay:{{ e.delay }}s; --drift:{{ e.drift }}px;"></span>
+            {%- endfor %}
+          </div>
+          <div class="gy-fog"></div>
+          <div class="gy-row">
+            {%- for s in stones %}
+            <div class="stone" style="width:{{ s.w }}px; height:{{ s.h }}px; transform:rotate({{ s.rot }}deg);
+                 background:linear-gradient(165deg, {{ s.light }} 0%, {{ s.mid }} 55%, {{ s.dark }} 100%);
+                 border-radius:{{ s.radius }};{% if not s.arched %} padding-top:26px;{% else %} padding-top:34px;{% endif %}">
+              {%- if s.cross %}<div class="cross"><i style="left:10px; top:0; width:7px; height:56px;"></i><i style="left:0; top:13px; width:26px; height:7px;"></i></div>
+              {%- else %}<div class="rip">R.I.P.</div>{% endif %}
+              <div class="nm">{{ s.name }}</div>
+              <div class="dd">{{ s.deaths }}</div>
+              <div class="ep">{{ s.epitaph }}</div>
+            </div>
+            {%- endfor %}
+            <div class="plot">
+              <div class="fire">
+                <div style="position:absolute; left:50%; bottom:6px; transform:translateX(-50%); width:60px; height:90px;">
+                  <div class="flame" style="width:56px; height:84px; margin-left:-28px; filter:blur(3px); background:radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%); animation-duration:.6s;"></div>
+                  <div class="flame" style="width:36px; height:64px; margin-left:-18px; filter:blur(3px); background:radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%); animation-duration:.3s;"></div>
+                  <div class="flame" style="width:18px; height:40px; margin-left:-9px; filter:blur(3px); background:radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%); animation-duration:.2s;"></div>
+                </div>
+                <div class="log" style="left:14px; transform:rotate(-14deg);"></div>
+                <div class="log" style="right:14px; transform:rotate(14deg);"></div>
+              </div>
+              <div class="reserved">RESERVED: HEALMATES</div>
+              <div class="weeks">6 consecutive weeks in the fire</div>
+            </div>
+          </div>
+        </div>
+        <div class="gy-cap">Plots assigned by deaths-per-pull. The campfire is load-bearing.</div>
+      </div>
+      <div class="tooltip item">
+        <div class="tt" style="color:var(--legendary);">{{ item_title }}</div>
+        {%- if item_src %}<img class="item-img" src="{{ item_src }}" alt="">{% else %}
+        <div style="color:var(--muted); text-align:center; padding:40px 0;">New item arriving soon™</div>{% endif %}
+      </div>
+    </div>
+  </div>
+  <div class="motd"><div class="chip">MOTD</div><div class="q">{{ motd }}</div></div>
+  <div class="credits">
+    <span>“Git Gud.” — ancient guild proverb</span>
+    <span>{{ watermark }}</span>
+  </div>
+</div>
+</body>
+</html>

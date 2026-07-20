@@ -397,10 +397,20 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                           start_dt, end_dt, no_logs)
             board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
                                 previous=previous, streaks=streaks, records=records)
-            if display_cfg.get("animate", False):
+            animate = bool(display_cfg.get("animate", False))
+            frames = int(display_cfg.get("animate_frames", 10))
+            if display_cfg.get("renderer", "pillow") == "html":
+                # The design IS the render: headless-Chromium screenshot of
+                # the HTML template. Falls back to Pillow on any failure.
+                from guild_board.html_board import generate_board_html
+                image_path = generate_board_html(
+                    *board_args,
+                    output_path="board.gif" if animate else "board.png",
+                    animate=animate, frames=frames, **board_kwargs)
+            if not image_path and animate:
                 image_path = generate_board_animation(
                     *board_args, output_path="board.gif",
-                    frames=int(display_cfg.get("animate_frames", 10)), **board_kwargs)
+                    frames=frames, **board_kwargs)
             if not image_path:
                 image_path = generate_board_image(
                     *board_args, output_path="board.png", **board_kwargs)

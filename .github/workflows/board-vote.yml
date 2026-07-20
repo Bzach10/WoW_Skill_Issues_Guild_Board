@@ -26,6 +26,9 @@ jobs:
       - name: Install fonts for board rendering
         run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core
 
+      - name: Install Chromium for the HTML renderer
+        run: python -m playwright install --with-deps chromium
+
       - name: Render Board A (dry run, no post)
         env:
           WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}

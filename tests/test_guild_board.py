@@ -465,6 +465,43 @@ def test_board_animation_gif(tmp_path):
     assert mid.getbbox() is None        # ...but only inside the bands
 
 
+def test_html_board_context_and_template():
+    """The HTML renderer builds a full context and the template renders it
+    (no browser needed — Playwright capture is exercised in CI runs)."""
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    cfg = _image_board_cfg()
+    ctx = html_board.build_context(
+        cfg, _image_board_stats(), None, None, "Voidspire", None, None, None,
+        now - timedelta(days=7), now)
+    assert ctx["columns"][0]["title"] == "RAID"
+    assert ctx["wipes"] == ctx["pulls"] - _image_board_stats()["kills"]
+    assert len(ctx["header_embers"]) == 26
+    html = html_board.render_html(ctx)
+    assert "GRAVEYARD CAMPERS MEMORIAL" in html
+    assert "GIT GUD" in html
+    assert "Voidspire" in html
+    # every animation in the template must divide the GIF loop so any
+    # frame count loops seamlessly
+    import re
+    for dur in re.findall(r"animation(?:-duration)?:\s*\.?([\d.]+)s", html):
+        period_ms = float(dur) * 1000 * 2   # alternate direction => 2x period
+        assert html_board.LOOP_MS % int(period_ms) in (0, html_board.LOOP_MS), dur
+
+
+def test_html_board_falls_back_without_browser(monkeypatch, tmp_path):
+    """Any renderer failure returns None so main falls back to Pillow."""
+    from guild_board import html_board
+    monkeypatch.setattr(html_board, "render_html",
+                        lambda *a, **k: (_ for _ in ()).throw(RuntimeError("boom")))
+    now = datetime.now(timezone.utc)
+    out = html_board.generate_board_html(
+        _image_board_cfg(), _image_board_stats(), None, None, None, None, None,
+        None, now - timedelta(days=7), now,
+        output_path=str(tmp_path / "board.png"))
+    assert out is None
+
+
 def test_watermark_renders(tmp_path):
     from PIL import Image
     cfg = _image_board_cfg()
