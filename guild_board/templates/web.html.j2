@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Weekly Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  /* ================= Responsive web board =================
+     The auto-scaling sibling of the Discord image: real HTML,
+     4 columns on a desktop, stacking down to 1 on a phone. */
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--bg); color:var(--text); font-family:var(--font-body); font-size:16px;}
+  .hdr{position:relative; padding:44px 20px 34px; text-align:center; overflow:hidden;
+    background:radial-gradient(ellipse 90% 130% at 50% -30%, rgba(224,122,40,.22), transparent 60%), #0b0c10;
+    border-bottom:1px solid var(--hairline);}
+  .hdr h1{font-family:var(--font-display); font-weight:900; letter-spacing:.1em;
+    font-size:clamp(30px, 7vw, 64px); text-shadow:0 4px 18px #000;}
+  .hdr .sub{margin-top:6px; letter-spacing:.34em; color:var(--accent); font-weight:700;
+    font-size:clamp(11px, 2.6vw, 16px);}
+  .info{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+    padding:12px 20px; color:var(--muted); font-size:14px; border-bottom:1px solid var(--hairline);}
+  .wrap{max-width:1720px; margin:0 auto; padding:22px 16px 8px;}
+  .hero{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:16px 20px; margin-bottom:20px;}
+  .headline{display:flex; align-items:center; flex-wrap:wrap; gap:10px 14px;
+    padding-bottom:12px; margin-bottom:12px; border-bottom:1px solid var(--hairline);}
+  .headline .tag{font-size:12px; letter-spacing:.16em; font-weight:800; color:var(--accent);
+    background:rgba(230,180,70,.12); border:1px solid rgba(230,180,70,.35);
+    padding:5px 10px; border-radius:6px; flex:none;}
+  .headline .txt{font-family:var(--font-display); font-weight:900; letter-spacing:.02em;
+    font-size:clamp(17px, 3.4vw, 30px); line-height:1.2;}
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px 18px;}
+  .tile .lbl{font-size:12px; color:var(--muted); letter-spacing:.05em;}
+  .tile .val{font-size:clamp(20px, 3.2vw, 28px); font-weight:800; font-variant-numeric:tabular-nums;}
+  .tile .val small{font-size:.55em; font-weight:600; margin-left:6px;}
+  .bar{position:relative; height:16px; margin-top:12px; border-radius:8px; background:#262830; overflow:hidden;}
+  .bar .fill{position:absolute; inset:0 auto 0 0; border-radius:8px; background:var(--accent);}
+  .bar .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--text);}
+  .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
+  .col{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:16px 18px; min-width:0;}
+  .col-h{display:flex; align-items:center; gap:10px; padding-bottom:10px; margin-bottom:12px;
+    border-bottom:1px solid var(--hairline);}
+  .col-h .tick{width:4px; height:20px; background:var(--accent); flex:none;}
+  .col-h .t{font-size:18px; font-weight:800; letter-spacing:.03em;}
+  .sec{margin-bottom:14px;}
+  .sec:last-child{margin-bottom:0;}
+  .sec-h{display:flex; align-items:center; gap:10px; height:30px;}
+  .sec-h .t{font-size:13px; font-weight:800; color:var(--accent); letter-spacing:.05em; white-space:nowrap;}
+  .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
+  .row{display:flex; align-items:center; min-height:38px; padding:2px 8px; margin:0 -8px;
+    border-radius:7px; min-width:0;}
+  .row.alt{background:rgba(255,255,255,.032);}
+  .row .badge{width:22px; height:22px; border-radius:50%; flex:none; display:flex;
+    align-items:center; justify-content:center; font-size:12px; font-weight:800;
+    color:#14141a; margin-right:9px;}
+  .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted);}
+  .row .icon{width:22px; height:22px; border-radius:4px; flex:none; margin-right:7px;}
+  .row .name{font-size:15px; font-weight:700; white-space:nowrap;}
+  .row .detail{font-size:13px; color:var(--muted); margin-left:9px; flex:1; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row .value{font-size:15px; font-weight:800; white-space:nowrap; margin-left:12px;
+    font-variant-numeric:tabular-nums;}
+  .row .value small{font-size:12px; font-weight:500; color:#ccd2dd;}
+  .row.textrow{font-size:13px; color:var(--muted);}
+  .empty{font-size:13px; color:var(--faint); padding:6px 0;}
+  .roast{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:16px 20px; margin-top:16px;}
+  .roast .t{font-size:13px; font-weight:800; color:var(--accent); margin-bottom:6px; letter-spacing:.05em;}
+  .roast .q{font-size:clamp(15px, 3vw, 19px); line-height:1.4;}
+  .roast .attr{font-size:13px; color:var(--muted); text-align:right; margin-top:4px;}
+  .motd{display:flex; align-items:center; gap:12px; margin:16px auto 0; max-width:1720px;
+    padding:12px 16px; color:var(--accent);}
+  .motd .chip{font-weight:800; letter-spacing:.14em; font-size:12px; background:#1a1c23;
+    border:1px solid var(--hairline); border-radius:6px; padding:5px 10px; flex:none;}
+  .motd .q{font-size:14px; min-width:0;}
+  .credits{display:flex; flex-wrap:wrap; gap:4px 16px; justify-content:space-between;
+    padding:12px 20px 26px; color:var(--faint); font-size:12px;}
+  @media (max-width:480px){
+    .row .detail{display:none;}   /* phones: name + number is the story */
+  }
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <h1>{{ guild_name.upper() }}</h1>
+    <div class="sub">{{ realm_label }}</div>
+  </div>
+  <div class="info"><span>{{ subtitle }}</span><span>{{ date_range }}</span></div>
+  <div class="wrap">
+    {%- if hero_tiles %}
+    <div class="hero">
+      {%- if headline %}
+      <div class="headline"><span class="tag">THIS WEEK</span><span class="txt">{{ headline }}</span></div>
+      {%- endif %}
+      <div class="tiles">
+        {%- for t in hero_tiles %}
+        <div class="tile"><div class="lbl">{{ t.label }}</div>
+          <div class="val">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div></div>
+        {%- endfor %}
+      </div>
+      <div class="bar">
+        {%- if bar_pct %}<div class="fill" style="width:{{ bar_pct }}%;"></div>{% endif %}
+        <div class="cap">{{ bar_label }}</div>
+      </div>
+    </div>
+    {%- endif %}
+    <div class="cols">
+      {%- for col in columns %}
+      <div class="col">
+        <div class="col-h"><div class="tick"></div><div class="t">{{ col.title }}</div></div>
+        {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
+        {%- for sec in col.sections %}
+        <div class="sec">
+          <div class="sec-h"><span class="t">{{ sec.title }}</span><span class="rule"></span></div>
+          {%- for row in sec.rows %}
+          {%- if row.text is defined %}
+          <div class="row textrow">{{ row.text }}</div>
+          {%- else %}
+          <div class="row{{ ' alt' if loop.index % 2 == 0 }}">
+            <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
+            {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
+            <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
+            <span class="detail">{{ row.detail }}</span>
+            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
+          </div>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endfor %}
+      </div>
+      {%- endfor %}
+    </div>
+    {%- if roast %}
+    <div class="roast">
+      <div class="t">ROAST OF THE WEEK</div>
+      <div class="q">{{ roast.quote }}</div>
+      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    </div>
+    {%- endif %}
+  </div>
+  <div class="motd"><span class="chip">MOTD</span><span class="q">{{ motd }}</span></div>
+  <div class="credits">
+    <span>{{ theme.credits }}</span>
+    <span>{{ watermark }}</span>
+  </div>
+</body>
+</html>

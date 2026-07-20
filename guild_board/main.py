@@ -422,6 +422,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if not image_path:
                 image_path = generate_board_image(
                     *board_args, output_path="board.png", **board_kwargs)
+            # The responsive web twin (published to GitHub Pages by CI —
+            # the auto-scaling companion the phone link button points at)
+            if (display_cfg.get("web_board") or {}).get("enabled", False):
+                from guild_board.html_board import generate_web_board
+                generate_web_board(*board_args, **board_kwargs)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.

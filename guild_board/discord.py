@@ -109,6 +109,15 @@ def _build_link_buttons(cfg):
         }
     ]
 
+    web_url = ((cfg.get("display") or {}).get("web_board") or {}).get("url")
+    if web_url:
+        buttons.append({
+            "type": 2,
+            "style": 5,
+            "label": "\U0001F4F1 Web Board",
+            "url": web_url,
+        })
+
     roast_form = cfg.get("roast_form_url")
     if roast_form:
         buttons.append({

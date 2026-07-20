@@ -46,8 +46,19 @@ display:
   animate_frames: 10
   # Phone-readable portrait companion image posted alongside the board
   # (top-3 per category, big text). The post text also carries TL;DR
-  # callout lines either way.
+  # callout lines either way. Consider turning this off once the
+  # web_board link below is live — the website replaces it.
   mobile_companion: true
+  # Responsive WEBSITE version of the board — a "📱 Web Board" button on
+  # the Discord post links to it, and it auto-scales to any screen.
+  # CI publishes site/index.html to the public repo below (needs the
+  # WEB_BOARD_TOKEN secret — see README "Web board" for the 5-minute
+  # one-time setup). Safe to leave enabled before setup: without the
+  # secret the publish step just skips.
+  web_board:
+    enabled: true
+    repo: "Bzach10/wow-guild-board"                    # public repo that hosts the page
+    url: "https://bzach10.github.io/wow-guild-board/"  # where the button points
   # NOTE: colors, backgrounds, fonts, header/footer modules and all the
   # gag text moved to theme.yml — see CUSTOMIZING.md. Any member can
   # safely edit that file.

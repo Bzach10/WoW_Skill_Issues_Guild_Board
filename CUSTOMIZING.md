@@ -114,12 +114,15 @@ awards:
   top_n: 3
 ```
 
-### The phone version
+### The phone versions
 
-Every post now includes a second, portrait image built for phones (top-3 per
+Every post includes a second, portrait image built for phones (top-3 per
 category, big text), plus TL;DR callout lines in the message itself so the
-highlights land without opening any image. Turn the companion off in
-`config.yml`:
+highlights land without opening any image. There's also a **📱 Web Board**
+button linking to a live responsive website that truly auto-scales to any
+screen (see README "Web board" for the one-time hosting setup — the web page
+uses your theme colors and fonts automatically). Turn the image companion off
+in `config.yml` once the website is live:
 
 ```yaml
 display:

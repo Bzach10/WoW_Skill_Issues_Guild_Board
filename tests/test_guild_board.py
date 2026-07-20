@@ -1203,3 +1203,40 @@ def test_collect_parses_only_returns_tanks(monkeypatch):
     assert tanks["Brewz"]["parse"] == 77.0
     assert dps["Rakell"]["parse"] == 90.0
     assert tanks["Brewz"]["difficulty"] == 5
+
+
+# --- responsive web board ---------------------------------------------------------
+
+
+def test_web_template_renders_responsive():
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        _image_board_cfg(), _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    html = html_board.render_html(ctx, template="web.html.j2")
+    assert 'name="viewport"' in html            # phone scaling enabled
+    assert "TEST GUILD" in html
+    assert "auto-fit" in html                   # columns reflow with the screen
+    assert "ROAST OF THE WEEK" in html
+
+
+def test_generate_web_board_writes_file(tmp_path):
+    from guild_board.html_board import generate_web_board
+    now = datetime.now(timezone.utc)
+    out = generate_web_board(
+        _image_board_cfg(), _image_board_stats(), None, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now,
+        output_path=str(tmp_path / "site" / "index.html"))
+    assert out and os.path.exists(out)
+
+
+def test_link_buttons_include_web_board():
+    cfg = {"guild": {"name": "Test", "realm_slug": "bleeding-hollow", "region": "us"},
+           "display": {"web_board": {"url": "https://example.github.io/board/"}}}
+    rows = gb_discord._build_link_buttons(cfg)
+    labels = [b["label"] for b in rows[0]["components"]]
+    assert any("Web Board" in l for l in labels)
+    cfg["display"] = {}
+    labels = [b["label"] for b in gb_discord._build_link_buttons(cfg)[0]["components"]]
+    assert not any("Web Board" in l for l in labels)

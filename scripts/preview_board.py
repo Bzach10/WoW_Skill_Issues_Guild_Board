@@ -164,8 +164,12 @@ def main():
     Path("board_render.html").write_text(html_board.render_html(ctx), encoding="utf-8")
     Path("board_mobile_render.html").write_text(
         html_board.render_html(ctx, template="mobile.html.j2"), encoding="utf-8")
-    print("Wrote board_render.html (desktop) and board_mobile_render.html (mobile).")
-    print("Open them in any browser — refresh after each theme.yml edit.")
+    Path("board_web_render.html").write_text(
+        html_board.render_html(ctx, template="web.html.j2"), encoding="utf-8")
+    print("Wrote board_render.html (desktop image), board_mobile_render.html "
+          "(mobile image) and board_web_render.html (responsive website).")
+    print("Open them in any browser — refresh after each theme.yml edit. "
+          "Resize the window on the web one to see it adapt.")
 
     if args.png:
         out = html_board.generate_board_html(

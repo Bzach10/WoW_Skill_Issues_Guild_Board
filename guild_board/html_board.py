@@ -442,6 +442,30 @@ def render_html(context, template="board.html.j2"):
     return env.get_template(template).render(**context)
 
 
+def generate_web_board(cfg, stats, standing, leaders, zone_name,
+                       mplus_results, mplus_season_scores, mplus_season_parses,
+                       start_dt, end_dt, no_logs=False,
+                       output_path="site/index.html", **kwargs):
+    """The responsive web twin of the board image (templates/web.html.j2),
+    written to site/ for CI to publish to GitHub Pages. Pure HTML render —
+    no browser needed. Best-effort: returns the path or None, and never
+    raises into the posting flow."""
+    try:
+        context = build_context(
+            cfg, stats, standing, leaders, zone_name, mplus_results,
+            mplus_season_scores, mplus_season_parses, start_dt, end_dt,
+            no_logs=no_logs, **kwargs)
+        out = Path(output_path)
+        out.parent.mkdir(parents=True, exist_ok=True)
+        out.write_text(render_html(context, template="web.html.j2"),
+                       encoding="utf-8")
+        logger.info("Generated web board at %s", out)
+        return str(out)
+    except Exception as exc:
+        logger.warning("Web board render failed (%s); the post proceeds without it.", exc)
+        return None
+
+
 def _capture_mobile(browser, context, mobile_path):
     """Portrait companion PNG in the same browser session. Best-effort:
     a mobile failure never sinks the main board."""

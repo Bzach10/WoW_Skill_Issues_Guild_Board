@@ -83,6 +83,32 @@ jobs:
           fi
           python leaderboard.py "${args[@]}"
 
+      - name: Publish web board to GitHub Pages
+        env:
+          WEB_BOARD_TOKEN: ${{ secrets.WEB_BOARD_TOKEN }}
+        run: |
+          if [ ! -f site/index.html ]; then
+            echo "No web board rendered this run; skipping publish."
+            exit 0
+          fi
+          if [ -z "$WEB_BOARD_TOKEN" ]; then
+            echo "WEB_BOARD_TOKEN secret not set; skipping web publish (see README 'Web board')."
+            exit 0
+          fi
+          repo=$(python -c "import yaml; print((((yaml.safe_load(open('config.yml')).get('display') or {}).get('web_board') or {}).get('repo') or ''))")
+          if [ -z "$repo" ]; then
+            echo "display.web_board.repo not set in config.yml; skipping."
+            exit 0
+          fi
+          cd site
+          git init -q -b gh-pages
+          git config user.email "action@github.com"
+          git config user.name "GitHub Action"
+          git add -A
+          git commit -q -m "Weekly web board $(date -u +%F)"
+          git push -q -f "https://x-access-token:${WEB_BOARD_TOKEN}@github.com/${repo}.git" gh-pages
+          echo "Web board published to https://github.com/${repo} (gh-pages)."
+
       - name: Commit roster cache and board state
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
