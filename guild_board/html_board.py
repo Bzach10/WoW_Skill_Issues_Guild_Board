@@ -37,12 +37,13 @@ WIDTH = 3000
 HEADER_H = 300
 FOOTER_TOTAL = 430 + 52 + 40
 
-# tombstone geometry from the design (w, h, arched, cross, rotation)
+# tombstone geometry (w, h, arched, cross, rotation) — stones are pure art
+# now; names/deaths live on high-contrast plates beneath them
 STONES = [
-    (170, 216, True, False, -2.5, ("#767268", "#56534b", "#3e3c36")),
-    (180, 238, False, True, 1.6, ("#7c786d", "#5a574f", "#403e38")),
-    (158, 196, True, False, -1.2, ("#6e6a60", "#514e46", "#3a3832")),
-    (158, 182, False, False, 2.2, ("#6e6a60", "#514e46", "#3a3832")),
+    (170, 150, True, False, -2.5, ("#7c7869", "#5c594c", "#403e37")),
+    (180, 168, False, True, 1.6, ("#827e6e", "#605d50", "#434139")),
+    (158, 134, True, False, -1.2, ("#746f61", "#575447", "#3c3a33")),
+    (158, 122, False, False, 2.2, ("#746f61", "#575447", "#3c3a33")),
 ]
 
 DEBUFFS = [
@@ -202,9 +203,8 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
             "w": w, "h": h, "arched": arched, "cross": cross, "rot": rot,
             "light": light, "mid": mid, "dark": dark,
             "radius": (f"{w // 2}px {w // 2}px 6px 6px" if arched else "14px 14px 6px 6px"),
-            "name": name.upper()[:12],
+            "name": name.upper()[:16],
             "deaths": f"{count} DEATHS{rate}",
-            "epitaph": theme_bands.EPITAPHS[i % len(theme_bands.EPITAPHS)],
         })
 
     debuffs = []
