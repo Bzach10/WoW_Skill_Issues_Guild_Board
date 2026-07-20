@@ -262,8 +262,14 @@
     }
     rows.forEach(function (r) { r.setAttribute('data-role', roleOf(r)); });
 
-    /* --- search + role filter --- */
+    /* --- search + role filter (remembered across visits) --- */
     var activeRole = 'all', query = '';
+    function remember() {
+      try {
+        localStorage.setItem('gb.role', activeRole);
+        localStorage.setItem('gb.query', query);
+      } catch (e) { /* private mode etc. — filters just reset next visit */ }
+    }
     function apply() {
       rows.forEach(function (r) {
         var okRole = activeRole === 'all' || r.getAttribute('data-role') === activeRole;
@@ -285,6 +291,7 @@
           Array.prototype.forEach.call(filters.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
           b.classList.add('on');
           activeRole = b.getAttribute('data-role');
+          remember();
           apply();
         });
       });
@@ -293,9 +300,24 @@
       search.hidden = false;
       search.addEventListener('input', function () {
         query = search.value.trim().toLowerCase();
+        remember();
         apply();
       });
     }
+    /* restore the last visit's view */
+    try {
+      var savedRole = localStorage.getItem('gb.role');
+      var savedQuery = localStorage.getItem('gb.query') || '';
+      if (filters && savedRole && savedRole !== 'all') {
+        var btn = filters.querySelector('button[data-role="' + savedRole + '"]');
+        if (btn) { btn.click(); }
+      }
+      if (search && savedQuery) {
+        search.value = savedQuery;
+        query = savedQuery.toLowerCase();
+        apply();
+      }
+    } catch (e) { /* fail-quiet */ }
 
     /* --- week archive dropdown (manifest written by CI) --- */
     var inArchive = location.pathname.indexOf('/archive/') !== -1;

@@ -29,3 +29,8 @@ Generated three pieces in assets/generated/: wanted_parchment (now the
 real texture behind the WANTED columns, theme key backgrounds.poster),
 wall_header_art (candlelit stone wall, ready for the header), and
 guild_crest (golden skull + crossed swords, ready for web masthead).
+
+## Iteration 3 (~4:15 AM)
+Web board remembers each visitor's role filter and player search across
+visits (localStorage, fail-quiet in private mode). Playwright-verified:
+tap Tanks, reload, still filtered to tanks. 95 tests remain green.
