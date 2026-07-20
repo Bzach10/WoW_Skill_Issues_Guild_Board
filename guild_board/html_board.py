@@ -19,6 +19,7 @@ import io
 import logging
 import os
 import random
+import re
 from pathlib import Path
 
 from PIL import Image
@@ -65,6 +66,23 @@ def _css(color):
     if isinstance(color, str):
         return color
     return f"rgb({color[0]},{color[1]},{color[2]})"
+
+
+_INK_RE = re.compile(r"rgb\((\d+),(\d+),(\d+)\)")
+
+
+def _ink(css):
+    """Darken a screen color into ink for LIGHT parchment posters.
+    Class colors are designed for dark backgrounds; on paper they must be
+    printed like ink — same hue, deep enough to read. Whitish colors
+    (Priest) become dark sepia rather than washed gray."""
+    m = _INK_RE.match(css or "")
+    if not m:
+        return css
+    r, g, b = (int(v) for v in m.groups())
+    if min(r, g, b) > 195:
+        return "rgb(52,44,34)"
+    return f"rgb({int(r * 0.52)},{int(g * 0.52)},{int(b * 0.52)})"
 
 
 def _icon_url(row):
@@ -179,19 +197,25 @@ def _html_rows(sections, lookup=None):
             icon = _icon_url(row)
             if icon is None and key in lookup:
                 icon = ICON_CDN.format(CLASS_ICONS[lookup[key]])
+            color_css = _css(color)
+            value_css = _css(row.get("value_color", (235, 236, 240)))
+            suffix_css = _css(row["value_suffix_color"]) if row.get("value_suffix_color") else None
             rows.append({
                 "rank": i + 1,
                 "medal": _css(MEDAL_FILLS[i]) if i < len(MEDAL_FILLS) else None,
                 "icon": icon,
                 "name": row.get("name", ""),
-                "color": _css(color),
+                "color": color_css,
+                "ink": _ink(color_css),
                 "detail": row.get("detail", ""),
                 "detail_bits": [b for b in (row.get("detail_bits")
                                             or ([row["detail"]] if row.get("detail") else [])) if b],
                 "value": row.get("value", ""),
-                "value_color": _css(row.get("value_color", (235, 236, 240))),
+                "value_color": value_css,
+                "value_ink": _ink(value_css),
                 "value_suffix": row.get("value_suffix"),
-                "value_suffix_color": _css(row["value_suffix_color"]) if row.get("value_suffix_color") else None,
+                "value_suffix_color": suffix_css,
+                "value_suffix_ink": _ink(suffix_css) if suffix_css else None,
             })
         out.append({"title": sec["title"], "rows": rows})
     return out

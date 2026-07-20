@@ -79,7 +79,9 @@
   .col{flex:1; min-width:0; position:relative; padding:34px 24px 24px;
     background:
       {%- if theme.backgrounds.poster %}
-      linear-gradient(rgba(22,15,8,.84), rgba(20,13,7,.88)),
+      {#- REAL poster: light paper at full strength, art knocked back to a
+          watermark by a paper glaze; all text inside prints as INK. #}
+      linear-gradient(rgba(240,228,201,.62), rgba(235,221,190,.68)),
       url("{{ theme.backgrounds.poster }}") center/cover;
       {%- else %}
       radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.07), transparent 62%),
@@ -103,7 +105,7 @@
   .col-h .eyebrow{display:block; font-family:var(--font-display); font-size:15px;
     letter-spacing:.5em; text-indent:.5em; color:#c8a55f;}
   .col-h .t{display:block; font-family:var(--font-display); font-size:31px; font-weight:400;
-    color:#ecd9b0; letter-spacing:.05em; margin-top:6px;
+    color:#ecd9b0; letter-spacing:.05em; word-spacing:.35em; margin-top:6px;
     text-shadow:0 2px 0 rgba(0,0,0,.6), 0 0 26px rgba(230,180,70,.18);}
   .col-h .bounty{display:block; font-size:12px; letter-spacing:.3em; text-indent:.3em;
     color:#94794c; margin-top:8px; font-weight:700;}
@@ -113,6 +115,25 @@
     color:#c8a55f; white-space:nowrap; letter-spacing:.08em;}
   .sec-h .rule{flex:1; height:1px;
     background:linear-gradient(90deg, #7c6136, transparent);}
+  {%- if theme.backgrounds.poster %}
+  /* ---- INK-ON-PAPER overrides: everything inside a poster prints dark ---- */
+  .col{border:2px solid #5c4526; box-shadow: inset 0 0 0 6px rgba(74,54,26,.25),
+    inset 0 0 60px rgba(88,60,20,.22), 0 16px 36px rgba(0,0,0,.65);}
+  .col::before{background:radial-gradient(circle at 35% 30%, #8d7a5e, #2b2117 70%);}
+  .col-h{border-bottom:3px double #5c4526;}
+  .col-h .eyebrow{color:#4a3113; text-shadow:none;}
+  .col-h .t{color:#2c2010; text-shadow:0 1px 0 rgba(255,244,214,.5);}
+  .col-h .bounty{color:#6b5433;}
+  .col .sec-h .t{color:#4a3113;}
+  .col .sec-h .rule{background:linear-gradient(90deg, #6d5433, transparent);}
+  .col .row.alt{background:rgba(74,49,19,.10);}
+  .col .row .detail{color:#5f4a2e;}
+  .col .row .value small{color:#5f4a2e;}
+  .col .row .badge.plain{border-color:#6d5433; color:#5f4a2e;}
+  .col .row.textrow{color:#5f4a2e;}
+  .col .empty{color:#7a6244;}
+  .col .row .icon{box-shadow:0 0 0 1px rgba(60,40,15,.5);}
+  {%- endif %}
   .row{display:flex; align-items:center; height:46px; min-width:0;
     padding:0 12px; margin:0 -12px; border-radius:8px;}
   .row.alt{background:rgba(255,220,160,.045);}
@@ -194,11 +215,12 @@
           <div class="row textrow">{{ row.text }}</div>
           {%- else %}
           <div class="row{{ ' alt' if loop.index % 2 == 0 }}">
+            {%- set paper = theme.backgrounds.poster %}
             <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
             {%- if icons_on %}{% if row.icon %}<img class="icon" src="{{ row.icon }}" alt="">{% else %}<span class="icon blank"></span>{% endif %}{% endif %}
-            <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
+            <span class="name" style="color:{{ row.ink if paper else row.color }};">{{ row.name }}</span>
             <span class="detail"{% if row.detail_bits %} data-bits='{{ row.detail_bits | tojson }}'{% endif %}>{{ row.detail }}</span>
-            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small {% if row.value_suffix_color %}style="color:{{ row.value_suffix_color }};"{% endif %}>· {{ row.value_suffix }}</small>{% endif %}</span>
+            <span class="value" style="color:{{ row.value_ink if paper else row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small {% if row.value_suffix_color %}style="color:{{ (row.value_suffix_ink if paper else row.value_suffix_color) }};"{% endif %}>· {{ row.value_suffix }}</small>{% endif %}</span>
           </div>
           {%- endif %}
           {%- endfor %}

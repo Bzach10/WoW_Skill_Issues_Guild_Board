@@ -34,3 +34,12 @@ guild_crest (golden skull + crossed swords, ready for web masthead).
 Web board remembers each visitor's role filter and player search across
 visits (localStorage, fail-quiet in private mode). Playwright-verified:
 tap Tanks, reload, still filtered to tanks. 95 tests remain green.
+
+## ~4:30 AM: "Imperial Bounty" — the 10/10 poster push
+User called the dark posters weak (right). Art director's run supplied an
+imperial void theme + light parchment with inked void-crown watermark;
+I built the missing architecture: posters render as REAL light paper
+(full-strength texture + light glaze) with an ink text pipeline — class
+colors darkened to ink weight, sepia details, engraved ink titles.
+Dramatic contrast against the purple ruin backdrop. Unless told
+otherwise, merging to main ~8:15 AM so the 9 AM post carries it.
