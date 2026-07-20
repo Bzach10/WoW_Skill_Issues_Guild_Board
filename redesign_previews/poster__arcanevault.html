@@ -1,4 +1,6 @@
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -84,14 +86,23 @@
     background:linear-gradient(90deg, var(--accent), #f6c96a);}
   .bar2 .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:12px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.6);}
-  .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
-  .col{position:relative; padding:26px 18px 16px; min-width:0;
+  /* Posters are PAPER: unequal widths, a little tilt, and edges torn by
+     the shared deckle filter rather than a 2px rectangle. The sheet is
+     painted on a filtered ::before so the text on top stays crisp. */
+  .cols{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(20px,2.6vw,34px) clamp(16px,2.2vw,26px); align-items:start;}
+  .col{position:relative; padding:30px 22px 20px; min-width:0;}
+  .col > *{position:relative; z-index:1;}
+  .col::before{content:""; position:absolute; inset:-5px; z-index:0;
     background:
       linear-gradient(rgba(240,228,201,.62), rgba(235,221,190,.68)),
-      url("../assets/generated/arcanevault/poster.png") center/cover !important;
-    border:2px solid #5c4526 !important;
-    box-shadow: inset 0 0 0 5px rgba(74,54,26,.22), 0 12px 30px rgba(0,0,0,.5) !important;
-    border-radius:3px 10px 4px 12px !important;}
+      url("../assets/generated/arcanevault/poster.png") center/cover;
+    box-shadow:inset 0 0 0 5px rgba(74,54,26,.22);
+    filter:url(#gb-deckle) drop-shadow(0 14px 30px rgba(0,0,0,.5));}
+  .col:nth-child(1){grid-column:1 / span 7; transform:rotate(-.5deg);}
+  .col:nth-child(2){grid-column:8 / span 5; margin-top:26px; transform:rotate(.45deg);}
+  .col:nth-child(3){grid-column:1 / span 5; margin-top:-10px; transform:rotate(.3deg);}
+  .col:nth-child(4){grid-column:6 / span 7; transform:rotate(-.28deg);}
   /* ink-on-paper: match the image board's Imperial Bounty posters */
   .col .col-h{border-bottom-color:#5c4526;}
   .col .col-h .eyebrow{color:#4a3113;}
@@ -106,8 +117,9 @@
   .col .row .badge.plain{border-color:#6d5433; color:#5f4a2e;}
   .col .row.textrow{color:#5f4a2e;}
   .col .empty{color:#7a6244;}
-  .col::before{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
-    width:10px; height:10px; border-radius:50%;
+  /* the nail — ::after, because ::before is now the torn sheet itself */
+  .col::after{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
+    z-index:2; width:10px; height:10px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
     box-shadow:0 2px 4px rgba(0,0,0,.7);}
   .col-h{display:block; text-align:center; padding-bottom:10px; margin-bottom:12px;
@@ -161,6 +173,48 @@
   .credits{display:flex; flex-wrap:wrap; gap:4px 16px; justify-content:space-between;
     padding:14px 20px 28px; color:var(--faint); font-size:12px;}
   .credits a{color:var(--faint);}
+  /* cultural modules, framed by the theme */
+  .strip{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(20px,3vw,36px) clamp(16px,2.2vw,28px); align-items:start; margin-top:6px;}
+  .strip > *{min-width:0;}
+  .strip > *:nth-child(1){grid-column:span 5;}
+  .strip > *:nth-child(2){grid-column:span 4; margin-top:18px;}
+  .strip > *:nth-child(3){grid-column:span 3; margin-top:-12px;}
+  .strip > *:nth-child(4){grid-column:span 6;}
+  .strip > *:nth-child(n+5){grid-column:span 6;}
+  .mod{--fr-surface:linear-gradient(172deg, rgba(var(--bg-rgb),.92), rgba(var(--bg-rgb),.72));}
+  .mod-h{font-size:13px; font-weight:800; color:var(--accent); letter-spacing:.08em;
+    text-transform:uppercase; margin-bottom:12px;}
+  .mod-quote{font-family:var(--font-display); font-size:clamp(16px,3.2vw,21px); line-height:1.45;}
+  .mod-attr{font-size:13px; color:var(--muted); text-align:right; margin-top:8px;}
+  .mod-amt{font-family:var(--font-display); font-weight:900; color:var(--red);
+    font-size:clamp(26px,5vw,42px); line-height:1; font-variant-numeric:tabular-nums;}
+  .mod-amt sup{font-size:.4em; margin-left:3px; color:var(--muted);}
+  .mod-sub{font-size:12px; color:var(--muted); margin-top:6px;}
+  .mod-lines{list-style:none; font-size:13px; line-height:1.7; margin-top:12px;
+    padding-top:10px; border-top:1px solid var(--hairline);}
+  .mod-lines li{display:flex; gap:10px;}
+  .mod-lines li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
+  .mod-lines li.is-green{color:var(--green);}
+  .mod-flavor{font-style:italic; color:var(--muted); font-size:12.5px; margin-top:10px;}
+  .mod-req{color:var(--red); font-size:12px; margin-top:4px;}
+  .mod-plots{display:flex; flex-wrap:wrap; gap:10px;}
+  .plot{flex:1 1 108px; text-align:center; padding:13px 8px 10px;
+    border-radius:54% 54% 5px 5px / 30% 30% 5px 5px;
+    background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(0,0,0,.32));
+    box-shadow:inset 0 0 0 1px var(--hairline), 0 6px 14px rgba(0,0,0,.35);}
+  .plot-n{font-family:var(--font-display); font-size:12.5px; font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .plot-d{font-size:10.5px; color:var(--muted); margin-top:5px;}
+  .mod-cap{font-size:12px; color:var(--faint); margin-top:10px;}
+  .mod-res{font-size:11.5px; color:var(--accent); margin-top:8px;}
+  .mod-img{width:100%; height:auto; display:block;}
+
+  @media (max-width:900px){
+    .cols,.strip{grid-template-columns:1fr;}
+    .col:nth-child(n){grid-column:1 / -1; margin-top:0; transform:none;}
+    .strip > *:nth-child(n){grid-column:1 / -1; margin-top:0;}
+  }
   @media (max-width:480px){
     .row .detail{display:none;}   /* phones: name + number is the story */
     .bar input{width:110px;}
@@ -169,6 +223,152 @@
 </style>
 </head>
 <body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- ragged, hand-torn paper edge -->
+    <filter id="gb-deckle" x="-12%" y="-12%" width="124%" height="124%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.019"
+                    numOctaves="4" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="24"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- coarser, burnt/eaten edge for the heavier surfaces -->
+    <filter id="gb-singe" x="-18%" y="-18%" width="136%" height="136%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.007 0.014"
+                    numOctaves="5" seed="19" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="38"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- subtle wobble: metal that was hammered, not milled -->
+    <filter id="gb-hammered" x="-8%" y="-8%" width="116%" height="116%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.03"
+                    numOctaves="3" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<style>
+  /* ===================== the frame kit ===================== */
+  .fr{position:relative; padding:26px 24px 24px; min-width:0;
+      --fr-surface:var(--panel);
+      --fr-edge:var(--hairline);}
+  /* content rides above the filtered plate */
+  .fr > *{position:relative; z-index:1;}
+  /* the plate itself — this is what gets torn/curled/arched */
+  .fr::before{content:""; position:absolute; inset:0; z-index:0;
+    background:var(--fr-surface);
+    box-shadow:inset 0 0 0 1px rgba(var(--bg-rgb),.35);}
+
+  /* per-module art, laid into the surface under a scrim so text holds */
+  .fr[data-art]::before{
+    background-image:var(--fr-art);
+    background-size:cover; background-position:center;
+    background-blend-mode:multiply;}
+
+  /* --- torn: ragged deckle edge, like a page pulled from a book --- */
+  .fr--torn{padding:30px 28px 28px;}
+  .fr--torn::before{
+    filter:url(#gb-deckle) drop-shadow(0 14px 26px rgba(0,0,0,.42));
+    inset:-4px;}
+
+  /* --- singed: heavier, burnt-eaten edge --- */
+  .fr--singe::before{
+    filter:url(#gb-singe) drop-shadow(0 16px 30px rgba(0,0,0,.5));
+    inset:-8px;}
+
+  /* --- scroll: curled rails top and bottom, body between them --- */
+  .fr--scroll{padding:38px 30px 38px;}
+  .fr--scroll::before{inset:14px 0; filter:drop-shadow(0 12px 22px rgba(0,0,0,.36));}
+  .fr--scroll::after{content:""; position:absolute; left:-6px; right:-6px; height:26px;
+    z-index:0; top:0; border-radius:13px;
+    background:linear-gradient(180deg,
+      rgba(255,255,255,.16), var(--fr-surface) 46%, rgba(0,0,0,.34));
+    box-shadow:0 3px 8px rgba(0,0,0,.4), inset 0 -2px 4px rgba(0,0,0,.35);}
+  .fr--scroll .fr-roll-b{position:absolute; left:-6px; right:-6px; bottom:0; height:26px;
+    z-index:0; border-radius:13px;
+    background:linear-gradient(0deg,
+      rgba(255,255,255,.12), var(--fr-surface) 46%, rgba(0,0,0,.34));
+    box-shadow:0 -3px 8px rgba(0,0,0,.4), inset 0 2px 4px rgba(0,0,0,.35);}
+
+  /* --- arch: gothic window / headstone --- */
+  .fr--arch{padding:46px 24px 22px;}
+  .fr--arch::before{
+    border-radius:48% 48% 6px 6px / 30% 30% 6px 6px;
+    filter:drop-shadow(0 14px 26px rgba(0,0,0,.44));
+    box-shadow:inset 0 0 0 1px var(--fr-edge),
+               inset 0 3px 0 rgba(255,255,255,.10);}
+
+  /* --- plate: riveted, hammered metal --- */
+  .fr--plate{padding:28px 26px 24px;}
+  .fr--plate::before{
+    border-radius:10px;
+    filter:url(#gb-hammered) drop-shadow(0 12px 24px rgba(0,0,0,.46));
+    box-shadow:inset 0 0 0 2px var(--fr-edge),
+               inset 0 2px 0 rgba(255,255,255,.13),
+               inset 0 -3px 8px rgba(0,0,0,.4);}
+  /* four rivets, drawn not imported */
+  .fr--plate::after{content:""; position:absolute; inset:11px; z-index:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px);
+    background-size:8px 8px; background-repeat:no-repeat;
+    background-position:left top, right top, left bottom, right bottom;}
+
+  .fr--none{padding:6px 0;}
+  .fr--none::before{display:none;}
+
+  /* --- overlap + tilt: the grid-breakers. Small, deterministic, and
+         switched off on phones where they'd just cause overflow. --- */
+  .fr-tilt-a{transform:rotate(-.7deg);}
+  .fr-tilt-b{transform:rotate(.55deg);}
+  .fr-tilt-c{transform:rotate(-.35deg);}
+  .fr-lift{margin-top:-26px;}
+  .fr-sink{margin-top:22px;}
+
+  /* ===================== illustrated dividers ===================== */
+  .orn-rule{display:flex; align-items:center; gap:14px; justify-content:center;
+    margin:clamp(22px,4vw,40px) 0; color:var(--accent);}
+  .orn-rule i{flex:1; height:1px; max-width:220px;
+    background:linear-gradient(90deg, transparent, currentColor);}
+  .orn-rule i+i{background:linear-gradient(90deg, currentColor, transparent);}
+  .orn-rule svg{flex:none; opacity:.9;}
+
+  /* a soft vignette instead of a hard border — used where a panel would
+     otherwise read as a box */
+  .soft-edge{
+    -webkit-mask-image:radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%);
+    mask-image:radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%);}
+
+  @media (max-width:760px){
+    .fr-tilt-a,.fr-tilt-b,.fr-tilt-c{transform:none;}
+    .fr-lift{margin-top:0;} .fr-sink{margin-top:0;}
+    .fr{padding:22px 18px 20px;}
+  }
+  /* Rough edges cost a repaint; honour the reduced-motion hint by
+     dropping the displacement filters, keeping the shape and depth. */
+  @media (prefers-reduced-motion:reduce){
+    .fr--torn::before,.fr--singe::before,.fr--plate::before{filter:none;}
+  }
+</style>
+
+
+
+
+
+
+
+
+
   <div class="hdr">
     <h1>SKILL ISSUES</h1>
     <div class="sub">BLEEDING HOLLOW · US</div>
@@ -212,7 +412,7 @@
       </div>
     </div>
     <div class="cols">
-      <div class="card col" id="col-1" style="scroll-margin-top:64px;">
+      <div class="col" id="col-1" style="scroll-margin-top:64px;">
         <div class="col-h"><span class="eyebrow">✦ ARCANE WRIT ✦</span>
           <span class="t">RAID</span><span class="bounty">SEALED BY THE VAULT · REWARD: PASSAGE</span>
         </div>
@@ -343,7 +543,7 @@
           </div>
         </div>
       </div>
-      <div class="card col" id="col-2" style="scroll-margin-top:64px;">
+      <div class="col" id="col-2" style="scroll-margin-top:64px;">
         <div class="col-h"><span class="eyebrow">✦ ARCANE WRIT ✦</span>
           <span class="t">MYTHIC PLUS</span><span class="bounty">SEALED BY THE VAULT · REWARD: PASSAGE</span>
         </div>
@@ -468,7 +668,7 @@
           </div>
         </div>
       </div>
-      <div class="card col" id="col-3" style="scroll-margin-top:64px;">
+      <div class="col" id="col-3" style="scroll-margin-top:64px;">
         <div class="col-h"><span class="eyebrow">✦ ARCANE WRIT ✦</span>
           <span class="t">SEASONAL MYTHIC PLUS</span><span class="bounty">SEALED BY THE VAULT · REWARD: PASSAGE</span>
         </div>
@@ -575,7 +775,7 @@
           <div class="row textrow">Rakdisc trails Brewzleeh by 156</div>
         </div>
       </div>
-      <div class="card col" id="col-4" style="scroll-margin-top:64px;">
+      <div class="col" id="col-4" style="scroll-margin-top:64px;">
         <div class="col-h"><span class="eyebrow">✦ ARCANE WRIT ✦</span>
           <span class="t">SEASONAL GUILD</span><span class="bounty">SEALED BY THE VAULT · REWARD: PASSAGE</span>
         </div>
@@ -695,9 +895,70 @@
         </div>
       </div>
     </div>
-    <div class="card roast" id="roast" style="scroll-margin-top:64px;">
-      <div class="t">ROAST OF THE WEEK</div>
-      <div class="q">“Healmates Sucks”</div><div class="attr">— Rakdaddy, aimed at Healmates</div>
+    <div class="orn-rule"><i></i><svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+    <path d="M9 1C5 1 2.5 3.6 2.5 7c0 2 .9 3 1.8 3.8V13h9.4v-2.2C14.6 10 15.5 9 15.5 7 15.5 3.6 13 1 9 1z"
+          fill="currentColor"/>
+    <circle cx="6.4" cy="7" r="1.5" fill="var(--bg)"/><circle cx="11.6" cy="7" r="1.5" fill="var(--bg)"/>
+    <path d="M5 14.5h8M6 16.5h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </svg><i></i></div>
+    <div class="strip">
+      <div id="roast" style="scroll-margin-top:64px;">
+        <div class="fr fr--torn fr-tilt-b mod mod--roast">
+          <div class="mod-h">ROAST OF THE WEEK</div>
+  <div class="mod-quote">“Healmates Sucks”</div><div class="mod-attr">— Rakdaddy, aimed at Healmates</div>
+        
+</div>
+      </div>
+      <div id="debt" style="scroll-margin-top:64px;">
+        <div class="fr fr--plate fr-tilt-c mod mod--debt">
+          <div class="mod-h">Brewzleeh&#39;s Gambling Debt</div>
+  <div class="mod-amt">2,167,521<sup>g</sup></div>
+  <div class="mod-sub">and climbing · interest: 9.99% weekly · collateral: his monk</div>
+  <ul class="mod-lines">
+    <li class=""><span>Binds on !roll</span></li>
+    <li class=""><span>Deathroll Ledger</span><span class="r">Unique</span></li>
+    <li class=""><span>+15 Gambling Addiction</span></li>
+    <li class=""><span>-100% Gold Retention Aura</span></li>
+    <li class="is-green"><span>Equip: Doubles down on a 2% win chance.</span></li>
+    <li class="is-green"><span>Equip: Cannot leave while ahead. Has never been ahead.</span></li>
+    <li class="is-green"><span>Use: Borrows from GBank tab 3. Again. (No Cooldown)</span></li>
+  </ul><div class="mod-flavor">“Just one more roll.” — Brewzleeh, at 4 AM</div><div class="mod-req">Requires: An intervention</div>
+        
+</div>
+      </div>
+      <div id="graveyard" style="scroll-margin-top:64px;">
+        <div class="fr fr--arch mod mod--graveyard">
+          
+  <div class="mod-h">GRAVEYARD CAMPERS MEMORIAL</div>
+  <div class="mod-plots">
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(94,116,63);">MAILLO</div>
+      <div class="plot-d">32 DEATHS · 0.6/PULL</div>
+    </div>
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(35,109,129);">BUCHALTER</div>
+      <div class="plot-d">30 DEATHS · 0.6/PULL</div>
+    </div>
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(107,16,31);">TOMMYBRAVOO</div>
+      <div class="plot-d">18 DEATHS · 0.3/PULL</div>
+    </div>
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(109,85,60);">CHOKALOCK</div>
+      <div class="plot-d">17 DEATHS · 0.3/PULL</div>
+    </div>
+  </div><div class="mod-cap">Plots assigned by deaths-per-pull. The campfire is load-bearing.</div>
+  <div class="mod-res">Plot reserved: HEALMATES — 6 consecutive weeks in the fire</div>
+        
+</div>
+      </div>
+      <div id="item" style="scroll-margin-top:64px;">
+        <div class="fr fr--scroll fr-tilt-a mod mod--item">
+          <div class="mod-h">GUILD ITEM OF THE MONTH</div>
+  <img class="mod-img" src="../assets/item_art.png" alt="GUILD ITEM OF THE MONTH" loading="lazy">
+        <span class="fr-roll-b"></span>
+</div>
+      </div>
     </div>
   </div>
   <div class="motd"><span class="chip">MOTD</span><span class="q">That&#39;s a 50 DKP MINUS.</span></div>

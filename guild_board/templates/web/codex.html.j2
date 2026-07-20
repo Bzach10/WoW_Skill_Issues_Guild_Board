@@ -14,7 +14,14 @@
   render it as a black-vellum grimoire instead.
 
   Phone behaviour is the easy case here: the measure simply narrows.
+
+  The annexes at the foot are the theme's cultural modules, rendered
+  through the shared ornament frames — so which of them appear, in what
+  order, and whether each is torn / arched / riveted is a theme.yml
+  decision, not a layout one.
 #}
+{% import "web/_ornaments.html.j2" as orn with context %}
+{% import "web/_modules.html.j2" as mods with context %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -170,44 +177,40 @@
   .empty{font-size:13.5px; color:var(--faint); font-style:italic; text-align:center; padding:8px 0;}
   .nohit{display:none !important;}
 
-  /* --------------------------- annex sections -------------------------- */
-  .annex{margin-top:clamp(22px,4vw,34px); padding:22px 22px 20px;
-    border:1px solid var(--hairline); background:rgba(var(--bg-rgb),.55);}
-  .annex > .ah{font-family:var(--font-display); font-weight:900; font-size:15.5px;
+  /* ------------- annexes: cultural modules, framed by the theme -------- */
+  .mod{margin-top:clamp(22px,4vw,34px); --fr-surface:rgba(var(--bg-rgb),.5);}
+  .mod-h{font-family:var(--font-display); font-weight:900; font-size:15.5px;
     letter-spacing:.1em; text-transform:uppercase; text-align:center;
     color:var(--accent); margin-bottom:16px;}
-
-  .debt .amt{font-family:var(--font-display); font-weight:900; color:var(--red);
+  .mod-amt{font-family:var(--font-display); font-weight:900; color:var(--red);
     font-size:clamp(28px,5.6vw,46px); line-height:1; text-align:center;
     font-variant-numeric:tabular-nums;}
-  .debt .amt sup{font-size:.4em; margin-left:3px; color:var(--muted);}
-  .debt .note{text-align:center; font-size:12px; color:var(--muted); margin-top:8px;
+  .mod-amt sup{font-size:.4em; margin-left:3px; color:var(--muted);}
+  .mod-sub{text-align:center; font-size:12px; color:var(--muted); margin-top:8px;
     font-style:italic;}
-  .debt ul{list-style:none; font-size:14px; line-height:1.8; margin-top:16px;
+  .mod-lines{list-style:none; font-size:14px; line-height:1.8; margin-top:16px;
     padding-top:14px; border-top:1px solid var(--hairline);}
-  .debt li{display:flex; gap:12px;}
-  .debt li .r{margin-left:auto; color:var(--faint); white-space:nowrap; font-style:italic;}
-  .debt li.g{color:var(--green);}
-  .debt .flav{font-style:italic; color:var(--muted); font-size:13px; margin-top:14px;
+  .mod-lines li{display:flex; gap:12px;}
+  .mod-lines li .r{margin-left:auto; color:var(--faint); white-space:nowrap; font-style:italic;}
+  .mod-lines li.is-green{color:var(--green);}
+  .mod-flavor{font-style:italic; color:var(--muted); font-size:13px; margin-top:14px;
     text-align:center;}
-  .debt .req{color:var(--red); font-size:12px; margin-top:5px; text-align:center;}
-
-  .grave .plots{display:flex; flex-wrap:wrap; gap:12px; justify-content:center;}
-  .grave .p{flex:0 1 158px; text-align:center; padding:14px 10px 11px;
-    border:1px solid var(--hairline); border-radius:80px 80px 3px 3px;
-    background:rgba(var(--bg-rgb),.5);}
-  .grave .p .n{font-family:var(--font-display); font-weight:900; font-size:13.5px;
+  .mod-req{color:var(--red); font-size:12px; margin-top:5px; text-align:center;}
+  .mod-plots{display:flex; flex-wrap:wrap; gap:12px; justify-content:center;}
+  .plot{flex:0 1 158px; text-align:center; padding:16px 10px 11px;
+    border-radius:80px 80px 3px 3px; background:rgba(var(--bg-rgb),.5);
+    box-shadow:inset 0 0 0 1px var(--hairline), 0 8px 16px rgba(0,0,0,.2);}
+  .plot-n{font-family:var(--font-display); font-weight:900; font-size:13.5px;
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .grave .p .d{font-size:11px; color:var(--muted); margin-top:6px; font-style:italic;}
-  .grave .cap{text-align:center; font-size:12.5px; color:var(--faint);
+  .plot-d{font-size:11px; color:var(--muted); margin-top:6px; font-style:italic;}
+  .mod-cap{text-align:center; font-size:12.5px; color:var(--faint);
     margin-top:14px; font-style:italic;}
-  .grave .res{text-align:center; font-size:12px; color:var(--accent); margin-top:8px;}
-
-  .roast .q{font-family:var(--font-display); font-weight:700; text-align:center;
+  .mod-res{text-align:center; font-size:12px; color:var(--accent); margin-top:8px;}
+  .mod-quote{font-family:var(--font-display); font-weight:700; text-align:center;
     font-size:clamp(18px,3.4vw,27px); line-height:1.35;}
-  .roast .attr{text-align:center; font-size:13px; color:var(--muted); margin-top:14px;
+  .mod-attr{text-align:center; font-size:13px; color:var(--muted); margin-top:14px;
     font-style:italic;}
-  .relic img{width:100%; height:auto; display:block; border:1px solid var(--hairline);}
+  .mod-img{width:100%; height:auto; display:block;}
 
   /* ------------------------------ colophon ----------------------------- */
   .motd{text-align:center; margin-top:clamp(26px,5vw,44px); padding:18px 0;
@@ -227,6 +230,9 @@
 </style>
 </head>
 <body>
+{# import above exposes the macros; this include emits the SVG filter
+   defs and the frame CSS the macros rely on #}
+{% include "web/_ornaments.html.j2" %}
 <div class="sheet">
   <div class="front">
     {%- if theme.backgrounds.header %}
@@ -317,55 +323,19 @@
     <div class="orn"><i></i><span>❦</span><i></i></div>
 
     {# --- the annexes: the guild's load-bearing traditions --- #}
-    {%- if roast %}
-    <div class="annex roast" id="roast" style="scroll-margin-top:64px;">
-      <div class="ah">Roast of the week</div>
-      <div class="q">{{ roast.quote }}</div>
-      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    {%- set tilts = ['','fr-tilt-c','fr-tilt-b','fr-tilt-a'] %}
+    {%- for m in culture_modules %}
+    <div id="{{ m.key }}" style="scroll-margin-top:64px;">
+      {{ orn.module_open(m, tilts[loop.index0 % 4]) }}
+        {{ mods.body(m) }}
+      {{ orn.module_close(m) }}
     </div>
-    {%- endif %}
+    {%- if not loop.last %}{{ orn.rule('dot') }}{% endif %}
+    {%- endfor %}
 
-    {%- if debt_card %}
-    <div class="annex debt">
-      <div class="ah">{{ debt_card.title }}</div>
-      <div class="amt">{{ "{:,}".format(debt_card.amount) }}<sup>g</sup></div>
-      <div class="note">{{ debt_card.climbing_note }} · {{ debt_card.interest_note }}</div>
-      <ul>
-        {%- for line in debt_card.lines %}
-        <li class="{{ 'g' if line.green }}"><span>{{ line.left }}</span>{% if line.right %}<span class="r">{{ line.right }}</span>{% endif %}</li>
-        {%- endfor %}
-      </ul>
-      {%- if debt_card.flavor %}<div class="flav">{{ debt_card.flavor }}</div>{% endif %}
-      {%- if debt_card.requires %}<div class="req">{{ debt_card.requires }}</div>{% endif %}
-    </div>
+    {%- if motd %}
+    <div class="motd"><span class="chip">{{ motd_label }}</span><span class="q">{{ motd }}</span></div>
     {%- endif %}
-
-    {%- if stones %}
-    <div class="annex grave">
-      <div class="ah">{{ theme.footer.graveyard.title }}</div>
-      <div class="plots">
-        {%- for s in stones %}
-        <div class="p">
-          <div class="n" style="color:{{ s.carve_color if theme.backgrounds.poster else s.color }};">{{ s.name }}</div>
-          <div class="d">{{ s.deaths }}</div>
-        </div>
-        {%- endfor %}
-      </div>
-      <div class="cap">{{ theme.footer.graveyard.caption }}</div>
-      {%- if theme.footer.graveyard.reserved %}
-      <div class="res">Plot reserved: {{ theme.footer.graveyard.reserved }} — {{ theme.footer.graveyard.reserved_note }}</div>
-      {%- endif %}
-    </div>
-    {%- endif %}
-
-    {%- if item_src %}
-    <div class="annex relic">
-      <div class="ah">{{ item_title }}</div>
-      <img src="{{ item_src }}" alt="{{ item_title }}" loading="lazy">
-    </div>
-    {%- endif %}
-
-    <div class="motd"><span class="chip">Message of the day</span><span class="q">{{ motd }}</span></div>
     <div class="credits">
       <div>{{ theme.credits }}</div>
       <div>{{ watermark }}</div>

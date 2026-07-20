@@ -1,0 +1,80 @@
+{#
+  Bodies for the guild's cultural modules — written ONCE, framed by
+  _ornaments.html.j2, and rendered by every layout.
+
+  A layout does:
+
+      {% import "web/_ornaments.html.j2" as orn with context %}
+      {% import "web/_modules.html.j2" as mods with context %}
+      {% for m in culture_modules %}
+        {{ orn.module_open(m, tilt) }}{{ mods.body(m) }}{{ orn.module_close(m) }}
+      {% endfor %}
+
+  ...and gets whichever modules the theme rotated in, in the theme's
+  order, each in the frame the theme chose. Adding a module later means
+  adding a branch here, not touching four layouts.
+
+  Styling stays in the layouts (they own .mod-h, .mod-sub etc.) so the
+  same module can read as a console panel in one and a manuscript annex
+  in another.
+#}
+
+{% macro heading(m) -%}
+<div class="mod-h">{{ m.title }}</div>
+{%- endmacro %}
+
+
+{% macro roast(m) -%}
+  {{ heading(m) }}
+  <div class="mod-quote">{{ m.data.quote }}</div>
+  {%- if m.data.attr %}<div class="mod-attr">{{ m.data.attr }}</div>{% endif %}
+{%- endmacro %}
+
+
+{% macro debt(m) -%}
+  {{ heading(m) }}
+  <div class="mod-amt">{{ "{:,}".format(m.data.amount) }}<sup>g</sup></div>
+  <div class="mod-sub">{{ m.data.climbing_note }} · {{ m.data.interest_note }}</div>
+  <ul class="mod-lines">
+    {%- for line in m.data.lines %}
+    <li class="{{ 'is-green' if line.green }}"><span>{{ line.left }}</span>
+      {%- if line.right %}<span class="r">{{ line.right }}</span>{% endif %}</li>
+    {%- endfor %}
+  </ul>
+  {%- if m.data.flavor %}<div class="mod-flavor">{{ m.data.flavor }}</div>{% endif %}
+  {%- if m.data.requires %}<div class="mod-req">{{ m.data.requires }}</div>{% endif %}
+{%- endmacro %}
+
+
+{% macro graveyard(m) -%}
+  {%- set g = (theme.footer or {}).graveyard or {} %}
+  {{ heading(m) }}
+  <div class="mod-plots">
+    {%- for s in m.data %}
+    <div class="plot">
+      <div class="plot-n" style="color:{{ s.carve_color if theme.backgrounds.poster else s.color }};">{{ s.name }}</div>
+      <div class="plot-d">{{ s.deaths }}</div>
+    </div>
+    {%- endfor %}
+  </div>
+  {%- if g.caption %}<div class="mod-cap">{{ g.caption }}</div>{% endif %}
+  {%- if g.reserved %}
+  <div class="mod-res">Plot reserved: {{ g.reserved }} — {{ g.reserved_note }}</div>
+  {%- endif %}
+{%- endmacro %}
+
+
+{% macro item(m) -%}
+  {{ heading(m) }}
+  <img class="mod-img" src="{{ m.data }}" alt="{{ m.title }}" loading="lazy">
+{%- endmacro %}
+
+
+{#- the dispatcher every layout calls -#}
+{% macro body(m) -%}
+  {%- if m.key == 'roast' %}{{ roast(m) }}
+  {%- elif m.key == 'debt' %}{{ debt(m) }}
+  {%- elif m.key == 'graveyard' %}{{ graveyard(m) }}
+  {%- elif m.key == 'item' %}{{ item(m) }}
+  {%- endif %}
+{%- endmacro %}

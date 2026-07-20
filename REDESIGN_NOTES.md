@@ -55,6 +55,68 @@ default; nothing switches until you say so.
 
 ---
 
+## 1b. Killing the block look
+
+Zach's note — *"very 8-bit and very block-oriented"* — was right, and it
+was the same root cause everywhere: same-size rectangles, hard 1px
+borders, square corners, everything on an even grid.
+
+What changed, in every layout:
+
+- **Edges are torn, not ruled.** An SVG turbulence + displacement filter
+  eats the edge of each surface. The trick is that the filter is applied
+  to a *background plate* behind the content, never to the content
+  itself — so the paper is ragged while the text stays perfectly crisp.
+- **Nothing is the same size.** Columns run on unequal spans (7/5, 5/7)
+  with vertical offsets and sub-degree rotations, so no two edges line
+  up. On phones every offset and rotation switches off and it's a clean
+  single column.
+- **Containers aren't rectangles.** Modules can be arched like a
+  headstone, curled like a scroll, riveted like a metal plate, or torn
+  like a page — chosen per module, per theme.
+- **Illustrated dividers** (diamond, flame, skull) part the sections
+  instead of whitespace and rules.
+- **Depth is real:** drop shadows follow the torn silhouette rather than
+  a box, and the generated art sits behind everything.
+
+`codex` was already there and set the bar; the other three were rebuilt
+to meet it.
+
+## 1c. Modules are part of the theme now
+
+A theme is no longer just colors and fonts — it decides **which cultural
+modules appear, in what order, and how each is dressed.** Swapping a
+theme swaps a whole world.
+
+```yaml
+modules:
+  order: [roast, debt, graveyard, item]   # drop one to retire it
+  roast:
+    enabled: true
+    title: "ROAST OF THE WEEK"
+    style: torn          # torn | scroll | arch | plate | none
+    art: null            # optional: this module's own background art
+  graveyard:
+    style: arch          # headstone-shaped
+  debt:
+    style: plate         # riveted metal
+  motd:
+    enabled: false       # retire the MOTD strip entirely
+  awards:
+    enabled: true
+```
+
+Fail-open at every step: no `modules` block at all gives the shipped
+set; an unknown module name in `order` is skipped with a warning; an
+unknown `style` renders unframed; a module whose `art` file is missing
+renders without art; and a module with nothing to show this week drops
+out on its own. Older `theme.yml` files keep working — if a guild
+already set `footer.debt.enabled` or `footer.graveyard.title`, those
+still win.
+
+The bodies live in one shared partial, so a module added later appears
+in all four layouts at once instead of being copy-pasted into each.
+
 ## 2. The themes
 
 A *theme* is the paint — colors, fonts, art, and the flavor copy. Any
@@ -182,7 +244,34 @@ apples-to-apples.
 
 ---
 
-## 6. What I'd do next
+## 6. The guild vote (built, NOT fired)
+
+`.github/workflows/redesign-vote.yml` posts four candidates to Discord
+as a numbered vote. **It has not been run.**
+
+- **Manual only.** `workflow_dispatch` with no push or schedule trigger,
+  so committing can never post to the guild. It also refuses to send
+  unless you set `dry_run: false` *and* type `POST` in the confirm box.
+- **Dry run first.** Leaving `dry_run: true` (the default) prints the
+  exact message and attachment list into the Actions log and sends
+  nothing.
+- **Reactions are seeded** 1️⃣2️⃣3️⃣4️⃣ via the bot token after posting
+  with `?wait=true`. If the bot lacks "Add Reactions" — or there's no
+  token — it posts anyway and the text asks members to react. It reads
+  the same either way.
+- **Purpose-built images.** Full-page shots are 8–14MB and up to 6000px
+  tall; they'd blow Discord's cap and render as unreadable slivers. The
+  script builds ~260KB JPEG cards of the top of each page instead
+  (~1MB total).
+- The message says twice, up top, that these are **proposals and the
+  live board is untouched**.
+
+**The one thing I can't verify:** `DISCORD_WEBHOOK_URL` is a repo secret,
+so I cannot see which channel it points at. Confirm with Zach that it's
+the guild-board channel (`…409620`) before anyone triggers this — it's
+the one part that can't be undone.
+
+## 7. What I'd do next
 
 - Pick a favorite and I'll tune that one properly — the three are
   deliberately at similar polish rather than one being finished.

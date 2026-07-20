@@ -1,3 +1,5 @@
+{% import "web/_ornaments.html.j2" as orn with context %}
+{% import "web/_modules.html.j2" as mods with context %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -83,21 +85,30 @@
     background:linear-gradient(90deg, var(--accent), #f6c96a);}
   .bar2 .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     font-size:12px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.6);}
-  .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
-  .col{position:relative; padding:26px 18px 16px; min-width:0;
+  /* Posters are PAPER: unequal widths, a little tilt, and edges torn by
+     the shared deckle filter rather than a 2px rectangle. The sheet is
+     painted on a filtered ::before so the text on top stays crisp. */
+  .cols{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(20px,2.6vw,34px) clamp(16px,2.2vw,26px); align-items:start;}
+  .col{position:relative; padding:30px 22px 20px; min-width:0;}
+  .col > *{position:relative; z-index:1;}
+  .col::before{content:""; position:absolute; inset:-5px; z-index:0;
     {%- if theme.backgrounds.poster %}
     background:
       linear-gradient(rgba(240,228,201,.62), rgba(235,221,190,.68)),
-      url("{{ theme.backgrounds.poster }}") center/cover !important;
-    border:2px solid #5c4526 !important;
-    box-shadow: inset 0 0 0 5px rgba(74,54,26,.22), 0 12px 30px rgba(0,0,0,.5) !important;
+      url("{{ theme.backgrounds.poster }}") center/cover;
+    box-shadow:inset 0 0 0 5px rgba(74,54,26,.22);
     {%- else %}
     background:
       radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.06), transparent 62%),
-      linear-gradient(172deg, #2b2114 0%, #241b10 55%, #1c140b 100%) !important;
-    border:2px solid #7c6136 !important;
+      linear-gradient(172deg, #2b2114 0%, #241b10 55%, #1c140b 100%);
+    box-shadow:inset 0 0 0 3px rgba(124,97,54,.35);
     {%- endif %}
-    border-radius:3px 10px 4px 12px !important;}
+    filter:url(#gb-deckle) drop-shadow(0 14px 30px rgba(0,0,0,.5));}
+  .col:nth-child(1){grid-column:1 / span 7; transform:rotate(-.5deg);}
+  .col:nth-child(2){grid-column:8 / span 5; margin-top:26px; transform:rotate(.45deg);}
+  .col:nth-child(3){grid-column:1 / span 5; margin-top:-10px; transform:rotate(.3deg);}
+  .col:nth-child(4){grid-column:6 / span 7; transform:rotate(-.28deg);}
   {%- if theme.backgrounds.poster %}
   /* ink-on-paper: match the image board's Imperial Bounty posters */
   .col .col-h{border-bottom-color:#5c4526;}
@@ -114,8 +125,9 @@
   .col .row.textrow{color:#5f4a2e;}
   .col .empty{color:#7a6244;}
   {%- endif %}
-  .col::before{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
-    width:10px; height:10px; border-radius:50%;
+  /* the nail — ::after, because ::before is now the torn sheet itself */
+  .col::after{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
+    z-index:2; width:10px; height:10px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
     box-shadow:0 2px 4px rgba(0,0,0,.7);}
   .col-h{display:block; text-align:center; padding-bottom:10px; margin-bottom:12px;
@@ -169,6 +181,48 @@
   .credits{display:flex; flex-wrap:wrap; gap:4px 16px; justify-content:space-between;
     padding:14px 20px 28px; color:var(--faint); font-size:12px;}
   .credits a{color:var(--faint);}
+  /* cultural modules, framed by the theme */
+  .strip{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(20px,3vw,36px) clamp(16px,2.2vw,28px); align-items:start; margin-top:6px;}
+  .strip > *{min-width:0;}
+  .strip > *:nth-child(1){grid-column:span 5;}
+  .strip > *:nth-child(2){grid-column:span 4; margin-top:18px;}
+  .strip > *:nth-child(3){grid-column:span 3; margin-top:-12px;}
+  .strip > *:nth-child(4){grid-column:span 6;}
+  .strip > *:nth-child(n+5){grid-column:span 6;}
+  .mod{--fr-surface:linear-gradient(172deg, rgba(var(--bg-rgb),.92), rgba(var(--bg-rgb),.72));}
+  .mod-h{font-size:13px; font-weight:800; color:var(--accent); letter-spacing:.08em;
+    text-transform:uppercase; margin-bottom:12px;}
+  .mod-quote{font-family:var(--font-display); font-size:clamp(16px,3.2vw,21px); line-height:1.45;}
+  .mod-attr{font-size:13px; color:var(--muted); text-align:right; margin-top:8px;}
+  .mod-amt{font-family:var(--font-display); font-weight:900; color:var(--red);
+    font-size:clamp(26px,5vw,42px); line-height:1; font-variant-numeric:tabular-nums;}
+  .mod-amt sup{font-size:.4em; margin-left:3px; color:var(--muted);}
+  .mod-sub{font-size:12px; color:var(--muted); margin-top:6px;}
+  .mod-lines{list-style:none; font-size:13px; line-height:1.7; margin-top:12px;
+    padding-top:10px; border-top:1px solid var(--hairline);}
+  .mod-lines li{display:flex; gap:10px;}
+  .mod-lines li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
+  .mod-lines li.is-green{color:var(--green);}
+  .mod-flavor{font-style:italic; color:var(--muted); font-size:12.5px; margin-top:10px;}
+  .mod-req{color:var(--red); font-size:12px; margin-top:4px;}
+  .mod-plots{display:flex; flex-wrap:wrap; gap:10px;}
+  .plot{flex:1 1 108px; text-align:center; padding:13px 8px 10px;
+    border-radius:54% 54% 5px 5px / 30% 30% 5px 5px;
+    background:linear-gradient(180deg, rgba(255,255,255,.1), rgba(0,0,0,.32));
+    box-shadow:inset 0 0 0 1px var(--hairline), 0 6px 14px rgba(0,0,0,.35);}
+  .plot-n{font-family:var(--font-display); font-size:12.5px; font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .plot-d{font-size:10.5px; color:var(--muted); margin-top:5px;}
+  .mod-cap{font-size:12px; color:var(--faint); margin-top:10px;}
+  .mod-res{font-size:11.5px; color:var(--accent); margin-top:8px;}
+  .mod-img{width:100%; height:auto; display:block;}
+
+  @media (max-width:900px){
+    .cols,.strip{grid-template-columns:1fr;}
+    .col:nth-child(n){grid-column:1 / -1; margin-top:0; transform:none;}
+    .strip > *:nth-child(n){grid-column:1 / -1; margin-top:0;}
+  }
   @media (max-width:480px){
     .row .detail{display:none;}   /* phones: name + number is the story */
     .bar input{width:110px;}
@@ -177,6 +231,9 @@
 </style>
 </head>
 <body>
+{# macros come from the import above; this include emits the
+   SVG filter defs and frame CSS they rely on #}
+{% include "web/_ornaments.html.j2" %}
   <div class="hdr">
     <h1>{{ guild_name.upper() }}</h1>
     <div class="sub">{{ realm_label }}</div>
@@ -218,7 +275,7 @@
     {%- endif %}
     <div class="cols">
       {%- for col in columns %}
-      <div class="card col" id="col-{{ loop.index }}" style="scroll-margin-top:64px;">
+      <div class="col" id="col-{{ loop.index }}" style="scroll-margin-top:64px;">
         <div class="col-h">
           {%- if theme.board.poster_eyebrow %}<span class="eyebrow">{{ theme.board.poster_eyebrow }}</span>{% endif %}
           <span class="t">{{ col.title }}</span>
@@ -250,15 +307,23 @@
       </div>
       {%- endfor %}
     </div>
-    {%- if roast %}
-    <div class="card roast" id="roast" style="scroll-margin-top:64px;">
-      <div class="t">ROAST OF THE WEEK</div>
-      <div class="q">{{ roast.quote }}</div>
-      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    {%- if culture_modules %}
+    {{ orn.rule('skull') }}
+    <div class="strip">
+      {%- set tilts = ['fr-tilt-b','fr-tilt-c','','fr-tilt-a'] %}
+      {%- for m in culture_modules %}
+      <div id="{{ m.key }}" style="scroll-margin-top:64px;">
+        {{ orn.module_open(m, tilts[loop.index0 % 4]) }}
+          {{ mods.body(m) }}
+        {{ orn.module_close(m) }}
+      </div>
+      {%- endfor %}
     </div>
     {%- endif %}
   </div>
-  <div class="motd"><span class="chip">MOTD</span><span class="q">{{ motd }}</span></div>
+  {%- if motd %}
+  <div class="motd"><span class="chip">{{ motd_label }}</span><span class="q">{{ motd }}</span></div>
+  {%- endif %}
   <div class="credits">
     <span>{{ theme.credits }}</span>
     <span>{{ watermark }}</span>

@@ -1,5 +1,7 @@
 
 
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,142 +21,144 @@
     --bg-rgb:11,7,4;
     --font-display:'Cinzel Decorative',serif;
     --font-body:'Inter','Segoe UI',sans-serif;
-    --font-mono:'JetBrains Mono','JetBrains Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
+    --font-mono:'JetBrains Mono','JetBrains Mono',ui-monospace,Consolas,monospace;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html{scroll-behavior:smooth;}
   body{color:var(--text); font-family:var(--font-body); font-size:16px;
     background:var(--bg); position:relative; min-height:100vh; overflow-x:hidden;}
-
-  /* --- full-bleed art backdrop, fixed so the console scrolls over it --- */
-  /* The backdrop spans the whole DOCUMENT (absolute, not fixed) so the
-     art is present the entire way down — in the browser and in a
-     full-page screenshot. Over a long page `cover` blows the art up
-     into soft atmospheric shapes, which is exactly what a backdrop
-     behind text should be. */
   .backdrop{position:absolute; inset:0; z-index:0; pointer-events:none;
     background:url("../assets/generated/emberforge/middle.png") center/cover no-repeat;
-    opacity:.62; filter:saturate(1.12);}
-  /* vignette + tint keeps every theme's art readable under text. The
-     panels below carry their own scrim, so this stays light enough to
-     let the artwork actually read. */
+    opacity:.66; filter:saturate(1.14);}
   .veil{position:absolute; inset:0; z-index:1; pointer-events:none;
     background:
-      radial-gradient(125% 95% at 50% 0%, transparent 6%, rgba(var(--bg-rgb),.42) 55%, rgba(var(--bg-rgb),.86) 100%),
-      linear-gradient(180deg, rgba(var(--bg-rgb),.18), rgba(var(--bg-rgb),.62));}
+      radial-gradient(125% 95% at 50% 0%, transparent 6%, rgba(var(--bg-rgb),.40) 55%, rgba(var(--bg-rgb),.85) 100%),
+      linear-gradient(180deg, rgba(var(--bg-rgb),.16), rgba(var(--bg-rgb),.6));}
+  .scan{position:absolute; inset:0; z-index:2; pointer-events:none; opacity:.42;
+    background:repeating-linear-gradient(180deg, rgba(0,0,0,.2) 0 1px, transparent 1px 3px);}
+  .motes{position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden;}
+  .motes i{position:absolute; bottom:-12px; border-radius:50%; background:var(--accent);
+    opacity:.5; filter:blur(.4px); animation:rise 9s linear infinite;}
+  @keyframes rise{to{transform:translateY(-102vh) translateX(var(--dx,0)); opacity:0;}}
+  @media (prefers-reduced-motion:reduce){.motes{display:none;}}
 
-  /* ------------------- masthead art band (header art) ------------------ */
+  .page{position:relative; z-index:3; max-width:1640px; margin:0 auto;
+    padding:0 clamp(12px,3vw,30px) 46px;}
+
+  /* ------------------------------ masthead ----------------------------- */
   .band{position:relative; z-index:3; overflow:hidden;}
   .band .art{position:absolute; inset:0; pointer-events:none;
     background:url("../assets/generated/emberforge/header.png") center 42%/cover no-repeat;}
   .band .art::after{content:""; position:absolute; inset:0;
-    background:linear-gradient(180deg, rgba(var(--bg-rgb),.34) 0%, rgba(var(--bg-rgb),.52) 55%, rgba(var(--bg-rgb),.97) 100%);}
-  .band .inner{position:relative; max-width:1660px; margin:0 auto;
-    padding:0 clamp(10px,2.5vw,26px);}
-  /* CRT scanlines — the "it's a machine" tell */
-  .scan{position:fixed; inset:0; z-index:2; pointer-events:none; opacity:.5;
-    background:repeating-linear-gradient(180deg, rgba(0,0,0,.22) 0 1px, transparent 1px 3px);}
-  .motes{position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden;}
-  .motes i{position:absolute; bottom:-12px; width:3px; height:3px; border-radius:50%;
-    background:var(--accent); opacity:.55; filter:blur(.4px);
-    animation:rise 9s linear infinite;}
-  @keyframes rise{to{transform:translateY(-102vh) translateX(var(--dx,0)); opacity:0;}}
-  @media (prefers-reduced-motion:reduce){.motes{display:none;}}
-
-  .page{position:relative; z-index:3; max-width:1660px; margin:0 auto; padding:0 clamp(10px,2.5vw,26px) 40px;}
-
-  /* ------------------------------ masthead ----------------------------- */
-  .mast{display:flex; align-items:center; gap:clamp(12px,2.5vw,26px);
-    padding:clamp(48px,9vw,112px) 4px clamp(30px,5vw,58px); flex-wrap:wrap;}
-  .sigil{width:clamp(58px,10vw,104px); height:clamp(58px,10vw,104px); flex:none;
-    border-radius:50%; background:url("../assets/generated/emberforge/crest.png") center/cover;
-    box-shadow:0 0 0 1px var(--hairline), 0 0 38px -6px var(--accent);}
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.3) 0%, rgba(var(--bg-rgb),.48) 55%, rgba(var(--bg-rgb),.96) 100%);}
+  .band .inner{position:relative; max-width:1640px; margin:0 auto;
+    padding:0 clamp(12px,3vw,30px);}
+  .mast{display:flex; align-items:center; gap:clamp(12px,2.5vw,28px);
+    padding:clamp(46px,9vw,108px) 2px clamp(28px,5vw,54px); flex-wrap:wrap;}
+  .sigil{width:clamp(58px,10vw,108px); height:clamp(58px,10vw,108px); flex:none;
+    background:url("../assets/generated/emberforge/crest.png") center/cover;
+    border-radius:50%; filter:drop-shadow(0 0 34px rgba(0,0,0,.8));
+    box-shadow:0 0 0 1px var(--hairline), 0 0 44px -8px var(--accent);}
   .mast .id{min-width:0; flex:1;}
   .mast h1{font-family:var(--font-display); font-weight:900; line-height:1;
-    font-size:clamp(28px,6.4vw,64px); letter-spacing:.06em;
-    text-shadow:0 0 34px rgba(0,0,0,.9);}
-  .mast .realm{margin-top:8px; font-family:var(--font-mono); font-size:clamp(10px,2.2vw,13px);
-    letter-spacing:.28em; color:var(--accent); text-transform:uppercase;}
+    font-size:clamp(28px,6.6vw,66px); letter-spacing:.055em;
+    text-shadow:0 0 38px rgba(0,0,0,.92);}
+  .mast .realm{margin-top:9px; font-family:var(--font-mono);
+    font-size:clamp(10px,2.2vw,13px); letter-spacing:.28em; color:var(--accent);
+    text-transform:uppercase;}
   .mast .meta{font-family:var(--font-mono); font-size:12px; color:var(--muted);
     text-align:right; line-height:1.9; white-space:nowrap;}
   .mast .meta .on{color:var(--green);}
 
-  /* ------------------------- command bar (sticky) ---------------------- */
-  .cmd{position:sticky; top:0; z-index:9; display:flex; align-items:center; gap:8px;
-    flex-wrap:wrap; padding:10px 12px; margin-bottom:20px;
+  /* ---------------- command rail (no box: a floating line) -------------- */
+  .cmd{position:sticky; top:0; z-index:9; display:flex; align-items:center; gap:6px;
+    flex-wrap:wrap; padding:11px 6px; margin-bottom:8px;
     font-family:var(--font-mono); font-size:12.5px;
-    background:rgba(var(--bg-rgb),.9); backdrop-filter:blur(10px);
-    border:1px solid var(--hairline); border-radius:4px;
-    box-shadow:0 0 0 1px rgba(0,0,0,.4), 0 14px 34px rgba(0,0,0,.45);}
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.95), rgba(var(--bg-rgb),.72));
+    backdrop-filter:blur(10px);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
   .cmd .caret{color:var(--accent); font-weight:700;}
   .cmd a,.cmd button{font:inherit; color:var(--muted); background:none; cursor:pointer;
-    text-decoration:none; padding:5px 10px; border:1px solid transparent; border-radius:3px;
-    white-space:nowrap; transition:color .15s, border-color .15s, background .15s;}
-  .cmd a:hover,.cmd button:hover{color:var(--accent); border-color:var(--hairline);
-    background:rgba(255,255,255,.04);}
-  .cmd button.on{color:var(--bg); background:var(--accent); border-color:var(--accent);}
+    text-decoration:none; padding:5px 10px; border:0; border-bottom:1px solid transparent;
+    white-space:nowrap; transition:color .15s, border-color .15s;}
+  .cmd a:hover,.cmd button:hover{color:var(--accent); border-bottom-color:var(--accent);}
+  .cmd button.on{color:var(--accent); border-bottom-color:var(--accent);}
   .cmd .sp{flex:1;}
-  .cmd input,.cmd select{font:inherit; color:var(--text); background:rgba(0,0,0,.35);
-    border:1px solid var(--hairline); border-radius:3px; padding:5px 10px; outline:none;}
-  .cmd input{width:160px;} .cmd input:focus,.cmd select:focus{border-color:var(--accent);}
+  .cmd input,.cmd select{font:inherit; color:var(--text); background:rgba(0,0,0,.32);
+    border:0; border-bottom:1px solid var(--hairline); padding:5px 8px; outline:none;}
+  .cmd input{width:150px;} .cmd input:focus,.cmd select:focus{border-bottom-color:var(--accent);}
   .filters{display:contents;}
 
-  /* --------------------------- broadcast band -------------------------- */
-  .cast{position:relative; padding:clamp(16px,3vw,26px) clamp(16px,3vw,30px); margin-bottom:22px;
-    border:1px solid var(--hairline); border-left:3px solid var(--accent); border-radius:4px;
-    background:linear-gradient(100deg, rgba(var(--bg-rgb),.86), rgba(var(--bg-rgb),.58));
-    box-shadow:0 18px 44px rgba(0,0,0,.5);}
+  /* ------------- broadcast: type on the art, torn plate behind --------- */
+  .cast{position:relative; margin:8px 0 4px; padding:clamp(20px,3.4vw,34px) clamp(18px,3vw,36px);}
+  .cast::before{content:""; position:absolute; inset:-6px; z-index:0;
+    background:linear-gradient(100deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.42));
+    filter:url(#gb-deckle) drop-shadow(0 16px 34px rgba(0,0,0,.55));}
+  .cast > *{position:relative; z-index:1;}
   .cast .lbl{font-family:var(--font-mono); font-size:11px; letter-spacing:.3em;
     color:var(--accent); text-transform:uppercase;}
   .cast h2{font-family:var(--font-display); font-weight:900; margin-top:10px;
-    font-size:clamp(19px,3.9vw,40px); line-height:1.16; letter-spacing:.01em;}
-  .cast .prog{margin-top:16px; height:6px; border-radius:3px; background:rgba(0,0,0,.5);
-    overflow:hidden; border:1px solid var(--hairline);}
-  .cast .prog i{display:block; height:100%; background:linear-gradient(90deg,var(--accent),transparent);
-    box-shadow:0 0 14px var(--accent);}
+    font-size:clamp(20px,4.2vw,44px); line-height:1.14;
+    text-shadow:0 4px 26px rgba(0,0,0,.7);}
+  .cast .prog{margin-top:16px; height:5px; background:rgba(0,0,0,.5); overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,#000,#000 92%,transparent);
+    mask-image:linear-gradient(90deg,#000,#000 92%,transparent);}
+  .cast .prog i{display:block; height:100%;
+    background:linear-gradient(90deg,var(--accent),transparent);
+    box-shadow:0 0 16px var(--accent);}
   .cast .progcap{margin-top:7px; font-family:var(--font-mono); font-size:11.5px; color:var(--muted);}
 
-  /* --------------------------- diagnostics row ------------------------- */
-  .diag{display:grid; grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
-    gap:1px; margin-bottom:22px; background:var(--hairline);
-    border:1px solid var(--hairline); border-radius:4px; overflow:hidden;}
-  .diag .d{padding:14px 16px; background:rgba(var(--bg-rgb),.86);}
-  .diag .k{font-family:var(--font-mono); font-size:10.5px; letter-spacing:.16em;
+  /* --------- readout: numerals on a rule, divided by flame glyphs ------- */
+  .diag{display:flex; flex-wrap:wrap; align-items:flex-end; gap:clamp(14px,3vw,40px);
+    padding:22px 6px 20px; margin:6px 0 4px;
+    border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);}
+  .diag .d{position:relative; min-width:96px;}
+  .diag .d+.d::before{content:""; position:absolute; left:calc(clamp(14px,3vw,40px) / -2);
+    top:6px; bottom:6px; width:1px; background:var(--hairline); opacity:.7;}
+  .diag .k{font-family:var(--font-mono); font-size:10px; letter-spacing:.2em;
     color:var(--faint); text-transform:uppercase;}
-  .diag .v{font-family:var(--font-mono); font-weight:700; margin-top:5px;
-    font-size:clamp(19px,3vw,27px); font-variant-numeric:tabular-nums;}
-  .diag .v small{font-size:.5em; margin-left:6px; font-weight:400;}
+  .diag .v{font-family:var(--font-display); font-weight:900; margin-top:6px;
+    font-size:clamp(21px,3.4vw,34px); line-height:1; font-variant-numeric:tabular-nums;
+    text-shadow:0 2px 18px rgba(0,0,0,.6);}
+  .diag .v small{font-family:var(--font-mono); font-size:.42em; margin-left:6px; font-weight:400;}
 
-  /* ------------------- log blocks: the asymmetric grid ------------------ */
-  .logs{display:grid; grid-template-columns:repeat(6,1fr); gap:18px; align-items:start;}
-  .log{position:relative; min-width:0; padding:18px 16px 14px;
-    border:1px solid var(--hairline); border-radius:4px;
-    background:linear-gradient(180deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.72));
-    box-shadow:0 16px 40px rgba(0,0,0,.46);}
-  /* deliberately unequal spans + offsets — the anti-grid */
-  .log:nth-child(1){grid-column:span 4;}
-  .log:nth-child(2){grid-column:span 2; transform:translateY(26px);}
-  .log:nth-child(3){grid-column:span 3;}
-  .log:nth-child(4){grid-column:span 3; transform:translateY(18px);}
-  .log::before{content:""; position:absolute; inset:0 auto 0 0; width:2px;
-    background:linear-gradient(180deg,var(--accent),transparent); opacity:.75;}
-  .log > .h{display:flex; align-items:baseline; gap:9px; padding-bottom:10px;
-    margin-bottom:12px; border-bottom:1px solid var(--hairline);
-    font-family:var(--font-mono); font-size:clamp(12px,1.9vw,15px);}
-  .log > .h .caret{color:var(--accent);}
-  .log > .h .t{font-weight:700; letter-spacing:.06em; text-transform:lowercase;}
-  .log > .h .n{margin-left:auto; font-size:11px; color:var(--faint);}
+  /* ------------- the slates: unequal, overlapping, not a grid ----------- */
+  .logs{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(20px,2.6vw,38px) clamp(16px,2.2vw,30px); align-items:start;
+    padding-top:10px;}
+  .slate{position:relative; min-width:0; padding:30px 26px 26px;}
+  .slate > *{position:relative; z-index:1;}
+  .slate::before{content:""; position:absolute; inset:-6px; z-index:0;
+    background:linear-gradient(168deg, rgba(var(--bg-rgb),.93), rgba(var(--bg-rgb),.68));
+    box-shadow:inset 0 0 0 1px rgba(var(--bg-rgb),.5);
+    filter:url(#gb-singe) drop-shadow(0 18px 36px rgba(0,0,0,.55));}
+  /* deliberately unequal spans, staggered depth, slight rotation */
+  .slate:nth-child(1){grid-column:1 / span 7; transform:rotate(-.45deg);}
+  .slate:nth-child(2){grid-column:8 / span 5; margin-top:34px; transform:rotate(.5deg);}
+  .slate:nth-child(3){grid-column:1 / span 5; margin-top:-18px; transform:rotate(.35deg);}
+  .slate:nth-child(4){grid-column:6 / span 7; margin-top:6px; transform:rotate(-.3deg);}
+  .slate:nth-child(odd){z-index:2;}
 
-  .sec{margin-bottom:16px;} .sec:last-child{margin-bottom:0;}
+  .slate > .h{display:flex; align-items:baseline; gap:9px; padding-bottom:11px;
+    margin-bottom:13px; font-family:var(--font-mono); font-size:clamp(12px,1.9vw,15px);
+    border-bottom:1px solid var(--hairline);
+    -webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);
+    mask-image:linear-gradient(90deg,#000 82%,transparent);}
+  .slate > .h .caret{color:var(--accent);}
+  .slate > .h .t{font-weight:700; letter-spacing:.06em; text-transform:lowercase;}
+  .slate > .h .n{margin-left:auto; font-size:11px; color:var(--faint);}
+
+  .sec{margin-bottom:17px;} .sec:last-child{margin-bottom:0;}
   .sec-h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
-    color:var(--accent); text-transform:uppercase; margin-bottom:7px; opacity:.92;}
-  .sec-h::before{content:"// ";  color:var(--faint);}
+    color:var(--accent); text-transform:uppercase; margin-bottom:7px; opacity:.94;}
+  .sec-h::before{content:"// "; color:var(--faint);}
 
-  /* ------------------------------ log rows ----------------------------- */
   .row{display:flex; align-items:center; gap:9px; min-height:34px; padding:3px 8px;
-    margin:0 -8px; border-radius:3px; min-width:0; font-family:var(--font-mono);
-    transition:background .15s;}
-  .row:hover{background:rgba(255,255,255,.055);}
+    margin:0 -8px; min-width:0; font-family:var(--font-mono); transition:background .15s;}
+  .row:hover{background:rgba(255,255,255,.05);}
   .row .rk{flex:none; font-size:11px; color:var(--faint); width:22px;}
   .row .rk.top{color:var(--accent);}
   .row .icon{width:20px; height:20px; border-radius:3px; flex:none;
@@ -173,74 +177,222 @@
   .empty{font-family:var(--font-mono); font-size:12px; color:var(--faint); padding:6px 0;}
   .nohit{display:none !important;}
 
-  /* --------------------------- culture panels -------------------------- */
-  .strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(min(330px,100%),1fr));
-    gap:18px; margin-top:44px;}
-  .panel{padding:18px 18px 16px; border:1px solid var(--hairline); border-radius:4px;
-    background:linear-gradient(180deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.7));
-    box-shadow:0 16px 40px rgba(0,0,0,.46); min-width:0;}
-  .panel > .h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
+  /* --------------- cultural modules (framed by the theme) -------------- */
+  /* modules get unequal spans too — four equal columns would put the
+     grid straight back */
+  .strip{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(22px,3vw,40px) clamp(18px,2.4vw,32px); align-items:start; margin-top:10px;}
+  .strip > *{min-width:0;}
+  .strip > *:nth-child(1){grid-column:span 5;}
+  .strip > *:nth-child(2){grid-column:span 4; margin-top:20px;}
+  .strip > *:nth-child(3){grid-column:span 3; margin-top:-14px;}
+  .strip > *:nth-child(4){grid-column:span 6; margin-top:10px;}
+  .strip > *:nth-child(n+5){grid-column:span 6;}
+  .mod{--fr-surface:linear-gradient(172deg, rgba(var(--bg-rgb),.94), rgba(var(--bg-rgb),.7));}
+  .mod-h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
     color:var(--accent); text-transform:uppercase; margin-bottom:12px;}
-  .panel > .h::before{content:"◆ ";}
-
-  /* debt daemon */
-  .debt .amt{font-family:var(--font-mono); font-weight:700; color:var(--red);
-    font-size:clamp(26px,5vw,44px); line-height:1; font-variant-numeric:tabular-nums;
-    text-shadow:0 0 26px rgba(0,0,0,.8);}
-  .debt .amt sup{font-size:.42em; margin-left:4px; vertical-align:super; color:var(--muted);}
-  .debt .note{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-top:6px;}
-  .debt .title{font-family:var(--font-display); font-size:16px; margin:12px 0 8px;}
-  .debt ul{list-style:none; font-size:12.5px; line-height:1.75;}
-  .debt li{display:flex; gap:10px;}
-  .debt li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
-  .debt li.g{color:var(--green);}
-  .debt .flav{font-style:italic; color:var(--muted); font-size:12px; margin-top:10px;}
-  .debt .req{color:var(--red); font-size:11.5px; margin-top:4px;}
-
-  /* casualty log / graveyard */
-  .grave .stones{display:flex; flex-wrap:wrap; gap:10px;}
-  .grave .st{flex:1 1 108px; min-width:0; text-align:center; padding:10px 6px 8px;
-    border:1px solid var(--hairline); border-radius:10px 10px 3px 3px;
-    background:linear-gradient(180deg, rgba(255,255,255,.09), rgba(0,0,0,.35));}
-  .grave .st .n{font-family:var(--font-display); font-size:12px; font-weight:700;
-    letter-spacing:.03em; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
-  .grave .st .d{font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:5px;}
-  .grave .cap{font-size:11.5px; color:var(--faint); margin-top:10px;}
-  .grave .res{font-family:var(--font-mono); font-size:11px; color:var(--accent); margin-top:8px;}
-
-  /* transmission / roast */
-  .roast .q{font-family:var(--font-display); font-size:clamp(15px,2.6vw,21px); line-height:1.5;}
-  .roast .attr{font-family:var(--font-mono); font-size:11.5px; color:var(--muted);
+  .mod-h::before{content:"◆ ";}
+  .mod-quote{font-family:var(--font-display); font-size:clamp(15px,2.6vw,22px); line-height:1.45;}
+  .mod-attr{font-family:var(--font-mono); font-size:11.5px; color:var(--muted);
     margin-top:10px; text-align:right;}
-
-  /* item of the month */
-  .item img{width:100%; height:auto; border-radius:3px; display:block;
-    border:1px solid var(--hairline);}
-  .item .cap{font-family:var(--font-mono); font-size:11px; color:var(--faint); margin-top:8px;}
+  .mod-amt{font-family:var(--font-mono); font-weight:700; color:var(--red);
+    font-size:clamp(26px,5vw,44px); line-height:1; font-variant-numeric:tabular-nums;
+    text-shadow:0 0 28px rgba(0,0,0,.85);}
+  .mod-amt sup{font-size:.42em; margin-left:4px; color:var(--muted);}
+  .mod-sub{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-top:6px;}
+  .mod-lines{list-style:none; font-size:12.5px; line-height:1.75; margin-top:12px;}
+  .mod-lines li{display:flex; gap:10px;}
+  .mod-lines li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
+  .mod-lines li.is-green{color:var(--green);}
+  .mod-flavor{font-style:italic; color:var(--muted); font-size:12px; margin-top:10px;}
+  .mod-req{color:var(--red); font-size:11.5px; margin-top:4px;}
+  .mod-plots{display:flex; flex-wrap:wrap; gap:10px;}
+  .plot{flex:1 1 104px; min-width:0; text-align:center; padding:12px 6px 9px;
+    border-radius:52% 52% 5px 5px / 30% 30% 5px 5px;
+    background:linear-gradient(180deg, rgba(255,255,255,.11), rgba(0,0,0,.36));
+    box-shadow:inset 0 0 0 1px var(--hairline), 0 6px 14px rgba(0,0,0,.4);}
+  .plot-n{font-family:var(--font-display); font-size:12px; font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .plot-d{font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:5px;}
+  .mod-cap{font-size:11.5px; color:var(--faint); margin-top:10px;}
+  .mod-res{font-family:var(--font-mono); font-size:11px; color:var(--accent); margin-top:8px;}
+  .mod-img{width:100%; height:auto; display:block;}
 
   /* ------------------------------ footer ------------------------------- */
-  .motd{display:flex; align-items:center; gap:12px; margin-top:34px; padding:14px 16px;
-    border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
+  .motd{position:relative; margin-top:34px; padding:18px 22px;
+    display:flex; align-items:center; gap:14px;
     font-family:var(--font-mono); font-size:13px; color:var(--accent);}
-  .motd .chip{flex:none; font-size:10px; letter-spacing:.24em; padding:5px 9px;
-    border:1px solid var(--accent); border-radius:3px;}
+  .motd::before{content:""; position:absolute; inset:-4px; z-index:0;
+    background:linear-gradient(90deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.5));
+    filter:url(#gb-deckle) drop-shadow(0 10px 20px rgba(0,0,0,.45));}
+  .motd > *{position:relative; z-index:1;}
+  .motd .chip{flex:none; font-size:10px; letter-spacing:.24em; padding:4px 9px;
+    border:1px solid var(--accent);}
   .credits{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
-    padding:18px 4px 0; font-family:var(--font-mono); font-size:11px; color:var(--faint);}
+    padding:20px 6px 0; font-family:var(--font-mono); font-size:11px; color:var(--faint);}
 
   /* ------------------------------- phone ------------------------------- */
   @media (max-width:900px){
-    .logs{grid-template-columns:1fr;}
-    .log:nth-child(n){grid-column:span 1; transform:none;}   /* no offsets on phones */
+    .logs,.strip{grid-template-columns:1fr;}
+    .slate:nth-child(n){grid-column:1 / -1; margin-top:0; transform:none;}
+    .strip > *:nth-child(n){grid-column:1 / -1; margin-top:0;}
     .mast .meta{text-align:left;}
   }
   @media (max-width:520px){
-    .row .detail{display:none;}    /* name + number is the story on a phone */
-    .cmd{position:static;}         /* a 3-row sticky bar would eat the screen */
-    .cmd input{width:120px;}
+    .row .detail{display:none;}
+    .cmd{position:static;}
+    .cmd input{width:118px;}
+    .slate{padding:22px 18px 20px;}
   }
 </style>
 </head>
 <body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- ragged, hand-torn paper edge -->
+    <filter id="gb-deckle" x="-12%" y="-12%" width="124%" height="124%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.019"
+                    numOctaves="4" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="24"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- coarser, burnt/eaten edge for the heavier surfaces -->
+    <filter id="gb-singe" x="-18%" y="-18%" width="136%" height="136%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.007 0.014"
+                    numOctaves="5" seed="19" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="38"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- subtle wobble: metal that was hammered, not milled -->
+    <filter id="gb-hammered" x="-8%" y="-8%" width="116%" height="116%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.03"
+                    numOctaves="3" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<style>
+  /* ===================== the frame kit ===================== */
+  .fr{position:relative; padding:26px 24px 24px; min-width:0;
+      --fr-surface:var(--panel);
+      --fr-edge:var(--hairline);}
+  /* content rides above the filtered plate */
+  .fr > *{position:relative; z-index:1;}
+  /* the plate itself — this is what gets torn/curled/arched */
+  .fr::before{content:""; position:absolute; inset:0; z-index:0;
+    background:var(--fr-surface);
+    box-shadow:inset 0 0 0 1px rgba(var(--bg-rgb),.35);}
+
+  /* per-module art, laid into the surface under a scrim so text holds */
+  .fr[data-art]::before{
+    background-image:var(--fr-art);
+    background-size:cover; background-position:center;
+    background-blend-mode:multiply;}
+
+  /* --- torn: ragged deckle edge, like a page pulled from a book --- */
+  .fr--torn{padding:30px 28px 28px;}
+  .fr--torn::before{
+    filter:url(#gb-deckle) drop-shadow(0 14px 26px rgba(0,0,0,.42));
+    inset:-4px;}
+
+  /* --- singed: heavier, burnt-eaten edge --- */
+  .fr--singe::before{
+    filter:url(#gb-singe) drop-shadow(0 16px 30px rgba(0,0,0,.5));
+    inset:-8px;}
+
+  /* --- scroll: curled rails top and bottom, body between them --- */
+  .fr--scroll{padding:38px 30px 38px;}
+  .fr--scroll::before{inset:14px 0; filter:drop-shadow(0 12px 22px rgba(0,0,0,.36));}
+  .fr--scroll::after{content:""; position:absolute; left:-6px; right:-6px; height:26px;
+    z-index:0; top:0; border-radius:13px;
+    background:linear-gradient(180deg,
+      rgba(255,255,255,.16), var(--fr-surface) 46%, rgba(0,0,0,.34));
+    box-shadow:0 3px 8px rgba(0,0,0,.4), inset 0 -2px 4px rgba(0,0,0,.35);}
+  .fr--scroll .fr-roll-b{position:absolute; left:-6px; right:-6px; bottom:0; height:26px;
+    z-index:0; border-radius:13px;
+    background:linear-gradient(0deg,
+      rgba(255,255,255,.12), var(--fr-surface) 46%, rgba(0,0,0,.34));
+    box-shadow:0 -3px 8px rgba(0,0,0,.4), inset 0 2px 4px rgba(0,0,0,.35);}
+
+  /* --- arch: gothic window / headstone --- */
+  .fr--arch{padding:46px 24px 22px;}
+  .fr--arch::before{
+    border-radius:48% 48% 6px 6px / 30% 30% 6px 6px;
+    filter:drop-shadow(0 14px 26px rgba(0,0,0,.44));
+    box-shadow:inset 0 0 0 1px var(--fr-edge),
+               inset 0 3px 0 rgba(255,255,255,.10);}
+
+  /* --- plate: riveted, hammered metal --- */
+  .fr--plate{padding:28px 26px 24px;}
+  .fr--plate::before{
+    border-radius:10px;
+    filter:url(#gb-hammered) drop-shadow(0 12px 24px rgba(0,0,0,.46));
+    box-shadow:inset 0 0 0 2px var(--fr-edge),
+               inset 0 2px 0 rgba(255,255,255,.13),
+               inset 0 -3px 8px rgba(0,0,0,.4);}
+  /* four rivets, drawn not imported */
+  .fr--plate::after{content:""; position:absolute; inset:11px; z-index:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px);
+    background-size:8px 8px; background-repeat:no-repeat;
+    background-position:left top, right top, left bottom, right bottom;}
+
+  .fr--none{padding:6px 0;}
+  .fr--none::before{display:none;}
+
+  /* --- overlap + tilt: the grid-breakers. Small, deterministic, and
+         switched off on phones where they'd just cause overflow. --- */
+  .fr-tilt-a{transform:rotate(-.7deg);}
+  .fr-tilt-b{transform:rotate(.55deg);}
+  .fr-tilt-c{transform:rotate(-.35deg);}
+  .fr-lift{margin-top:-26px;}
+  .fr-sink{margin-top:22px;}
+
+  /* ===================== illustrated dividers ===================== */
+  .orn-rule{display:flex; align-items:center; gap:14px; justify-content:center;
+    margin:clamp(22px,4vw,40px) 0; color:var(--accent);}
+  .orn-rule i{flex:1; height:1px; max-width:220px;
+    background:linear-gradient(90deg, transparent, currentColor);}
+  .orn-rule i+i{background:linear-gradient(90deg, currentColor, transparent);}
+  .orn-rule svg{flex:none; opacity:.9;}
+
+  /* a soft vignette instead of a hard border — used where a panel would
+     otherwise read as a box */
+  .soft-edge{
+    -webkit-mask-image:radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%);
+    mask-image:radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%);}
+
+  @media (max-width:760px){
+    .fr-tilt-a,.fr-tilt-b,.fr-tilt-c{transform:none;}
+    .fr-lift{margin-top:0;} .fr-sink{margin-top:0;}
+    .fr{padding:22px 18px 20px;}
+  }
+  /* Rough edges cost a repaint; honour the reduced-motion hint by
+     dropping the displacement filters, keeping the shape and depth. */
+  @media (prefers-reduced-motion:reduce){
+    .fr--torn::before,.fr--singe::before,.fr--plate::before{filter:none;}
+  }
+</style>
+
+
+
+
+
+
+
+
+
   <div class="backdrop"></div><div class="veil"></div><div class="scan"></div>
   <div class="motes" aria-hidden="true">
     <i style="left:46.3%; --dx:44px; animation-delay:-0.17s;
@@ -299,7 +451,7 @@
       <a href="#log-1">raid</a>
       <a href="#log-2">mythic plus</a>
       <a href="#log-3">seasonal mythic plus</a>
-      <a href="#log-4">seasonal guild</a><a href="#roast">roast</a>
+      <a href="#log-4">seasonal guild</a>
       <span class="sp"></span>
       <span class="filters" id="filters" hidden>
         <button class="on" data-role="all">all</button>
@@ -344,8 +496,9 @@
     </div>
 
     <div class="logs">
-      <section class="log" id="log-1" style="scroll-margin-top:70px;">
-        <div class="h"><span class="caret">&gt;</span><span class="t">query raid</span>
+      <section class="slate" id="log-1" style="scroll-margin-top:70px;">
+        <div class="h"><span class="caret">&gt;</span>
+          <span class="t">query raid</span>
           <span class="n">--week</span></div>
         <div class="sec">
           <div class="sec-h">TOP DPS PARSES</div>
@@ -487,8 +640,9 @@
           </div>
         </div>
       </section>
-      <section class="log" id="log-2" style="scroll-margin-top:70px;">
-        <div class="h"><span class="caret">&gt;</span><span class="t">query mythic_plus</span>
+      <section class="slate" id="log-2" style="scroll-margin-top:70px;">
+        <div class="h"><span class="caret">&gt;</span>
+          <span class="t">query mythic_plus</span>
           <span class="n">--week</span></div>
         <div class="sec">
           <div class="sec-h">TOP TIMED KEYS THIS WEEK</div>
@@ -623,8 +777,9 @@
           </div>
         </div>
       </section>
-      <section class="log" id="log-3" style="scroll-margin-top:70px;">
-        <div class="h"><span class="caret">&gt;</span><span class="t">query seasonal_mythic_plus</span>
+      <section class="slate" id="log-3" style="scroll-margin-top:70px;">
+        <div class="h"><span class="caret">&gt;</span>
+          <span class="t">query seasonal_mythic_plus</span>
           <span class="n">--week</span></div>
         <div class="sec">
           <div class="sec-h">SEASON M+ SCORES</div>
@@ -739,8 +894,9 @@
           <div class="row textrow">Rakdisc trails Brewzleeh by 156</div>
         </div>
       </section>
-      <section class="log" id="log-4" style="scroll-margin-top:70px;">
-        <div class="h"><span class="caret">&gt;</span><span class="t">query seasonal_guild</span>
+      <section class="slate" id="log-4" style="scroll-margin-top:70px;">
+        <div class="h"><span class="caret">&gt;</span>
+          <span class="t">query seasonal_guild</span>
           <span class="n">--week</span></div>
         <div class="sec">
           <div class="sec-h">MOST IMPROVED DPS</div>
@@ -869,57 +1025,69 @@
         </div>
       </section>
     </div>
-
-    
+    <div class="orn-rule"><i></i><svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
+    <path d="M7 0C7 4 2 5 2 10a5 5 0 0010 0c0-2-1.5-3.5-2.5-5C8.8 6.5 8 7 7 7c1-2.5 0-5 0-7z"
+          fill="currentColor"/>
+  </svg><i></i></div>
     <div class="strip">
-      <div class="panel debt">
-        <div class="h">daemon: gambling_debt · status running</div>
-        <div class="amt">2,167,521<sup>g</sup></div>
-        <div class="note">and climbing · interest: 9.99% weekly · collateral: his monk</div>
-        <div class="title">Brewzleeh&#39;s Gambling Debt</div>
-        <ul>
-          <li class=""><span>Binds on !roll</span></li>
-          <li class=""><span>Deathroll Ledger</span><span class="r">Unique</span></li>
-          <li class=""><span>+15 Gambling Addiction</span></li>
-          <li class=""><span>-100% Gold Retention Aura</span></li>
-          <li class="g"><span>Equip: Doubles down on a 2% win chance.</span></li>
-          <li class="g"><span>Equip: Cannot leave while ahead. Has never been ahead.</span></li>
-          <li class="g"><span>Use: Borrows from GBank tab 3. Again. (No Cooldown)</span></li>
-        </ul><div class="flav">“Just one more roll.” — Brewzleeh, at 4 AM</div><div class="req">Requires: An intervention</div>
+      <div id="roast" style="scroll-margin-top:70px;">
+        <div class="fr fr--torn fr-tilt-a mod mod--roast">
+          <div class="mod-h">ROAST OF THE WEEK</div>
+  <div class="mod-quote">“Healmates Sucks”</div><div class="mod-attr">— Rakdaddy, aimed at Healmates</div>
+        
+</div>
       </div>
-      <div class="panel grave">
-        <div class="h">GRAVEYARD CAMPERS MEMORIAL</div>
-        <div class="stones">
-          <div class="st">
-            <div class="n" style="color:rgb(171,212,115);">MAILLO</div>
-            <div class="d">32 DEATHS · 0.6/PULL</div>
-          </div>
-          <div class="st">
-            <div class="n" style="color:rgb(64,199,235);">BUCHALTER</div>
-            <div class="d">30 DEATHS · 0.6/PULL</div>
-          </div>
-          <div class="st">
-            <div class="n" style="color:rgb(196,30,58);">TOMMYBRAVOO</div>
-            <div class="d">18 DEATHS · 0.3/PULL</div>
-          </div>
-          <div class="st">
-            <div class="n" style="color:rgb(199,156,110);">CHOKALOCK</div>
-            <div class="d">17 DEATHS · 0.3/PULL</div>
-          </div>
-        </div>
-        <div class="cap">Plots assigned by deaths-per-pull. The campfire is load-bearing.</div>
-        <div class="res">◆ plot reserved: HEALMATES — 6 consecutive weeks in the fire</div>
+      <div id="debt" style="scroll-margin-top:70px;">
+        <div class="fr fr--plate fr-tilt-b mod mod--debt">
+          <div class="mod-h">Brewzleeh&#39;s Gambling Debt</div>
+  <div class="mod-amt">2,167,521<sup>g</sup></div>
+  <div class="mod-sub">and climbing · interest: 9.99% weekly · collateral: his monk</div>
+  <ul class="mod-lines">
+    <li class=""><span>Binds on !roll</span></li>
+    <li class=""><span>Deathroll Ledger</span><span class="r">Unique</span></li>
+    <li class=""><span>+15 Gambling Addiction</span></li>
+    <li class=""><span>-100% Gold Retention Aura</span></li>
+    <li class="is-green"><span>Equip: Doubles down on a 2% win chance.</span></li>
+    <li class="is-green"><span>Equip: Cannot leave while ahead. Has never been ahead.</span></li>
+    <li class="is-green"><span>Use: Borrows from GBank tab 3. Again. (No Cooldown)</span></li>
+  </ul><div class="mod-flavor">“Just one more roll.” — Brewzleeh, at 4 AM</div><div class="mod-req">Requires: An intervention</div>
+        
+</div>
       </div>
-      <div class="panel roast" id="roast" style="scroll-margin-top:70px;">
-        <div class="h">incoming transmission · roast of the week</div>
-        <div class="q">“Healmates Sucks”</div><div class="attr">— Rakdaddy, aimed at Healmates</div>
+      <div id="graveyard" style="scroll-margin-top:70px;">
+        <div class="fr fr--arch fr-tilt-c mod mod--graveyard">
+          
+  <div class="mod-h">GRAVEYARD CAMPERS MEMORIAL</div>
+  <div class="mod-plots">
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(94,116,63);">MAILLO</div>
+      <div class="plot-d">32 DEATHS · 0.6/PULL</div>
+    </div>
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(35,109,129);">BUCHALTER</div>
+      <div class="plot-d">30 DEATHS · 0.6/PULL</div>
+    </div>
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(107,16,31);">TOMMYBRAVOO</div>
+      <div class="plot-d">18 DEATHS · 0.3/PULL</div>
+    </div>
+    <div class="plot">
+      <div class="plot-n" style="color:rgb(109,85,60);">CHOKALOCK</div>
+      <div class="plot-d">17 DEATHS · 0.3/PULL</div>
+    </div>
+  </div><div class="mod-cap">Plots assigned by deaths-per-pull. The campfire is load-bearing.</div>
+  <div class="mod-res">Plot reserved: HEALMATES — 6 consecutive weeks in the fire</div>
+        
+</div>
       </div>
-      <div class="panel item">
-        <div class="h">GUILD ITEM OF THE MONTH</div>
-        <img src="../assets/item_art.png" alt="GUILD ITEM OF THE MONTH" loading="lazy">
+      <div id="item" style="scroll-margin-top:70px;">
+        <div class="fr fr--scroll mod mod--item">
+          <div class="mod-h">GUILD ITEM OF THE MONTH</div>
+  <img class="mod-img" src="../assets/item_art.png" alt="GUILD ITEM OF THE MONTH" loading="lazy">
+        <span class="fr-roll-b"></span>
+</div>
       </div>
     </div>
-
     <div class="motd"><span class="chip">MOTD</span><span>That&#39;s a 50 DKP MINUS.</span></div>
     <div class="credits">
       <span>“Git Gud.” — ancient guild proverb</span>

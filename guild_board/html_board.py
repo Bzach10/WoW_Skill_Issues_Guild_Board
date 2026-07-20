@@ -389,6 +389,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     display_cfg = cfg.get("display") or {}
     theme = theme_mod.load_theme(display_cfg.get("theme_file", theme_mod.THEME_FILE))
     modules = theme_mod.resolve_templates(theme)
+    mods = theme_mod.resolve_modules(theme)
     width = int((theme.get("board") or {}).get("width") or WIDTH)
     week_index = start_dt.isocalendar()[1]
 
@@ -401,7 +402,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
 
     # Rotating mid-pack spotlights ride in the Seasonal Guild column
     awards_cfg = theme.get("awards") or {}
-    if awards_cfg.get("enabled", True):
+    if mods["by_key"]["awards"]["enabled"]:
         seasonal_guild = list(seasonal_guild) + awards_mod.weekly_awards(
             week_index, stats=stats, streaks=streaks,
             season_scores=mplus_season_scores, previous=previous,
@@ -454,6 +455,14 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
 
     debt_card = _debt_card(theme, week_index)
     quips = theme.get("motd_quips") or ["Git Gud."]
+    roast = _roast(cfg)
+
+    # Bind each rotated-in module to its data. A module the theme enabled
+    # but that has nothing to show this week drops out on its own.
+    payloads = {"roast": roast, "debt": debt_card,
+                "graveyard": stones, "item": item_src}
+    culture_modules = [dict(mods["by_key"][key], data=payloads.get(key))
+                       for key in mods["order"] if payloads.get(key)]
 
     global LAST_TLDR
     LAST_TLDR = _tldr_from_columns(columns, standing)
@@ -491,7 +500,11 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "bar_label": bar_label,
         "columns": columns,
         "icons_on": bool(display_cfg.get("icons", True)),
-        "roast": _roast(cfg),
+        "roast": roast,
+        # the theme's rotated-in cultural modules, in order, each with its
+        # own title/art/frame/accent and its data attached
+        "culture_modules": culture_modules,
+        "module_cfg": mods["by_key"],
         "stones": stones,
         "debt": debt_card["amount"] if debt_card else 0,
         "debt_card": debt_card,
@@ -499,7 +512,11 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "item_title": (theme.get("footer") or {}).get("item_title",
                                                       display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")),
         "item_src": item_src,
-        "motd": quips[week_index % len(quips)],
+        # "" (not None) when retired: the image-board templates print this
+        # unconditionally, and None would render the word "None"
+        "motd": (quips[week_index % len(quips)]
+                 if mods["by_key"]["motd"]["enabled"] else ""),
+        "motd_label": mods["by_key"]["motd"]["title"],
         "watermark": display_cfg.get(
             "watermark_text",
             "Powered by Guild Board · github.com/Bzach10/wow-guild-board")

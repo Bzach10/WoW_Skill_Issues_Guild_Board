@@ -15,6 +15,7 @@ filename. See CUSTOMIZING.md for the walkthrough.
 
 import copy
 import logging
+import os
 from pathlib import Path
 
 import yaml
@@ -125,6 +126,32 @@ DEFAULT_THEME = {
         "item_title": "GUILD ITEM OF THE MONTH",
         "item_empty": "New item arriving soon™",
     },
+    # ------------------------------------------------------------------
+    #  MODULES — the guild's cultural blocks, rotatable per theme.
+    #  A theme picks WHICH appear, in WHAT ORDER, and how each is dressed
+    #  (its own art, frame style and accent). Anything omitted inherits
+    #  the shipped default, and where an older theme.yml already said
+    #  something (footer.debt.enabled, footer.graveyard.title, ...) that
+    #  value still wins — see resolve_modules.
+    #
+    #  style names a frame from templates/web/_ornaments.html.j2:
+    #  torn | scroll | arch | plate | none.
+    # ------------------------------------------------------------------
+    "modules": {
+        # panel order on the page; drop a key to retire that module
+        "order": ["roast", "debt", "graveyard", "item"],
+        "roast": {"enabled": True, "title": "ROAST OF THE WEEK",
+                  "art": None, "style": "torn", "accent": None},
+        "debt": {"enabled": True, "title": None,     # None -> footer.debt.title
+                 "art": None, "style": "plate", "accent": None},
+        "graveyard": {"enabled": True, "title": None,
+                      "art": None, "style": "arch", "accent": None},
+        "item": {"enabled": True, "title": None,
+                 "art": None, "style": "scroll", "accent": None},
+        "motd": {"enabled": True, "title": "MOTD",
+                 "art": None, "style": "none", "accent": None},
+        "awards": {"enabled": None},   # None -> fall back to awards.enabled
+    },
     "motd_quips": [
         "MORE DOTS. MORE DOTS. … OK STOP DOTS.",
         "That's a 50 DKP MINUS.",
@@ -207,6 +234,101 @@ def resolve_templates(theme):
         "footer_h": int(footer_h),
         "footer_total": int(footer_h) + FOOTER_EXTRA,
     }
+
+
+#: frame styles templates/web/_ornaments.html.j2 knows how to draw
+FRAME_STYLES = ("torn", "scroll", "arch", "plate", "none")
+
+#: every module the board can rotate in or out
+MODULE_KEYS = ("roast", "debt", "graveyard", "item", "motd", "awards")
+
+
+def _module_title(key, theme, declared):
+    """A module's heading: what the theme's modules block says, else the
+    older footer.* key it used to live under, else the shipped default."""
+    if declared:
+        return declared
+    footer = theme.get("footer") or {}
+    if key == "debt":
+        return (footer.get("debt") or {}).get("title") or "Gambling Debt"
+    if key == "graveyard":
+        return (footer.get("graveyard") or {}).get("title") or "GRAVEYARD"
+    if key == "item":
+        return footer.get("item_title") or "GUILD ITEM OF THE MONTH"
+    # not every module is a titled panel (awards has no heading of its own)
+    return DEFAULT_THEME["modules"].get(key, {}).get("title")
+
+
+def _module_enabled(key, theme, declared):
+    """Explicit modules.<key>.enabled wins; otherwise honour the older
+    switch the guild may already have set, then the default."""
+    if declared is not None:
+        return bool(declared)
+    if key == "debt":
+        return bool(((theme.get("footer") or {}).get("debt") or {}).get("enabled", True))
+    if key == "awards":
+        return bool((theme.get("awards") or {}).get("enabled", True))
+    return True
+
+
+def resolve_modules(theme):
+    """Which cultural modules this theme shows, in order, and how each is
+    dressed.
+
+    Returns {"order": [keys...], "by_key": {key: {...}}}. Fails open at
+    every step: an unknown key in `order` is dropped with a warning, an
+    unknown frame style falls back to "none", a module whose art file is
+    missing simply renders without art, and a theme with no modules block
+    at all gets the shipped set.
+    """
+    theme = theme or {}
+    declared = theme.get("modules")
+    if not isinstance(declared, dict):
+        declared = {}
+    defaults = DEFAULT_THEME["modules"]
+
+    by_key = {}
+    for key in MODULE_KEYS:
+        spec = declared.get(key)
+        if not isinstance(spec, dict):
+            spec = {}
+        base = defaults[key]
+        style = str(spec.get("style", base.get("style", "none")) or "none")
+        if style not in FRAME_STYLES:
+            logger.warning("Module '%s' asks for unknown frame style '%s'; "
+                           "drawing it unframed.", key, style)
+            style = "none"
+        art = spec.get("art", base.get("art"))
+        if art and not os.path.exists(art):
+            logger.warning("Module '%s' points at missing art '%s'; "
+                           "rendering without it.", key, art)
+            art = None
+        by_key[key] = {
+            "key": key,
+            # pass None when the theme didn't declare it — filling in the
+            # default here would shadow the older footer.* switches that
+            # _module_enabled falls back to
+            "enabled": _module_enabled(key, theme, spec.get("enabled")),
+            "title": _module_title(key, theme, spec.get("title")),
+            "art": art,
+            "style": style,
+            "accent": spec.get("accent") or base.get("accent"),
+        }
+
+    raw_order = declared.get("order", defaults["order"])
+    if not isinstance(raw_order, (list, tuple)):
+        raw_order = defaults["order"]
+    order = []
+    for key in raw_order:
+        if key in ("motd", "awards"):
+            continue            # not panels; they have their own slots
+        if key not in by_key:
+            logger.warning("Theme lists unknown module '%s' in modules.order; "
+                           "skipping it.", key)
+            continue
+        if by_key[key]["enabled"] and key not in order:
+            order.append(key)
+    return {"order": order, "by_key": by_key}
 
 
 def template_loader_paths():
