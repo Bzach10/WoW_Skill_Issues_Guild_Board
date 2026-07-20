@@ -66,3 +66,10 @@ CUSTOMIZING.md caught up with the night: WANTED poster knobs (eyebrow,
 reward line, backgrounds.poster + ink mode explained), fonts.display_weights,
 season-derived Iron Attendance wording, pointers to THEME_JOURNAL and
 ART_GUIDE. Docs now match the board the guild actually has.
+
+## Iteration 8 (~6:35 AM)
+Simplification with a save: hoisted the attendance-derivation imports out
+of the per-difficulty loop (new _sample_week helper) — and the cleanup
+exposed that wcl.week_of relied on function-local datetime imports; the
+module-level import was missing, which would have been a runtime
+NameError in the untested CI path. Smoke-tested the path directly.

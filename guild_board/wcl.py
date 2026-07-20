@@ -1,6 +1,7 @@
 import logging
 import time
 from collections import defaultdict
+from datetime import datetime, timezone
 
 import requests
 
@@ -501,8 +502,7 @@ def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_rep
         season = season[:half] + season[-half:]
 
     logger.info("Most Improved: scanning %s season report(s)", len(season))
-    from guild_board.state import raid_week_label
-    from datetime import datetime, timezone
+    from guild_board.state import raid_week_label   # here (not module top) to keep wcl importable without state
 
     def week_of(ms):
         return raid_week_label(datetime.fromtimestamp((ms or 0) / 1000, tz=timezone.utc))

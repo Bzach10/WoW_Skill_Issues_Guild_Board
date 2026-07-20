@@ -16,6 +16,12 @@ from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, col
 from guild_board.state import (baselines_view, load_board_state, raid_attendance_streaks,
                                raid_week_label, save_board_state, streaks_from_attendance,
                                update_records)
+
+
+def _sample_week(sample):
+    """Raid-week label for one season-history sample (ts in ms)."""
+    return raid_week_label(datetime.fromtimestamp((sample.get("ts") or 0) / 1000,
+                                                  tz=timezone.utc))
 from guild_board.wcl import (
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
@@ -153,15 +159,12 @@ def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_m
             history, coverage = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
             attendance["scanned"] |= coverage.get("scanned") or set()
             attendance["all"] |= coverage.get("all") or set()
-            from guild_board.state import raid_week_label as _rwl
-            from datetime import datetime as _dt, timezone as _tz
             for role in ("dps", "hps", "tanks"):
                 for name, samples in (history.get(role) or {}).items():
                     if not keep(name):
                         continue
                     weeks = attendance["weeks"].setdefault(name.strip().lower(), set())
-                    for s in samples:
-                        weeks.add(_rwl(_dt.fromtimestamp((s.get("ts") or 0) / 1000, tz=_tz.utc)))
+                    weeks.update(_sample_week(s) for s in samples)
             for role, bucket in (("dps", per_diff_dps), ("hps", per_diff_hps)):
                 ranked = compute_improvement(history[role], min_span_days=min_days)
                 for entry in ranked:
