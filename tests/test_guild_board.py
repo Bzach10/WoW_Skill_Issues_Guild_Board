@@ -1460,3 +1460,54 @@ def test_web_role_filter_uses_whole_words():
     tpl = open("guild_board/templates/web.html.j2", encoding="utf-8").read()
     assert "tokens.indexOf(w)" in tpl          # whole-word membership
     assert "tags.indexOf(w)" not in tpl        # the substring bug is gone
+
+
+# --- webhook delivery: multi-file + rate-limit retry ------------------------------
+
+
+def test_webhook_multifile_and_429_retry(tmp_path, monkeypatch):
+    """The post survives a 429 (retry once) and attaches board + mobile as
+    files[0]/files[1] — the exact multipart shape Discord requires."""
+    calls = []
+
+    class Resp:
+        def __init__(self, code):
+            self.status_code = code
+            self.text = ""
+        def json(self):
+            return {"retry_after": 0.01}
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise requests.HTTPError(response=self)
+
+    monkeypatch.setattr(gb_discord.requests, "post",
+                        lambda url, **kw: (calls.append((url, kw)), Resp(429 if len(calls) == 1 else 200))[1])
+    monkeypatch.setattr(gb_discord.time, "sleep", lambda s: None)
+    board = tmp_path / "board.gif"; board.write_bytes(b"gif")
+    mobile = tmp_path / "mobile.png"; mobile.write_bytes(b"png")
+    gb_discord.post_to_discord("https://discord.test/hook", {"title": "t"},
+                               image_path=str(board), extra_image_paths=[str(mobile)])
+    assert len(calls) == 2                                  # 429, then success
+    url, kw = calls[1]
+    assert set(kw["files"]) == {"files[0]", "files[1]"}     # both images attached
+    assert kw["files"]["files[0]"][2] == "image/gif"        # mime follows extension
+    assert "payload_json" in kw["data"]
+
+
+def test_webhook_skips_missing_extra_files(monkeypatch):
+    """A vanished mobile companion must not break the post."""
+    seen = {}
+
+    class Resp:
+        status_code = 200
+        text = ""
+        def raise_for_status(self):
+            pass
+
+    monkeypatch.setattr(gb_discord.requests, "post",
+                        lambda url, **kw: (seen.update(kw), Resp())[1])
+    gb_discord.post_to_discord("https://discord.test/hook", {"title": "t"},
+                               image_path="does_not_exist.png",
+                               extra_image_paths=["also_missing.png"])
+    assert "files" not in seen                              # clean JSON post instead
+    assert seen["json"]["embeds"][0]["title"] == "t"
