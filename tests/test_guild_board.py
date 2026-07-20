@@ -1587,3 +1587,21 @@ def test_poster_mode_renders_ink_names(tmp_path):
         cfg2, _image_board_stats(), None, None, "Voidspire", None, None, None,
         now - timedelta(days=7), now)
     assert "rgb(0,112,222)" in html_board.render_html(ctx2)
+
+
+def test_integrity_heals_missing_theme_assets():
+    from guild_board import integrity
+    theme = {"backgrounds": {
+        "header": "assets/does_not_exist.png",      # heals to shipped default
+        "middle": "assets/theme_art.png",           # exists — untouched
+        "poster": "assets/generated/gone.png",      # no default — cleared
+    }}
+    msgs = []
+    integrity.check_theme_assets(theme, msgs)
+    assert theme["backgrounds"]["header"] == "assets/wall_header.png"
+    assert theme["backgrounds"]["middle"] == "assets/theme_art.png"
+    assert theme["backgrounds"]["poster"] is None
+    assert len(msgs) == 2
+    # clean theme produces zero noise
+    ok = {"backgrounds": {"middle": "assets/theme_art.png"}}
+    assert integrity.run_all(theme=ok) == []

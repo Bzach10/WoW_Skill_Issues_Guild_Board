@@ -118,6 +118,31 @@ def check_streaks(state, messages):
               f"elapsed since tracking began ({started}) — per-post inflation bug?")
 
 
+def check_theme_assets(theme, messages):
+    """Every configured background image must exist on disk — a typo'd or
+    uncommitted path (easy to do when the art director stages new assets)
+    otherwise renders as a silent blank. Heal: poster falls back to the
+    pure-CSS parchment (None); walls fall back to the shipped defaults."""
+    from guild_board.theme import DEFAULT_THEME
+    backgrounds = (theme or {}).get("backgrounds")
+    if not backgrounds:
+        return
+    defaults = DEFAULT_THEME["backgrounds"]
+    for key in ("header", "middle", "footer", "poster", "item"):
+        path = backgrounds.get(key)
+        if not path or os.path.exists(path):
+            continue
+        fallback = defaults.get(key)
+        if fallback and os.path.exists(fallback):
+            _warn(messages, f"backgrounds.{key} points at missing file '{path}' — "
+                            f"healed to the shipped default")
+            backgrounds[key] = fallback
+        else:
+            _warn(messages, f"backgrounds.{key} points at missing file '{path}' — "
+                            f"cleared (renders without it)")
+            backgrounds[key] = None
+
+
 def check_standing(standing, messages):
     """Ranks must be positive integers; anything else is dropped rather
     than rendered (a '#0' or negative rank is worse than a blank)."""
@@ -134,10 +159,12 @@ def check_standing(standing, messages):
             standing.pop(key, None)
 
 
-def run_all(context=None, records=None, standing=None):
+def run_all(context=None, records=None, standing=None, theme=None):
     """Run every applicable check, healing in place. Returns the warning
     list — empty means a clean bill of health."""
     messages = []
+    if theme:
+        check_theme_assets(theme, messages)
     if context:
         check_rows(context, messages)
         check_hero(context, messages)

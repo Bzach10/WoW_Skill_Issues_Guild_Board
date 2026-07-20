@@ -459,9 +459,10 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     LAST_TLDR = _tldr_from_columns(columns, standing)
 
     # Self-heal before anything renders: clamp impossible values, recompute
-    # inconsistent math, flag suspect data — loudly, but never block a post.
+    # inconsistent math, verify theme assets exist, flag suspect data —
+    # loudly, but never block a post.
     ctx_probe = {"columns": columns, "hero_tiles": tiles, "pulls": pulls, "wipes": wipes}
-    integrity.run_all(context=ctx_probe, records=records, standing=standing)
+    integrity.run_all(context=ctx_probe, records=records, standing=standing, theme=theme)
     wipes = ctx_probe["wipes"]
 
     wipes_sub = str((theme.get("header") or {}).get("wipes_sub", ""))

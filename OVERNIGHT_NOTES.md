@@ -54,3 +54,9 @@ Locked down the new ink pipeline with tests: class-color darkening,
 whitish->sepia special case, non-rgb passthrough, and a full render
 assertion that poster mode prints ink while plain mode keeps screen
 colors — on both board and web surfaces. 97 tests.
+
+## Iteration 6 (~5:40 AM)
+New integrity guard: theme background paths are verified at build time —
+a typo'd or uncommitted asset (the art-director failure mode) heals to
+the shipped default (walls) or the CSS parchment (poster) with a loud
+warning, instead of rendering a silent blank. 98 tests.
