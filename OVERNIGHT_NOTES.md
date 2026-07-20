@@ -78,3 +78,8 @@ NameError in the untested CI path. Smoke-tested the path directly.
 End-to-end test for guild-made template modules: a board_templates/
 header is resolved first, honors its custom GIF band height, renders in
 place of the built-in. The CUSTOMIZING.md recipe is now under test. 99 tests.
+
+## Iteration 10 (~7:28 AM)
+Final overnight iteration: pinned the awards fail-open contract — a
+crashing award builder is skipped and the rest still render. 100 tests
+even. Next wake performs the verified merge to main for the 9 AM post.

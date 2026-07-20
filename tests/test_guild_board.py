@@ -1635,3 +1635,20 @@ def test_custom_board_template_module(tmp_path, monkeypatch):
     html = html_board.render_html(ctx)
     assert "CUSTOM HEADER FOR TEST GUILD" in html     # guild module actually rendered
     assert "GIT GUD" not in html                      # built-in header fully replaced
+
+
+def test_weekly_awards_fail_open(monkeypatch):
+    """A crashing award builder is skipped, never sinks the board."""
+    from guild_board import awards as awards_mod
+
+    def boom(**_):
+        raise RuntimeError("award exploded")
+
+    def fine(**_):
+        return [{"name": "Alba", "detail": "ok", "value": "1"}]
+
+    monkeypatch.setattr(awards_mod, "AWARD_POOL",
+                        [("WEEKLY AWARD · BOOM", boom), ("WEEKLY AWARD · FINE", fine)])
+    secs = awards_mod.weekly_awards(0, per_week=2, streaks={"alba": 3})
+    assert [s["title"] for s in secs] == ["WEEKLY AWARD · FINE"]
+    assert secs[0]["rows"][0]["name"] == "Alba"
