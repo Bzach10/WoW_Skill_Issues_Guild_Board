@@ -52,6 +52,20 @@ Optional: `tests/test_guild_board.py` is an offline pytest suite (no API keys ne
 
 Officers can also toggle categories, change `top_n`, switch difficulty, adjust the pug filter, or enable the M+ board — all from `config.yml`, no code.
 
+## Make it yours (any member, no coding)
+
+Everything about how the board **looks** — colors, fonts, background art, the
+header/footer style, every joke on it, and the rotating weekly awards — lives
+in **`theme.yml`**, safe for any member to edit right on the GitHub website.
+Mistakes can't break the board: bad values fall back to the shipped design.
+Preview changes instantly with `python scripts/preview_board.py --open`
+(fake data, no API keys). Full walkthrough, including building your own
+header/footer module: **[CUSTOMIZING.md](CUSTOMIZING.md)**.
+
+Every post also includes a portrait phone-readable companion image and TL;DR
+callout lines in the message text, so the highlights land on mobile without
+pinch-zooming (toggle: `display.mobile_companion` in `config.yml`).
+
 ## CLI & preview
 
 Run locally with no network calls:

@@ -10,8 +10,12 @@ from guild_board.wcl import wcl_guild_url
 logger = logging.getLogger(__name__)
 
 
-def post_to_discord(webhook_url, embed, content=None, image_path=None, cfg=None):
+def post_to_discord(webhook_url, embed, content=None, image_path=None, cfg=None,
+                    extra_image_paths=None):
     """Post a Discord embed with an optional image attachment.
+
+    extra_image_paths (e.g. the phone-readable companion board) ride along
+    as additional attachments on the same message.
 
     Link buttons ride along when cfg provides guild info. Channel webhooks
     (non-application-owned) only accept link buttons when the request sets
@@ -26,7 +30,7 @@ def post_to_discord(webhook_url, embed, content=None, image_path=None, cfg=None)
         payload["components"] = components
 
     try:
-        return _execute_webhook(webhook_url, payload, image_path)
+        return _execute_webhook(webhook_url, payload, image_path, extra_image_paths)
     except requests.HTTPError as exc:
         resp = exc.response
         status = resp.status_code if resp is not None else "?"
@@ -36,23 +40,37 @@ def post_to_discord(webhook_url, embed, content=None, image_path=None, cfg=None)
                 "Discord rejected the post with link buttons (HTTP %s: %s); retrying without them.",
                 status, body)
             payload.pop("components", None)
-            return _execute_webhook(webhook_url, payload, image_path)
+            return _execute_webhook(webhook_url, payload, image_path, extra_image_paths)
         logger.error("Discord webhook post failed (HTTP %s): %s", status, body)
         raise
 
 
-def _execute_webhook(webhook_url, payload, image_path=None, _retried=False):
+def _mime(path):
+    return "image/gif" if path.lower().endswith(".gif") else "image/png"
+
+
+def _execute_webhook(webhook_url, payload, image_path=None, extra_image_paths=None,
+                     _retried=False):
     url = webhook_url
     if payload.get("components"):
         sep = "&" if "?" in webhook_url else "?"
         url = f"{webhook_url}{sep}with_components=true"
 
-    if image_path and os.path.exists(image_path):
-        with open(image_path, "rb") as f:
-            mime = "image/gif" if image_path.lower().endswith(".gif") else "image/png"
-            files = {"file": (os.path.basename(image_path), f, mime)}
+    paths = [p for p in ([image_path] + list(extra_image_paths or []))
+             if p and os.path.exists(p)]
+    if paths:
+        handles = []
+        try:
+            files = {}
+            for i, p in enumerate(paths):
+                f = open(p, "rb")
+                handles.append(f)
+                files[f"files[{i}]"] = (os.path.basename(p), f, _mime(p))
             data = {"payload_json": json.dumps(payload)}
             resp = requests.post(url, data=data, files=files, timeout=30)
+        finally:
+            for f in handles:
+                f.close()
     else:
         resp = requests.post(url, json=payload, timeout=30)
 
@@ -64,7 +82,8 @@ def _execute_webhook(webhook_url, payload, image_path=None, _retried=False):
             pass
         logger.warning("Discord rate limited the webhook; retrying in %.1fs", retry_after)
         time.sleep(min(retry_after, 10))
-        return _execute_webhook(webhook_url, payload, image_path, _retried=True)
+        return _execute_webhook(webhook_url, payload, image_path, extra_image_paths,
+                                _retried=True)
 
     resp.raise_for_status()
     return resp

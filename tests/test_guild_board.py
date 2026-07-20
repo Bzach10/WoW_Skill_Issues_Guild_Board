@@ -1044,3 +1044,113 @@ def test_main_preview_writes_html(tmp_path):
     embed, _ = main.build_board(cfg, start_dt=now - timedelta(days=7), end_dt=now, preview=True)
     assert "title" in embed
     assert "Test" in embed["title"]
+
+
+# --- theming, modules, awards, mobile companion -----------------------------------
+
+
+def test_theme_defaults_merge_and_fail_open(tmp_path):
+    from guild_board import theme as theme_mod
+    # missing file -> full defaults
+    t = theme_mod.load_theme(str(tmp_path / "missing.yml"))
+    assert t["header"]["sign_text"] == "GIT GUD"
+    # partial file -> overrides win, untouched keys keep defaults
+    custom = tmp_path / "theme.yml"
+    custom.write_text("colors:\n  accent: '#123456'\nheader:\n  sign_text: 'NO WIPES'\n",
+                      encoding="utf-8")
+    t2 = theme_mod.load_theme(str(custom))
+    assert t2["colors"]["accent"] == "#123456"
+    assert t2["header"]["sign_text"] == "NO WIPES"
+    assert t2["colors"]["background"] == "#111217"
+    # broken YAML -> defaults, never an exception
+    broken = tmp_path / "broken.yml"
+    broken.write_text("colors: [unclosed", encoding="utf-8")
+    assert theme_mod.load_theme(str(broken))["header"]["sign_text"] == "GIT GUD"
+
+
+def test_theme_module_resolution_falls_back():
+    from guild_board import theme as theme_mod
+    mods = theme_mod.resolve_templates({"board": {"header": "no_such_module", "footer": "simple"}})
+    assert mods["header_template"] == "headers/stone_torchlight.html.j2"
+    assert mods["footer_template"] == "footers/simple.html.j2"
+    assert mods["footer_h"] == theme_mod.FOOTER_HEIGHTS["simple"]
+
+
+def test_weekly_awards_rotate_and_rank():
+    from guild_board.awards import weekly_awards
+    stats = {"deaths": {"Alba": 3, "Bryn": 0}, "participants": ["Alba", "Bryn", "Cyd"],
+             "pulls": 20, "best_dps": {}, "best_hps": {}}
+    streaks = {"alba": 5, "bryn": 3, "cyd": 1}
+    scores = [(3000, "Alba", "Holy Priest"), (2500, "Bryn", "Fire Mage")]
+    previous = {"season_scores": {"alba": 2900, "bryn": 2510}}
+    kwargs = dict(stats=stats, streaks=streaks, season_scores=scores, previous=previous)
+    secs = weekly_awards(0, per_week=2, **kwargs)
+    assert len(secs) == 2
+    assert secs[0]["title"].endswith("IRONMAN")
+    assert secs[0]["rows"][0]["value"] == "0"          # zero deaths ranks first
+    secs2 = weekly_awards(1, per_week=2, **kwargs)
+    assert secs2[0]["title"].endswith("ATTENDANCE")    # rotation moved on
+    assert secs2[0]["rows"][0]["name"] == "Alba"
+    # climb: only positive gains, largest first
+    climb = weekly_awards(2, per_week=1, **kwargs)[0]
+    assert climb["title"].endswith("BIGGEST CLIMB")
+    assert climb["rows"][0]["name"] == "Alba" and climb["rows"][0]["value"] == "+100"
+
+
+def test_alt_header_footer_modules_render(tmp_path):
+    from guild_board import html_board
+    theme_file = tmp_path / "theme.yml"
+    theme_file.write_text("board:\n  header: banner\n  footer: simple\n", encoding="utf-8")
+    cfg = _image_board_cfg()
+    cfg["display"]["theme_file"] = str(theme_file)
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        cfg, _image_board_stats(), None, None, "Voidspire", None, None, None,
+        now - timedelta(days=7), now)
+    assert ctx["header_template"] == "headers/banner.html.j2"
+    html = html_board.render_html(ctx)
+    assert "TEST GUILD" in html                 # banner carries the guild name
+    assert "CAMPERS MEMORIAL" not in html       # simple footer has no memorial
+    assert "GIT GUD" not in html                # no hanging sign either
+
+
+def test_headline_priorities():
+    from guild_board.html_board import _headline
+    records = {"best_dps_parse": {"name": "Rakell", "parse": 99.0, "boss": "Chimaerus", "new": True}}
+    assert "NEW GUILD RECORD" in _headline(None, None, None, records)
+    standing, previous = {"realm": 49}, {"standing": {"realm": 52}}
+    assert _headline(None, standing, previous, None) == "REALM RANK #49 — UP 3 THIS WEEK"
+    assert "GO AGANE" in _headline({"kills": 2, "pulls": 30}, None, None, None)
+    assert _headline({"kills": 0, "pulls": 0}, None, None, None) is None
+
+
+def test_mobile_template_renders():
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        _image_board_cfg(), _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    html = html_board.render_html(ctx, template="mobile.html.j2")
+    assert "TEST GUILD" in html
+    assert 'width:1080px' in html
+    assert "ROAST OF THE WEEK" in html
+
+
+def test_tldr_lines():
+    from guild_board.formatters import tldr_lines
+    lines = tldr_lines(_image_board_stats(), {"realm": 49})
+    assert any("Top DPS" in l and "Rakell" in l for l in lines)
+    assert any("#49" in l for l in lines)
+    assert tldr_lines(None, None) == []
+
+
+def test_debt_card_theme_driven():
+    from guild_board.html_board import _debt_card
+    card = _debt_card({"footer": {"debt": {"enabled": True, "principal": 1000,
+                                           "weekly_rate_pct": 10.0,
+                                           "lines": ["Binds on !roll", "Ledger|Unique",
+                                                     "Equip: Loses gold."]}}}, 2)
+    assert card["amount"] == 1210
+    assert card["lines"][1] == {"left": "Ledger", "right": "Unique", "green": False}
+    assert card["lines"][2]["green"] is True
+    assert _debt_card({"footer": {"debt": {"enabled": False}}}, 5) is None

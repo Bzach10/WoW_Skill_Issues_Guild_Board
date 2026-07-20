@@ -1,25 +1,31 @@
-"""Render the weekly board from an HTML template via headless Chromium.
+"""Render the weekly board from HTML templates via headless Chromium.
 
-The design IS the render: guild_board/templates/stone_torchlight.html.j2
-carries the exact CSS of the approved design, this module feeds it the same
-live data structures the Pillow renderer uses, and Playwright screenshots
-the page. Animation frames are captured by pausing every CSS animation and
-seeking it to phase*loop — all template animation periods divide the loop,
-so any frame count loops seamlessly.
+The design IS the render — and the design is modular: board.html.j2 is
+the skeleton (info strip, hero, columns, roast, MOTD), while the header
+and footer are swappable modules under templates/headers/ and
+templates/footers/, chosen in theme.yml. Colors, backgrounds, fonts and
+every gag line come from theme.yml too (guild_board/theme.py owns the
+defaults). Playwright screenshots the page; animation frames are
+captured by pausing every CSS animation and seeking it to phase*loop.
+
+A portrait phone-readable companion (mobile.html.j2) can be captured in
+the same browser session and posted alongside the landscape board.
 
 Fails open: any missing dependency or browser error returns None so the
 caller falls back to the battle-tested Pillow renderer.
 """
 
+import io
 import logging
-import math
 import os
 import random
 from pathlib import Path
 
 from PIL import Image
 
-from guild_board import board_image, theme_bands
+from guild_board import awards as awards_mod
+from guild_board import board_image
+from guild_board import theme as theme_mod
 from guild_board.board_image import (
     CLASS_ICONS, DIFFICULTY_NAMES, ICON_CDN, MEDAL_FILLS, SPEC_ICONS,
     _CLASS_KEY_DISPLAY, _build_columns, _build_seasonal, _hero_tiles,
@@ -31,10 +37,10 @@ logger = logging.getLogger(__name__)
 
 LOOP_MS = 1200
 TEMPLATE_DIR = Path(__file__).parent / "templates"
-RENDER_HTML = "board_render.html"   # written to cwd so relative assets/ paths work
+RENDER_HTML = "board_render.html"          # written to cwd so relative assets/ paths work
+RENDER_MOBILE_HTML = "board_mobile_render.html"
 
-# canvas + band heights — MUST match the template's CSS so the viewport is
-# right and the GIF encoder knows which rows are animated
+# retained as defaults; the live values come from the theme's module map
 WIDTH = 3000
 HEADER_H = 300
 FOOTER_TOTAL = 430 + 52 + 40
@@ -46,14 +52,6 @@ STONES = [
     (180, 196, False, True, 1.6, ("#827e6e", "#605d50", "#434139")),
     (158, 162, True, False, -1.2, ("#746f61", "#575447", "#3c3a33")),
     (158, 150, False, False, 2.2, ("#746f61", "#575447", "#3c3a33")),
-]
-
-DEBUFFS = [
-    ("inv_misc_questionmark", "bad", "Skill Issue", "40"),
-    ("spell_fire_fire", "bad", "Standing in Fire (Healmates)", "6w"),
-    ("inv_misc_bone_humanskull_01", "bad", "Graveyard Timeshare", None),  # deaths
-    ("spell_nature_sleep", "good", "Coping", "∞"),
-    ("spell_holy_layonhands", "good", "Healer Diff", "1"),
 ]
 
 
@@ -207,17 +205,99 @@ def _roast(cfg):
     return {"quote": quote, "attr": attr}
 
 
+def _headline(stats, standing, previous, records):
+    """The week's single biggest story, as one big line at the top of the
+    hero band — record broken > rank climbed > bosses killed > copium."""
+    formats = {
+        "highest_timed_key": lambda r: (
+            f"NEW GUILD RECORD — {r['name'].upper()} TIMED A +{r['level']} {r['dungeon'].upper()}"),
+        "best_dps_parse": lambda r: (
+            f"NEW GUILD RECORD — {r['name'].upper()} PARSED {r['parse']:.0f}% ON {r['boss'].upper()}"),
+        "best_hps_parse": lambda r: (
+            f"NEW HEALING RECORD — {r['name'].upper()} PARSED {r['parse']:.0f}% ON {r['boss'].upper()}"),
+    }
+    for key, fmt in formats.items():
+        rec = (records or {}).get(key)
+        if rec and rec.get("new") and rec.get("name"):
+            try:
+                return fmt(rec)
+            except (KeyError, TypeError, ValueError):
+                continue
+    prev_realm = ((previous or {}).get("standing") or {}).get("realm")
+    realm = (standing or {}).get("realm")
+    if realm and prev_realm and not (standing or {}).get("stale"):
+        try:
+            up = int(prev_realm) - int(realm)
+            if up > 0:
+                return f"REALM RANK #{int(realm):,} — UP {up} THIS WEEK"
+        except (TypeError, ValueError):
+            pass
+    kills = (stats or {}).get("kills") or 0
+    pulls = (stats or {}).get("pulls") or 0
+    if kills:
+        return f"{kills} BOSS{'ES' if kills != 1 else ''} DOWN IN {pulls} PULLS — GO AGANE"
+    if pulls:
+        return f"{pulls} PULLS OF PROGRESS — THE KILL IS COMING"
+    return None
+
+
+def _debt_card(theme, week_index):
+    """The compounding-debt tooltip, fully theme-driven. Returns None when
+    the guild retires the gag (footer.debt.enabled: false)."""
+    cfg = (theme.get("footer") or {}).get("debt") or {}
+    if not cfg.get("enabled", True):
+        return None
+    try:
+        rate = float(cfg.get("weekly_rate_pct", 9.99)) / 100.0
+        principal = float(cfg.get("principal", 137_000))
+    except (TypeError, ValueError):
+        rate, principal = 0.0999, 137_000.0
+    amount = int(principal * ((1.0 + rate) ** week_index))
+    lines = []
+    for raw in cfg.get("lines") or []:
+        left, _, right = str(raw).partition("|")
+        lines.append({
+            "left": left,
+            "right": right or None,
+            "green": left.startswith(("Equip:", "Use:")),
+        })
+    return {
+        "title": cfg.get("title", "Gambling Debt"),
+        "amount": amount,
+        "climbing_note": cfg.get("climbing_note", "and climbing"),
+        "interest_note": cfg.get("interest_note", ""),
+        "lines": lines,
+        "flavor": cfg.get("flavor", ""),
+        "requires": cfg.get("requires", ""),
+    }
+
+
 def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
                   mplus_season_scores, mplus_season_parses, start_dt, end_dt,
                   no_logs=False, improvement=None, mplus_weekly=None,
                   previous=None, streaks=None, records=None):
     sections_cfg = cfg.get("sections", {})
+    display_cfg = cfg.get("display") or {}
+    theme = theme_mod.load_theme(display_cfg.get("theme_file", theme_mod.THEME_FILE))
+    modules = theme_mod.resolve_templates(theme)
+    width = int((theme.get("board") or {}).get("width") or WIDTH)
+    week_index = start_dt.isocalendar()[1]
+
     raid_secs, mplus_secs = _build_columns(
         cfg, stats, leaders, mplus_results, mplus_season_scores, mplus_season_parses,
         no_logs, mplus_weekly=mplus_weekly, streaks=streaks, zone_name=zone_name)
     seasonal_mp, seasonal_guild = _build_seasonal(
         cfg, mplus_season_scores, mplus_season_parses, improvement,
         previous=previous, records=records)
+
+    # Rotating mid-pack spotlights ride in the Seasonal Guild column
+    awards_cfg = theme.get("awards") or {}
+    if awards_cfg.get("enabled", True):
+        seasonal_guild = list(seasonal_guild) + awards_mod.weekly_awards(
+            week_index, stats=stats, streaks=streaks,
+            season_scores=mplus_season_scores, previous=previous,
+            per_week=int(awards_cfg.get("per_week", 2)),
+            top_n=int(awards_cfg.get("top_n", 3)))
 
     lookup = _class_lookup(stats, leaders, mplus_results, mplus_season_scores,
                            mplus_season_parses, improvement, mplus_weekly, records)
@@ -268,7 +348,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         carved = name.upper()[:16]
         # engraved name sized to the stone's width; darkened class color
         # keeps the carved look while still reading as the player's class
-        carve_size = max(13, min(22, int((w - 38) / (0.62 * max(len(carved), 1)))))
+        carve_size = max(15, min(24, int((w - 38) / (0.62 * max(len(carved), 1)))))
         if cls_key:
             r, g_, b = _cls_color(cls_key)
             carve_color = f"rgb({int(r * 0.55)},{int(g_ * 0.55)},{int(b * 0.55)})"
@@ -286,18 +366,26 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         })
 
     debuffs = []
-    for icon, kind, label, stack in DEBUFFS:
-        debuffs.append({"url": ICON_CDN.format(icon), "kind": kind, "title": label,
-                        "stack": stack if stack is not None else str(deaths_total)})
+    for d in (theme.get("header") or {}).get("debuffs") or []:
+        stack = str(d.get("stack", ""))
+        if stack == "deaths":
+            stack = str(deaths_total)
+        debuffs.append({"url": ICON_CDN.format(d.get("icon", "inv_misc_questionmark")),
+                        "kind": d.get("kind", "bad"),
+                        "title": d.get("label", ""), "stack": stack})
 
-    display_cfg = cfg.get("display") or {}
-    item_src = display_cfg.get("item_art")
+    item_src = (theme.get("backgrounds") or {}).get("item") or display_cfg.get("item_art")
     if item_src and not os.path.exists(item_src):
         item_src = None
-    week_index = start_dt.isocalendar()[1]
-    # Brewzleeh's gambling debt compounds 9.99% weekly on a 137,000g
-    # principal — deterministic, so it climbs a little more every board.
-    debt = int(137_000 * (1.0999 ** week_index))
+
+    debt_card = _debt_card(theme, week_index)
+    quips = theme.get("motd_quips") or ["Git Gud."]
+
+    wipes_sub = str((theme.get("header") or {}).get("wipes_sub", ""))
+    try:
+        wipes_sub = wipes_sub.format(deaths=deaths_total, pulls=pulls, wipes=wipes)
+    except (KeyError, IndexError, ValueError):
+        pass
 
     return {
         "guild_name": guild.get("name", "Guild"),
@@ -310,22 +398,33 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "repair": deaths_total * 57 + pulls * 23,
         "debuffs": debuffs,
         "hero_tiles": tiles if (stats is not None or standing) else [],
+        "headline": _headline(stats, standing, previous, records),
         "bar_pct": bar_pct,
         "bar_label": bar_label,
         "columns": columns,
         "icons_on": bool(display_cfg.get("icons", True)),
         "roast": _roast(cfg),
         "stones": stones,
-        "debt": debt,
+        "debt": debt_card["amount"] if debt_card else 0,
+        "debt_card": debt_card,
         "week_label": start_dt.strftime("%b %d"),
-        "item_title": display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH"),
+        "item_title": (theme.get("footer") or {}).get("item_title",
+                                                      display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")),
         "item_src": item_src,
-        "motd": theme_bands.MOTD_QUIPS[week_index % len(theme_bands.MOTD_QUIPS)],
+        "motd": quips[week_index % len(quips)],
         "watermark": display_cfg.get(
             "watermark_text",
             "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
             if display_cfg.get("watermark") else "",
-        "width": WIDTH,
+        "width": width,
+        "theme": theme,
+        "font_css_url": theme_mod.font_css_url(theme),
+        "bg_rgb": "{},{},{}".format(*theme_mod.hex_to_rgb((theme.get("colors") or {}).get("background"))),
+        "hdr_wipes_sub": wipes_sub,
+        "header_template": modules["header_template"],
+        "footer_template": modules["footer_template"],
+        "header_h": modules["header_h"],
+        "footer_total": modules["footer_total"],
         "header_embers": _embers(7, 26),
         "footer_embers": _embers(11, 26),
         "footer_flames": _flames_row(),
@@ -334,19 +433,44 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     }
 
 
-def render_html(context, template="stone_torchlight.html.j2"):
+def render_html(context, template="board.html.j2"):
     from jinja2 import Environment, FileSystemLoader
-    env = Environment(loader=FileSystemLoader(str(TEMPLATE_DIR)), autoescape=True)
+    env = Environment(loader=FileSystemLoader(theme_mod.template_loader_paths()),
+                      autoescape=True)
     return env.get_template(template).render(**context)
+
+
+def _capture_mobile(browser, context, mobile_path):
+    """Portrait companion PNG in the same browser session. Best-effort:
+    a mobile failure never sinks the main board."""
+    try:
+        html = render_html(context, template="mobile.html.j2")
+        html_path = Path(RENDER_MOBILE_HTML)
+        html_path.write_text(html, encoding="utf-8")
+        page = browser.new_page(viewport={"width": 1080, "height": 1400})
+        page.goto(html_path.resolve().as_uri())
+        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(800)
+        page.screenshot(path=mobile_path, full_page=True)
+        page.close()
+        logger.info("Generated mobile companion at %s", mobile_path)
+        return mobile_path
+    except Exception as exc:
+        logger.warning("Mobile companion render failed (%s); posting desktop board only.", exc)
+        return None
 
 
 def generate_board_html(cfg, stats, standing, leaders, zone_name,
                         mplus_results, mplus_season_scores, mplus_season_parses,
                         start_dt, end_dt, no_logs=False, output_path="board.png",
-                        animate=False, frames=10, duration_ms=120, **kwargs):
+                        animate=False, frames=10, duration_ms=120,
+                        mobile_path=None, **kwargs):
     """Render the board via headless Chromium; PNG, or a looping GIF when
-    animate=True. Returns the output path, or None on ANY failure so the
-    caller can fall back to the Pillow renderer."""
+    animate=True. When mobile_path is set, a portrait companion PNG is
+    captured too. Returns the main output path, or None on ANY failure so
+    the caller can fall back to the Pillow renderer."""
+    if mobile_path:
+        Path(mobile_path).unlink(missing_ok=True)   # never post a stale one
     try:
         from playwright.sync_api import sync_playwright
     except ImportError:
@@ -360,10 +484,11 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
         html = render_html(context)
         html_path = Path(RENDER_HTML)
         html_path.write_text(html, encoding="utf-8")
+        width = context["width"]
 
         with sync_playwright() as p:
             browser = p.chromium.launch()
-            page = browser.new_page(viewport={"width": WIDTH, "height": 1400})
+            page = browser.new_page(viewport={"width": width, "height": 1400})
             page.goto(html_path.resolve().as_uri())
             page.wait_for_load_state("networkidle")
             page.wait_for_timeout(1200)   # webfonts + CDN icons settle
@@ -372,6 +497,8 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
 
             if not animate:
                 page.screenshot(path=output_path, full_page=True)
+                if mobile_path:
+                    _capture_mobile(browser, context, mobile_path)
                 browser.close()
                 logger.info("Generated HTML board at %s", output_path)
                 return output_path
@@ -384,12 +511,15 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
                 page.evaluate(f"document.getAnimations().forEach(a => a.currentTime = {t})")
                 page.evaluate(f"window.__setPhase && window.__setPhase({i / frames})")
                 shot = page.screenshot(full_page=True)
-                import io
                 imgs.append(Image.open(io.BytesIO(shot)).convert("RGB"))
+            if mobile_path:
+                _capture_mobile(browser, context, mobile_path)
             browser.close()
 
         return _encode_gif(imgs, output_path, frames, duration_ms,
-                           key_colors=_collect_key_colors(context))
+                           key_colors=_collect_key_colors(context),
+                           header_h=context["header_h"],
+                           footer_total=context["footer_total"])
     except Exception as exc:
         logger.warning("HTML board render failed (%s); using the Pillow renderer.", exc)
         return None
@@ -427,13 +557,13 @@ def _collect_key_colors(context):
     return seen[:80]
 
 
-def _encode_gif(frames_l, output_path, frames, duration_ms, key_colors=None):
+def _encode_gif(frames_l, output_path, frames, duration_ms, key_colors=None,
+                header_h=HEADER_H, footer_total=FOOTER_TOTAL):
     """Shared-palette GIF with the static middle copied verbatim from
     frame 0 — same anti-shimmer scheme as the Pillow pipeline. key_colors
-    get reserved palette slots so text colors survive quantization exactly."""
+    get reserved palette slots so text colors survive quantization exactly.
+    Band heights come from the theme's header/footer modules."""
     base = frames_l[0]
-    header_h = HEADER_H
-    footer_h = FOOTER_TOTAL
     key_colors = key_colors or []
     for scale in (1.0, 0.8, 0.65, 0.5):
         imgs = frames_l if scale == 1.0 else [
@@ -447,7 +577,7 @@ def _encode_gif(frames_l, output_path, frames, duration_ms, key_colors=None):
         pal.putpalette(palette)
         q = [im.quantize(palette=pal, dither=Image.FLOYDSTEINBERG) for im in imgs]
         mid_top = int(header_h * scale) + 8
-        mid_bot = int((base.height - footer_h) * scale) - 8
+        mid_bot = int((base.height - footer_total) * scale) - 8
         if mid_bot > mid_top:
             still = q[0].crop((0, mid_top, imgs[0].width, mid_bot))
             for frame in q[1:]:

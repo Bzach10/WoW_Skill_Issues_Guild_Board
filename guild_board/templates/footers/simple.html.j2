@@ -1,0 +1,37 @@
+{# ========================== FOOTER MODULE: simple ==========================
+   A quiet close: flames along the bottom of the footer art and the item of
+   the month centered — no graveyard, no debt ledger. Band height: 150px.
+   (theme.yml: board.footer: simple) #}
+<style>
+  .ftr{position:relative; width:{{ width }}px; height:150px; overflow:hidden;
+    background:url("{{ theme.backgrounds.footer }}") center/cover;}
+  .ftr-shade{position:absolute; inset:0; background:rgba(8,8,11,.45);}
+  .ftr-fireglow{position:absolute; left:0; right:0; bottom:-70px; height:200px;
+    background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
+    animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
+  .firerow{position:absolute; left:0; right:0; bottom:-6px; height:120px; pointer-events:none;}
+  .ftr-item{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; gap:22px;}
+  .ftr-item .tt{font-family:var(--font-display); font-size:26px; font-weight:800;
+    color:var(--legendary); text-shadow:0 2px 10px #000;}
+  .ftr-item img{max-height:110px; border:2px solid #967a3e; border-radius:6px;}
+</style>
+<div class="ftr">
+  <div class="ftr-shade"></div>
+  <div class="ftr-fireglow"></div>
+  <div class="firerow">
+    {%- for f in footer_flames %}
+    <div style="position:absolute; left:{{ f.left }}%; bottom:0; width:{{ f.w }}px; height:{{ (f.h * 0.7) | int }}px;">
+      <div class="flame" style="width:{{ f.w }}px; height:{{ (f.h * 0.7) | int }}px; margin-left:-{{ f.w // 2 }}px; background:radial-gradient(circle at 50% 88%, rgba(224,122,40,.85), rgba(224,122,40,.08) 78%); animation-duration:{{ f.dur }}s; animation-delay:{{ f.delay }}s;"></div>
+    </div>
+    {%- endfor %}
+  </div>
+  <div class="embers">
+    {%- for e in footer_embers %}
+    <span style="left:{{ e.left }}%; width:{{ e.size }}px; height:{{ e.size }}px; animation-delay:{{ e.delay }}s; --drift:{{ e.drift }}px;"></span>
+    {%- endfor %}
+  </div>
+  <div class="ftr-item">
+    <div class="tt">{{ item_title }}</div>
+    {%- if item_src %}<img src="{{ item_src }}" alt="">{% endif %}
+  </div>
+</div>

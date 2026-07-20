@@ -44,6 +44,13 @@ display:
   # GIF would exceed Discord's upload limit.
   animate: true
   animate_frames: 10
+  # Phone-readable portrait companion image posted alongside the board
+  # (top-3 per category, big text). The post text also carries TL;DR
+  # callout lines either way.
+  mobile_companion: true
+  # NOTE: colors, backgrounds, fonts, header/footer modules and all the
+  # gag text moved to theme.yml — see CUSTOMIZING.md. Any member can
+  # safely edit that file.
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control

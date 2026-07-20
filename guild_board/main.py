@@ -389,6 +389,7 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                              season_parses=season_parse_bests,
                              season_key=season_key_record)
 
+    mobile_path = None
     if layout == "image_board":
         try:
             display_cfg = cfg.get("display") or {}
@@ -403,10 +404,15 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                 # The design IS the render: headless-Chromium screenshot of
                 # the HTML template. Falls back to Pillow on any failure.
                 from guild_board.html_board import generate_board_html
+                want_mobile = bool(display_cfg.get("mobile_companion", True))
                 image_path = generate_board_html(
                     *board_args,
                     output_path="board.gif" if animate else "board.png",
-                    animate=animate, frames=frames, **board_kwargs)
+                    animate=animate, frames=frames,
+                    mobile_path="board_mobile.png" if want_mobile else None,
+                    **board_kwargs)
+                if image_path and want_mobile and os.path.exists("board_mobile.png"):
+                    mobile_path = "board_mobile.png"
             if not image_path and animate:
                 image_path = generate_board_animation(
                     *board_args, output_path="board.gif",
@@ -420,8 +426,10 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             cfg.setdefault("display", {})["layout"] = "single_column"
 
     if image_path:
+        from guild_board.formatters import tldr_lines
         embed = build_image_embed(cfg, stats, start_dt, end_dt,
-                                  image_url=f"attachment://{os.path.basename(image_path)}")
+                                  image_url=f"attachment://{os.path.basename(image_path)}",
+                                  tldr=tldr_lines(stats, standing))
     else:
         progress_image_url = None
         progress_cfg = sections.get("progress_image", {})
@@ -444,7 +452,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     if not dry_run:
         webhook_url = require_env("DISCORD_WEBHOOK_URL")
-        post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg)
+        post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg,
+                        extra_image_paths=[mobile_path] if mobile_path else None)
         logger.info("Board posted to Discord.")
         try:
             save_board_state(standing, mplus_season_scores, streaks=streaks, records=records)
