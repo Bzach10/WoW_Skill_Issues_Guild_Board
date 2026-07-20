@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import requests
 
-from guild_board.config import clean_spec_name, slugify_server
+from guild_board.config import slugify_server
 from guild_board.dedup import FightDeduper, report_sort_key
 
 logger = logging.getLogger(__name__)

@@ -1,12 +1,11 @@
 import json
 import logging
 import os
-import time
 from datetime import datetime, timedelta, timezone
 
 import requests
 
-from guild_board.config import load_config, require_env, resolve_roster, save_roster_cache
+from guild_board.config import load_config, require_env
 from guild_board.discord import post_to_discord
 from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
 from guild_board.filters import apply_roster_filters, make_name_filter
@@ -14,9 +13,8 @@ from guild_board.board_image import generate_board_animation, generate_board_ima
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
-from guild_board.state import advance_streaks, load_board_state, save_board_state, update_records
+from guild_board.state import load_board_state, raid_attendance_streaks, save_board_state, update_records
 from guild_board.wcl import (
-    DIFFICULTY_MAP,
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
     clear_report_cache,
@@ -311,7 +309,10 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                     except (RuntimeError, requests.RequestException) as exc:
                         logger.warning("Guild standing lookup failed: %s", exc)
 
-                    if stats and stats.get("participants"):
+                    # Leaders power the WEEKLY BOSS RANKS section — skip the
+                    # whole per-character sweep when the section is disabled.
+                    leaders_wanted = (sections.get("realm_rank_leaders") or {}).get("enabled", True)
+                    if leaders_wanted and stats and stats.get("participants"):
                         if use_fallback:
                             logger.info("Using difficulty fallback for realm rank leaders")
                             leaders, diff_used = try_difficulties(
@@ -373,17 +374,9 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     image_path = None
     previous = load_board_state()
 
-    # Streaks: who was active in any weekly dataset this week
-    active_names = set()
-    if stats:
-        active_names |= set(stats.get("best_dps") or {})
-        active_names |= set(stats.get("best_hps") or {})
-    for run in (mplus_results or []):
-        active_names.add(run[2])
-    if mplus_weekly:
-        active_names |= set(mplus_weekly.get("dps") or {})
-        active_names |= set(mplus_weekly.get("hps") or {})
-    streaks = advance_streaks(previous.get("streaks"), active_names)
+    # Attendance streaks: RAID nights only — showing up to raid is what
+    # Iron Attendance rewards, not spamming keys.
+    streaks = raid_attendance_streaks(previous, stats)
 
     # Season record book: weekly data plus the full-season sweeps, so
     # records reflect the entire season rather than weeks since launch

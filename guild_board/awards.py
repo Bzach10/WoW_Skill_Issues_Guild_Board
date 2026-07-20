@@ -18,7 +18,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 GREEN = (76, 220, 86)
-MUTED = (179, 185, 197)
 
 
 def _display(name):
@@ -28,7 +27,8 @@ def _display(name):
 
 
 def _attendance(streaks=None, **_):
-    """Longest consecutive-week activity streaks (2+ weeks to qualify)."""
+    """Longest streaks of consecutive raid weeks attended (2+ to qualify).
+    Streaks are advanced from raid participation only — see build_board."""
     qualified = [(w, n) for n, w in (streaks or {}).items() if w >= 2]
     if not qualified:
         return None
@@ -36,7 +36,7 @@ def _attendance(streaks=None, **_):
     for weeks, name in sorted(qualified, key=lambda t: (-t[0], t[1])):
         rows.append({
             "name": _display(name),
-            "detail": "weeks active in a row",
+            "detail": "raid weeks in a row",
             "value": str(weeks),
             "value_suffix": "wks",
             "value_color": GREEN,

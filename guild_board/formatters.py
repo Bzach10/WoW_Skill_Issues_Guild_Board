@@ -529,7 +529,7 @@ def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://boar
         footer_bits.append(f"{plural(stats['kills'], 'kill')} / {plural(stats['pulls'], 'pull')} this week")
     footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
 
-    return {
+    embed = {
         "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
         "description": "\n".join(desc_lines),
         "color": 0xC69B6D,
@@ -537,3 +537,10 @@ def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://boar
         "footer": {"text": " | ".join(footer_bits)},
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+    # The embed TITLE links to the web board — the most obvious click
+    # target Discord offers an embed (link buttons on channel webhooks
+    # get silently dropped when Discord rejects them).
+    web_cfg = (cfg.get("display") or {}).get("web_board") or {}
+    if web_cfg.get("enabled") and web_cfg.get("url"):
+        embed["url"] = web_cfg["url"]
+    return embed

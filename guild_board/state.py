@@ -48,13 +48,27 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
 def advance_streaks(previous_streaks, active_names):
     """Consecutive-week counter: active players tick up, absentees reset.
 
-    A player is "active" when they appear in any weekly dataset (raid
-    parses, timed keys, M+ parses)."""
+    Callers decide what "active" means — the board feeds RAID attendance
+    (participants + parse pools) so streaks reward showing up to raid.
+    Skip the call entirely on a no-logs week to carry streaks forward."""
     previous_streaks = previous_streaks or {}
     return {
         name.strip().lower(): int(previous_streaks.get(name.strip().lower(), 0)) + 1
         for name in active_names if name and name.strip()
     }
+
+
+def raid_attendance_streaks(previous, stats):
+    """Advance streaks from RAID attendance (participants + every parse
+    pool). A week with no raid data carries streaks forward untouched —
+    a cancelled raid night must not wipe everyone's Iron Attendance."""
+    prev = (previous or {}).get("streaks") or {}
+    if not stats:
+        return dict(prev)
+    raiders = set(stats.get("participants") or {})
+    for pool in ("best_dps", "best_hps", "best_tanks"):
+        raiders |= set(stats.get(pool) or {})
+    return advance_streaks(prev, raiders)
 
 
 def update_records(previous_records, stats=None, mplus_results=None,

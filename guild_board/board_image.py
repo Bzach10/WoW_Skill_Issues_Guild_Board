@@ -1068,7 +1068,6 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         y += hero_h + GUTTER
 
     icons = bool((cfg.get("display") or {}).get("icons", True))
-    col_y = y
     col_xs = [MARGIN + i * (COL_W + GUTTER) for i in range(4)]
     _draw_column(img, draw, col_xs[0], y, col_h, raid_title, raid_sections, fonts, icons=icons)
     _draw_column(img, draw, col_xs[1], y, col_h, mplus_title, mplus_sections, fonts, icons=icons)

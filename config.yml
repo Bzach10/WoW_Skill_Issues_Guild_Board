@@ -44,11 +44,10 @@ display:
   # GIF would exceed Discord's upload limit.
   animate: true
   animate_frames: 10
-  # Phone-readable portrait companion image posted alongside the board
-  # (top-3 per category, big text). The post text also carries TL;DR
-  # callout lines either way. Consider turning this off once the
-  # web_board link below is live — the website replaces it.
-  mobile_companion: true
+  # Phone-readable portrait companion image posted alongside the board.
+  # OFF: the web board (linked from the post title and text) replaces it,
+  # and the second image cluttered the post. Flip back on any time.
+  mobile_companion: false
   # Responsive WEBSITE version of the board — a "📱 Web Board" button on
   # the Discord post links to it, and it auto-scales to any screen.
   # CI publishes site/index.html to the public repo below (needs the
@@ -156,12 +155,12 @@ sections:
     order: 10
     enabled: true
 
-  # Weekly raid boss ranks (WCL All Stars per-boss realm ranks) — shown
-  # at the top of the SEASONAL GUILD column (moved there to make room
-  # for the tank section in the raid column)
+  # Weekly raid boss ranks (WCL All Stars per-boss realm ranks).
+  # OFF by guild decision — re-enable any time and it returns to the
+  # top of the SEASONAL GUILD column.
   realm_rank_leaders:
     order: 11
-    enabled: true
+    enabled: false
     max_characters: 30
 
   # Most deaths (Graveyard Camper award) — retired from the columns; the

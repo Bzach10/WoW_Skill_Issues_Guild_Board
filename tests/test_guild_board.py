@@ -1257,3 +1257,26 @@ def test_tldr_matches_rendered_rows():
     assert any("Top tank" in l and "Brewz" in l and "88%" in l for l in tldr)
     assert any("#49" in l for l in tldr)
     assert ctx["tldr"] == tldr
+
+
+def test_raid_attendance_streaks():
+    from guild_board.state import raid_attendance_streaks
+    previous = {"streaks": {"alba": 4, "bryn": 2}}
+    stats = {"participants": {"Alba": None}, "best_dps": {"Cyd": {}},
+             "best_hps": {}, "best_tanks": {}}
+    out = raid_attendance_streaks(previous, stats)
+    assert out == {"alba": 5, "cyd": 1}          # attendee ticks, newcomer starts, absentee drops
+    # a no-logs week carries streaks forward instead of wiping them
+    assert raid_attendance_streaks(previous, None) == previous["streaks"]
+    assert raid_attendance_streaks(None, None) == {}
+
+
+def test_image_embed_title_links_to_web_board():
+    cfg = {"guild": {"name": "Test Guild", "realm_slug": "x", "region": "us"},
+           "raid": {"difficulty": "mythic"}, "lookback_days": 7, "sections": {},
+           "display": {"web_board": {"enabled": True, "url": "https://x.github.io/b/"}}}
+    now = datetime.now(timezone.utc)
+    embed = formatters.build_image_embed(cfg, None, now, now)
+    assert embed["url"] == "https://x.github.io/b/"
+    cfg["display"]["web_board"]["enabled"] = False
+    assert "url" not in formatters.build_image_embed(cfg, None, now, now)

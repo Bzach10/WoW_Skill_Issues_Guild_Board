@@ -310,6 +310,52 @@ def _debt_card(theme, week_index):
     }
 
 
+def _build_stones(stats, pulls, lookup):
+    """Graveyard tombstones for the week's top-4 deaths, class-tinted."""
+    ranked = sorted(((stats or {}).get("deaths") or {}).items(),
+                    key=lambda kv: kv[1], reverse=True)[:4]
+    if not ranked:
+        ranked = [("Nobody", 0)]
+    stones = []
+    for i, (name, count) in enumerate(ranked):
+        w, h, arched, cross, rot, (light, mid, dark) = STONES[i % len(STONES)]
+        rate = f" · {count / pulls:.1f}/PULL" if pulls else ""
+        cls_key = lookup.get(name.strip().lower())
+        carved = name.upper()[:16]
+        # engraved name sized to the stone's width; darkened class color
+        # keeps the carved look while still reading as the player's class
+        carve_size = max(15, min(24, int((w - 38) / (0.62 * max(len(carved), 1)))))
+        if cls_key:
+            r, g_, b = _cls_color(cls_key)
+            carve_color = f"rgb({int(r * 0.55)},{int(g_ * 0.55)},{int(b * 0.55)})"
+        else:
+            carve_color = "#3a362d"
+        stones.append({
+            "w": w, "h": h, "arched": arched, "cross": cross, "rot": rot,
+            "light": light, "mid": mid, "dark": dark,
+            "radius": (f"{w // 2}px {w // 2}px 6px 6px" if arched else "14px 14px 6px 6px"),
+            "name": carved,
+            "carve_size": carve_size,
+            "carve_color": carve_color,
+            "color": _css(_cls_color(cls_key)) if cls_key else "#f4f0e4",
+            "deaths": f"{count} DEATHS{rate}",
+        })
+    return stones
+
+
+def _build_debuffs(theme, deaths_total):
+    """Theme-driven fake raid debuffs; a stack of "deaths" shows the real total."""
+    debuffs = []
+    for d in (theme.get("header") or {}).get("debuffs") or []:
+        stack = str(d.get("stack", ""))
+        if stack == "deaths":
+            stack = str(deaths_total)
+        debuffs.append({"url": ICON_CDN.format(d.get("icon", "inv_misc_questionmark")),
+                        "kind": d.get("kind", "bad"),
+                        "title": d.get("label", ""), "stack": stack})
+    return debuffs
+
+
 def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
                   mplus_season_scores, mplus_season_parses, start_dt, end_dt,
                   no_logs=False, improvement=None, mplus_weekly=None,
@@ -374,43 +420,8 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     realm = (guild.get("realm_slug") or "").replace("-", " ").upper()
     region = (guild.get("region") or "").upper()
 
-    ranked = sorted(((stats or {}).get("deaths") or {}).items(),
-                    key=lambda kv: kv[1], reverse=True)[:4]
-    if not ranked:
-        ranked = [("Nobody", 0)]
-    stones = []
-    for i, (name, count) in enumerate(ranked):
-        w, h, arched, cross, rot, (light, mid, dark) = STONES[i % len(STONES)]
-        rate = f" · {count / pulls:.1f}/PULL" if pulls else ""
-        cls_key = lookup.get(name.strip().lower())
-        carved = name.upper()[:16]
-        # engraved name sized to the stone's width; darkened class color
-        # keeps the carved look while still reading as the player's class
-        carve_size = max(15, min(24, int((w - 38) / (0.62 * max(len(carved), 1)))))
-        if cls_key:
-            r, g_, b = _cls_color(cls_key)
-            carve_color = f"rgb({int(r * 0.55)},{int(g_ * 0.55)},{int(b * 0.55)})"
-        else:
-            carve_color = "#3a362d"
-        stones.append({
-            "w": w, "h": h, "arched": arched, "cross": cross, "rot": rot,
-            "light": light, "mid": mid, "dark": dark,
-            "radius": (f"{w // 2}px {w // 2}px 6px 6px" if arched else "14px 14px 6px 6px"),
-            "name": carved,
-            "carve_size": carve_size,
-            "carve_color": carve_color,
-            "color": _css(_cls_color(cls_key)) if cls_key else "#f4f0e4",
-            "deaths": f"{count} DEATHS{rate}",
-        })
-
-    debuffs = []
-    for d in (theme.get("header") or {}).get("debuffs") or []:
-        stack = str(d.get("stack", ""))
-        if stack == "deaths":
-            stack = str(deaths_total)
-        debuffs.append({"url": ICON_CDN.format(d.get("icon", "inv_misc_questionmark")),
-                        "kind": d.get("kind", "bad"),
-                        "title": d.get("label", ""), "stack": stack})
+    stones = _build_stones(stats, pulls, lookup)
+    debuffs = _build_debuffs(theme, deaths_total)
 
     item_src = (theme.get("backgrounds") or {}).get("item") or display_cfg.get("item_art")
     if item_src and not os.path.exists(item_src):

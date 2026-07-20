@@ -34,7 +34,7 @@ FAKE_CFG = {
         "mplus_header": {"title": "Mythic Plus"},
         "top_dps": {"enabled": True},
         "top_healing": {"enabled": True},
-        "realm_rank_leaders": {"enabled": True},
+        "realm_rank_leaders": {"enabled": False},   # mirrors config.yml (guild retired it)
         "mplus": {"enabled": True},
         "mplus_weekly_parses": {"enabled": True},
         "mplus_season_scores": {"enabled": True},
