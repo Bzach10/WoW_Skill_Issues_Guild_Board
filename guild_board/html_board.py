@@ -193,6 +193,9 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     if item_src and not os.path.exists(item_src):
         item_src = None
     week_index = start_dt.isocalendar()[1]
+    # Brewzleeh's gambling debt compounds 9.99% weekly on a 137,000g
+    # principal — deterministic, so it climbs a little more every board.
+    debt = int(137_000 * (1.0999 ** week_index))
 
     return {
         "guild_name": guild.get("name", "Guild"),
@@ -211,6 +214,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "icons_on": bool(display_cfg.get("icons", True)),
         "roast": _roast(cfg),
         "stones": stones,
+        "debt": debt,
         "week_label": start_dt.strftime("%b %d"),
         "item_title": display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH"),
         "item_src": item_src,
@@ -272,6 +276,7 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
             for i in range(frames):
                 t = i / frames * LOOP_MS
                 page.evaluate(f"document.getAnimations().forEach(a => a.currentTime = {t})")
+                page.evaluate(f"window.__setPhase && window.__setPhase({i / frames})")
                 shot = page.screenshot(full_page=True)
                 import io
                 imgs.append(Image.open(io.BytesIO(shot)).convert("RGB"))
