@@ -7,6 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   /* ============ Stone & Torchlight — the design IS the render ============ */
+  /* Readability pass: slimmer art bands (330/470), ~25% larger data text,  */
+  /* bigger tombstone lettering, fire along the footer.                     */
   :root{
     --bg:#111217; --panel:#1a1c23; --hairline:#2d303a;
     --accent:#e6b446; --text:#ebecf0; --muted:#969aa4; --faint:#5f636e;
@@ -15,7 +17,7 @@
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   body{width:2600px; background:var(--bg); color:var(--text);
-       font-family:'Inter','Segoe UI',sans-serif; font-size:15px;}
+       font-family:'Inter','Segoe UI',sans-serif; font-size:18px;}
   .board{position:relative; width:2600px; overflow:hidden;}
 
   /* --------- animation set: every period divides the {{ loop_ms }}ms loop --------- */
@@ -41,12 +43,12 @@
          animation:flamePulse .6s ease-in-out infinite alternate;}
 
   /* ================================ HEADER ================================ */
-  .hdr{position:relative; width:2600px; height:380px; overflow:hidden;
+  .hdr{position:relative; width:2600px; height:330px; overflow:hidden;
        background:url("assets/wall_header.png");}
   .hdr-glow{position:absolute; left:0; right:0; bottom:-60px; height:220px;
     background:radial-gradient(ellipse 55% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
     animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
-  .plaque{position:absolute; left:44px; top:36px; width:600px; height:308px; padding:14px;
+  .plaque{position:absolute; left:44px; top:30px; width:560px; height:270px; padding:13px;
     border-radius:12px; background:linear-gradient(160deg, #6b5943, #3d3123);
     box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 2px 2px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.5);
     transform:rotate(-0.8deg);}
@@ -54,143 +56,144 @@
     background:url("assets/plaque.png") center/cover;
     box-shadow:inset 0 5px 10px rgba(255,255,255,.22), inset 0 -8px 16px rgba(0,0,0,.45);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; overflow:hidden;}
-  .plaque-word{font-family:Cinzel,serif; font-size:88px; font-weight:900; line-height:.98;
+  .plaque-word{font-family:Cinzel,serif; font-size:74px; font-weight:900; line-height:.98;
     letter-spacing:.1em; color:#43352a;
     text-shadow:0 2px 1px rgba(255,244,214,.4), 0 -2px 3px rgba(0,0,0,.55);}
-  .plaque-sub{font-size:15px; letter-spacing:.4em; color:#5a4a38; font-weight:700; margin-top:8px;
+  .plaque-sub{font-size:14px; letter-spacing:.38em; color:#5a4a38; font-weight:700; margin-top:7px;
     text-shadow:0 1px 0 rgba(255,244,214,.35);}
-  .nail{position:absolute; width:16px; height:16px; border-radius:50%;
+  .nail{position:absolute; width:15px; height:15px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%);
     box-shadow:0 1px 2px rgba(255,255,255,.25);}
-  .widgets{position:absolute; left:700px; top:44px; display:flex; gap:26px;}
-  .widget{background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:20px 24px;}
+  .widgets{position:absolute; left:660px; top:32px; display:flex; gap:26px;}
+  .widget{background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:16px 22px;}
   .widget .lbl{font-size:14px; letter-spacing:.14em; font-weight:700; color:var(--accent);}
-  .widget .val{font-size:52px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:6px;}
-  .widget .sub{font-size:14px; color:var(--muted); margin-top:4px;}
+  .widget .val{font-size:46px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:5px;}
+  .widget .sub{font-size:14px; color:var(--muted); margin-top:3px;}
   .coin{display:inline-block; border-radius:50%; vertical-align:baseline;}
-  .debuffs{position:absolute; left:700px; top:266px; display:flex; gap:20px; align-items:center;}
+  .debuffs{position:absolute; left:660px; top:238px; display:flex; gap:20px; align-items:center;}
   .debuffs .lbl{font-size:13px; letter-spacing:.14em; color:#b8bcc6; font-weight:700; text-shadow:0 1px 3px #000;}
   .debuff{position:relative; width:52px; height:52px; border-radius:8px; overflow:hidden; border:2px solid;}
   .debuff img{width:100%; height:100%; object-fit:cover;}
   .debuff .stack{position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;}
   .debuff.bad{border-color:var(--red); box-shadow:0 0 14px rgba(229,72,77,.35);}
   .debuff.good{border-color:var(--green); box-shadow:0 0 14px rgba(76,220,86,.3);}
-  .torch{position:absolute; right:420px; top:64px; width:70px; height:210px;}
-  .torch .handle{position:absolute; bottom:-58px; left:50%; width:14px; height:76px; margin-left:-7px;
+  .torch{position:absolute; right:420px; top:36px; width:70px; height:200px;}
+  .torch .handle{position:absolute; bottom:-56px; left:50%; width:14px; height:74px; margin-left:-7px;
     border-radius:7px; background:linear-gradient(180deg, #4a3826, #2b2117);
     box-shadow:0 0 24px rgba(224,122,40,.5);}
   .sign{position:absolute; right:96px; top:0; display:flex; flex-direction:column; align-items:center;
     animation:signSwing .6s ease-in-out infinite alternate; transform-origin:top center;}
   .sign .chains{display:flex; gap:150px;}
-  .sign .chain{width:4px; height:74px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;}
-  .sign .plank{width:250px; padding:18px 0 22px; border-radius:8px;
+  .sign .chain{width:4px; height:60px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;}
+  .sign .plank{width:250px; padding:16px 0 20px; border-radius:8px;
     background:repeating-linear-gradient(180deg, #5a4028 0 22px, #4c3520 22px 24px, #63482d 24px 46px, #45301d 46px 48px);
     border:3px solid #2b2117; box-shadow:0 14px 34px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.12);
     display:flex; flex-direction:column; align-items:center; gap:2px;}
-  .sign .big{font-family:Cinzel,serif; font-size:44px; font-weight:900; letter-spacing:.1em; color:#251a10;
+  .sign .big{font-family:Cinzel,serif; font-size:42px; font-weight:900; letter-spacing:.1em; color:#251a10;
     text-shadow:0 1px 0 rgba(255,220,160,.28), 0 -1px 2px rgba(0,0,0,.6);}
   .sign .small{font-size:11px; letter-spacing:.22em; color:#2e2114; font-weight:700; white-space:nowrap;}
   .hdr-fade{position:absolute; left:0; right:0; bottom:0; height:26px;
     background:linear-gradient(180deg, transparent, rgba(8,8,11,.85));}
 
   /* ============================== INFO STRIP ============================== */
-  .info{height:48px; display:flex; align-items:center; justify-content:space-between;
+  .info{height:52px; display:flex; align-items:center; justify-content:space-between;
     padding:0 36px; border-bottom:1px solid var(--hairline); background:var(--bg);}
-  .info .l{color:var(--muted); font-size:19px;}
-  .info .r{color:var(--muted); font-size:17px;}
+  .info .l{color:var(--muted); font-size:22px;}
+  .info .r{color:var(--muted); font-size:19px;}
 
   /* ================================ MIDDLE ================================ */
-  .mid{position:relative; padding:24px 36px 24px;
+  .mid{position:relative; padding:26px 36px 26px;
     background:linear-gradient(rgba(17,18,23,.78), rgba(17,18,23,.78)), url("assets/theme_art.png") center 40%/cover;}
   .hero{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
-    padding:16px 22px 14px; margin-bottom:24px;}
+    padding:18px 24px 16px; margin-bottom:26px;}
   .tiles{display:flex;}
   .tile{flex:1;}
-  .tile .lbl{font-size:13px; color:var(--muted);}
-  .tile .val{font-size:28px; font-weight:700; margin-top:2px;}
-  .tile .val small{font-size:13px; font-weight:600; margin-left:8px;}
-  .bar{position:relative; height:18px; margin-top:12px; border-radius:9px; background:#262830; overflow:hidden;}
-  .bar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:9px; background:var(--accent);}
+  .tile .lbl{font-size:16px; color:var(--muted);}
+  .tile .val{font-size:34px; font-weight:700; margin-top:2px;}
+  .tile .val small{font-size:16px; font-weight:600; margin-left:8px;}
+  .bar{position:relative; height:20px; margin-top:14px; border-radius:10px; background:#262830; overflow:hidden;}
+  .bar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:10px; background:var(--accent);}
   .bar .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-size:13px; color:var(--text);}
+    font-size:15px; color:var(--text);}
   .cols{display:flex; gap:24px; align-items:stretch;}
   .col{flex:1; min-width:0; background:var(--panel); border:1px solid var(--hairline);
-    border-radius:12px; padding:22px;}
-  .col-h{display:flex; align-items:center; gap:14px; height:24px; margin-bottom:22px;}
-  .col-h .tick{width:4px; height:22px; background:var(--accent);}
-  .col-h .t{font-size:21px; font-weight:700; color:var(--text); letter-spacing:.02em;}
-  .sec{margin-bottom:16px;}
+    border-radius:12px; padding:24px;}
+  .col-h{display:flex; align-items:center; gap:14px; height:28px; margin-bottom:24px;}
+  .col-h .tick{width:5px; height:26px; background:var(--accent);}
+  .col-h .t{font-size:25px; font-weight:700; color:var(--text); letter-spacing:.02em;}
+  .sec{margin-bottom:18px;}
   .sec:last-child{margin-bottom:0;}
-  .sec-h{display:flex; align-items:center; gap:12px; height:32px;}
-  .sec-h .t{font-size:15px; font-weight:700; color:var(--accent); white-space:nowrap;}
+  .sec-h{display:flex; align-items:center; gap:12px; height:38px;}
+  .sec-h .t{font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap;}
   .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
-  .row{display:flex; align-items:center; height:36px; min-width:0;}
-  .row .badge{width:22px; height:22px; border-radius:50%; flex:none;
+  .row{display:flex; align-items:center; height:46px; min-width:0;}
+  .row .badge{width:27px; height:27px; border-radius:50%; flex:none;
     display:flex; align-items:center; justify-content:center;
-    font-size:13px; font-weight:700; color:#14141a; margin-right:10px;}
+    font-size:15px; font-weight:700; color:#14141a; margin-right:11px;}
   .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted);}
-  .row .icon{width:22px; height:22px; border-radius:5px; flex:none; margin-right:8px;}
+  .row .icon{width:27px; height:27px; border-radius:5px; flex:none; margin-right:9px;}
   .row .icon.blank{visibility:hidden;}
-  .row .name{font-size:17px; font-weight:700; white-space:nowrap;}
-  .row .detail{font-size:15px; color:var(--muted); margin-left:10px; flex:1; min-width:0;
+  .row .name{font-size:21px; font-weight:700; white-space:nowrap;}
+  .row .detail{font-size:18px; color:var(--muted); margin-left:11px; flex:1; min-width:0;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
-  .row .value{font-size:17px; font-weight:700; white-space:nowrap; margin-left:16px;}
-  .row .value small{font-size:15px; font-weight:400; color:var(--muted);}
-  .row.textrow{font-size:15px; color:var(--muted);}
-  .empty{font-size:15px; color:var(--faint); padding-top:8px;}
+  .row .value{font-size:21px; font-weight:700; white-space:nowrap; margin-left:16px;}
+  .row .value small{font-size:18px; font-weight:400; color:var(--muted);}
+  .row.textrow{font-size:18px; color:var(--muted);}
+  .empty{font-size:18px; color:var(--faint); padding-top:8px;}
   .roast{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
-    padding:20px 22px 22px; margin-top:24px;}
-  .roast .t{font-size:15px; font-weight:700; color:var(--accent); margin-bottom:6px;}
-  .roast .q{font-size:20px; color:var(--text); line-height:1.4;}
-  .roast .attr{font-size:15px; color:var(--muted); text-align:right; margin-top:2px;}
+    padding:22px 24px 24px; margin-top:26px;}
+  .roast .t{font-size:18px; font-weight:700; color:var(--accent); margin-bottom:8px;}
+  .roast .q{font-size:23px; color:var(--text); line-height:1.4;}
+  .roast .attr{font-size:17px; color:var(--muted); text-align:right; margin-top:2px;}
 
   /* ================================ FOOTER ================================ */
-  .ftr{position:relative; width:2600px; height:520px; overflow:hidden;
+  .ftr{position:relative; width:2600px; height:470px; overflow:hidden;
     background:url("assets/wall_footer.png");}
-  .ftr-glow{position:absolute; left:0; right:0; bottom:-40px; height:200px;
-    background:radial-gradient(ellipse 50% 100% at 50% 100%, rgba(58,220,90,.16), transparent 70%);
+  .ftr-fireglow{position:absolute; left:0; right:0; bottom:-70px; height:260px;
+    background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
     animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
+  .firerow{position:absolute; left:0; right:0; bottom:-6px; height:150px; pointer-events:none;}
   .ftr-in{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    gap:44px; padding:0 60px;}
-  .tooltip{width:600px; background:rgba(7,7,24,.94); border-radius:8px; padding:26px 30px;
-    font-size:20px; line-height:1.55;}
+    gap:40px; padding:0 56px;}
+  .tooltip{width:600px; background:rgba(7,7,24,.94); border-radius:8px; padding:22px 28px;
+    font-size:19px; line-height:1.5;}
   .tooltip.codex{border:1px solid #43435c; box-shadow:inset 0 0 0 1px rgba(120,120,180,.15), 0 14px 40px rgba(0,0,0,.6);}
   .tooltip.item{border:1px solid #5c4a2e; box-shadow:inset 0 0 0 1px rgba(230,180,70,.18), 0 14px 40px rgba(0,0,0,.6);}
-  .tooltip .tt{font-family:Cinzel,serif; font-size:32px; font-weight:800;}
+  .tooltip .tt{font-family:Cinzel,serif; font-size:30px; font-weight:800;}
   .tooltip .split{display:flex; justify-content:space-between;}
-  .item-img{display:block; margin:12px auto 0; border:2px solid #967a3e; border-radius:6px; max-width:540px;}
-  .memorial{display:flex; flex-direction:column; align-items:center; gap:8px;}
-  .memorial .mt{font-size:15px; letter-spacing:.3em; color:var(--accent); font-weight:700; text-shadow:0 1px 4px #000;}
-  .gy{position:relative; width:1080px; height:390px; border:3px solid #967a3e; border-radius:10px; overflow:hidden;
-    background:linear-gradient(180deg, #0d0f14 0%, #131720 55%, #10130c 100%);
+  .item-img{display:block; margin:12px auto 0; border:2px solid #967a3e; border-radius:6px; max-width:540px; max-height:310px;}
+  .memorial{display:flex; flex-direction:column; align-items:center; gap:7px;}
+  .memorial .mt{font-size:16px; letter-spacing:.28em; color:var(--accent); font-weight:700; text-shadow:0 1px 4px #000;}
+  .gy{position:relative; width:1140px; height:370px; border:3px solid #967a3e; border-radius:10px; overflow:hidden;
+    background:linear-gradient(180deg, #12141a 0%, #191d28 55%, #141710 100%);
     box-shadow:0 0 0 1px #2d303a, 0 18px 50px rgba(0,0,0,.65);}
   .gy-glow{position:absolute; left:0; right:0; bottom:-90px; height:260px;
     background:radial-gradient(ellipse 70% 100% at 50% 100%, rgba(58,220,90,.28), transparent 70%);
     animation:glowPulse .6s ease-in-out infinite alternate;}
-  .gy-fog{position:absolute; left:0; right:0; bottom:0; height:74px;
-    background:linear-gradient(180deg, transparent, #171a10 40%, #0e1009);}
-  .gy-row{position:absolute; left:0; right:0; bottom:26px; display:flex; align-items:flex-end;
-    justify-content:center; gap:38px;}
-  .stone{display:flex; flex-direction:column; align-items:center; padding-top:26px; gap:5px;
-    box-shadow:inset 0 4px 6px rgba(255,255,255,.14), inset 0 -10px 18px rgba(0,0,0,.5), 0 12px 26px rgba(0,0,0,.6);}
-  .stone .rip{font-family:Cinzel,serif; font-size:21px; font-weight:900; color:#2e2c27; text-shadow:0 1px 0 rgba(255,255,255,.18);}
-  .stone .cross{width:26px; height:56px; position:relative; margin-bottom:2px;}
-  .stone .cross i{position:absolute; background:#34322c; border-radius:3px;}
-  .stone .nm{font-size:20px; font-weight:800; color:#2e2c27;}
-  .stone .dd{font-size:14px; font-weight:700; color:#463f2e;}
-  .stone .ep{font-size:12.5px; color:#4a463d; text-align:center; padding:0 14px; font-style:italic;}
+  .gy-fog{position:absolute; left:0; right:0; bottom:0; height:70px;
+    background:linear-gradient(180deg, transparent, #171a10 45%, #0e1009);}
+  .gy-row{position:absolute; left:0; right:0; bottom:24px; display:flex; align-items:flex-end;
+    justify-content:center; gap:40px;}
+  .stone{display:flex; flex-direction:column; align-items:center; padding-top:24px; gap:6px;
+    box-shadow:inset 0 4px 6px rgba(255,255,255,.18), inset 0 -10px 18px rgba(0,0,0,.45), 0 12px 26px rgba(0,0,0,.6);}
+  .stone .rip{font-family:Cinzel,serif; font-size:24px; font-weight:900; color:#211f1b; text-shadow:0 1px 0 rgba(255,255,255,.22);}
+  .stone .cross{width:26px; height:52px; position:relative; margin-bottom:2px;}
+  .stone .cross i{position:absolute; background:#2c2a25; border-radius:3px;}
+  .stone .nm{font-size:22px; font-weight:800; color:#211f1b;}
+  .stone .dd{font-size:16px; font-weight:700; color:#35301f;}
+  .stone .ep{font-size:14px; color:#413d33; text-align:center; padding:0 14px; font-style:italic; line-height:1.25;}
   .plot{display:flex; flex-direction:column; align-items:center; gap:6px; width:190px;}
   .fire{position:relative; width:120px; height:120px;}
   .fire .log{position:absolute; bottom:2px; width:64px; height:12px; border-radius:6px;
     background:linear-gradient(180deg, #5a4028, #2b2117);}
   .reserved{background:#3a2c1a; border:2px solid #211809; border-radius:6px; padding:6px 12px;
-    font-size:13px; font-weight:800; letter-spacing:.08em; color:#d9c49a; box-shadow:0 6px 16px rgba(0,0,0,.5);}
-  .plot .weeks{font-size:12px; color:#7d8290; font-style:italic;}
+    font-size:14px; font-weight:800; letter-spacing:.08em; color:#d9c49a; box-shadow:0 6px 16px rgba(0,0,0,.5);}
+  .plot .weeks{font-size:13px; color:#8d93a2; font-style:italic;}
   .gy-cap{font-size:16px; color:var(--muted); font-style:italic; text-shadow:0 1px 4px #000;}
   .motd{height:52px; display:flex; align-items:stretch; border-top:1px solid var(--hairline); background:#0d0e13;}
   .motd .chip{display:flex; align-items:center; padding:0 24px; background:#1a1c23;
     border-right:1px solid var(--hairline); font-weight:800; letter-spacing:.16em; color:var(--accent); font-size:15px;}
-  .motd .q{flex:1; display:flex; align-items:center; padding:0 26px; font-size:19px; color:var(--accent);
+  .motd .q{flex:1; display:flex; align-items:center; padding:0 26px; font-size:20px; color:var(--accent);
     white-space:nowrap; overflow:hidden;}
   .credits{height:40px; display:flex; align-items:center; justify-content:space-between;
     padding:0 36px; background:#0b0c10;}
@@ -225,7 +228,7 @@
         <div class="lbl">SEASON REPAIR BILL (EST.)</div>
         <div class="val"><span data-count data-base="{{ repair }}" data-step="57" data-ticks="3">{{ "{:,}".format(repair) }}</span>
           <span class="coin" style="width:18px; height:18px; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420);"></span>
-          <span style="font-size:30px; font-weight:700; color:#b0b6c0;">43</span>
+          <span style="font-size:28px; font-weight:700; color:#b0b6c0;">43</span>
           <span class="coin" style="width:13px; height:13px; background:radial-gradient(circle at 35% 30%, #e8ecf2, #b0b6c0 55%, #6a707c);"></span>
         </div>
         <div class="sub">donations welcome · thoughts &amp; prayers accepted</div>
@@ -245,9 +248,9 @@
       {%- endfor %}
     </div>
     <div class="torch">
-      <div class="flame" style="width:64px; height:130px; margin-left:-32px; background:radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%); animation-duration:.6s;"></div>
-      <div class="flame" style="width:42px; height:100px; margin-left:-21px; background:radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%); animation-duration:.3s;"></div>
-      <div class="flame" style="width:22px; height:62px; margin-left:-11px; background:radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%); animation-duration:.2s;"></div>
+      <div class="flame" style="width:64px; height:126px; margin-left:-32px; background:radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%); animation-duration:.6s;"></div>
+      <div class="flame" style="width:42px; height:96px; margin-left:-21px; background:radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%); animation-duration:.3s;"></div>
+      <div class="flame" style="width:22px; height:60px; margin-left:-11px; background:radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%); animation-duration:.2s;"></div>
       <div class="handle"></div>
     </div>
     <div class="sign">
@@ -315,7 +318,15 @@
 
   <!-- ================================ FOOTER ================================ -->
   <div class="ftr">
-    <div class="ftr-glow"></div>
+    <div class="ftr-fireglow"></div>
+    <div class="firerow">
+      {%- for f in footer_flames %}
+      <div style="position:absolute; left:{{ f.left }}%; bottom:0; width:{{ f.w }}px; height:{{ f.h }}px;">
+        <div class="flame" style="width:{{ f.w }}px; height:{{ f.h }}px; margin-left:-{{ f.w // 2 }}px; background:radial-gradient(circle at 50% 88%, rgba(224,122,40,.85), rgba(224,122,40,.08) 78%); animation-duration:{{ f.dur }}s; animation-delay:{{ f.delay }}s;"></div>
+        <div class="flame" style="width:{{ (f.w * 0.55) | int }}px; height:{{ (f.h * 0.66) | int }}px; margin-left:-{{ (f.w * 0.55 / 2) | int }}px; background:radial-gradient(circle at 50% 88%, rgba(246,176,78,.8), rgba(246,176,78,.06) 78%); animation-duration:{{ f.dur2 }}s; animation-delay:{{ f.delay }}s;"></div>
+      </div>
+      {%- endfor %}
+    </div>
     <div class="embers">
       {%- for e in footer_embers %}
       <span style="left:{{ e.left }}%; width:{{ e.size }}px; height:{{ e.size }}px; animation-delay:{{ e.delay }}s; --drift:{{ e.drift }}px;"></span>
@@ -324,13 +335,13 @@
     <div class="ftr-in">
       <div class="tooltip codex">
         <div class="tt" style="color:var(--legendary);">Brewzleeh's Gambling Debt</div>
-        <div style="display:flex; align-items:baseline; gap:10px; margin:6px 0 2px; font-variant-numeric:tabular-nums;">
+        <div style="display:flex; align-items:baseline; gap:10px; margin:5px 0 2px; font-variant-numeric:tabular-nums;">
           <span data-count data-base="{{ debt }}" data-step="1337" data-ticks="4"
-                style="font-size:46px; font-weight:800; color:var(--accent); animation:debtGlow .6s ease-in-out infinite alternate;">{{ "{:,}".format(debt) }}</span>
+                style="font-size:44px; font-weight:800; color:var(--accent); animation:debtGlow .6s ease-in-out infinite alternate;">{{ "{:,}".format(debt) }}</span>
           <span class="coin" style="width:18px; height:18px; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420);"></span>
           <span style="font-size:14px; color:var(--muted);">and climbing</span>
         </div>
-        <div style="font-size:14px; color:var(--muted); margin-bottom:8px;">interest: 9.99% weekly · collateral: <span style="color:#00ff98;">his monk</span></div>
+        <div style="font-size:14px; color:var(--muted); margin-bottom:7px;">interest: 9.99% weekly · collateral: <span style="color:#00ff98;">his monk</span></div>
         <div>Binds on !roll</div>
         <div class="split"><span>Deathroll Ledger</span><span>Unique</span></div>
         <div>+15 Gambling Addiction</div>
@@ -338,8 +349,8 @@
         <div style="color:var(--uncommon);">Equip: Doubles down on a 2% win chance.</div>
         <div style="color:var(--uncommon);">Equip: Cannot leave while ahead. Has never been ahead.</div>
         <div style="color:var(--uncommon);">Use: Borrows from GBank tab 3. Again. (No Cooldown)</div>
-        <div style="color:var(--goldtext); font-style:italic; margin-top:8px;">“Just one more roll.” — Brewzleeh, at 4 AM</div>
-        <div style="color:#ff2020; margin-top:6px;">Requires: An intervention</div>
+        <div style="color:var(--goldtext); font-style:italic; margin-top:7px;">“Just one more roll.” — Brewzleeh, at 4 AM</div>
+        <div style="color:#ff2020; margin-top:5px;">Requires: An intervention</div>
       </div>
       <div class="memorial">
         <div class="mt">GRAVEYARD CAMPERS MEMORIAL{% if week_label %} · WEEK OF {{ week_label.upper() }}{% endif %}</div>
@@ -355,8 +366,8 @@
             {%- for s in stones %}
             <div class="stone" style="width:{{ s.w }}px; height:{{ s.h }}px; transform:rotate({{ s.rot }}deg);
                  background:linear-gradient(165deg, {{ s.light }} 0%, {{ s.mid }} 55%, {{ s.dark }} 100%);
-                 border-radius:{{ s.radius }};{% if not s.arched %} padding-top:26px;{% else %} padding-top:34px;{% endif %}">
-              {%- if s.cross %}<div class="cross"><i style="left:10px; top:0; width:7px; height:56px;"></i><i style="left:0; top:13px; width:26px; height:7px;"></i></div>
+                 border-radius:{{ s.radius }};{% if not s.arched %} padding-top:22px;{% else %} padding-top:30px;{% endif %}">
+              {%- if s.cross %}<div class="cross"><i style="left:10px; top:0; width:7px; height:52px;"></i><i style="left:0; top:12px; width:26px; height:7px;"></i></div>
               {%- else %}<div class="rip">R.I.P.</div>{% endif %}
               <div class="nm">{{ s.name }}</div>
               <div class="dd">{{ s.deaths }}</div>
