@@ -42,18 +42,23 @@
     background:var(--bg); position:relative; min-height:100vh; overflow-x:hidden;}
 
   /* --- full-bleed art backdrop, fixed so the console scrolls over it --- */
+  /* The backdrop spans the whole DOCUMENT (absolute, not fixed) so the
+     art is present the entire way down — in the browser and in a
+     full-page screenshot. Over a long page `cover` blows the art up
+     into soft atmospheric shapes, which is exactly what a backdrop
+     behind text should be. */
   {%- if theme.backgrounds.middle %}
-  .backdrop{position:fixed; inset:0; z-index:0; pointer-events:none;
+  .backdrop{position:absolute; inset:0; z-index:0; pointer-events:none;
     background:url("{{ theme.backgrounds.middle }}") center/cover no-repeat;
     opacity:.62; filter:saturate(1.12);}
   {%- else %}
-  .backdrop{position:fixed; inset:0; z-index:0; pointer-events:none;
+  .backdrop{position:absolute; inset:0; z-index:0; pointer-events:none;
     background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.06), transparent 70%);}
   {%- endif %}
   /* vignette + tint keeps every theme's art readable under text. The
      panels below carry their own scrim, so this stays light enough to
      let the artwork actually read. */
-  .veil{position:fixed; inset:0; z-index:1; pointer-events:none;
+  .veil{position:absolute; inset:0; z-index:1; pointer-events:none;
     background:
       radial-gradient(125% 95% at 50% 0%, transparent 6%, rgba(var(--bg-rgb),.42) 55%, rgba(var(--bg-rgb),.86) 100%),
       linear-gradient(180deg, rgba(var(--bg-rgb),.18), rgba(var(--bg-rgb),.62));}

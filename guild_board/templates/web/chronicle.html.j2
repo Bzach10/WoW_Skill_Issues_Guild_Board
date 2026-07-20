@@ -1,0 +1,366 @@
+{#
+  LAYOUT: chronicle — "the weekly dispatch"
+
+  The board as an editorial spread: the week has a FRONT PAGE. A
+  full-bleed art plate carries one enormous headline, a rule of stat
+  numerals runs beneath it, and the data falls into a two-track
+  magazine grid — a wide lead column of standings against a narrow
+  sidebar holding the guild's running jokes (the ledger, in memoriam,
+  the roast as a pull quote).
+
+  Structurally this is the opposite of both the poster grid (four equal
+  cards) and ember_terminal (a machine readout): here the hierarchy is
+  editorial. One story is the biggest thing on the page and everything
+  else is subordinate to it.
+
+  Theme-neutral by construction — every scrim is built from the theme's
+  own background color (--bg-rgb), so this reads correctly on the light
+  vellum theme as well as the dark ones.
+#}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Weekly Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --bg-rgb:{{ bg_rgb }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text); font-family:var(--font-body); font-size:16px;
+    background:var(--bg); overflow-x:hidden;}
+  .wrap{max-width:1500px; margin:0 auto; padding:0 clamp(14px,3.4vw,40px);}
+
+  /* ============================ front page ============================= */
+  .plate{position:relative; min-height:min(84vh,760px); display:flex;
+    align-items:flex-end; overflow:hidden;}
+  {%- if theme.backgrounds.middle %}
+  .plate .art{position:absolute; inset:0;
+    background:url("{{ theme.backgrounds.middle }}") center 45%/cover no-repeat;}
+  {%- else %}
+  .plate .art{position:absolute; inset:0; background:var(--panel);}
+  {%- endif %}
+  /* scrim built from the theme's own bg so light themes stay light */
+  .plate .art::after{content:""; position:absolute; inset:0;
+    background:
+      linear-gradient(180deg, rgba(var(--bg-rgb),.30) 0%, rgba(var(--bg-rgb),.10) 34%, rgba(var(--bg-rgb),.88) 86%, var(--bg) 100%),
+      linear-gradient(90deg, rgba(var(--bg-rgb),.72), transparent 62%);}
+  .plate .inner{position:relative; width:100%; max-width:1500px; margin:0 auto;
+    padding:clamp(30px,6vw,74px) clamp(14px,3.4vw,40px) clamp(26px,4vw,52px);}
+
+  .flag{display:flex; align-items:center; gap:14px; flex-wrap:wrap;
+    padding-bottom:14px; margin-bottom:clamp(20px,5vw,58px);
+    border-bottom:1px solid var(--hairline);}
+  {%- if theme.backgrounds.crest %}
+  .flag .crest{width:46px; height:46px; flex:none; border-radius:50%;
+    background:url("{{ theme.backgrounds.crest }}") center/cover;
+    box-shadow:0 0 0 1px var(--hairline);}
+  {%- endif %}
+  .flag .nm{font-family:var(--font-display); font-weight:900; letter-spacing:.1em;
+    font-size:clamp(15px,2.4vw,22px);}
+  .flag .rl{font-size:11px; letter-spacing:.26em; color:var(--accent); text-transform:uppercase;}
+  .flag .dt{margin-left:auto; font-size:12px; color:var(--muted); letter-spacing:.06em;}
+
+  .kicker{font-size:clamp(10px,2vw,13px); letter-spacing:.36em; font-weight:800;
+    color:var(--accent); text-transform:uppercase; margin-bottom:14px;}
+  .lede{font-family:var(--font-display); font-weight:900; line-height:1.03;
+    font-size:clamp(34px,8.2vw,104px); letter-spacing:-.005em; max-width:19ch;
+    text-shadow:0 6px 40px rgba(0,0,0,.5);}
+  .standfirst{margin-top:20px; max-width:56ch; font-size:clamp(14px,2.2vw,19px);
+    line-height:1.55; color:var(--muted);}
+
+  /* numeral rule under the front page */
+  .numerals{display:grid; grid-template-columns:repeat(auto-fit,minmax(122px,1fr));
+    border-top:2px solid var(--text); border-bottom:1px solid var(--hairline);
+    margin-top:clamp(26px,4vw,44px);}
+  .numerals .n{padding:16px 18px 15px; border-right:1px solid var(--hairline);}
+  .numerals .n:last-child{border-right:0;}
+  .numerals .k{font-size:10.5px; letter-spacing:.2em; color:var(--faint); text-transform:uppercase;}
+  .numerals .v{font-family:var(--font-display); font-weight:900; margin-top:6px;
+    font-size:clamp(23px,3.6vw,36px); line-height:1; font-variant-numeric:tabular-nums;}
+  .numerals .v small{font-size:.42em; font-weight:600; margin-left:7px; letter-spacing:0;}
+
+  /* ============================== toolbar ============================== */
+  .bar{position:sticky; top:0; z-index:9; display:flex; align-items:center; gap:8px;
+    flex-wrap:wrap; padding:11px 0; margin-bottom:clamp(26px,4vw,46px);
+    background:rgba(var(--bg-rgb),.95); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--hairline);}
+  .bar a,.bar button{font:inherit; font-size:12px; font-weight:700; letter-spacing:.14em;
+    text-transform:uppercase; color:var(--muted); background:none; cursor:pointer;
+    text-decoration:none; padding:6px 12px; border:1px solid transparent; border-radius:2px;
+    white-space:nowrap; transition:color .15s,border-color .15s;}
+  .bar a:hover,.bar button:hover{color:var(--accent); border-color:var(--hairline);}
+  .bar button.on{color:var(--bg); background:var(--accent); border-color:var(--accent);}
+  .bar .sp{flex:1;}
+  .bar input,.bar select{font:inherit; font-size:12.5px; color:var(--text);
+    background:rgba(var(--bg-rgb),.6); border:1px solid var(--hairline);
+    border-radius:2px; padding:6px 12px; outline:none;}
+  .bar input{width:158px;} .bar input:focus,.bar select:focus{border-color:var(--accent);}
+  .filters{display:contents;}
+
+  /* ============================ the spread ============================= */
+  .spread{display:grid; grid-template-columns:minmax(0,1.62fr) minmax(0,1fr);
+    gap:clamp(24px,4vw,58px); align-items:start; padding-bottom:20px;}
+  .aside{display:flex; flex-direction:column; gap:clamp(20px,3vw,34px);
+    position:sticky; top:74px;}
+
+  /* editorial section heading: numeral + rule + small caps */
+  .head{display:flex; align-items:baseline; gap:12px; margin-bottom:16px;}
+  .head .no{font-family:var(--font-display); font-weight:900; font-size:13px;
+    color:var(--accent); letter-spacing:.1em;}
+  .head .t{font-family:var(--font-display); font-weight:900; letter-spacing:.06em;
+    font-size:clamp(17px,2.6vw,25px); white-space:nowrap;}
+  .head .rule{flex:1; height:1px; background:var(--hairline);}
+
+  .story{margin-bottom:clamp(34px,5vw,58px);}
+  .story:last-child{margin-bottom:0;}
+  .sec{margin-bottom:26px;} .sec:last-child{margin-bottom:0;}
+  .sec-h{font-size:11px; font-weight:800; letter-spacing:.24em; text-transform:uppercase;
+    color:var(--accent); padding-bottom:6px; margin-bottom:4px;
+    border-bottom:1px solid var(--hairline);}
+
+  /* ------------------------------- rows ------------------------------- */
+  .row{display:flex; align-items:center; gap:11px; min-height:42px; min-width:0;
+    padding:4px 6px; margin:0 -6px; border-bottom:1px solid var(--hairline);
+    transition:background .15s;}
+  .row:last-child{border-bottom:0;}
+  .row:hover{background:rgba(var(--bg-rgb),.5);}
+  .row .rk{flex:none; width:26px; font-family:var(--font-display); font-weight:900;
+    font-size:15px; color:var(--faint); text-align:right;}
+  .row .rk.top{color:var(--accent);}
+  .row .icon{width:26px; height:26px; border-radius:4px; flex:none;
+    box-shadow:0 0 0 1px var(--hairline);}
+  .row .who{min-width:0; flex:1;}
+  .row .name{font-size:16px; font-weight:700; text-decoration:none; white-space:nowrap;}
+  .row a.name:hover{text-decoration:underline;}
+  .row .detail{display:block; font-size:12px; color:var(--muted); white-space:nowrap;
+    overflow:hidden; text-overflow:ellipsis; margin-top:1px;}
+  .row .value{font-family:var(--font-display); font-weight:900; font-size:19px;
+    white-space:nowrap; font-variant-numeric:tabular-nums; text-align:right;}
+  .row .value small{display:block; font-family:var(--font-body); font-size:11px;
+    font-weight:500; color:var(--muted); letter-spacing:.04em;}
+  .row.textrow{font-size:13px; color:var(--muted); font-style:italic;}
+  .empty{font-size:13px; color:var(--faint); padding:8px 0; font-style:italic;}
+  .nohit{display:none !important;}
+
+  /* ---------------------------- sidebar cards -------------------------- */
+  .card{border:1px solid var(--hairline); border-top:3px solid var(--accent);
+    padding:20px 18px 18px; background:rgba(var(--bg-rgb),.55);}
+  .card .ch{font-family:var(--font-display); font-weight:900; font-size:15px;
+    letter-spacing:.05em; margin-bottom:14px;}
+
+  .ledger .amt{font-family:var(--font-display); font-weight:900; color:var(--red);
+    font-size:clamp(30px,5vw,46px); line-height:1; font-variant-numeric:tabular-nums;}
+  .ledger .amt sup{font-size:.4em; margin-left:3px; color:var(--muted);}
+  .ledger .note{font-size:11.5px; color:var(--muted); margin-top:7px; letter-spacing:.03em;}
+  .ledger ul{list-style:none; font-size:13px; line-height:1.7; margin-top:14px;
+    padding-top:12px; border-top:1px solid var(--hairline);}
+  .ledger li{display:flex; gap:10px;}
+  .ledger li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
+  .ledger li.g{color:var(--green);}
+  .ledger .flav{font-style:italic; color:var(--muted); font-size:12.5px; margin-top:12px;}
+  .ledger .req{color:var(--red); font-size:11.5px; margin-top:4px;}
+
+  .memoriam .plots{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .memoriam .p{padding:12px 10px; text-align:center; border:1px solid var(--hairline);
+    border-radius:60px 60px 4px 4px; background:rgba(var(--bg-rgb),.5);}
+  .memoriam .p .n{font-family:var(--font-display); font-weight:700; font-size:12.5px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .memoriam .p .d{font-size:10.5px; color:var(--muted); margin-top:5px;}
+  .memoriam .cap{font-size:12px; color:var(--faint); margin-top:12px; font-style:italic;}
+  .memoriam .res{font-size:11.5px; color:var(--accent); margin-top:8px; letter-spacing:.04em;}
+
+  /* the roast, set as a proper editorial pull quote */
+  .pull{border:0; border-left:3px solid var(--accent); padding:6px 0 6px 20px;
+    background:none;}
+  .pull .q{font-family:var(--font-display); font-weight:700; line-height:1.32;
+    font-size:clamp(18px,2.8vw,26px);}
+  .pull .q::before{content:"“"; color:var(--accent); margin-right:2px;}
+  .pull .q::after{content:"”"; color:var(--accent);}
+  .pull .attr{font-size:12.5px; color:var(--muted); margin-top:12px; letter-spacing:.06em;}
+  .pull .lbl{font-size:10.5px; letter-spacing:.28em; color:var(--accent);
+    text-transform:uppercase; margin-bottom:10px;}
+
+  .relic img{width:100%; height:auto; display:block; border:1px solid var(--hairline);}
+
+  /* ============================== footer =============================== */
+  .motd{display:flex; align-items:center; gap:14px; margin-top:clamp(30px,5vw,56px);
+    padding:16px 0; border-top:2px solid var(--text); border-bottom:1px solid var(--hairline);}
+  .motd .chip{flex:none; font-size:10px; font-weight:800; letter-spacing:.26em;
+    color:var(--accent); text-transform:uppercase;}
+  .motd .q{font-family:var(--font-display); font-size:clamp(14px,2.2vw,18px);}
+  .credits{display:flex; flex-wrap:wrap; gap:6px 20px; justify-content:space-between;
+    padding:16px 0 34px; font-size:11.5px; color:var(--faint); letter-spacing:.04em;}
+
+  /* =============================== phone =============================== */
+  @media (max-width:940px){
+    .spread{grid-template-columns:1fr;}
+    .aside{position:static;}
+    .plate{min-height:auto;}
+  }
+  @media (max-width:520px){
+    .row .detail{display:none;}   /* name + number is the story on a phone */
+    .bar{position:static;}
+    .bar input{width:118px;}
+    .memoriam .plots{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+  <header class="plate">
+    <div class="art" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="flag">
+        {%- if theme.backgrounds.crest %}<div class="crest"></div>{% endif %}
+        <div>
+          <div class="nm">{{ guild_name.upper() }}</div>
+          <div class="rl">{{ realm_label }}</div>
+        </div>
+        <div class="dt">{{ subtitle }} — {{ date_range }}</div>
+      </div>
+      <div class="kicker">The weekly dispatch · week of {{ week_label }}</div>
+      <h1 class="lede">{{ headline or (guild_name ~ ' — the week in full') }}</h1>
+      {%- if bar_label %}<p class="standfirst">{{ bar_label }}.
+        {%- if tldr %} {{ tldr | map('striptags') | join(' · ') | replace('**','') }}{% endif %}</p>
+      {%- endif %}
+    </div>
+  </header>
+
+  <div class="wrap">
+    {%- if hero_tiles %}
+    <div class="numerals">
+      {%- for t in hero_tiles %}
+      <div class="n">
+        <div class="k">{{ t.label }}</div>
+        <div class="v">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+
+    <nav class="bar">
+      {%- for col in columns %}
+      <a href="#s-{{ loop.index }}">{{ col.title }}</a>
+      {%- endfor %}
+      {%- if roast %}<a href="#roast">Roast</a>{% endif %}
+      <span class="sp"></span>
+      <span class="filters" id="filters" hidden>
+        <button class="on" data-role="all">All</button>
+        <button data-role="dps">DPS</button>
+        <button data-role="healer">Healers</button>
+        <button data-role="tank">Tanks</button>
+      </span>
+      <input id="search" type="search" placeholder="Find a player…" hidden>
+      <select id="weeksel" hidden><option value="">This week</option></select>
+    </nav>
+
+    <div class="spread">
+      <main>
+        {%- for col in columns %}
+        <section class="story" id="s-{{ loop.index }}" style="scroll-margin-top:74px;">
+          <div class="head">
+            <span class="no">{{ '%02d' % loop.index }}</span>
+            <span class="t">{{ col.title }}</span>
+            <span class="rule"></span>
+          </div>
+          {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
+          {%- for sec in col.sections %}
+          <div class="sec">
+            <div class="sec-h">{{ sec.title }}</div>
+            {%- for row in sec.rows %}
+            {%- if row.text is defined %}
+            <div class="row textrow">{{ row.text }}</div>
+            {%- else %}
+            <div class="row" data-name="{{ row.name | lower }}"
+                 data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
+              <span class="rk{{ ' top' if row.medal }}">{{ row.rank }}</span>
+              {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
+              <span class="who">
+                <a class="name" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
+                   target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
+                   style="color:{{ row.color }};">{{ row.name }}</a>
+                <span class="detail">{{ row.detail }}</span>
+              </span>
+              <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %}<small>{{ row.value_suffix }}</small>{% endif %}</span>
+            </div>
+            {%- endif %}
+            {%- endfor %}
+          </div>
+          {%- endfor %}
+        </section>
+        {%- endfor %}
+      </main>
+
+      {# --- sidebar: the guild's running jokes, given real estate --- #}
+      <aside class="aside">
+        {%- if roast %}
+        <div class="card pull" id="roast" style="scroll-margin-top:74px;">
+          <div class="lbl">Roast of the week</div>
+          <div class="q">{{ roast.quote | replace('“','') | replace('”','') }}</div>
+          {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+        </div>
+        {%- endif %}
+
+        {%- if debt_card %}
+        <div class="card ledger">
+          <div class="ch">{{ debt_card.title }}</div>
+          <div class="amt">{{ "{:,}".format(debt_card.amount) }}<sup>g</sup></div>
+          <div class="note">{{ debt_card.climbing_note }} · {{ debt_card.interest_note }}</div>
+          <ul>
+            {%- for line in debt_card.lines %}
+            <li class="{{ 'g' if line.green }}"><span>{{ line.left }}</span>{% if line.right %}<span class="r">{{ line.right }}</span>{% endif %}</li>
+            {%- endfor %}
+          </ul>
+          {%- if debt_card.flavor %}<div class="flav">{{ debt_card.flavor }}</div>{% endif %}
+          {%- if debt_card.requires %}<div class="req">{{ debt_card.requires }}</div>{% endif %}
+        </div>
+        {%- endif %}
+
+        {%- if stones %}
+        <div class="card memoriam">
+          <div class="ch">{{ theme.footer.graveyard.title }}</div>
+          <div class="plots">
+            {%- for s in stones %}
+            <div class="p">
+              <div class="n" style="color:{{ s.color }};">{{ s.name }}</div>
+              <div class="d">{{ s.deaths }}</div>
+            </div>
+            {%- endfor %}
+          </div>
+          <div class="cap">{{ theme.footer.graveyard.caption }}</div>
+          {%- if theme.footer.graveyard.reserved %}
+          <div class="res">Plot reserved: {{ theme.footer.graveyard.reserved }} — {{ theme.footer.graveyard.reserved_note }}</div>
+          {%- endif %}
+        </div>
+        {%- endif %}
+
+        {%- if item_src %}
+        <div class="card relic">
+          <div class="ch">{{ item_title }}</div>
+          <img src="{{ item_src }}" alt="{{ item_title }}" loading="lazy">
+        </div>
+        {%- endif %}
+      </aside>
+    </div>
+
+    <div class="motd"><span class="chip">MOTD</span><span class="q">{{ motd }}</span></div>
+    <div class="credits">
+      <span>{{ theme.credits }}</span>
+      <span>{{ watermark }}</span>
+    </div>
+  </div>
+{% include "web/_interactive.html.j2" %}
+</body>
+</html>

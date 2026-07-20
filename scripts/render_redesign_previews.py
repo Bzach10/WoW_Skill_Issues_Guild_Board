@@ -41,6 +41,9 @@ from guild_board import html_board  # noqa: E402
 from scripts import preview_board as fixture  # noqa: E402
 
 OUT_DIR = ROOT / "redesign_previews"
+# Full-size shots are big (a tall page runs 10MB+) and stay out of git;
+# the small JPEGs that the contact sheet embeds are what gets committed.
+THUMB_DIR = OUT_DIR / "thumbs"
 THEME_DIR = ROOT / "themes"
 LAYOUT_DIR = ROOT / "guild_board" / "templates" / "web"
 
@@ -122,11 +125,16 @@ def render(context, layout):
 
 
 def contact_sheet(combos):
-    """A plain index so every option is one click away."""
-    cards = "\n".join(
-        f'    <a class="c" href="{layout}__{theme}.html">'
-        f'<span class="l">{layout}</span><span class="t">{theme}</span></a>'
-        for layout, theme in combos)
+    """A plain index so every option is one click away, with a thumbnail
+    when one has been generated (--png)."""
+    def card(layout, theme):
+        thumb = THUMB_DIR / f"{layout}__{theme}.jpg"
+        img = (f'<img src="thumbs/{thumb.name}" alt="" loading="lazy">'
+               if thumb.exists() else "")
+        return (f'    <a class="c" href="{layout}__{theme}.html">{img}'
+                f'<span class="m"><span class="l">{layout}</span>'
+                f'<span class="t">{theme}</span></span></a>')
+    cards = "\n".join(card(layout, theme) for layout, theme in combos)
     return f"""<!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -134,11 +142,14 @@ def contact_sheet(combos):
 <style>
  body{{background:#0d0d12;color:#eee;font:16px/1.6 system-ui,sans-serif;margin:0;padding:40px 24px;}}
  h1{{font-size:24px;margin:0 0 6px;}} p{{color:#9a9aa8;max-width:70ch;margin:0 0 28px;}}
- .g{{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;max-width:1100px;}}
- .c{{display:flex;flex-direction:column;gap:4px;padding:18px;border:1px solid #2b2b38;border-radius:10px;
+ .g{{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;max-width:1400px;}}
+ .c{{display:block;border:1px solid #2b2b38;border-radius:10px;overflow:hidden;
     text-decoration:none;color:inherit;background:#15151d;transition:border-color .15s,background .15s;}}
  .c:hover{{border-color:#c9974a;background:#1b1b26;}}
- .l{{font-weight:700;font-size:17px;}} .t{{color:#9a9aa8;font-size:13px;}}
+ .c img{{display:block;width:100%;height:210px;object-fit:cover;object-position:top center;
+    border-bottom:1px solid #2b2b38;}}
+ .m{{display:flex;flex-direction:column;gap:3px;padding:14px 16px;}}
+ .l{{font-weight:700;font-size:16px;}} .t{{color:#9a9aa8;font-size:13px;}}
 </style></head><body>
 <h1>Guild Board — redesign options</h1>
 <p>Every layout paired with every theme. Layout is the structure; theme is the paint.
@@ -182,11 +193,11 @@ def main():
     if not combos:
         print("Nothing rendered.")
         return 1
-    (OUT_DIR / "index.html").write_text(contact_sheet(combos), encoding="utf-8")
-    print(f"\n{len(combos)} preview(s) + redesign_previews/index.html")
-
     if args.png:
         shoot(pages)
+    # written last so it can embed whatever thumbnails now exist
+    (OUT_DIR / "index.html").write_text(contact_sheet(combos), encoding="utf-8")
+    print(f"\n{len(combos)} preview(s) + redesign_previews/index.html")
     return 0
 
 
@@ -211,7 +222,26 @@ def shoot(pages):
                 page.screenshot(path=str(shot), full_page=True)
                 page.close()
                 print(f"  shot {shot.name}")
+                if not label:
+                    thumbnail(shot)
         browser.close()
+
+
+def thumbnail(shot, width=520, max_height=1400):
+    """A small JPEG of the top of the page for the contact sheet.
+    Best-effort: without Pillow the sheet just shows text cards."""
+    try:
+        from PIL import Image
+    except ImportError:
+        return
+    try:
+        THUMB_DIR.mkdir(parents=True, exist_ok=True)
+        with Image.open(shot) as im:
+            im = im.convert("RGB").crop((0, 0, im.width, min(im.height, max_height * 3)))
+            im.thumbnail((width, max_height), Image.LANCZOS)
+            im.save(THUMB_DIR / (shot.stem + ".jpg"), quality=78, optimize=True)
+    except Exception as exc:
+        print(f"    (thumbnail skipped: {exc})")
 
 
 if __name__ == "__main__":

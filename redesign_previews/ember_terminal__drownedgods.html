@@ -11,12 +11,12 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&amp;family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#0b0704; --panel:#17100a;
-    --hairline:#402c1b; --accent:#f5842a;
-    --text:#f8eee3; --muted:#bda691;
-    --faint:#806c5b;
-    --red:#ef5350; --green:#5fdc8f;
-    --bg-rgb:11,7,4;
+    --bg:#04100f; --panel:#0b1f22;
+    --hairline:#1e4247; --accent:#6ee7a8;
+    --text:#e6f6f2; --muted:#9dc0bb;
+    --faint:#688580;
+    --red:#ef6a5a; --green:#6ee7a8;
+    --bg-rgb:4,16,15;
     --font-display:'Cinzel Decorative',serif;
     --font-body:'Inter','Segoe UI',sans-serif;
     --font-mono:'JetBrains Mono','JetBrains Mono',ui-monospace,'Cascadia Code',Consolas,monospace;
@@ -33,7 +33,7 @@
      into soft atmospheric shapes, which is exactly what a backdrop
      behind text should be. */
   .backdrop{position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:url("../assets/generated/emberforge/middle.png") center/cover no-repeat;
+    background:url("../assets/generated/drownedgods/middle.png") center/cover no-repeat;
     opacity:.62; filter:saturate(1.12);}
   /* vignette + tint keeps every theme's art readable under text. The
      panels below carry their own scrim, so this stays light enough to
@@ -46,7 +46,7 @@
   /* ------------------- masthead art band (header art) ------------------ */
   .band{position:relative; z-index:3; overflow:hidden;}
   .band .art{position:absolute; inset:0; pointer-events:none;
-    background:url("../assets/generated/emberforge/header.png") center 42%/cover no-repeat;}
+    background:url("../assets/generated/drownedgods/header.png") center 42%/cover no-repeat;}
   .band .art::after{content:""; position:absolute; inset:0;
     background:linear-gradient(180deg, rgba(var(--bg-rgb),.34) 0%, rgba(var(--bg-rgb),.52) 55%, rgba(var(--bg-rgb),.97) 100%);}
   .band .inner{position:relative; max-width:1660px; margin:0 auto;
@@ -67,7 +67,7 @@
   .mast{display:flex; align-items:center; gap:clamp(12px,2.5vw,26px);
     padding:clamp(48px,9vw,112px) 4px clamp(30px,5vw,58px); flex-wrap:wrap;}
   .sigil{width:clamp(58px,10vw,104px); height:clamp(58px,10vw,104px); flex:none;
-    border-radius:50%; background:url("../assets/generated/emberforge/crest.png") center/cover;
+    border-radius:50%; background:url("../assets/generated/drownedgods/crest.png") center/cover;
     box-shadow:0 0 0 1px var(--hairline), 0 0 38px -6px var(--accent);}
   .mast .id{min-width:0; flex:1;}
   .mast h1{font-family:var(--font-display); font-weight:900; line-height:1;

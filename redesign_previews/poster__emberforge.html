@@ -1,0 +1,818 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Issues — Weekly Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&amp;family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+  /* ================= Responsive web board =================
+     The auto-scaling twin of the Discord image: real HTML, 4 columns on
+     a desktop, stacking to 1 on a phone. Interactive: search, role
+     filters, per-player profile links, and a week archive — all of it
+     fail-quiet, so with JS off you simply get the clean static page. */
+  :root{
+    --bg:#0b0704; --panel:#17100a;
+    --hairline:#402c1b; --accent:#f5842a;
+    --text:#f8eee3; --muted:#bda691;
+    --faint:#806c5b;
+    --red:#ef5350; --green:#5fdc8f;
+    --font-display:'Cinzel Decorative',serif;
+    --font-body:'Inter','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text); font-family:var(--font-body); font-size:16px;
+    background:radial-gradient(1200px 500px at 50% -180px, rgba(224,122,40,.14), transparent 65%), var(--bg);}
+
+  /* ------------------------------ header ------------------------------ */
+  .hdr{position:relative; padding:52px 20px 30px; text-align:center; overflow:hidden;
+    background:radial-gradient(ellipse 90% 140% at 50% -40%, rgba(224,122,40,.25), transparent 62%), #0b0c10;
+    border-bottom:1px solid var(--hairline);}
+  .hdr h1{font-family:var(--font-display); font-weight:900; letter-spacing:.12em;
+    font-size:clamp(30px, 7vw, 62px); text-shadow:0 4px 22px #000, 0 0 46px rgba(230,180,70,.25);}
+  .hdr .sub{margin-top:8px; letter-spacing:.36em; color:var(--accent); font-weight:700;
+    font-size:clamp(11px, 2.6vw, 15px);}
+  .hdr .rule{width:min(360px, 60%); height:2px; margin:18px auto 0;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent); opacity:.7;}
+  .info{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+    padding:12px 20px; color:var(--muted); font-size:14px; border-bottom:1px solid var(--hairline);}
+
+  /* ------------------------- sticky toolbar --------------------------- */
+  .bar{position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:8px;
+    flex-wrap:wrap; padding:10px 16px; background:rgba(11,12,16,.94);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--hairline);}
+  .bar a, .bar button{font:inherit; font-size:13px; font-weight:700; letter-spacing:.04em;
+    color:var(--muted); background:none; text-decoration:none; padding:6px 12px;
+    border:1px solid var(--hairline); border-radius:999px; cursor:pointer;
+    transition:color .15s, border-color .15s, background .15s; white-space:nowrap;}
+  .bar a:hover, .bar button:hover{color:var(--accent); border-color:var(--accent);}
+  .bar button.on{color:#14141a; background:var(--accent); border-color:var(--accent);}
+  .bar .sp{flex:1;}
+  .bar input{font:inherit; font-size:13px; color:var(--text); background:#15171e;
+    border:1px solid var(--hairline); border-radius:999px; padding:6px 14px; width:150px;
+    outline:none; transition:border-color .15s;}
+  .bar input:focus{border-color:var(--accent);}
+  .bar select{font:inherit; font-size:13px; font-weight:700; color:var(--muted);
+    background:#15171e; border:1px solid var(--hairline); border-radius:999px;
+    padding:6px 10px; outline:none; cursor:pointer;}
+  .filters{display:contents;}
+
+  /* ------------------------------ layout ------------------------------ */
+  .wrap{max-width:1720px; margin:0 auto; padding:22px 16px 8px;}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.14)), var(--panel);
+    border:1px solid var(--hairline); border-radius:14px;
+    box-shadow:0 12px 34px rgba(0,0,0,.35);}
+  .hero{padding:16px 20px; margin-bottom:20px;}
+  .headline{display:flex; align-items:center; flex-wrap:wrap; gap:10px 14px;
+    padding-bottom:12px; margin-bottom:12px;
+    border-bottom:1px solid var(--hairline);}
+  .headline .tag{font-size:12px; letter-spacing:.16em; font-weight:800; color:var(--accent);
+    background:rgba(230,180,70,.12); border:1px solid rgba(230,180,70,.35);
+    padding:5px 10px; border-radius:6px; flex:none;}
+  .headline .txt{font-family:var(--font-display); font-weight:900; letter-spacing:.02em;
+    font-size:clamp(17px, 3.4vw, 30px); line-height:1.2;}
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px 18px;}
+  .tile .lbl{font-size:12px; color:var(--muted); letter-spacing:.05em;}
+  .tile .val{font-size:clamp(20px, 3.2vw, 28px); font-weight:800; font-variant-numeric:tabular-nums;}
+  .tile .val small{font-size:.55em; font-weight:600; margin-left:6px;}
+  .bar2{position:relative; height:16px; margin-top:12px; border-radius:8px; background:#262830; overflow:hidden;}
+  .bar2 .fill{position:absolute; inset:0 auto 0 0; border-radius:8px;
+    background:linear-gradient(90deg, var(--accent), #f6c96a);}
+  .bar2 .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.6);}
+  .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
+  .col{position:relative; padding:26px 18px 16px; min-width:0;
+    background:
+      linear-gradient(rgba(240,228,201,.62), rgba(235,221,190,.68)),
+      url("../assets/generated/emberforge/poster.png") center/cover !important;
+    border:2px solid #5c4526 !important;
+    box-shadow: inset 0 0 0 5px rgba(74,54,26,.22), 0 12px 30px rgba(0,0,0,.5) !important;
+    border-radius:3px 10px 4px 12px !important;}
+  /* ink-on-paper: match the image board's Imperial Bounty posters */
+  .col .col-h{border-bottom-color:#5c4526;}
+  .col .col-h .eyebrow{color:#4a3113;}
+  .col .col-h .t{color:#2c2010;}
+  .col .col-h .bounty{color:#6b5433;}
+  .col .sec-h .t{color:#4a3113;}
+  .col .sec-h .rule{background:linear-gradient(90deg, #6d5433, transparent);}
+  .col .row.alt{background:rgba(74,49,19,.10);}
+  .col .row:hover{background:rgba(74,49,19,.16);}
+  .col .row .detail{color:#5f4a2e;}
+  .col .row .value small{color:#5f4a2e;}
+  .col .row .badge.plain{border-color:#6d5433; color:#5f4a2e;}
+  .col .row.textrow{color:#5f4a2e;}
+  .col .empty{color:#7a6244;}
+  .col::before{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
+    width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
+    box-shadow:0 2px 4px rgba(0,0,0,.7);}
+  .col-h{display:block; text-align:center; padding-bottom:10px; margin-bottom:12px;
+    border-bottom:3px double #7c6136;}
+  .col-h .eyebrow{display:block; font-family:var(--font-display); font-size:11px;
+    letter-spacing:.45em; text-indent:.45em; color:#c8a55f;}
+  .col-h .t{display:block; font-family:var(--font-display); font-size:19px; font-weight:400;
+    color:#ecd9b0; letter-spacing:.04em; word-spacing:.35em; margin-top:4px;}
+  .col-h .bounty{display:block; font-size:9px; letter-spacing:.28em; text-indent:.28em;
+    color:#94794c; margin-top:5px; font-weight:700;}
+  .sec{margin-bottom:16px;}
+  .sec:last-child{margin-bottom:0;}
+  .sec-h{display:flex; align-items:center; gap:10px; height:30px;}
+  .sec-h .t{font-size:13px; font-weight:800; color:var(--accent); letter-spacing:.06em; white-space:nowrap;}
+  .sec-h .rule{flex:1; height:1px;
+    background:linear-gradient(90deg, var(--hairline), transparent);}
+
+  /* ------------------------------- rows ------------------------------- */
+  .row{display:flex; align-items:center; min-height:40px; padding:2px 8px; margin:0 -8px;
+    border-radius:8px; min-width:0; transition:background .15s;}
+  .row.alt{background:rgba(255,255,255,.032);}
+  .row:hover{background:rgba(230,180,70,.08);}
+  .row .badge{width:23px; height:23px; border-radius:50%; flex:none; display:flex;
+    align-items:center; justify-content:center; font-size:12px; font-weight:800;
+    color:#14141a; margin-right:9px;
+    box-shadow:inset 0 2px 3px rgba(255,255,255,.35), inset 0 -2px 3px rgba(0,0,0,.3);}
+  .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted); box-shadow:none;}
+  .row .icon{width:23px; height:23px; border-radius:5px; flex:none; margin-right:7px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.12);}
+  .row .name{font-size:15px; font-weight:700; white-space:nowrap; text-decoration:none;}
+  .row a.name:hover{text-decoration:underline;}
+  .row .detail{font-size:13px; color:var(--muted); margin-left:9px; flex:1; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row .value{font-size:15px; font-weight:800; white-space:nowrap; margin-left:12px;
+    font-variant-numeric:tabular-nums;}
+  .row .value small{font-size:12px; font-weight:500; color:#ccd2dd;}
+  .row.textrow{font-size:13px; color:var(--muted);}
+  .empty{font-size:13px; color:var(--faint); padding:6px 0;}
+  .nohit{display:none !important;}
+
+  /* --------------------------- roast & footer -------------------------- */
+  .roast{padding:16px 20px; margin-top:16px;}
+  .roast .t{font-size:13px; font-weight:800; color:var(--accent); margin-bottom:6px; letter-spacing:.06em;}
+  .roast .q{font-family:var(--font-display); font-size:clamp(16px, 3.2vw, 21px); line-height:1.45;}
+  .roast .attr{font-size:13px; color:var(--muted); text-align:right; margin-top:6px;}
+  .motd{display:flex; align-items:center; gap:12px; margin:18px auto 0; max-width:1720px;
+    padding:12px 16px; color:var(--accent);}
+  .motd .chip{font-weight:800; letter-spacing:.14em; font-size:12px; background:#1a1c23;
+    border:1px solid var(--hairline); border-radius:6px; padding:5px 10px; flex:none;}
+  .motd .q{font-size:14px; min-width:0;}
+  .credits{display:flex; flex-wrap:wrap; gap:4px 16px; justify-content:space-between;
+    padding:14px 20px 28px; color:var(--faint); font-size:12px;}
+  .credits a{color:var(--faint);}
+  @media (max-width:480px){
+    .row .detail{display:none;}   /* phones: name + number is the story */
+    .bar input{width:110px;}
+    .bar{position:static;}        /* a 3-row sticky bar would eat the screen */
+  }
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <h1>SKILL ISSUES</h1>
+    <div class="sub">BLEEDING HOLLOW · US</div>
+    <div class="rule"></div>
+  </div>
+  <div class="info"><span>MYTHIC · Voidspire Sanctum</span><span>Raid week: Jul 13 – Jul 20, 2026</span></div>
+  <nav class="bar">
+    <a href="#col-1">RAID</a>
+    <a href="#col-2">MYTHIC PLUS</a>
+    <a href="#col-3">SEASONAL MYTHIC PLUS</a>
+    <a href="#col-4">SEASONAL GUILD</a><a href="#roast">ROAST</a>
+    <span class="sp"></span>
+    <span class="filters" id="filters" hidden>
+      <button class="on" data-role="all">All</button>
+      <button data-role="dps">DPS</button>
+      <button data-role="healer">Healers</button>
+      <button data-role="tank">Tanks</button>
+    </span>
+    <input id="search" type="search" placeholder="Find a player…" hidden>
+    <select id="weeksel" hidden><option value="">This week</option></select>
+  </nav>
+  <div class="wrap">
+    <div class="card hero">
+      <div class="headline"><span class="tag">THIS WEEK</span><span class="txt">6 BOSSES DOWN IN 54 PULLS — GO AGANE</span></div>
+      <div class="tiles">
+        <div class="tile"><div class="lbl">KILLS</div>
+          <div class="val">6</div></div>
+        <div class="tile"><div class="lbl">PULLS</div>
+          <div class="val">54</div></div>
+        <div class="tile"><div class="lbl">DEATHS</div>
+          <div class="val">123</div></div>
+        <div class="tile"><div class="lbl">REALM RANK</div>
+          <div class="val">#49</div></div>
+        <div class="tile"><div class="lbl">REGION RANK</div>
+          <div class="val">#2,219</div></div>
+        <div class="tile"><div class="lbl">WORLD RANK</div>
+          <div class="val">#6,855<small style="color:rgb(229,72,77);">▼1</small></div></div>
+      </div>
+      <div class="bar2"><div class="fill" style="width:11.1%;"></div>
+        <div class="cap">6 kills in 54 pulls (11%)</div>
+      </div>
+    </div>
+    <div class="cols">
+      <div class="card col" id="col-1" style="scroll-margin-top:64px;">
+        <div class="col-h"><span class="eyebrow">★ FORGE BOUNTY ★</span>
+          <span class="t">RAID</span><span class="bounty">STRUCK IN IRON · REWARD: A SEAT BY THE FIRE</span>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP DPS PARSES</span><span class="rule"></span></div>
+          <div class="row" data-name="maillo"
+               data-tags="beastmastery mythic chimaerus top dps parses">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/maillo"
+               target="_blank" rel="noopener" title="Open Maillo on Warcraft Logs"
+               style="color:rgb(88,110,59);">Maillo</a>
+            <span class="detail">BeastMastery · Mythic Chimaerus</span>
+            <span class="value" style="color:rgb(84,27,123);">92% <small>· 144K</small></span>
+          </div>
+          <div class="row alt" data-name="rakdisc"
+               data-tags="shadow mythic chimaerus top dps parses">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">Shadow · Mythic Chimaerus</span>
+            <span class="value" style="color:rgb(84,27,123);">88% <small>· 146K</small></span>
+          </div>
+          <div class="row" data-name="enyo"
+               data-tags="devourer mythic vorasius top dps parses">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_demonhunter.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/enyo"
+               target="_blank" rel="noopener" title="Open Enyo on Warcraft Logs"
+               style="color:rgb(84,24,104);">Enyo</a>
+            <span class="detail">Devourer · Mythic Vorasius</span>
+            <span class="value" style="color:rgb(84,27,123);">85% <small>· 125K</small></span>
+          </div>
+          <div class="row alt" data-name="tommybravox"
+               data-tags="havoc mythic chimaerus top dps parses">
+            <span class="badge" style="background:rgb(255,172,51);">4</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_demonhunter_specdps.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravox"
+               target="_blank" rel="noopener" title="Open Tommybravox on Warcraft Logs"
+               style="color:rgb(84,24,104);">Tommybravox</a>
+            <span class="detail">Havoc · Mythic Chimaerus</span>
+            <span class="value" style="color:rgb(84,27,123);">79% <small>· 138K</small></span>
+          </div>
+          <div class="row" data-name="tommybravoo"
+               data-tags="unholy mythic imperator averzian 2w streak top dps parses">
+            <span class="badge" style="background:rgb(85,172,238);">5</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">Unholy · Mythic Imperator Averzian · 2w streak</span>
+            <span class="value" style="color:rgb(29,74,132);">67% <small>· 127K</small></span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP HEALING PARSES</span><span class="rule"></span></div>
+          <div class="row" data-name="phyrthepali"
+               data-tags="holy mythic imperator averzian top healing parses">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/phyrthepali"
+               target="_blank" rel="noopener" title="Open Phyrthepali on Warcraft Logs"
+               style="color:rgb(127,72,96);">Phyrthepali</a>
+            <span class="detail">Holy · Mythic Imperator Averzian</span>
+            <span class="value" style="color:rgb(132,66,0);">96% <small>· 167K</small></span>
+          </div>
+          <div class="row alt" data-name="healmates"
+               data-tags="holy mythic imperator averzian 3w streak top healing parses">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/healmates"
+               target="_blank" rel="noopener" title="Open Healmates on Warcraft Logs"
+               style="color:rgb(52,44,34);">Healmates</a>
+            <span class="detail">Holy · Mythic Imperator Averzian · 3w streak</span>
+            <span class="value" style="color:rgb(84,27,123);">75% <small>· 130K</small></span>
+          </div>
+          <div class="row" data-name="rakdisc"
+               data-tags="discipline mythic fallen-king salhadaar top healing parses">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">Discipline · Mythic Fallen-King Salhadaar</span>
+            <span class="value" style="color:rgb(29,74,132);">61% <small>· 173K</small></span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP PARSES · ALL ROLES</span><span class="rule"></span></div>
+          <div class="row" data-name="phyrthepali"
+               data-tags="hps holy mythic imperator averzian top parses · all roles">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/phyrthepali"
+               target="_blank" rel="noopener" title="Open Phyrthepali on Warcraft Logs"
+               style="color:rgb(127,72,96);">Phyrthepali</a>
+            <span class="detail">HPS · Holy · Mythic Imperator Averzian</span>
+            <span class="value" style="color:rgb(132,66,0);">96% <small>· 167K</small></span>
+          </div>
+          <div class="row alt" data-name="maillo"
+               data-tags="dps beastmastery mythic chimaerus top parses · all roles">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/maillo"
+               target="_blank" rel="noopener" title="Open Maillo on Warcraft Logs"
+               style="color:rgb(88,110,59);">Maillo</a>
+            <span class="detail">DPS · BeastMastery · Mythic Chimaerus</span>
+            <span class="value" style="color:rgb(84,27,123);">92% <small>· 144K</small></span>
+          </div>
+          <div class="row" data-name="brewzleeh"
+               data-tags="tank brewmaster mythic chimaerus top parses · all roles">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/brewzleeh"
+               target="_blank" rel="noopener" title="Open Brewzleeh on Warcraft Logs"
+               style="color:rgb(0,132,78);">Brewzleeh</a>
+            <span class="detail">Tank · Brewmaster · Mythic Chimaerus</span>
+            <span class="value" style="color:rgb(84,27,123);">91% <small>· 88K</small></span>
+          </div>
+          <div class="row alt" data-name="rakdisc"
+               data-tags="dps shadow mythic chimaerus top parses · all roles">
+            <span class="badge" style="background:rgb(255,172,51);">4</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_shadow_shadowwordpain.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">DPS · Shadow · Mythic Chimaerus</span>
+            <span class="value" style="color:rgb(84,27,123);">88% <small>· 146K</small></span>
+          </div>
+          <div class="row" data-name="enyo"
+               data-tags="dps devourer mythic vorasius top parses · all roles">
+            <span class="badge" style="background:rgb(85,172,238);">5</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_demonhunter.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/enyo"
+               target="_blank" rel="noopener" title="Open Enyo on Warcraft Logs"
+               style="color:rgb(84,24,104);">Enyo</a>
+            <span class="detail">DPS · Devourer · Mythic Vorasius</span>
+            <span class="value" style="color:rgb(84,27,123);">85% <small>· 125K</small></span>
+          </div>
+        </div>
+      </div>
+      <div class="card col" id="col-2" style="scroll-margin-top:64px;">
+        <div class="col-h"><span class="eyebrow">★ FORGE BOUNTY ★</span>
+          <span class="t">MYTHIC PLUS</span><span class="bounty">STRUCK IN IRON · REWARD: A SEAT BY THE FIRE</span>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP TIMED KEYS THIS WEEK</span><span class="rule"></span></div>
+          <div class="row" data-name="amrevenge"
+               data-tags="beast mastery hunter pit of saron top timed keys this week">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/amrevenge"
+               target="_blank" rel="noopener" title="Open Amrevenge on Warcraft Logs"
+               style="color:rgb(88,110,59);">Amrevenge</a>
+            <span class="detail">Beast Mastery Hunter · Pit of Saron</span>
+            <span class="value" style="color:rgb(119,93,36);">+20</span>
+          </div>
+          <div class="row alt" data-name="tommybravoo"
+               data-tags="unholy dk skyreach 2w streak top timed keys this week">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">Unholy DK · Skyreach · 2w streak</span>
+            <span class="value" style="color:rgb(119,93,36);">+19</span>
+          </div>
+          <div class="row" data-name="brewzleeh"
+               data-tags="brewmaster monk magisters&#39; terrace top timed keys this week">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/brewzleeh"
+               target="_blank" rel="noopener" title="Open Brewzleeh on Warcraft Logs"
+               style="color:rgb(0,132,78);">Brewzleeh</a>
+            <span class="detail">Brewmaster Monk · Magisters&#39; Terrace</span>
+            <span class="value" style="color:rgb(119,93,36);">+18</span>
+          </div>
+          <div class="row alt" data-name="rakdisc"
+               data-tags="discipline priest skyreach top timed keys this week">
+            <span class="badge" style="background:rgb(255,172,51);">4</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">Discipline Priest · Skyreach</span>
+            <span class="value" style="color:rgb(119,93,36);">+18</span>
+          </div>
+          <div class="row" data-name="enyo"
+               data-tags="devourer dh maisara caverns top timed keys this week">
+            <span class="badge" style="background:rgb(85,172,238);">5</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_demonhunter.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/enyo"
+               target="_blank" rel="noopener" title="Open Enyo on Warcraft Logs"
+               style="color:rgb(84,24,104);">Enyo</a>
+            <span class="detail">Devourer DH · Maisara Caverns</span>
+            <span class="value" style="color:rgb(119,93,36);">+17</span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP M+ DPS THIS WEEK</span><span class="rule"></span></div>
+          <div class="row" data-name="brewzleeh"
+               data-tags="windwalker +18 pit of saron top m+ dps this week">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_windwalker_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/brewzleeh"
+               target="_blank" rel="noopener" title="Open Brewzleeh on Warcraft Logs"
+               style="color:rgb(0,132,78);">Brewzleeh</a>
+            <span class="detail">Windwalker · +18 Pit of Saron</span>
+            <span class="value" style="color:rgb(132,66,0);">96% <small>· 146K</small></span>
+          </div>
+          <div class="row alt" data-name="tommybravoo"
+               data-tags="unholy +19 skyreach top m+ dps this week">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">Unholy · +19 Skyreach</span>
+            <span class="value" style="color:rgb(84,27,123);">89% <small>· 143K</small></span>
+          </div>
+          <div class="row" data-name="boondocka"
+               data-tags="beastmastery +16 algeth&#39;ar academy top m+ dps this week">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/boondocka"
+               target="_blank" rel="noopener" title="Open Boondocka on Warcraft Logs"
+               style="color:rgb(88,110,59);">Boondocka</a>
+            <span class="detail">BeastMastery · +16 Algeth&#39;ar Academy</span>
+            <span class="value" style="color:rgb(84,27,123);">89% <small>· 111K</small></span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP M+ HPS THIS WEEK</span><span class="rule"></span></div>
+          <div class="row" data-name="rakdisc"
+               data-tags="discipline +19 magisters&#39; terrace top m+ hps this week">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">Discipline · +19 Magisters&#39; Terrace</span>
+            <span class="value" style="color:rgb(132,66,0);">96% <small>· 100K</small></span>
+          </div>
+          <div class="row alt" data-name="healmates"
+               data-tags="holy +16 algeth&#39;ar academy top m+ hps this week">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/healmates"
+               target="_blank" rel="noopener" title="Open Healmates on Warcraft Logs"
+               style="color:rgb(52,44,34);">Healmates</a>
+            <span class="detail">Holy · +16 Algeth&#39;ar Academy</span>
+            <span class="value" style="color:rgb(132,66,0);">95% <small>· 46K</small></span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">TOP M+ TANKS THIS WEEK</span><span class="rule"></span></div>
+          <div class="row" data-name="brewzleeh"
+               data-tags="brewmaster +18 pit of saron top m+ tanks this week">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/brewzleeh"
+               target="_blank" rel="noopener" title="Open Brewzleeh on Warcraft Logs"
+               style="color:rgb(0,132,78);">Brewzleeh</a>
+            <span class="detail">Brewmaster · +18 Pit of Saron</span>
+            <span class="value" style="color:rgb(84,27,123);">93% <small>· 84K</small></span>
+          </div>
+          <div class="row alt" data-name="chokalock"
+               data-tags="protection +15 skyreach top m+ tanks this week">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_warrior_defensivestance.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/chokalock"
+               target="_blank" rel="noopener" title="Open Chokalock on Warcraft Logs"
+               style="color:rgb(103,81,57);">Chokalock</a>
+            <span class="detail">Protection · +15 Skyreach</span>
+            <span class="value" style="color:rgb(29,74,132);">68% <small>· 74K</small></span>
+          </div>
+        </div>
+      </div>
+      <div class="card col" id="col-3" style="scroll-margin-top:64px;">
+        <div class="col-h"><span class="eyebrow">★ FORGE BOUNTY ★</span>
+          <span class="t">SEASONAL MYTHIC PLUS</span><span class="bounty">STRUCK IN IRON · REWARD: A SEAT BY THE FIRE</span>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">SEASON M+ SCORES</span><span class="rule"></span></div>
+          <div class="row" data-name="amrevenge"
+               data-tags="beast mastery hunter season m+ scores">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/amrevenge"
+               target="_blank" rel="noopener" title="Open Amrevenge on Warcraft Logs"
+               style="color:rgb(88,110,59);">Amrevenge</a>
+            <span class="detail">Beast Mastery Hunter</span>
+            <span class="value" style="color:rgb(119,93,36);">3908</span>
+          </div>
+          <div class="row alt" data-name="shadoxii"
+               data-tags="mistweaver monk season m+ scores">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_mistweaver_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/shadoxii"
+               target="_blank" rel="noopener" title="Open Shadoxii on Warcraft Logs"
+               style="color:rgb(0,132,78);">Shadoxii</a>
+            <span class="detail">Mistweaver Monk</span>
+            <span class="value" style="color:rgb(119,93,36);">3692</span>
+          </div>
+          <div class="row" data-name="tommybravoo"
+               data-tags="unholy dk season m+ scores">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">Unholy DK</span>
+            <span class="value" style="color:rgb(119,93,36);">3686 <small>· ▲18</small></span>
+          </div>
+          <div class="row alt" data-name="brewzleeh"
+               data-tags="brewmaster monk season m+ scores">
+            <span class="badge" style="background:rgb(255,172,51);">4</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/brewzleeh"
+               target="_blank" rel="noopener" title="Open Brewzleeh on Warcraft Logs"
+               style="color:rgb(0,132,78);">Brewzleeh</a>
+            <span class="detail">Brewmaster Monk</span>
+            <span class="value" style="color:rgb(119,93,36);">3685</span>
+          </div>
+          <div class="row" data-name="rakdisc"
+               data-tags="discipline priest season m+ scores">
+            <span class="badge" style="background:rgb(85,172,238);">5</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">Discipline Priest</span>
+            <span class="value" style="color:rgb(119,93,36);">3529</span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">BEST SEASON RUNS</span><span class="rule"></span></div>
+          <div class="row" data-name="amrevenge"
+               data-tags="beast mastery hunter · pit of saron best season runs">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/amrevenge"
+               target="_blank" rel="noopener" title="Open Amrevenge on Warcraft Logs"
+               style="color:rgb(88,110,59);">Amrevenge</a>
+            <span class="detail">Beast Mastery Hunter · Pit of Saron</span>
+            <span class="value" style="color:rgb(52,44,34);">492</span>
+          </div>
+          <div class="row alt" data-name="shadoxii"
+               data-tags="mistweaver monk · pit of saron best season runs">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_mistweaver_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/shadoxii"
+               target="_blank" rel="noopener" title="Open Shadoxii on Warcraft Logs"
+               style="color:rgb(0,132,78);">Shadoxii</a>
+            <span class="detail">Mistweaver Monk · Pit of Saron</span>
+            <span class="value" style="color:rgb(52,44,34);">473</span>
+          </div>
+          <div class="row" data-name="brewzleeh"
+               data-tags="brewmaster monk · magisters&#39; terrace best season runs">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_monk_brewmaster_spec.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/brewzleeh"
+               target="_blank" rel="noopener" title="Open Brewzleeh on Warcraft Logs"
+               style="color:rgb(0,132,78);">Brewzleeh</a>
+            <span class="detail">Brewmaster Monk · Magisters&#39; Terrace</span>
+            <span class="value" style="color:rgb(52,44,34);">473</span>
+          </div>
+          <div class="row alt" data-name="tommybravoo"
+               data-tags="unholy dk · skyreach best season runs">
+            <span class="badge" style="background:rgb(255,172,51);">4</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">Unholy DK · Skyreach</span>
+            <span class="value" style="color:rgb(52,44,34);">472</span>
+          </div>
+          <div class="row" data-name="rakdisc"
+               data-tags="discipline priest · skyreach best season runs">
+            <span class="badge" style="background:rgb(85,172,238);">5</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_powerwordshield.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/rakdisc"
+               target="_blank" rel="noopener" title="Open Rakdisc on Warcraft Logs"
+               style="color:rgb(52,44,34);">Rakdisc</a>
+            <span class="detail">Discipline Priest · Skyreach</span>
+            <span class="value" style="color:rgb(52,44,34);">456</span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">CLOSEST RACES</span><span class="rule"></span></div>
+          <div class="row textrow">Brewzleeh trails Tommybravoo by just 1 — one good key flips it</div>
+          <div class="row textrow">Tommybravoo trails Shadoxii by just 6 — one good key flips it</div>
+          <div class="row textrow">Rakdisc trails Brewzleeh by 156</div>
+        </div>
+      </div>
+      <div class="card col" id="col-4" style="scroll-margin-top:64px;">
+        <div class="col-h"><span class="eyebrow">★ FORGE BOUNTY ★</span>
+          <span class="t">SEASONAL GUILD</span><span class="bounty">STRUCK IN IRON · REWARD: A SEAT BY THE FIRE</span>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">MOST IMPROVED DPS</span><span class="rule"></span></div>
+          <div class="row" data-name="tommybravoo"
+               data-tags="19% → 67% unholy most improved dps">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">19% → 67% · Unholy</span>
+            <span class="value" style="color:rgb(39,114,44);">+48% <small>· 90K → 127K</small></span>
+          </div>
+          <div class="row alt" data-name="buchalter"
+               data-tags="8% → 55% frost most improved dps">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_frost_frostbolt02.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/buchalter"
+               target="_blank" rel="noopener" title="Open Buchalter on Warcraft Logs"
+               style="color:rgb(33,103,122);">Buchalter</a>
+            <span class="detail">8% → 55% · Frost</span>
+            <span class="value" style="color:rgb(39,114,44);">+47% <small>· 89K → 109K</small></span>
+          </div>
+          <div class="row" data-name="healyeah"
+               data-tags="7% → 37% augmentation most improved dps">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_evoker_augmentation.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/healyeah"
+               target="_blank" rel="noopener" title="Open Healyeah on Warcraft Logs"
+               style="color:rgb(26,76,66);">Healyeah</a>
+            <span class="detail">7% → 37% · Augmentation</span>
+            <span class="value" style="color:rgb(39,114,44);">+30% <small>· 72K → 108K</small></span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">MOST IMPROVED HEALERS</span><span class="rule"></span></div>
+          <div class="row" data-name="healmates"
+               data-tags="19% → 75% holy most improved healers">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_guardianspirit.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/healmates"
+               target="_blank" rel="noopener" title="Open Healmates on Warcraft Logs"
+               style="color:rgb(52,44,34);">Healmates</a>
+            <span class="detail">19% → 75% · Holy</span>
+            <span class="value" style="color:rgb(39,114,44);">+56% <small>· 97K → 130K</small></span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">GUILD RECORDS · SEASON</span><span class="rule"></span></div>
+          <div class="row" data-name="amrevenge"
+               data-tags="highest timed key · pit of saron guild records · season">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/amrevenge"
+               target="_blank" rel="noopener" title="Open Amrevenge on Warcraft Logs"
+               style="color:rgb(88,110,59);">Amrevenge</a>
+            <span class="detail">Highest timed key · Pit of Saron</span>
+            <span class="value" style="color:rgb(119,93,36);">+20</span>
+          </div>
+          <div class="row alt" data-name="amrevenge"
+               data-tags="best dps parse · heroic fallen-king salhadaar guild records · season">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/ability_hunter_bestialdiscipline.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/amrevenge"
+               target="_blank" rel="noopener" title="Open Amrevenge on Warcraft Logs"
+               style="color:rgb(88,110,59);">Amrevenge</a>
+            <span class="detail">Best DPS parse · Heroic Fallen-King Salhadaar</span>
+            <span class="value" style="color:rgb(132,66,0);">97%</span>
+          </div>
+          <div class="row" data-name="phyrthepali"
+               data-tags="best hps parse · mythic imperator averzian guild records · season">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_holy_holybolt.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/phyrthepali"
+               target="_blank" rel="noopener" title="Open Phyrthepali on Warcraft Logs"
+               style="color:rgb(127,72,96);">Phyrthepali</a>
+            <span class="detail">Best HPS parse · Mythic Imperator Averzian</span>
+            <span class="value" style="color:rgb(132,66,0);">96%</span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">WEEKLY AWARD · BIGGEST CLIMB</span><span class="rule"></span></div>
+          <div class="row" data-name="tommybravoo"
+               data-tags="unholy dk 3668 → 3686 weekly award · biggest climb">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/spell_deathknight_unholypresence.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/tommybravoo"
+               target="_blank" rel="noopener" title="Open Tommybravoo on Warcraft Logs"
+               style="color:rgb(101,15,30);">Tommybravoo</a>
+            <span class="detail">Unholy DK · 3668 → 3686</span>
+            <span class="value" style="color:rgb(39,114,44);">+18</span>
+          </div>
+        </div>
+        <div class="sec">
+          <div class="sec-h"><span class="t">WEEKLY AWARD · IRON ATTENDANCE</span><span class="rule"></span></div>
+          <div class="row" data-name="buchalter"
+               data-tags="raid weeks in a row weekly award · iron attendance">
+            <span class="badge" style="background:rgb(241,196,83);">1</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_mage.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/buchalter"
+               target="_blank" rel="noopener" title="Open Buchalter on Warcraft Logs"
+               style="color:rgb(33,103,122);">Buchalter</a>
+            <span class="detail">raid weeks in a row</span>
+            <span class="value" style="color:rgb(39,114,44);">6 <small>· wks</small></span>
+          </div>
+          <div class="row alt" data-name="healmates"
+               data-tags="raid weeks in a row weekly award · iron attendance">
+            <span class="badge" style="background:rgb(176,182,192);">2</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_priest.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/healmates"
+               target="_blank" rel="noopener" title="Open Healmates on Warcraft Logs"
+               style="color:rgb(52,44,34);">Healmates</a>
+            <span class="detail">raid weeks in a row</span>
+            <span class="value" style="color:rgb(39,114,44);">3 <small>· wks</small></span>
+          </div>
+          <div class="row" data-name="boondocka"
+               data-tags="raid weeks in a row weekly award · iron attendance">
+            <span class="badge" style="background:rgb(205,127,68);">3</span><img class="icon" src="https://wow.zamimg.com/images/wow/icons/large/classicon_deathknight.jpg" alt="" loading="lazy">
+            <a class="name" href="https://www.warcraftlogs.com/character/us/bleeding-hollow/boondocka"
+               target="_blank" rel="noopener" title="Open Boondocka on Warcraft Logs"
+               style="color:rgb(101,15,30);">Boondocka</a>
+            <span class="detail">raid weeks in a row</span>
+            <span class="value" style="color:rgb(39,114,44);">2 <small>· wks</small></span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card roast" id="roast" style="scroll-margin-top:64px;">
+      <div class="t">ROAST OF THE WEEK</div>
+      <div class="q">“Healmates Sucks”</div><div class="attr">— Rakdaddy, aimed at Healmates</div>
+    </div>
+  </div>
+  <div class="motd"><span class="chip">MOTD</span><span class="q">That&#39;s a 50 DKP MINUS.</span></div>
+  <div class="credits">
+    <span>“Git Gud.” — ancient guild proverb</span>
+    <span>Powered by Guild Board · github.com/Bzach10/wow-guild-board</span>
+  </div>
+
+<script>
+(function () {
+  "use strict";
+  /* Everything below is progressive enhancement: any failure leaves the
+     clean static page untouched. */
+  try {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.row[data-name]'));
+    var secs = Array.prototype.slice.call(document.querySelectorAll('.sec'));
+
+    /* --- role classification from spec/section keywords ---
+       WHOLE-WORD tokens only: substring matching classified every
+       Unholy DK as a healer, because "unholy" contains "holy". */
+    var HEAL = ['holy', 'discipline', 'restoration', 'resto', 'mistweaver', 'preservation', 'healing', 'hps', 'healer', 'healers'];
+    var TANK = ['protection', 'brewmaster', 'blood', 'vengeance', 'guardian', 'tank', 'tanks'];
+    function roleOf(row) {
+      var tokens = (row.getAttribute('data-tags') || '').split(/[^a-z0-9+]+/);
+      var hit = function (words) {
+        return words.some(function (w) { return tokens.indexOf(w) !== -1; });
+      };
+      if (hit(TANK)) return 'tank';
+      if (hit(HEAL)) return 'healer';
+      return 'dps';
+    }
+    rows.forEach(function (r) { r.setAttribute('data-role', roleOf(r)); });
+
+    /* --- search + role filter (remembered across visits) --- */
+    var activeRole = 'all', query = '';
+    function remember() {
+      try {
+        localStorage.setItem('gb.role', activeRole);
+        localStorage.setItem('gb.query', query);
+      } catch (e) { /* private mode etc. — filters just reset next visit */ }
+    }
+    function apply() {
+      rows.forEach(function (r) {
+        var okRole = activeRole === 'all' || r.getAttribute('data-role') === activeRole;
+        var okName = !query || (r.getAttribute('data-name') || '').indexOf(query) !== -1;
+        r.classList.toggle('nohit', !(okRole && okName));
+      });
+      secs.forEach(function (s) {
+        var any = s.querySelector('.row[data-name]:not(.nohit)');
+        var filtering = activeRole !== 'all' || query;
+        s.classList.toggle('nohit', Boolean(filtering && !any));
+      });
+    }
+    var filters = document.getElementById('filters');
+    var search = document.getElementById('search');
+    if (filters && rows.length) {
+      filters.hidden = false;
+      Array.prototype.forEach.call(filters.querySelectorAll('button'), function (b) {
+        b.addEventListener('click', function () {
+          Array.prototype.forEach.call(filters.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          activeRole = b.getAttribute('data-role');
+          remember();
+          apply();
+        });
+      });
+    }
+    if (search && rows.length) {
+      search.hidden = false;
+      search.addEventListener('input', function () {
+        query = search.value.trim().toLowerCase();
+        remember();
+        apply();
+      });
+    }
+    /* restore the last visit's view */
+    try {
+      var savedRole = localStorage.getItem('gb.role');
+      var savedQuery = localStorage.getItem('gb.query') || '';
+      if (filters && savedRole && savedRole !== 'all') {
+        var btn = filters.querySelector('button[data-role="' + savedRole + '"]');
+        if (btn) { btn.click(); }
+      }
+      if (search && savedQuery) {
+        search.value = savedQuery;
+        query = savedQuery.toLowerCase();
+        apply();
+      }
+    } catch (e) { /* fail-quiet */ }
+
+    /* --- week archive dropdown (manifest written by CI) --- */
+    var inArchive = location.pathname.indexOf('/archive/') !== -1;
+    var base = inArchive ? '../' : '';
+    var current = inArchive ? location.pathname.split('/').pop().replace('.html', '') : '';
+    fetch(base + 'archive/index.json', {cache: 'no-store'})
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (weeks) {
+        if (!Array.isArray(weeks) || !weeks.length) return;
+        var sel = document.getElementById('weeksel');
+        if (!sel) return;
+        weeks.forEach(function (w) {
+          var o = document.createElement('option');
+          o.value = w;
+          o.textContent = 'Week of ' + w;
+          if (w === current) o.selected = true;
+          sel.appendChild(o);
+        });
+        sel.hidden = false;
+        sel.addEventListener('change', function () {
+          location.href = sel.value ? base + 'archive/' + sel.value + '.html' : base + 'index.html';
+        });
+      })
+      .catch(function () {});
+  } catch (e) { /* static page remains fully usable */ }
+})();
+</script>
+</body>
+</html>

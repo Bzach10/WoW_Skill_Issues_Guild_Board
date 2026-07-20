@@ -1456,10 +1456,66 @@ def test_streaks_from_attendance_season_derivation():
 
 
 def test_web_role_filter_uses_whole_words():
-    """'Unholy' must never match the 'holy' healer keyword."""
-    tpl = open("guild_board/templates/web.html.j2", encoding="utf-8").read()
+    """'Unholy' must never match the 'holy' healer keyword.
+
+    The filter/search/archive JS lives in ONE shared partial that every
+    web layout includes, so the check belongs there."""
+    tpl = open("guild_board/templates/web/_interactive.html.j2", encoding="utf-8").read()
     assert "tokens.indexOf(w)" in tpl          # whole-word membership
     assert "tags.indexOf(w)" not in tpl        # the substring bug is gone
+
+
+def test_every_web_layout_includes_the_interactive_partial():
+    """A new layout must not silently ship without role filters, player
+    search and the week archive — they come from the shared partial."""
+    from pathlib import Path
+    layouts = [p for p in Path("guild_board/templates/web").glob("*.html.j2")
+               if not p.name.startswith("_")]
+    assert layouts, "no web layouts found"
+    for path in layouts:
+        body = path.read_text(encoding="utf-8")
+        assert "web/_interactive.html.j2" in body, f"{path.name} drops the interactive layer"
+        # the DOM contract the partial drives
+        assert 'id="filters"' in body and 'id="search"' in body, f"{path.name} misses filter hooks"
+        assert "data-name=" in body and "data-tags=" in body, f"{path.name} misses row hooks"
+
+
+def test_web_layout_resolution_fails_open():
+    """A typo'd board.web_layout must degrade to the shipped poster
+    layout, never to a blank or missing template."""
+    from guild_board import theme as theme_mod
+    assert theme_mod.resolve_templates(
+        {"board": {"web_layout": "ember_terminal"}}
+    )["web_layout_template"] == "web/ember_terminal.html.j2"
+    for bad in ("no_such_layout", "", None):
+        assert theme_mod.resolve_templates(
+            {"board": {"web_layout": bad}}
+        )["web_layout_template"] == "web/poster.html.j2"
+    # absent key entirely -> still the default
+    assert theme_mod.resolve_templates({})["web_layout_template"] == "web/poster.html.j2"
+
+
+def test_every_web_layout_renders_the_culture_slots():
+    """The gambling debt, the graveyard, the roast and the MOTD are
+    load-bearing guild culture — a layout may restyle them but must not
+    quietly drop them."""
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    base = html_board.build_context(
+        _image_board_cfg(), _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    from markupsafe import escape
+    for layout in ("poster", "chronicle", "ember_terminal", "codex"):
+        ctx = dict(base, web_layout_template=f"web/{layout}.html.j2")
+        page = html_board.render_html(ctx, template="web.html.j2")
+        upper = page.upper()
+        # the quip rotates weekly, so compare the escaped form of whichever
+        # one this week's index landed on
+        assert str(escape(ctx["motd"])) in page, f"{layout} drops the MOTD"
+        assert "ROAST OF THE WEEK" in upper, f"{layout} drops the roast"
+        if layout != "poster":      # poster predates these two on the web
+            assert "GAMBLING DEBT" in upper, f"{layout} drops the debt card"
+            assert "GRAVEYARD" in upper, f"{layout} drops the graveyard"
 
 
 # --- webhook delivery: multi-file + rate-limit retry ------------------------------
