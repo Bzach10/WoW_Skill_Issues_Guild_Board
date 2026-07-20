@@ -31,6 +31,11 @@ LOOP_MS = 1200
 TEMPLATE_DIR = Path(__file__).parent / "templates"
 RENDER_HTML = "board_render.html"   # written to cwd so relative assets/ paths work
 
+# band heights — MUST match the template's .hdr/.ftr/.motd/.credits CSS so
+# the GIF encoder knows which rows are animated
+HEADER_H = 330
+FOOTER_TOTAL = 470 + 52 + 40
+
 # tombstone geometry from the design (w, h, arched, cross, rotation)
 STONES = [
     (170, 216, True, False, -2.5, ("#767268", "#56534b", "#3e3c36")),
@@ -61,6 +66,22 @@ def _icon_url(row):
     if cls_key in CLASS_ICONS:
         return ICON_CDN.format(CLASS_ICONS[cls_key])
     return None
+
+
+def _flames_row(seed=13, n=9):
+    """Fire licking up from the footer's bottom edge — deterministic
+    positions, loop-safe durations."""
+    rng = random.Random(seed)
+    out = []
+    for i in range(n):
+        out.append({
+            "left": round(3 + i * (94 / max(n - 1, 1)) + rng.random() * 3, 1),
+            "w": int(46 + rng.random() * 50),
+            "h": int(80 + rng.random() * 70),
+            "dur": 0.6, "dur2": 0.3,
+            "delay": round(-rng.random() * (LOOP_MS / 1000), 2),
+        })
+    return out
 
 
 def _embers(seed, n):
@@ -224,7 +245,8 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
             "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
             if display_cfg.get("watermark") else "",
         "header_embers": _embers(7, 26),
-        "footer_embers": _embers(11, 22),
+        "footer_embers": _embers(11, 26),
+        "footer_flames": _flames_row(),
         "wisps": _embers(9, 16),
         "loop_ms": LOOP_MS,
     }
@@ -292,8 +314,8 @@ def _encode_gif(frames_l, output_path, frames, duration_ms):
     """Shared-palette GIF with the static middle copied verbatim from
     frame 0 — same anti-shimmer scheme as the Pillow pipeline."""
     base = frames_l[0]
-    header_h = theme_bands.HEADER_BAND_H
-    footer_h = 520 + 52 + 40   # template footer: art + MOTD + credits
+    header_h = HEADER_H
+    footer_h = FOOTER_TOTAL
     for scale in (1.0, 0.8, 0.65, 0.5):
         imgs = frames_l if scale == 1.0 else [
             im.resize((int(im.width * scale), int(im.height * scale)),
