@@ -10,6 +10,29 @@ Two tools are installed on this PC:
 - **Krita** (Start Menu → Krita) — free pro paint app for touch-ups,
   resizing, and layering generated art into final assets.
 
+## The fast path: generate a whole theme's art from a prompt file
+
+You don't have to click through ComfyUI to refresh the board's art. The
+art direction for every theme lives in **`assets/art_prompts.yml`** —
+plain YAML, one block per theme, editable by anyone — and a script feeds
+it to the local ComfyUI server:
+
+```
+python scripts/generate_theme_art.py --dry-run          # just show the prompts
+python scripts/generate_theme_art.py                    # generate everything
+python scripts/generate_theme_art.py --theme emberforge # or one theme
+```
+
+Output lands in `assets/generated/<theme>/` (header, middle, footer,
+poster, crest), which is where each `themes/theme.<name>.yml` already
+points. A piece takes about 10 seconds on the 4080. Don't like an image?
+Change that theme's `seed` in `art_prompts.yml` and re-run.
+
+The script needs the ComfyUI **server** running — the start command is in
+the header of `scripts/generate_theme_art.py`. If it isn't running the
+script says so and changes nothing. The shared negative prompt in
+`art_prompts.yml` is what keeps text out of the art; leave it alone.
+
 ## Models to grab (your RTX 4080 / 16GB runs all of these)
 
 | Model | Why | Size |

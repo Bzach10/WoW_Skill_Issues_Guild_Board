@@ -34,9 +34,15 @@
      at its natural scale however long the week's record runs. */
   .sheet::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
     background:url("../assets/generated/gildedcodex/poster.png") top center/100% auto repeat-y;
-    opacity:.85;}
+    /* Held well below full strength on purpose: the texture has to tile
+       down a page of unknown length, and a softer sheet reads as grain
+       in the paper instead of as a repeating tile. The theme's own
+       background color does the rest of the work. */
+    opacity:.42;}
   .sheet::after{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
-    background:linear-gradient(90deg, rgba(var(--bg-rgb),.5), transparent 18%, transparent 82%, rgba(var(--bg-rgb),.5));}
+    background:
+      linear-gradient(90deg, rgba(var(--bg-rgb),.62), transparent 20%, transparent 80%, rgba(var(--bg-rgb),.62)),
+      linear-gradient(180deg, transparent, rgba(var(--bg-rgb),.28));}
   .col{position:relative; z-index:1; max-width:860px; margin:0 auto;
     padding:0 clamp(18px,5vw,34px);}
 

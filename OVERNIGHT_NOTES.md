@@ -79,6 +79,20 @@ End-to-end test for guild-made template modules: a board_templates/
 header is resolved first, honors its custom GIF band height, renders in
 place of the built-in. The CUSTOMIZING.md recipe is now under test. 99 tests.
 
+## User request (daytime): the redesign pass — READ REDESIGN_NOTES.md
+Complete rebuild of the public website's structure, on 2.0 only. Three
+brand-new layouts (`chronicle` editorial front page, `ember_terminal`
+arcane console, `codex` illuminated manuscript) alongside the existing
+poster grid, picked with one line in theme.yml. Four themes in `themes/`
+— three rich darks and one real ink-on-vellum light. All 20 pieces of
+art were genuinely generated on the 4080 via ComfyUI's local API this
+session, from the new editable `assets/art_prompts.yml`.
+
+Every layout × theme combination is rendered in `redesign_previews/` —
+open `index.html` there. **REDESIGN_NOTES.md** is the catalogue: what
+each option is, what's real vs. fixture in the preview data, and the
+known rough edges. 103 tests green.
+
 ## Iteration 10 (~7:28 AM)
 Final overnight iteration: pinned the awards fail-open contract — a
 crashing award builder is skipped and the rest still render. 100 tests
