@@ -1299,3 +1299,50 @@ def test_parse_records_self_correct_from_season_sweep():
     # without a sweep, the stored record is carried forward (fail-safe)
     records2 = update_records(previous, {"best_dps": {}, "best_hps": {}}, None)
     assert records2["best_dps_parse"]["parse"] == 100
+
+
+# --- self-healing integrity layer -------------------------------------------------
+
+
+def test_integrity_heals_rows_and_hero():
+    from guild_board import integrity
+    ctx = {
+        "columns": [{"sections": [{"title": "TOP DPS PARSES", "rows": [
+            {"name": "Glitch", "value": "140%", "color": "rgb(0,112,222)", "spec": "Enh"},
+            {"name": "Grey", "value": "80%", "color": "rgb(235,236,240)", "spec": "Holy"},
+        ]}]}],
+        "hero_tiles": [{"label": "KILLS", "value": "6"}],
+        "pulls": 54, "wipes": 99,
+    }
+    msgs = integrity.run_all(context=ctx)
+    assert ctx["columns"][0]["sections"][0]["rows"][0]["value"] == "100%"   # clamped
+    assert ctx["wipes"] == 48                                              # healed math
+    assert any("grey-name" in m for m in msgs)
+
+
+def test_integrity_heals_records_and_standing():
+    from guild_board import integrity
+    records = {"best_dps_parse": {"name": "X", "parse": 250},
+               "best_hps_parse": {"name": "Y", "parse": 100},
+               "highest_timed_key": {"name": "Z", "level": 20}}
+    standing = {"realm": 49, "region": "garbage", "world": -3}
+    msgs = integrity.run_all(records=records, standing=standing)
+    assert records["best_dps_parse"]["parse"] == 100          # clamped
+    assert any("exactly 100%" in m for m in msgs)             # artifact flagged
+    assert standing == {"realm": 49}                          # bad ranks dropped
+    # a clean build produces zero noise
+    assert integrity.run_all(records={"highest_timed_key": {"level": 18}},
+                             standing={"realm": 10}) == []
+
+
+def test_integrity_cli_on_state_file(tmp_path, monkeypatch):
+    import subprocess, sys, json as _json
+    state = {"records": {"best_dps_parse": {"name": "A", "parse": 59}},
+             "standing": {"realm": 49}}
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "board_state.json").write_text(_json.dumps(state), encoding="utf-8")
+    r = subprocess.run([sys.executable, "-m", "guild_board.integrity"],
+                       capture_output=True, text=True,
+                       cwd=tmp_path, env={**os.environ, "PYTHONPATH": os.path.dirname(os.path.dirname(os.path.abspath(main.__file__)))})
+    assert r.returncode == 0
+    assert "0 needing attention" in r.stdout

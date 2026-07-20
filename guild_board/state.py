@@ -24,7 +24,12 @@ def load_board_state(path=STATE_FILE):
 
 
 def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE):
-    """Persist what this board showed, for next week's comparisons."""
+    """Persist what this board showed, for next week's comparisons.
+
+    Runs the integrity checks first — bad values must never be committed,
+    because this file seeds every future week's deltas and records."""
+    from guild_board import integrity
+    integrity.run_all(records=records, standing=standing)
     clean_standing = {
         k: v for k, v in (standing or {}).items()
         if k in ("realm", "region", "world") and v
