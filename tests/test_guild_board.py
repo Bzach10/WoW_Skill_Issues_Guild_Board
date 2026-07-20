@@ -1271,6 +1271,21 @@ def test_raid_attendance_streaks():
     assert raid_attendance_streaks(None, None) == {}
 
 
+def test_raid_attendance_streaks_once_per_week():
+    """Reposting the board in the same raid week must NOT inflate streaks —
+    the bug that gave players +1 'week' per manual rerun."""
+    from guild_board.state import raid_attendance_streaks
+    stats = {"participants": {"Alba": None}, "best_dps": {}, "best_hps": {}, "best_tanks": {}}
+    previous = {"streaks": {"alba": 4}, "streaks_week": "2026-W30"}
+    # same week, second/third/tenth post: unchanged
+    assert raid_attendance_streaks(previous, stats, week_label="2026-W30") == {"alba": 4}
+    # a NEW week advances once
+    assert raid_attendance_streaks(previous, stats, week_label="2026-W31") == {"alba": 5}
+    # legacy state without a stored week still advances (then gets guarded)
+    assert raid_attendance_streaks({"streaks": {"alba": 4}}, stats,
+                                   week_label="2026-W30") == {"alba": 5}
+
+
 def test_image_embed_title_links_to_web_board():
     cfg = {"guild": {"name": "Test Guild", "realm_slug": "x", "region": "us"},
            "raid": {"difficulty": "mythic"}, "lookback_days": 7, "sections": {},

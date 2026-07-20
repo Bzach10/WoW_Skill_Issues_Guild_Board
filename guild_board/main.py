@@ -375,8 +375,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     previous = load_board_state()
 
     # Attendance streaks: RAID nights only — showing up to raid is what
-    # Iron Attendance rewards, not spamming keys.
-    streaks = raid_attendance_streaks(previous, stats)
+    # Iron Attendance rewards, not spamming keys. Keyed by ISO week so
+    # reposting the board never counts the same week twice.
+    iso = end_dt.isocalendar()
+    streaks_week = f"{iso[0]}-W{iso[1]:02d}"
+    streaks = raid_attendance_streaks(previous, stats, week_label=streaks_week)
 
     # Season record book: weekly data plus the full-season sweeps, so
     # records reflect the entire season rather than weeks since launch
@@ -478,7 +481,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                         extra_image_paths=[mobile_path] if mobile_path else None)
         logger.info("Board posted to Discord.")
         try:
-            save_board_state(standing, mplus_season_scores, streaks=streaks, records=records)
+            save_board_state(standing, mplus_season_scores, streaks=streaks,
+                             records=records, streaks_week=streaks_week)
         except OSError as exc:
             logger.warning("Could not save board state: %s", exc)
 

@@ -23,7 +23,8 @@ def load_board_state(path=STATE_FILE):
         return {}
 
 
-def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE):
+def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE,
+                     streaks_week=None):
     """Persist what this board showed, for next week's comparisons.
 
     Runs the integrity checks first — bad values must never be committed,
@@ -42,6 +43,7 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
             for score, name, _ in (season_scores or [])
         },
         "streaks": streaks or {},
+        "streaks_week": streaks_week,
         "records": records or {},
     }
     with open(path, "w", encoding="utf-8") as f:
@@ -63,13 +65,18 @@ def advance_streaks(previous_streaks, active_names):
     }
 
 
-def raid_attendance_streaks(previous, stats):
+def raid_attendance_streaks(previous, stats, week_label=None):
     """Advance streaks from RAID attendance (participants + every parse
-    pool). A week with no raid data carries streaks forward untouched —
-    a cancelled raid night must not wipe everyone's Iron Attendance."""
+    pool) — at most ONCE per raid week. Reposting the board mid-week
+    must not inflate anyone's streak (it did: every manual rerun handed
+    the whole roster +1 "week"). A week with no raid data carries
+    streaks forward untouched — a cancelled raid night must not wipe
+    everyone's Iron Attendance."""
     prev = (previous or {}).get("streaks") or {}
     if not stats:
         return dict(prev)
+    if week_label and (previous or {}).get("streaks_week") == week_label:
+        return dict(prev)   # this raid week is already counted
     raiders = set(stats.get("participants") or {})
     for pool in ("best_dps", "best_hps", "best_tanks"):
         raiders |= set(stats.get(pool) or {})
