@@ -1,9 +1,7 @@
 import logging
-from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
-from guild_board.config import get_class_color
 
 logger = logging.getLogger(__name__)
 

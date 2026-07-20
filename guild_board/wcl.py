@@ -4,7 +4,7 @@ from collections import defaultdict
 
 import requests
 
-from guild_board.config import clean_spec_name, slugify_server
+from guild_board.config import slugify_server
 from guild_board.dedup import FightDeduper, report_sort_key
 
 logger = logging.getLogger(__name__)
@@ -310,6 +310,7 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
 
     best_dps = {}
     best_hps = {}
+    best_tanks = {}
     participants = {}
     death_totals = defaultdict(int)
     pulls = 0
@@ -327,6 +328,9 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
 
         extract_parses(rep.get("dps"), "dps", best_dps)
         extract_parses(rep.get("hps"), "healers", best_hps)
+        # tanks live in the same dps-metric blob under their own role —
+        # rankPercent is the tank-bracket percentile, no extra API call
+        extract_parses(rep.get("dps"), "tanks", best_tanks)
         collect_participants(rep.get("dps"), participants)
 
         fight_ids = []
@@ -362,18 +366,19 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
     # Enrich parse entries with report links where we can
     _enrich_parse_links(best_dps, report_codes)
     _enrich_parse_links(best_hps, report_codes)
+    _enrich_parse_links(best_tanks, report_codes)
 
     if not best_dps and not best_hps and pulls == 0:
         return None
 
-    for info in best_dps.values():
-        info["difficulty"] = difficulty
-    for info in best_hps.values():
-        info["difficulty"] = difficulty
+    for pool in (best_dps, best_hps, best_tanks):
+        for info in pool.values():
+            info["difficulty"] = difficulty
 
     return {
         "best_dps": best_dps,
         "best_hps": best_hps,
+        "best_tanks": best_tanks,
         "participants": participants,
         "deaths": dict(death_totals),
         "pulls": pulls,
@@ -383,8 +388,8 @@ def collect_raid_stats(token, cfg, reports, difficulty=None):
 
 
 def collect_parses_only(token, cfg, reports, difficulty):
-    """Fetch just DPS/HPS parse rankings at a difficulty (no deaths/pulls)."""
-    best_dps, best_hps = {}, {}
+    """Fetch just DPS/HPS/tank parse rankings at a difficulty (no deaths/pulls)."""
+    best_dps, best_hps, best_tanks = {}, {}, {}
     for report in reports:
         rep = fetch_report_detail(token, report["code"], difficulty)
         fight_levels = {
@@ -394,11 +399,11 @@ def collect_parses_only(token, cfg, reports, difficulty):
         }
         extract_parses(rep.get("dps"), "dps", best_dps, fight_levels)
         extract_parses(rep.get("hps"), "healers", best_hps, fight_levels)
-    for info in best_dps.values():
-        info["difficulty"] = difficulty
-    for info in best_hps.values():
-        info["difficulty"] = difficulty
-    return best_dps, best_hps
+        extract_parses(rep.get("dps"), "tanks", best_tanks, fight_levels)
+    for pool in (best_dps, best_hps, best_tanks):
+        for info in pool.values():
+            info["difficulty"] = difficulty
+    return best_dps, best_hps, best_tanks
 
 
 def fill_missing_parses(token, cfg, reports, stats, collector=None, keep=None):
@@ -418,12 +423,17 @@ def fill_missing_parses(token, cfg, reports, stats, collector=None, keep=None):
     lower = order[order.index(used) + 1:]
     collector = collector or collect_parses_only
 
-    for metric, side in (("best_dps", 0), ("best_hps", 1)):
+    for metric, side in (("best_dps", 0), ("best_hps", 1), ("best_tanks", 2)):
+        if metric == "best_tanks" and metric not in stats:
+            continue   # tank-unaware stats (older collector): nothing to backfill
         if stats.get(metric):
             continue
         for diff in lower:
             try:
-                found = collector(token, cfg, reports, diff)[side]
+                result = collector(token, cfg, reports, diff)
+                if side >= len(result):   # collector without tank support
+                    break
+                found = result[side]
             except (RuntimeError, requests.RequestException) as exc:
                 logger.warning("Parse fallback at difficulty %s failed: %s", diff, exc)
                 continue

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ guild_name }} — Weekly Board (mobile)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  /* ============== Mobile companion: portrait, top-3, big type ==============
+     Same data, phone-first: one column, only the podium rows, text sized to
+     be readable in a Discord thumbnail without pinch-zooming. Static PNG. */
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{width:1080px; background:var(--bg); color:var(--text);
+       font-family:var(--font-body); font-size:26px;}
+  .hdr{position:relative; height:230px; overflow:hidden;
+       background:url("{{ theme.backgrounds.header }}") center/cover;}
+  .hdr-shade{position:absolute; inset:0; background:linear-gradient(180deg, rgba(8,8,11,.3), rgba(8,8,11,.78));}
+  .hdr-title{position:absolute; inset:0; display:flex; flex-direction:column;
+    align-items:center; justify-content:center; gap:8px;}
+  .hdr-name{font-family:var(--font-display); font-size:76px; font-weight:900;
+    letter-spacing:.08em; color:var(--text); text-shadow:0 4px 18px #000;}
+  .hdr-sub{font-size:22px; letter-spacing:.3em; color:var(--accent); font-weight:700;}
+  .info{display:flex; justify-content:space-between; padding:18px 32px;
+    border-bottom:1px solid var(--hairline); color:var(--muted); font-size:24px;}
+  .wrap{padding:26px 32px 10px;}
+  .headline{background:var(--panel); border:1px solid var(--hairline); border-radius:14px;
+    padding:20px 26px; margin-bottom:22px;}
+  .headline .tag{font-size:18px; letter-spacing:.18em; font-weight:800; color:var(--accent);}
+  .headline .txt{font-family:var(--font-display); font-size:40px; font-weight:900; margin-top:6px; line-height:1.15;}
+  .tiles{display:flex; flex-wrap:wrap; gap:14px; margin-bottom:22px;}
+  .tile{flex:1 1 30%; background:var(--panel); border:1px solid var(--hairline);
+    border-radius:14px; padding:16px 20px;}
+  .tile .lbl{font-size:18px; color:var(--muted); letter-spacing:.06em;}
+  .tile .val{font-size:44px; font-weight:800; margin-top:4px; font-variant-numeric:tabular-nums;}
+  .tile .val small{font-size:22px; font-weight:600; margin-left:8px;}
+  .sec{background:var(--panel); border:1px solid var(--hairline); border-radius:14px;
+    padding:20px 26px 14px; margin-bottom:22px;}
+  .sec-h{display:flex; align-items:center; gap:14px; margin-bottom:10px;}
+  .sec-h .t{font-size:26px; font-weight:800; color:var(--accent); letter-spacing:.04em;}
+  .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
+  .row{display:flex; align-items:center; height:72px;}
+  .row + .row{border-top:1px solid rgba(255,255,255,.05);}
+  .row .badge{width:42px; height:42px; border-radius:50%; flex:none; display:flex;
+    align-items:center; justify-content:center; font-size:22px; font-weight:800;
+    color:#14141a; margin-right:18px;}
+  .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted);}
+  .row .icon{width:42px; height:42px; border-radius:8px; flex:none; margin-right:14px;}
+  .row .name{font-size:32px; font-weight:800; white-space:nowrap;}
+  .row .detail{font-size:24px; color:var(--muted); margin-left:16px; flex:1; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row .value{font-size:32px; font-weight:800; white-space:nowrap; margin-left:18px;
+    font-variant-numeric:tabular-nums;}
+  .row .value small{font-size:24px; font-weight:600; color:#ccd2dd;}
+  .row.textrow{font-size:24px; color:var(--muted); height:56px;}
+  .roast{background:var(--panel); border:1px solid var(--hairline); border-radius:14px;
+    padding:22px 26px; margin-bottom:22px;}
+  .roast .t{font-size:22px; font-weight:800; color:var(--accent); margin-bottom:8px;}
+  .roast .q{font-size:30px; line-height:1.35;}
+  .roast .attr{font-size:22px; color:var(--muted); text-align:right; margin-top:6px;}
+  .motd{display:flex; align-items:center; gap:18px; padding:20px 32px;
+    border-top:1px solid var(--hairline); background:#0d0e13;}
+  .motd .chip{font-weight:800; letter-spacing:.16em; color:var(--accent); font-size:18px;}
+  .motd .q{font-size:24px; color:var(--accent); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .credits{display:flex; justify-content:space-between; padding:14px 32px 20px;
+    background:#0b0c10; color:var(--faint); font-size:17px;}
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <div class="hdr-shade"></div>
+    <div class="hdr-title">
+      <div class="hdr-name">{{ guild_name.upper() }}</div>
+      <div class="hdr-sub">{{ realm_label }}</div>
+    </div>
+  </div>
+  <div class="info"><span>{{ subtitle }}</span><span>{{ date_range }}</span></div>
+  <div class="wrap">
+    {%- if headline %}
+    <div class="headline"><div class="tag">THIS WEEK</div><div class="txt">{{ headline }}</div></div>
+    {%- endif %}
+    {%- if hero_tiles %}
+    <div class="tiles">
+      {%- for t in hero_tiles %}
+      <div class="tile"><div class="lbl">{{ t.label }}</div>
+        <div class="val">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div></div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+    {%- for col in columns %}
+    {%- for sec in col.sections %}
+    {%- set rows = sec.rows | rejectattr("text", "defined") | list %}
+    {%- if rows %}
+    <div class="sec">
+      <div class="sec-h"><span class="t">{{ sec.title }}</span><span class="rule"></span></div>
+      {%- for row in rows[:3] %}
+      <div class="row">
+        <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
+        {%- if icons_on %}{% if row.icon %}<img class="icon" src="{{ row.icon }}" alt="">{% endif %}{% endif %}
+        <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
+        <span class="detail">{{ (row.detail_bits or [row.detail]) | first }}</span>
+        <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+    {%- endfor %}
+    {%- endfor %}
+    {%- if roast %}
+    <div class="roast">
+      <div class="t">ROAST OF THE WEEK</div>
+      <div class="q">{{ roast.quote }}</div>
+      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    </div>
+    {%- endif %}
+  </div>
+  <div class="motd"><span class="chip">MOTD</span><span class="q">{{ motd }}</span></div>
+  <div class="credits">
+    <span>{{ theme.credits }}</span>
+    <span>{{ watermark }}</span>
+  </div>
+</body>
+</html>

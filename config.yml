@@ -44,6 +44,23 @@ display:
   # GIF would exceed Discord's upload limit.
   animate: true
   animate_frames: 10
+  # Phone-readable portrait companion image posted alongside the board.
+  # OFF: the web board (linked from the post title and text) replaces it,
+  # and the second image cluttered the post. Flip back on any time.
+  mobile_companion: false
+  # Responsive WEBSITE version of the board — a "📱 Web Board" button on
+  # the Discord post links to it, and it auto-scales to any screen.
+  # CI publishes site/index.html to the public repo below (needs the
+  # WEB_BOARD_TOKEN secret — see README "Web board" for the 5-minute
+  # one-time setup). Safe to leave enabled before setup: without the
+  # secret the publish step just skips.
+  web_board:
+    enabled: true
+    repo: "Bzach10/wow-guild-board"                    # public repo that hosts the page
+    url: "https://bzach10.github.io/wow-guild-board/"  # where the button points
+  # NOTE: colors, backgrounds, fonts, header/footer modules and all the
+  # gag text moved to theme.yml — see CUSTOMIZING.md. Any member can
+  # safely edit that file.
 
 # ------------------------------------------------------------
 #  BOARD SECTIONS — each section has an order field to control
@@ -126,10 +143,24 @@ sections:
     difficulty: mythic             # normal / heroic / mythic
     difficulty_fallback: true      # Try mythic -> heroic -> normal sequentially
 
-  # Weekly raid boss ranks (WCL All Stars per-boss realm ranks)
-  realm_rank_leaders:
+  # Top parses overall — every role on ONE ladder (DPS, healers and
+  # tanks compete head to head at their best percentile)
+  top_parses:
     order: 10
     enabled: true
+
+  # Top M+ tanks section in the Mythic Plus column (tank-vs-tank
+  # percentiles from WCL's tank bracket)
+  top_tanks:
+    order: 10
+    enabled: true
+
+  # Weekly raid boss ranks (WCL All Stars per-boss realm ranks).
+  # OFF by guild decision — re-enable any time and it returns to the
+  # top of the SEASONAL GUILD column.
+  realm_rank_leaders:
+    order: 11
+    enabled: false
     max_characters: 30
 
   # Most deaths (Graveyard Camper award) — retired from the columns; the

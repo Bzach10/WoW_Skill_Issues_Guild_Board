@@ -1044,3 +1044,239 @@ def test_main_preview_writes_html(tmp_path):
     embed, _ = main.build_board(cfg, start_dt=now - timedelta(days=7), end_dt=now, preview=True)
     assert "title" in embed
     assert "Test" in embed["title"]
+
+
+# --- theming, modules, awards, mobile companion -----------------------------------
+
+
+def test_theme_defaults_merge_and_fail_open(tmp_path):
+    from guild_board import theme as theme_mod
+    # missing file -> full defaults
+    t = theme_mod.load_theme(str(tmp_path / "missing.yml"))
+    assert t["header"]["sign_text"] == "GIT GUD"
+    # partial file -> overrides win, untouched keys keep defaults
+    custom = tmp_path / "theme.yml"
+    custom.write_text("colors:\n  accent: '#123456'\nheader:\n  sign_text: 'NO WIPES'\n",
+                      encoding="utf-8")
+    t2 = theme_mod.load_theme(str(custom))
+    assert t2["colors"]["accent"] == "#123456"
+    assert t2["header"]["sign_text"] == "NO WIPES"
+    assert t2["colors"]["background"] == "#111217"
+    # broken YAML -> defaults, never an exception
+    broken = tmp_path / "broken.yml"
+    broken.write_text("colors: [unclosed", encoding="utf-8")
+    assert theme_mod.load_theme(str(broken))["header"]["sign_text"] == "GIT GUD"
+
+
+def test_theme_module_resolution_falls_back():
+    from guild_board import theme as theme_mod
+    mods = theme_mod.resolve_templates({"board": {"header": "no_such_module", "footer": "simple"}})
+    assert mods["header_template"] == "headers/stone_torchlight.html.j2"
+    assert mods["footer_template"] == "footers/simple.html.j2"
+    assert mods["footer_h"] == theme_mod.FOOTER_HEIGHTS["simple"]
+
+
+def test_weekly_awards_rotate_and_rank():
+    from guild_board.awards import weekly_awards
+    stats = {"deaths": {"Alba": 3, "Bryn": 0}, "participants": ["Alba", "Bryn", "Cyd"],
+             "pulls": 20, "best_dps": {}, "best_hps": {}}
+    streaks = {"alba": 5, "bryn": 3, "cyd": 1}
+    scores = [(3000, "Alba", "Holy Priest"), (2500, "Bryn", "Fire Mage")]
+    previous = {"season_scores": {"alba": 2900, "bryn": 2510}}
+    kwargs = dict(stats=stats, streaks=streaks, season_scores=scores, previous=previous)
+    secs = weekly_awards(0, per_week=2, **kwargs)
+    assert len(secs) == 2
+    assert secs[0]["title"].endswith("ATTENDANCE")
+    assert secs[0]["rows"][0]["name"] == "Alba"
+    # rotation: an odd week leads with the other award
+    secs2 = weekly_awards(1, per_week=2, **kwargs)
+    assert secs2[0]["title"].endswith("BIGGEST CLIMB")
+    # climb: only positive gains, largest first
+    climb = secs2[0]
+    assert climb["rows"][0]["name"] == "Alba" and climb["rows"][0]["value"] == "+100"
+    # the retired Ironman award never appears
+    assert not any("IRONMAN" in s["title"] for s in secs + secs2)
+
+
+def test_alt_header_footer_modules_render(tmp_path):
+    from guild_board import html_board
+    theme_file = tmp_path / "theme.yml"
+    theme_file.write_text("board:\n  header: banner\n  footer: simple\n", encoding="utf-8")
+    cfg = _image_board_cfg()
+    cfg["display"]["theme_file"] = str(theme_file)
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        cfg, _image_board_stats(), None, None, "Voidspire", None, None, None,
+        now - timedelta(days=7), now)
+    assert ctx["header_template"] == "headers/banner.html.j2"
+    html = html_board.render_html(ctx)
+    assert "TEST GUILD" in html                 # banner carries the guild name
+    assert "CAMPERS MEMORIAL" not in html       # simple footer has no memorial
+    assert "GIT GUD" not in html                # no hanging sign either
+
+
+def test_headline_priorities():
+    from guild_board.html_board import _headline
+    records = {"best_dps_parse": {"name": "Rakell", "parse": 99.0, "boss": "Chimaerus", "new": True}}
+    assert "NEW GUILD RECORD" in _headline(None, None, None, records)
+    standing, previous = {"realm": 49}, {"standing": {"realm": 52}}
+    assert _headline(None, standing, previous, None) == "REALM RANK #49 — UP 3 THIS WEEK"
+    assert "GO AGANE" in _headline({"kills": 2, "pulls": 30}, None, None, None)
+    assert _headline({"kills": 0, "pulls": 0}, None, None, None) is None
+
+
+def test_mobile_template_renders():
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        _image_board_cfg(), _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    html = html_board.render_html(ctx, template="mobile.html.j2")
+    assert "TEST GUILD" in html
+    assert 'width:1080px' in html
+    assert "ROAST OF THE WEEK" in html
+
+
+def test_tldr_lines():
+    from guild_board.formatters import tldr_lines
+    lines = tldr_lines(_image_board_stats(), {"realm": 49})
+    assert any("Top DPS" in l and "Rakell" in l for l in lines)
+    assert any("#49" in l for l in lines)
+    assert tldr_lines(None, None) == []
+
+
+def test_debt_card_theme_driven():
+    from guild_board.html_board import _debt_card
+    card = _debt_card({"footer": {"debt": {"enabled": True, "principal": 1000,
+                                           "weekly_rate_pct": 10.0,
+                                           "lines": ["Binds on !roll", "Ledger|Unique",
+                                                     "Equip: Loses gold."]}}}, 2)
+    assert card["amount"] == 1210
+    assert card["lines"][1] == {"left": "Ledger", "right": "Unique", "green": False}
+    assert card["lines"][2]["green"] is True
+    assert _debt_card({"footer": {"debt": {"enabled": False}}}, 5) is None
+
+
+# --- tank sections & boss-ranks relocation ----------------------------------------
+
+
+def test_tank_sections_and_boss_ranks_move():
+    from guild_board import html_board
+    cfg = _image_board_cfg()
+    stats = _image_board_stats()
+    stats["best_tanks"] = {"Brewz": {"parse": 88.0, "amount": 90_000, "boss": "Some Boss",
+                                     "spec": "Brewmaster", "cls": "Monk"}}
+    leaders = [{"name": "Rakell", "spec": "Enhancement Shaman", "realm_rank": 1,
+                "region_rank": 892, "best_avg": 91.3, "boss": "Some Boss"}]
+    mplus_weekly = {"dps": {}, "hps": {},
+                    "tanks": {"Brewz": {"parse": 90.0, "amount": 80_000, "boss": "Skyreach",
+                                        "spec": "Brewmaster", "cls": "Monk", "key_level": 18}}}
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        cfg, stats, None, leaders, "Voidspire", None, None, None,
+        now - timedelta(days=7), now, mplus_weekly=mplus_weekly)
+    raid_titles = [s["title"] for s in ctx["columns"][0]["sections"]]
+    mplus_titles = [s["title"] for s in ctx["columns"][1]["sections"]]
+    guild_titles = [s["title"] for s in ctx["columns"][3]["sections"]]
+    assert "TOP PARSES · ALL ROLES" in raid_titles
+    assert "TOP M+ TANKS THIS WEEK" in mplus_titles
+    assert "WEEKLY BOSS RANKS" not in raid_titles      # moved out of raid...
+    assert guild_titles[0] == "WEEKLY BOSS RANKS"      # ...to lead Seasonal Guild
+    # the all-roles ladder ranks by parse across DPS/HPS/tanks, tagged by role
+    overall = next(s for s in ctx["columns"][0]["sections"] if s["title"] == "TOP PARSES · ALL ROLES")
+    assert overall["rows"][0]["name"] == "Rakell"          # 94.2 DPS
+    assert overall["rows"][1]["name"] == "Brewz"           # 88.0 tank beats 58.0 healer
+    assert overall["rows"][1]["detail_bits"][0] == "Tank"
+
+
+def test_collect_parses_only_returns_tanks(monkeypatch):
+    blob = {"data": [{"encounter": {"name": "Some Boss"}, "fightID": 1, "roles": {
+        "tanks": {"characters": [{"name": "Brewz", "rankPercent": 77.0, "amount": 50_000,
+                                  "spec": "Brewmaster", "class": "Monk"}]},
+        "dps": {"characters": [{"name": "Rakell", "rankPercent": 90.0, "amount": 150_000,
+                                "spec": "Enhancement", "class": "Shaman"}]},
+        "healers": {"characters": []},
+    }}]}
+    monkeypatch.setattr(wcl, "fetch_report_detail",
+                        lambda token, code, difficulty: {"dps": blob, "hps": blob, "fights": []})
+    dps, hps, tanks = wcl.collect_parses_only("tok", {}, [{"code": "abc"}], 5)
+    assert tanks["Brewz"]["parse"] == 77.0
+    assert dps["Rakell"]["parse"] == 90.0
+    assert tanks["Brewz"]["difficulty"] == 5
+
+
+# --- responsive web board ---------------------------------------------------------
+
+
+def test_web_template_renders_responsive():
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        _image_board_cfg(), _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    html = html_board.render_html(ctx, template="web.html.j2")
+    assert 'name="viewport"' in html            # phone scaling enabled
+    assert "TEST GUILD" in html
+    assert "auto-fit" in html                   # columns reflow with the screen
+    assert "ROAST OF THE WEEK" in html
+
+
+def test_generate_web_board_writes_file(tmp_path):
+    from guild_board.html_board import generate_web_board
+    now = datetime.now(timezone.utc)
+    out = generate_web_board(
+        _image_board_cfg(), _image_board_stats(), None, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now,
+        output_path=str(tmp_path / "site" / "index.html"))
+    assert out and os.path.exists(out)
+
+
+def test_link_buttons_include_web_board():
+    cfg = {"guild": {"name": "Test", "realm_slug": "bleeding-hollow", "region": "us"},
+           "display": {"web_board": {"url": "https://example.github.io/board/"}}}
+    rows = gb_discord._build_link_buttons(cfg)
+    labels = [b["label"] for b in rows[0]["components"]]
+    assert any("Web Board" in l for l in labels)
+    cfg["display"] = {}
+    labels = [b["label"] for b in gb_discord._build_link_buttons(cfg)[0]["components"]]
+    assert not any("Web Board" in l for l in labels)
+
+
+def test_tldr_matches_rendered_rows():
+    """The post text derives from the exact rows the board renders."""
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    stats = _image_board_stats()
+    stats["best_tanks"] = {"Brewz": {"parse": 88.0, "amount": 90_000, "boss": "Some Boss",
+                                     "spec": "Brewmaster", "cls": "Monk"}}
+    ctx = html_board.build_context(
+        _image_board_cfg(), stats, {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    tldr = html_board.LAST_TLDR
+    assert any("Rakell" in l and "94%" in l for l in tldr)      # top DPS row verbatim
+    assert any("Top tank" in l and "Brewz" in l and "88%" in l for l in tldr)
+    assert any("#49" in l for l in tldr)
+    assert ctx["tldr"] == tldr
+
+
+def test_raid_attendance_streaks():
+    from guild_board.state import raid_attendance_streaks
+    previous = {"streaks": {"alba": 4, "bryn": 2}}
+    stats = {"participants": {"Alba": None}, "best_dps": {"Cyd": {}},
+             "best_hps": {}, "best_tanks": {}}
+    out = raid_attendance_streaks(previous, stats)
+    assert out == {"alba": 5, "cyd": 1}          # attendee ticks, newcomer starts, absentee drops
+    # a no-logs week carries streaks forward instead of wiping them
+    assert raid_attendance_streaks(previous, None) == previous["streaks"]
+    assert raid_attendance_streaks(None, None) == {}
+
+
+def test_image_embed_title_links_to_web_board():
+    cfg = {"guild": {"name": "Test Guild", "realm_slug": "x", "region": "us"},
+           "raid": {"difficulty": "mythic"}, "lookback_days": 7, "sections": {},
+           "display": {"web_board": {"enabled": True, "url": "https://x.github.io/b/"}}}
+    now = datetime.now(timezone.utc)
+    embed = formatters.build_image_embed(cfg, None, now, now)
+    assert embed["url"] == "https://x.github.io/b/"
+    cfg["display"]["web_board"]["enabled"] = False
+    assert "url" not in formatters.build_image_embed(cfg, None, now, now)

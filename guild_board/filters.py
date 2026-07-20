@@ -60,12 +60,14 @@ def apply_roster_filters(token, cfg, stats, keep=None):
     """Optionally restrict the board to guild members (plus an allowlist),
     and always honor the exclude list."""
     keep = keep or make_name_filter(token, cfg)
-    removed = sorted({name for key in ("best_dps", "best_hps", "deaths", "participants")
+    keys = ("best_dps", "best_hps", "best_tanks", "deaths", "participants")
+    removed = sorted({name for key in keys
                       for name in stats.get(key) or {} if not keep(name)})
     if removed:
         # Name the casualties so a wrongly-dropped member is visible in the log
         logger.info("Roster filter removed %s name(s): %s",
                     len(removed), ", ".join(removed[:30]))
-    for key in ("best_dps", "best_hps", "deaths", "participants"):
-        stats[key] = {name: value for name, value in stats[key].items() if keep(name)}
+    for key in keys:
+        if key in stats:
+            stats[key] = {name: value for name, value in stats[key].items() if keep(name)}
     return stats

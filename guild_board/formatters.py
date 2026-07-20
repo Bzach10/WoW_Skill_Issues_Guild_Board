@@ -478,11 +478,34 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
     return embed
 
 
-def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://board.png"):
+def tldr_lines(stats, standing=None):
+    """Three phone-readable callout lines for the embed text, so the top of
+    the board lands even before anyone zooms into the image."""
+    lines = []
+    if stats:
+        for pool_key, icon, label in (("best_dps", "\U0001F5E1️", "Top DPS"),
+                                      ("best_hps", "\U0001F49A", "Top heals"),
+                                      ("best_tanks", "\U0001F6E1️", "Top tank")):
+            pool = stats.get(pool_key) or {}
+            if pool:
+                name, info = max(pool.items(), key=lambda kv: kv[1].get("parse") or 0)
+                parse = info.get("parse") or 0
+                boss = info.get("boss") or ""
+                bit = f"{icon} {label}: **{name}** {parse:.0f}%"
+                lines.append(bit + (f" on {boss}" if boss else ""))
+    if standing and standing.get("realm"):
+        suffix = " (last wk)" if standing.get("stale") else ""
+        lines.append(f"\U0001F3F0 Realm rank **#{standing['realm']:,}**{suffix}")
+    return lines
+
+
+def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://board.png",
+                      tldr=None):
     """Minimal embed for image-board mode: title, announcement, the board image.
 
-    All stats live in the rendered image; the embed only carries what an
-    image can't — the title, the officer announcement, and the footer CTA.
+    All stats live in the rendered image; the embed carries what an image
+    can't — the title, the officer announcement, phone-readable TL;DR
+    callouts, and the footer CTA.
     """
     guild_name = cfg["guild"]["name"]
     difficulty = str(cfg["raid"]["difficulty"]).title()
@@ -497,13 +520,16 @@ def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://boar
     if ann_cfg.get("enabled", True) and ann_cfg.get("text"):
         desc_lines.append(f"\U0001F4E2 {ann_cfg['text']}")
     desc_lines.append(f"{week_label(cfg)}: **{date_range}**")
+    if tldr:
+        desc_lines.append("")
+        desc_lines.extend(tldr)
 
     footer_bits = []
     if stats is not None:
         footer_bits.append(f"{plural(stats['kills'], 'kill')} / {plural(stats['pulls'], 'pull')} this week")
     footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
 
-    return {
+    embed = {
         "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
         "description": "\n".join(desc_lines),
         "color": 0xC69B6D,
@@ -511,3 +537,10 @@ def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://boar
         "footer": {"text": " | ".join(footer_bits)},
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
+    # The embed TITLE links to the web board — the most obvious click
+    # target Discord offers an embed (link buttons on channel webhooks
+    # get silently dropped when Discord rejects them).
+    web_cfg = (cfg.get("display") or {}).get("web_board") or {}
+    if web_cfg.get("enabled") and web_cfg.get("url"):
+        embed["url"] = web_cfg["url"]
+    return embed

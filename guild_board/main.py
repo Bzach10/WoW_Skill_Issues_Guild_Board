@@ -1,12 +1,11 @@
 import json
 import logging
 import os
-import time
 from datetime import datetime, timedelta, timezone
 
 import requests
 
-from guild_board.config import load_config, require_env, resolve_roster, save_roster_cache
+from guild_board.config import load_config, require_env
 from guild_board.discord import post_to_discord
 from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
 from guild_board.filters import apply_roster_filters, make_name_filter
@@ -14,9 +13,8 @@ from guild_board.board_image import generate_board_animation, generate_board_ima
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
-from guild_board.state import advance_streaks, load_board_state, save_board_state, update_records
+from guild_board.state import load_board_state, raid_attendance_streaks, save_board_state, update_records
 from guild_board.wcl import (
-    DIFFICULTY_MAP,
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
     clear_report_cache,
@@ -188,17 +186,19 @@ def _collect_weekly_mplus(token, cfg, reports, roster_keep):
     if not sections.get("mplus_weekly_parses", {}).get("enabled", True):
         return None
     try:
-        mdps, mhps = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
+        mdps, mhps, mtanks = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
         if roster_keep:
             mdps = {n: v for n, v in mdps.items() if roster_keep(n)}
             mhps = {n: v for n, v in mhps.items() if roster_keep(n)}
-        if mdps or mhps:
-            logger.info("Weekly M+ parses: %s DPS, %s HPS", len(mdps), len(mhps))
+            mtanks = {n: v for n, v in mtanks.items() if roster_keep(n)}
+        if mdps or mhps or mtanks:
+            logger.info("Weekly M+ parses: %s DPS, %s HPS, %s tank(s)",
+                        len(mdps), len(mhps), len(mtanks))
         else:
             logger.info("No M+ dungeon logs found this week (players must upload M+ runs to WCL).")
         # Keep the dict even when empty so the board shows the section
         # title with a "no logs" placeholder instead of hiding it.
-        return {"dps": mdps, "hps": mhps}
+        return {"dps": mdps, "hps": mhps, "tanks": mtanks}
     except (RuntimeError, requests.RequestException) as exc:
         logger.warning("Weekly M+ parse lookup failed: %s", exc)
         return None
@@ -309,7 +309,10 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                     except (RuntimeError, requests.RequestException) as exc:
                         logger.warning("Guild standing lookup failed: %s", exc)
 
-                    if stats and stats.get("participants"):
+                    # Leaders power the WEEKLY BOSS RANKS section — skip the
+                    # whole per-character sweep when the section is disabled.
+                    leaders_wanted = (sections.get("realm_rank_leaders") or {}).get("enabled", True)
+                    if leaders_wanted and stats and stats.get("participants"):
                         if use_fallback:
                             logger.info("Using difficulty fallback for realm rank leaders")
                             leaders, diff_used = try_difficulties(
@@ -371,17 +374,9 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     image_path = None
     previous = load_board_state()
 
-    # Streaks: who was active in any weekly dataset this week
-    active_names = set()
-    if stats:
-        active_names |= set(stats.get("best_dps") or {})
-        active_names |= set(stats.get("best_hps") or {})
-    for run in (mplus_results or []):
-        active_names.add(run[2])
-    if mplus_weekly:
-        active_names |= set(mplus_weekly.get("dps") or {})
-        active_names |= set(mplus_weekly.get("hps") or {})
-    streaks = advance_streaks(previous.get("streaks"), active_names)
+    # Attendance streaks: RAID nights only — showing up to raid is what
+    # Iron Attendance rewards, not spamming keys.
+    streaks = raid_attendance_streaks(previous, stats)
 
     # Season record book: weekly data plus the full-season sweeps, so
     # records reflect the entire season rather than weeks since launch
@@ -389,6 +384,14 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                              season_parses=season_parse_bests,
                              season_key=season_key_record)
 
+    # Diagnostic: the raw tank pool, so any board/text discrepancy can be
+    # traced to the data rather than guessed at from the rendered image.
+    if stats and "best_tanks" in stats:
+        logger.info("Tank parse pool: %s",
+                    {n: f"{(i.get('parse') or 0):.1f}% {i.get('spec','')} d{i.get('difficulty')}"
+                     for n, i in (stats.get("best_tanks") or {}).items()})
+
+    mobile_path = None
     if layout == "image_board":
         try:
             display_cfg = cfg.get("display") or {}
@@ -402,11 +405,18 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if display_cfg.get("renderer", "pillow") == "html":
                 # The design IS the render: headless-Chromium screenshot of
                 # the HTML template. Falls back to Pillow on any failure.
+                from guild_board import html_board
                 from guild_board.html_board import generate_board_html
+                html_board.LAST_TLDR = None   # never reuse a stale one
+                want_mobile = bool(display_cfg.get("mobile_companion", True))
                 image_path = generate_board_html(
                     *board_args,
                     output_path="board.gif" if animate else "board.png",
-                    animate=animate, frames=frames, **board_kwargs)
+                    animate=animate, frames=frames,
+                    mobile_path="board_mobile.png" if want_mobile else None,
+                    **board_kwargs)
+                if image_path and want_mobile and os.path.exists("board_mobile.png"):
+                    mobile_path = "board_mobile.png"
             if not image_path and animate:
                 image_path = generate_board_animation(
                     *board_args, output_path="board.gif",
@@ -414,14 +424,34 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if not image_path:
                 image_path = generate_board_image(
                     *board_args, output_path="board.png", **board_kwargs)
+            # The responsive web twin (published to GitHub Pages by CI —
+            # the auto-scaling companion the phone link button points at)
+            if (display_cfg.get("web_board") or {}).get("enabled", False):
+                from guild_board.html_board import generate_web_board
+                generate_web_board(*board_args, **board_kwargs)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.
             cfg.setdefault("display", {})["layout"] = "single_column"
 
     if image_path:
+        from guild_board.formatters import tldr_lines
+        try:
+            from guild_board import html_board
+            tldr = html_board.LAST_TLDR
+        except ImportError:
+            tldr = None
+        # Prefer the lines derived from the rendered rows themselves; the
+        # independent computation is only the Pillow-path fallback.
+        tldr = list(tldr) if tldr else tldr_lines(stats, standing)
+        web_cfg = (cfg.get("display") or {}).get("web_board") or {}
+        if web_cfg.get("enabled") and web_cfg.get("url"):
+            # Link buttons on channel webhooks get dropped silently when
+            # Discord rejects them — a markdown link in the text always shows.
+            tldr.append(f"\U0001F4F1 [**Open the Web Board**]({web_cfg['url']}) — scales to any screen")
         embed = build_image_embed(cfg, stats, start_dt, end_dt,
-                                  image_url=f"attachment://{os.path.basename(image_path)}")
+                                  image_url=f"attachment://{os.path.basename(image_path)}",
+                                  tldr=tldr)
     else:
         progress_image_url = None
         progress_cfg = sections.get("progress_image", {})
@@ -444,7 +474,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     if not dry_run:
         webhook_url = require_env("DISCORD_WEBHOOK_URL")
-        post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg)
+        post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg,
+                        extra_image_paths=[mobile_path] if mobile_path else None)
         logger.info("Board posted to Discord.")
         try:
             save_board_state(standing, mplus_season_scores, streaks=streaks, records=records)

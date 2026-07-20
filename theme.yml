@@ -1,0 +1,126 @@
+# ==================================================================
+#  BOARD THEME — how the board LOOKS. Safe for ANY member to edit.
+#
+#  Edit this file on the GitHub website (pencil icon), commit, then
+#  Actions -> "Weekly Guild Board" -> Run workflow to see it live.
+#  You cannot break the data by editing this file: anything you
+#  delete or mistype simply falls back to the shipped design.
+#
+#  Full walkthrough with pictures of what each knob changes:
+#  see CUSTOMIZING.md in this repo.
+# ==================================================================
+
+board:
+  header: stone_torchlight   # header module: stone_torchlight or banner
+  footer: graveyard          # footer module: graveyard or simple
+  # Making your own module? Drop a file in board_templates/headers/
+  # or board_templates/footers/ and put its name here (CUSTOMIZING.md
+  # has a copy-paste recipe).
+
+# ------------------------------------------------------------------
+#  COLORS — any CSS hex color. accent is the gold used for titles,
+#  bars and highlights; the rest are the dark chrome around the data.
+# ------------------------------------------------------------------
+colors:
+  accent: "#e6b446"
+  background: "#111217"
+  panel: "#1e212b"
+  hairline: "#353b48"
+  text: "#f2f3f7"
+  muted: "#b3b9c5"
+  faint: "#7f8591"
+  red: "#e5484d"
+  green: "#4cdc56"
+
+# ------------------------------------------------------------------
+#  FONTS — any font name from fonts.google.com. display = the big
+#  carved titles, body = all the stats text.
+# ------------------------------------------------------------------
+fonts:
+  display: "Cinzel"
+  body: "Inter"
+
+# ------------------------------------------------------------------
+#  BACKGROUNDS — swap the art by replacing these files in assets/
+#  (keep the same filename) or pointing at a new file here.
+#  middle_tint darkens the middle art so text stays readable:
+#  0 = art at full strength, 1 = solid background color.
+# ------------------------------------------------------------------
+backgrounds:
+  header: "assets/wall_header.png"
+  middle: "assets/theme_art.png"
+  middle_tint: 0.87
+  footer: "assets/wall_footer.png"
+
+# ------------------------------------------------------------------
+#  HEADER GAGS — the hanging sign, the widget one-liners, and the
+#  fake raid debuffs. {deaths} in wipes_sub becomes the real number.
+# ------------------------------------------------------------------
+header:
+  sign_text: "GIT GUD"
+  sign_subtext: "MGMT IS NOT RESPONSIBLE"
+  wipes_sub: "deaths: {deaths} · personal best: still zero"
+  repair_sub: "donations welcome · thoughts & prayers accepted"
+  counter_label: "“GO AGANE” COUNTER"
+  counter_sub: "morale: unaffected · copium: stable"
+  # icon = any Wowhead icon name; kind = bad (red) or good (green);
+  # stack = the little number ("deaths" shows this week's death total)
+  debuffs:
+    - {icon: inv_misc_questionmark, kind: bad, label: "Skill Issue", stack: "40"}
+    - {icon: spell_fire_fire, kind: bad, label: "Standing in Fire", stack: "6w"}
+    - {icon: inv_misc_bone_humanskull_01, kind: bad, label: "Graveyard Timeshare", stack: "deaths"}
+    - {icon: spell_nature_sleep, kind: good, label: "Coping", stack: "∞"}
+    - {icon: spell_holy_layonhands, kind: good, label: "Healer Diff", stack: "1"}
+
+# ------------------------------------------------------------------
+#  FOOTER — the debt card, the graveyard, and the item of the month.
+#  Retire the debt gag by setting enabled: false (a new victim's
+#  card is a title + lines away).
+# ------------------------------------------------------------------
+footer:
+  debt:
+    enabled: true
+    title: "Brewzleeh's Gambling Debt"
+    principal: 137000          # gold owed at week zero
+    weekly_rate_pct: 9.99      # compounds weekly. He agreed to this.
+    interest_note: "interest: 9.99% weekly · collateral: his monk"
+    lines:                     # "left|right" splits a line to both edges
+      - "Binds on !roll"
+      - "Deathroll Ledger|Unique"
+      - "+15 Gambling Addiction"
+      - "-100% Gold Retention Aura"
+      - "Equip: Doubles down on a 2% win chance."
+      - "Equip: Cannot leave while ahead. Has never been ahead."
+      - "Use: Borrows from GBank tab 3. Again. (No Cooldown)"
+    flavor: "“Just one more roll.” — Brewzleeh, at 4 AM"
+    requires: "Requires: An intervention"
+  graveyard:
+    title: "GRAVEYARD CAMPERS MEMORIAL"
+    caption: "Plots assigned by deaths-per-pull. The campfire is load-bearing."
+    reserved: "HEALMATES"
+    reserved_note: "6 consecutive weeks in the fire"
+  item_title: "GUILD ITEM OF THE MONTH"
+
+# ------------------------------------------------------------------
+#  MOTD — one line rotates onto the board each week. Add as many as
+#  you like; inside jokes strongly encouraged.
+# ------------------------------------------------------------------
+motd_quips:
+  - "MORE DOTS. MORE DOTS. … OK STOP DOTS."
+  - "That's a 50 DKP MINUS."
+  - "Healmates has now stood in the fire for 6 consecutive weeks — a new guild record."
+  - "Key depleted? That is a you problem."
+  - "At least Leeroy had a plan."
+  - "Raid times: Tue/Thu, 8 PM to whenever Rakdisc stops blaming people."
+  - "Repair bills are self-inflicted and therefore not reimbursable."
+
+credits: "“Git Gud.” — ancient guild proverb"
+
+# ------------------------------------------------------------------
+#  WEEKLY AWARDS — rotating spotlights that mid-pack players can
+#  actually win (attendance streaks, biggest score climb).
+# ------------------------------------------------------------------
+awards:
+  enabled: true
+  per_week: 2
+  top_n: 3

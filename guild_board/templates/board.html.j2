@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>{{ guild_name }} — Guild Board</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  /* ============ Board skeleton — theme.yml drives every color ============ */
+  /* Header and footer are swappable modules (templates/headers/*,          */
+  /* templates/footers/*) that carry their own scoped CSS.                  */
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --epic:#a335ee; --legendary:#ff8000; --uncommon:#1eff00; --goldtext:#ffd100;
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{width:{{ width }}px; background:var(--bg); color:var(--text);
+       font-family:var(--font-body); font-size:18px;}
+  .board{position:relative; width:{{ width }}px; overflow:hidden;}
+
+  /* --------- animation set: every period divides the {{ loop_ms }}ms loop --------- */
+  @keyframes emberRise { 0%{transform:translate(0,0); opacity:0} 8%{opacity:.95}
+                         100%{transform:translate(var(--drift,0px),-420px); opacity:0} }
+  @keyframes flamePulse { 0%{transform:scaleY(1) scaleX(1) rotate(-2deg)}
+                          50%{transform:scaleY(1.18) scaleX(.9) rotate(2deg)}
+                          100%{transform:scaleY(.94) scaleX(1.06) rotate(-1deg)} }
+  @keyframes glowPulse { 0%{opacity:.35} 100%{opacity:.7} }
+  @keyframes signSwing { 0%{transform:rotate(-.6deg)} 100%{transform:rotate(.6deg)} }
+  @keyframes numPulse { 0%{text-shadow:0 0 6px rgba(229,72,77,.25)} 100%{text-shadow:0 0 22px rgba(229,72,77,.85)} }
+  @keyframes debtGlow { 0%{text-shadow:0 0 8px rgba(230,180,70,.2)} 100%{text-shadow:0 0 24px rgba(230,180,70,.75)} }
+  .val.pulse{animation:numPulse .6s ease-in-out infinite alternate;}
+
+  .embers{position:absolute; inset:0; overflow:hidden; pointer-events:none;}
+  .embers span{position:absolute; bottom:-12px; border-radius:50%; opacity:0;
+    background:radial-gradient(circle, #ffd27a, #e07a28 60%, transparent);
+    animation:emberRise {{ '%.1f'|format(loop_ms/1000) }}s linear infinite;}
+  .embers.wisps span{background:radial-gradient(circle, #b6ffb0, #3adc5a 60%, transparent);}
+
+  .flame{position:absolute; bottom:0; left:50%; border-radius:50% 50% 45% 45% / 70% 70% 30% 30%;
+         filter:blur(4px); transform-origin:bottom center;
+         animation:flamePulse .6s ease-in-out infinite alternate;}
+
+  /* ============================== INFO STRIP ============================== */
+  .info{height:52px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 36px; border-bottom:1px solid var(--hairline); background:var(--bg);}
+  .info .l{color:var(--muted); font-size:22px;}
+  .info .r{color:var(--muted); font-size:19px;}
+
+  /* ================================ MIDDLE ================================ */
+  .mid{position:relative; padding:26px 36px 26px;
+    background:linear-gradient(rgba({{ bg_rgb }},{{ theme.backgrounds.middle_tint }}), rgba({{ bg_rgb }},{{ theme.backgrounds.middle_tint }})),
+               url("{{ theme.backgrounds.middle }}") center 40%/cover;}
+  .hero{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:18px 24px 16px; margin-bottom:26px;}
+  .headline{display:flex; align-items:center; gap:18px; padding-bottom:14px;
+    margin-bottom:14px; border-bottom:1px solid var(--hairline);}
+  .headline .tag{flex:none; font-size:14px; letter-spacing:.18em; font-weight:800;
+    color:var(--accent); background:rgba(230,180,70,.12); border:1px solid rgba(230,180,70,.35);
+    padding:7px 12px; border-radius:6px;}
+  .headline .txt{font-family:var(--font-display); font-size:36px; font-weight:900;
+    color:var(--text); letter-spacing:.03em; white-space:nowrap; overflow:hidden;}
+  .tiles{display:flex;}
+  .tile{flex:1;}
+  .tile .lbl{font-size:16px; color:var(--muted);}
+  .tile .val{font-size:34px; font-weight:700; margin-top:2px; font-variant-numeric:tabular-nums;}
+  .tile .val small{font-size:16px; font-weight:600; margin-left:8px;}
+  .bar{position:relative; height:20px; margin-top:14px; border-radius:10px; background:#262830; overflow:hidden;}
+  .bar .fill{position:absolute; left:0; top:0; bottom:0; border-radius:10px; background:var(--accent);}
+  .bar .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:15px; color:var(--text);}
+  .cols{display:flex; gap:24px; align-items:stretch;}
+  .col{flex:1; min-width:0; background:var(--panel); border:1px solid var(--hairline);
+    border-radius:12px; padding:24px; display:flex; flex-direction:column;}
+  /* Fixed rhythm: every section sits a consistent 28px below the last.
+     space-between stretched short columns into awkward mid-column voids;
+     a steady beat with quiet space at the bottom reads far cleaner. */
+  .secs{flex:1; display:flex; flex-direction:column; justify-content:flex-start; gap:28px;}
+  .col-h{display:flex; align-items:center; gap:14px; padding-bottom:16px; margin-bottom:18px;
+    border-bottom:1px solid var(--hairline);}
+  .col-h .tick{width:5px; height:26px; background:var(--accent);}
+  .col-h .t{font-size:25px; font-weight:700; color:var(--text); letter-spacing:.03em;}
+  .sec{margin-bottom:0;}
+  .sec-h{display:flex; align-items:center; gap:12px; height:38px;}
+  .sec-h .t{font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap; letter-spacing:.05em;}
+  .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
+  .row{display:flex; align-items:center; height:46px; min-width:0;
+    padding:0 12px; margin:0 -12px; border-radius:8px;}
+  .row.alt{background:rgba(255,255,255,.032);}
+  .row .badge{width:27px; height:27px; border-radius:50%; flex:none;
+    display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:700; color:#14141a; margin-right:11px;}
+  .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted);}
+  .row .icon{width:27px; height:27px; border-radius:5px; flex:none; margin-right:9px;}
+  .row .icon.blank{visibility:hidden;}
+  .row .name{font-size:21px; font-weight:700; white-space:nowrap;}
+  .row .detail{font-size:18px; color:var(--muted); margin-left:11px; flex:1; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row .value{font-size:21px; font-weight:700; white-space:nowrap; margin-left:16px;
+    font-variant-numeric:tabular-nums; text-align:right;}
+  .row .value small{font-size:18px; font-weight:500; color:#ccd2dd;}
+  .row.textrow{font-size:18px; color:var(--muted);}
+  .empty{font-size:18px; color:var(--faint); padding-top:8px;}
+  .roast{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
+    padding:22px 24px 24px; margin-top:26px;}
+  .roast .t{font-size:18px; font-weight:700; color:var(--accent); margin-bottom:8px;}
+  .roast .q{font-size:23px; color:var(--text); line-height:1.4;}
+  .roast .attr{font-size:17px; color:var(--muted); text-align:right; margin-top:2px;}
+
+  /* =========================== MOTD & CREDITS ============================ */
+  .motd{height:52px; display:flex; align-items:stretch; border-top:1px solid var(--hairline); background:#0d0e13;}
+  .motd .chip{display:flex; align-items:center; padding:0 24px; background:#1a1c23;
+    border-right:1px solid var(--hairline); font-weight:800; letter-spacing:.16em; color:var(--accent); font-size:15px;}
+  .motd .q{flex:1; display:flex; align-items:center; padding:0 26px; font-size:20px; color:var(--accent);
+    white-space:nowrap; overflow:hidden;}
+  .credits{height:40px; display:flex; align-items:center; justify-content:space-between;
+    padding:0 36px; background:#0b0c10;}
+  .credits span{color:var(--faint); font-size:14px;}
+</style>
+</head>
+<body>
+<div class="board">
+
+  {% include header_template %}
+
+  <!-- ============================== INFO STRIP ============================== -->
+  <div class="info"><span class="l">{{ subtitle }}</span><span class="r">{{ date_range }}</span></div>
+
+  <!-- ================================ MIDDLE ================================ -->
+  <div class="mid">
+    {%- if hero_tiles %}
+    <div class="hero">
+      {%- if headline %}
+      <div class="headline"><span class="tag">THIS WEEK</span><span class="txt">{{ headline }}</span></div>
+      {%- endif %}
+      <div class="tiles">
+        {%- for t in hero_tiles %}
+        <div class="tile"><div class="lbl">{{ t.label }}</div>
+          <div class="val">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div></div>
+        {%- endfor %}
+      </div>
+      <div class="bar">
+        {%- if bar_pct %}<div class="fill" style="width:{{ bar_pct }}%;"></div>{% endif %}
+        <div class="cap">{{ bar_label }}</div>
+      </div>
+    </div>
+    {%- endif %}
+    <div class="cols">
+      {%- for col in columns %}
+      <div class="col">
+        <div class="col-h"><div class="tick"></div><div class="t">{{ col.title }}</div></div>
+        {%- if not col.sections %}
+        <div class="empty">{{ col.empty }}</div>
+        {%- endif %}
+        <div class="secs">
+        {%- for sec in col.sections %}
+        <div class="sec">
+          <div class="sec-h"><span class="t">{{ sec.title }}</span><span class="rule"></span></div>
+          {%- for row in sec.rows %}
+          {%- if row.text is defined %}
+          <div class="row textrow">{{ row.text }}</div>
+          {%- else %}
+          <div class="row{{ ' alt' if loop.index % 2 == 0 }}">
+            <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
+            {%- if icons_on %}{% if row.icon %}<img class="icon" src="{{ row.icon }}" alt="">{% else %}<span class="icon blank"></span>{% endif %}{% endif %}
+            <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
+            <span class="detail"{% if row.detail_bits %} data-bits='{{ row.detail_bits | tojson }}'{% endif %}>{{ row.detail }}</span>
+            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small {% if row.value_suffix_color %}style="color:{{ row.value_suffix_color }};"{% endif %}>· {{ row.value_suffix }}</small>{% endif %}</span>
+          </div>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endfor %}
+        </div>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- if roast %}
+    <div class="roast">
+      <div class="t">ROAST OF THE WEEK</div>
+      <div class="q">{{ roast.quote }}</div>
+      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    </div>
+    {%- endif %}
+  </div>
+
+  {% include footer_template %}
+
+  <div class="motd"><div class="chip">MOTD</div><div class="q">{{ motd }}</div></div>
+  <div class="credits">
+    <span>{{ theme.credits }}</span>
+    <span>{{ watermark }}</span>
+  </div>
+</div>
+<script>
+  /* GIF frame hook: the capture loop calls __setPhase(0..1) per frame so
+     JS-driven counters tick inside the loop (CSS animations are seeked
+     separately). Static renders keep the base values. */
+  window.__setPhase = function (ph) {
+    document.querySelectorAll('[data-count]').forEach(function (el) {
+      var base = parseInt(el.dataset.base, 10) || 0;
+      var step = parseInt(el.dataset.step, 10) || 1;
+      var ticks = parseInt(el.dataset.ticks, 10) || 3;
+      var v = base + Math.floor(ph * ticks) * step;
+      el.textContent = v.toLocaleString('en-US');
+    });
+  };
+
+  /* Whole-fact fitting: instead of CSS ellipsis chopping mid-word, drop
+     trailing " · "-joined facts until the line fits — the renderer calls
+     this once after fonts load, before any capture. */
+  window.__fitDetails = function () {
+    document.querySelectorAll('.detail[data-bits]').forEach(function (el) {
+      var bits;
+      try { bits = JSON.parse(el.dataset.bits); } catch (e) { return; }
+      bits = bits.filter(Boolean);
+      el.textContent = bits.join(' · ');
+      while (bits.length > 1 && el.scrollWidth > el.clientWidth + 1) {
+        bits.pop();
+        el.textContent = bits.join(' · ');
+      }
+    });
+  };
+</script>
+</body>
+</html>

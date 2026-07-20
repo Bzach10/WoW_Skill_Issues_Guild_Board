@@ -1,0 +1,121 @@
+{# ======================= HEADER MODULE: stone_torchlight =======================
+   The carved plaque, stat widgets, fake raid debuffs, torch and hanging sign.
+   Self-contained: all its CSS is scoped here, so copying this file is all it
+   takes to start a new header (see CUSTOMIZING.md). Band height: 300px. #}
+<style>
+  .hdr{position:relative; width:{{ width }}px; height:300px; overflow:hidden;
+       background:url("{{ theme.backgrounds.header }}");}
+  .hdr-glow{position:absolute; left:0; right:0; bottom:-60px; height:220px;
+    background:radial-gradient(ellipse 55% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
+    animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
+  .plaque{position:absolute; left:44px; top:26px; width:520px; height:248px; padding:12px;
+    border-radius:12px; background:linear-gradient(160deg, #6b5943, #3d3123);
+    box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 2px 2px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.5);
+    transform:rotate(-0.8deg);}
+  .plaque-in{position:relative; width:100%; height:100%; border-radius:6px;
+    background:url("assets/plaque.png") center/cover;
+    box-shadow:inset 0 5px 10px rgba(255,255,255,.22), inset 0 -8px 16px rgba(0,0,0,.45);
+    display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; overflow:hidden;}
+  .plaque-word{font-family:var(--font-display); font-size:66px; font-weight:900; line-height:.98;
+    letter-spacing:.1em; color:#43352a;
+    text-shadow:0 2px 1px rgba(255,244,214,.4), 0 -2px 3px rgba(0,0,0,.55);}
+  .plaque-sub{font-size:14px; letter-spacing:.38em; color:#5a4a38; font-weight:700; margin-top:7px;
+    text-shadow:0 1px 0 rgba(255,244,214,.35);}
+  .nail{position:absolute; width:15px; height:15px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%);
+    box-shadow:0 1px 2px rgba(255,255,255,.25);}
+  .widgets{position:absolute; left:620px; top:26px; display:flex; gap:24px;}
+  .widget{background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:13px 20px;}
+  .widget .lbl{font-size:14px; letter-spacing:.14em; font-weight:700; color:var(--accent);}
+  .widget .val{font-size:42px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:4px;}
+  .widget .sub{font-size:14px; color:var(--muted); margin-top:3px;}
+  .coin{display:inline-block; border-radius:50%; vertical-align:baseline;}
+  .debuffs{position:absolute; left:620px; top:200px; display:flex; gap:18px; align-items:flex-start;}
+  .debuffs .lbl{font-size:13px; letter-spacing:.14em; color:#b8bcc6; font-weight:700;
+    text-shadow:0 1px 3px #000; margin-top:19px;}
+  .debuff-wrap{display:flex; flex-direction:column; align-items:center; gap:4px; width:82px;}
+  .debuff{position:relative; width:52px; height:52px; border-radius:8px; overflow:hidden; border:2px solid;}
+  .debuff img{width:100%; height:100%; object-fit:cover;}
+  .debuff .stack{position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;}
+  .debuff.bad{border-color:var(--red); box-shadow:0 0 14px rgba(229,72,77,.35);}
+  .debuff.good{border-color:var(--green); box-shadow:0 0 14px rgba(76,220,86,.3);}
+  .debuff-cap{max-width:82px; font-size:11px; font-weight:600; color:#9aa0ac; text-align:center;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-shadow:0 1px 3px #000;}
+  .torch{position:absolute; right:420px; top:20px; width:70px; height:190px;}
+  .torch .handle{position:absolute; bottom:-56px; left:50%; width:14px; height:74px; margin-left:-7px;
+    border-radius:7px; background:linear-gradient(180deg, #4a3826, #2b2117);
+    box-shadow:0 0 24px rgba(224,122,40,.5);}
+  .sign{position:absolute; right:96px; top:0; display:flex; flex-direction:column; align-items:center;
+    animation:signSwing .6s ease-in-out infinite alternate; transform-origin:top center;}
+  .sign .chains{display:flex; gap:150px;}
+  .sign .chain{width:4px; height:50px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;}
+  .sign .plank{width:250px; padding:14px 0 18px; border-radius:8px;
+    background:repeating-linear-gradient(180deg, #5a4028 0 22px, #4c3520 22px 24px, #63482d 24px 46px, #45301d 46px 48px);
+    border:3px solid #2b2117; box-shadow:0 14px 34px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.12);
+    display:flex; flex-direction:column; align-items:center; gap:2px;}
+  .sign .big{font-family:var(--font-display); font-size:38px; font-weight:900; letter-spacing:.1em; color:#251a10;
+    text-shadow:0 1px 0 rgba(255,220,160,.28), 0 -1px 2px rgba(0,0,0,.6);}
+  .sign .small{font-size:11px; letter-spacing:.22em; color:#2e2114; font-weight:700; white-space:nowrap;}
+  .hdr-fade{position:absolute; left:0; right:0; bottom:0; height:26px;
+    background:linear-gradient(180deg, transparent, rgba(8,8,11,.85));}
+</style>
+<div class="hdr">
+  <div class="hdr-glow"></div>
+  <div class="embers">
+    {%- for e in header_embers %}
+    <span style="left:{{ e.left }}%; width:{{ e.size }}px; height:{{ e.size }}px; animation-delay:{{ e.delay }}s; --drift:{{ e.drift }}px;"></span>
+    {%- endfor %}
+  </div>
+  <div class="plaque"><div class="plaque-in">
+    {%- set words = guild_name.upper().split() %}
+    {%- for w in words %}<div class="plaque-word">{{ w }}</div>{% endfor %}
+    <div class="plaque-sub">{{ realm_label }}</div>
+    <div class="nail" style="left:14px; top:12px;"></div><div class="nail" style="right:14px; top:12px;"></div>
+    <div class="nail" style="left:16px; bottom:12px;"></div><div class="nail" style="right:16px; bottom:12px;"></div>
+  </div></div>
+  <div class="widgets">
+    <div class="widget" style="width:380px;">
+      <div class="lbl">{{ theme.header.wipes_label }}</div>
+      <div class="val pulse" style="color:{{ 'var(--red)' if wipes else 'var(--green)' }};">{{ wipes }}</div>
+      <div class="sub">{{ hdr_wipes_sub }}</div>
+    </div>
+    <div class="widget" style="width:400px;">
+      <div class="lbl">{{ theme.header.repair_label }}</div>
+      {#- factual numbers stay STATIC in the GIF — only the debt gag ticks.
+          A counter that animates makes the real stat wrong in most frames. #}
+      <div class="val"><span>{{ "{:,}".format(repair) }}</span>
+        <span class="coin" style="width:18px; height:18px; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420);"></span>
+        <span style="font-size:28px; font-weight:700; color:#b0b6c0;">43</span>
+        <span class="coin" style="width:13px; height:13px; background:radial-gradient(circle at 35% 30%, #e8ecf2, #b0b6c0 55%, #6a707c);"></span>
+      </div>
+      <div class="sub">{{ theme.header.repair_sub }}</div>
+    </div>
+    <div class="widget" style="width:330px;">
+      <div class="lbl">{{ theme.header.counter_label }}</div>
+      <div class="val"><span>{{ pulls }}</span></div>
+      <div class="sub">{{ theme.header.counter_sub }}</div>
+    </div>
+  </div>
+  <div class="debuffs">
+    <span class="lbl">{{ theme.header.debuffs_label }}</span>
+    {%- for d in debuffs %}
+    <div class="debuff-wrap">
+      <div class="debuff {{ d.kind }}" title="{{ d.title }}">
+        <img src="{{ d.url }}" alt=""><span class="stack">{{ d.stack }}</span>
+      </div>
+      <div class="debuff-cap">{{ d.title }}</div>
+    </div>
+    {%- endfor %}
+  </div>
+  <div class="torch">
+    <div class="flame" style="width:64px; height:126px; margin-left:-32px; background:radial-gradient(circle at 50% 85%, #e07a28, rgba(224,122,40,.15) 75%); animation-duration:.6s;"></div>
+    <div class="flame" style="width:42px; height:96px; margin-left:-21px; background:radial-gradient(circle at 50% 85%, #f6b04e, rgba(246,176,78,.2) 75%); animation-duration:.3s;"></div>
+    <div class="flame" style="width:22px; height:60px; margin-left:-11px; background:radial-gradient(circle at 50% 85%, #ffe9a8, rgba(255,233,168,.25) 75%); animation-duration:.2s;"></div>
+    <div class="handle"></div>
+  </div>
+  <div class="sign">
+    <div class="chains"><div class="chain"></div><div class="chain"></div></div>
+    <div class="plank"><div class="big">{{ theme.header.sign_text }}</div><div class="small">{{ theme.header.sign_subtext }}</div></div>
+  </div>
+  <div class="hdr-fade"></div>
+</div>

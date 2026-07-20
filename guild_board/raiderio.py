@@ -4,7 +4,7 @@ import time
 import requests
 
 from guild_board.config import clean_spec_name
-from guild_board.wcl import gql, wcl_character_url
+from guild_board.wcl import gql
 
 logger = logging.getLogger(__name__)
 
