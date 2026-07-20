@@ -55,7 +55,7 @@ def load_board_state(path=STATE_FILE):
 
 
 def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE,
-                     streaks_week=None, previous=None):
+                     streaks_week=None, previous=None, streaks_started=None):
     """Persist what this board showed, for next week's comparisons.
 
     Two-slot scheme: "baseline" holds the last COMPLETED week's finals
@@ -93,7 +93,7 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         },
         "streaks": streaks or {},
         "streaks_week": streaks_week,
-        "streaks_started": prev.get("streaks_started")
+        "streaks_started": streaks_started or prev.get("streaks_started")
             or datetime.now(timezone.utc).date().isoformat(),
         "baseline": baseline,
         "records": records or {},
@@ -115,6 +115,41 @@ def advance_streaks(previous_streaks, active_names):
         name.strip().lower(): int(previous_streaks.get(name.strip().lower(), 0)) + 1
         for name in active_names if name and name.strip()
     }
+
+
+def streaks_from_attendance(attendance, scanned_weeks, all_report_weeks):
+    """Season-derived attendance streaks — recomputed from actual guild
+    logs every run, so they start at the beginning of the season and can
+    never drift, inflate, or need resets.
+
+    attendance: {lower_name: set of raid-week labels attended}
+    scanned_weeks: weeks whose report details were read
+    all_report_weeks: every week the guild logged at all
+
+    Walking back from the latest scanned week: attended -> +1; guild
+    raided without them -> streak ends; guild logged but the sweep
+    trimmed that week's details -> UNKNOWN, stop counting (honest lower
+    bound); nobody logged at all -> neutral skip (a cancelled raid week
+    breaks nobody's streak). Returns (streaks, earliest_scanned_week)."""
+    from datetime import date
+    if not attendance or not scanned_weeks:
+        return {}, None
+    scanned = set(scanned_weeks)
+    unknown = set(all_report_weeks or ()) - scanned
+    anchor = max(scanned)
+    earliest = min(scanned | set(all_report_weeks or ()))
+    streaks = {}
+    for name, weeks in attendance.items():
+        label, streak = anchor, 0
+        while label >= earliest:
+            if label in weeks:
+                streak += 1
+            elif label in unknown or label in scanned:
+                break
+            label = (date.fromisoformat(label) - timedelta(days=7)).isoformat()
+        if streak:
+            streaks[name] = streak
+    return streaks, min(scanned)
 
 
 def raid_attendance_streaks(previous, stats, week_label=None):

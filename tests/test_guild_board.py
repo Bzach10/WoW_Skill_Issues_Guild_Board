@@ -1426,3 +1426,37 @@ def test_integrity_flags_streak_inflation():
     msgs2 = []
     integrity.check_streaks(ok_state, msgs2)
     assert msgs2 == []
+
+
+def test_streaks_from_attendance_season_derivation():
+    from guild_board.state import streaks_from_attendance
+    scanned = {"2026-06-30", "2026-07-07", "2026-07-14"}
+    # regular: attended all three -> 3; missed the middle -> 1
+    att = {"amrevenge": {"2026-06-30", "2026-07-07", "2026-07-14"},
+           "newguy": {"2026-07-14"},
+           "flaky": {"2026-06-30", "2026-07-14"}}
+    streaks, started = streaks_from_attendance(att, scanned, scanned)
+    assert streaks == {"amrevenge": 3, "newguy": 1, "flaky": 1}
+    assert started == "2026-06-30"
+    # a guild-wide skipped week (no reports at all) is neutral, not a break
+    skip_scanned = {"2026-06-30", "2026-07-14"}
+    streaks2, _ = streaks_from_attendance(
+        {"amrevenge": {"2026-06-30", "2026-07-14"}}, skip_scanned, skip_scanned)
+    assert streaks2 == {"amrevenge": 2}
+    # a raided-but-unscanned (trimmed) week stops the count honestly
+    streaks3, _ = streaks_from_attendance(
+        {"amrevenge": {"2026-06-30", "2026-07-14"}},
+        {"2026-06-30", "2026-07-14"},
+        {"2026-06-30", "2026-07-07", "2026-07-14"})
+    assert streaks3 == {"amrevenge": 1}
+    # absent from the latest raid week -> no current streak
+    streaks4, _ = streaks_from_attendance(
+        {"ghost": {"2026-06-30"}}, scanned, scanned)
+    assert streaks4 == {}
+
+
+def test_web_role_filter_uses_whole_words():
+    """'Unholy' must never match the 'holy' healer keyword."""
+    tpl = open("guild_board/templates/web.html.j2", encoding="utf-8").read()
+    assert "tokens.indexOf(w)" in tpl          # whole-word membership
+    assert "tags.indexOf(w)" not in tpl        # the substring bug is gone

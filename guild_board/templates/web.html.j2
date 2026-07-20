@@ -231,13 +231,15 @@
     var rows = Array.prototype.slice.call(document.querySelectorAll('.row[data-name]'));
     var secs = Array.prototype.slice.call(document.querySelectorAll('.sec'));
 
-    /* --- role classification from spec/section keywords --- */
-    var HEAL = ['holy', 'discipline', 'restoration', 'resto', 'mistweaver', 'preservation', 'healing', 'hps', 'healer'];
-    var TANK = ['protection', 'brewmaster', 'blood', 'vengeance', 'guardian', 'tank'];
+    /* --- role classification from spec/section keywords ---
+       WHOLE-WORD tokens only: substring matching classified every
+       Unholy DK as a healer, because "unholy" contains "holy". */
+    var HEAL = ['holy', 'discipline', 'restoration', 'resto', 'mistweaver', 'preservation', 'healing', 'hps', 'healer', 'healers'];
+    var TANK = ['protection', 'brewmaster', 'blood', 'vengeance', 'guardian', 'tank', 'tanks'];
     function roleOf(row) {
-      var tags = row.getAttribute('data-tags') || '';
+      var tokens = (row.getAttribute('data-tags') || '').split(/[^a-z0-9+]+/);
       var hit = function (words) {
-        return words.some(function (w) { return tags.indexOf(w) !== -1; });
+        return words.some(function (w) { return tokens.indexOf(w) !== -1; });
       };
       if (hit(TANK)) return 'tank';
       if (hit(HEAL)) return 'healer';

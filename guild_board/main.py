@@ -14,7 +14,8 @@ from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
 from guild_board.state import (baselines_view, load_board_state, raid_attendance_streaks,
-                               raid_week_label, save_board_state, update_records)
+                               raid_week_label, save_board_state, streaks_from_attendance,
+                               update_records)
 from guild_board.wcl import (
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
@@ -136,7 +137,7 @@ def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_m
     imp_dps_cfg = sections.get("most_improved_dps", {})
     imp_heal_cfg = sections.get("most_improved_healers", {})
     if not stats or not (imp_dps_cfg.get("enabled", False) or imp_heal_cfg.get("enabled", False)):
-        return None, None
+        return None, None, None
     if zone_id is None:
         zone_id, _ = detect_zone(cfg, reports)
     try:
@@ -144,8 +145,23 @@ def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_m
         min_days = int(imp_dps_cfg.get("min_days", imp_heal_cfg.get("min_days", 14)))
         per_diff_dps, per_diff_hps = [], []
         season_bests = {"dps": None, "hps": None}
+        # Season attendance rides the same sweep at zero extra API cost:
+        # who appeared in which raid week, plus the week coverage that
+        # keeps streaks honest across trimmed report details.
+        attendance = {"weeks": {}, "scanned": set(), "all": set()}
         for diff in IMPROVEMENT_DIFFICULTIES:
-            history = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
+            history, coverage = collect_improvement_history(token, cfg, zone_id, diff, end_ms)
+            attendance["scanned"] |= coverage.get("scanned") or set()
+            attendance["all"] |= coverage.get("all") or set()
+            from guild_board.state import raid_week_label as _rwl
+            from datetime import datetime as _dt, timezone as _tz
+            for role in ("dps", "hps", "tanks"):
+                for name, samples in (history.get(role) or {}).items():
+                    if not keep(name):
+                        continue
+                    weeks = attendance["weeks"].setdefault(name.strip().lower(), set())
+                    for s in samples:
+                        weeks.add(_rwl(_dt.fromtimestamp((s.get("ts") or 0) / 1000, tz=_tz.utc)))
             for role, bucket in (("dps", per_diff_dps), ("hps", per_diff_hps)):
                 ranked = compute_improvement(history[role], min_span_days=min_days)
                 for entry in ranked:
@@ -172,13 +188,15 @@ def _collect_improvement(token, cfg, reports, stats, zone_id, roster_keep, end_m
         if imp_heal_cfg.get("enabled", False):
             ranked = [e for e in merge_improvement(*per_diff_hps) if keep(e["name"])]
             improvement["hps"] = ranked[:int(imp_heal_cfg.get("top_n", 5))]
-        logger.info("Most Improved: %s DPS, %s healer(s)",
+        logger.info("Most Improved: %s DPS, %s healer(s); attendance for %s raider(s) "
+                    "across %s scanned week(s)",
                     len(improvement.get("dps") or []),
-                    len(improvement.get("hps") or []))
-        return improvement, season_bests
+                    len(improvement.get("hps") or []),
+                    len(attendance["weeks"]), len(attendance["scanned"]))
+        return improvement, season_bests, attendance
     except (RuntimeError, requests.RequestException) as exc:
         logger.warning("Most Improved lookup failed; skipping the section: %s", exc)
-        return None, None
+        return None, None, None
 
 
 def _collect_weekly_mplus(token, cfg, reports, roster_keep):
@@ -344,8 +362,9 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     improvement = None
     season_parse_bests = None
+    season_attendance = None
     if raid_enabled:
-        improvement, season_parse_bests = _collect_improvement(
+        improvement, season_parse_bests, season_attendance = _collect_improvement(
             token, cfg, reports, stats, zone_id, roster_keep, end_ms)
     mplus_weekly = None
     if raid_enabled and not no_logs and token:
@@ -379,11 +398,24 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     previous_view = baselines_view(previous)
 
     # Attendance streaks: RAID nights only — showing up to raid is what
-    # Iron Attendance rewards, not spamming keys. Keyed to the actual
-    # raid week (Tuesday 15:00 UTC reset) so reposting the board never
-    # counts the same week twice, whatever weekday the repost happens.
+    # Iron Attendance rewards, not spamming keys. Preferred source: the
+    # season sweep, recomputed from actual guild logs every run — starts
+    # at the beginning of the season, immune to reposts and resets.
+    # Fallback: the incremental counter, keyed to the raid week (Tuesday
+    # 15:00 UTC reset) so reposting never counts the same week twice.
     streaks_week = raid_week_label(end_dt)
-    streaks = raid_attendance_streaks(previous, stats, week_label=streaks_week)
+    streaks_started = None
+    derived = None
+    if season_attendance and season_attendance.get("weeks"):
+        derived, streaks_started = streaks_from_attendance(
+            season_attendance["weeks"], season_attendance["scanned"],
+            season_attendance["all"])
+    if derived:
+        streaks = derived
+        logger.info("Attendance streaks derived from season logs (%s raiders).",
+                    len(streaks))
+    else:
+        streaks = raid_attendance_streaks(previous, stats, week_label=streaks_week)
 
     # Season record book: weekly data plus the full-season sweeps, so
     # records reflect the entire season rather than weeks since launch
@@ -487,7 +519,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         logger.info("Board posted to Discord.")
         try:
             save_board_state(standing, mplus_season_scores, streaks=streaks,
-                             records=records, streaks_week=streaks_week)
+                             records=records, streaks_week=streaks_week,
+                             streaks_started=streaks_started)
         except OSError as exc:
             logger.warning("Could not save board state: %s", exc)
 

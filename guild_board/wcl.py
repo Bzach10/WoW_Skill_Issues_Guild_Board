@@ -501,7 +501,21 @@ def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_rep
         season = season[:half] + season[-half:]
 
     logger.info("Most Improved: scanning %s season report(s)", len(season))
-    history = {"dps": defaultdict(list), "hps": defaultdict(list)}
+    from guild_board.state import raid_week_label
+    from datetime import datetime, timezone
+
+    def week_of(ms):
+        return raid_week_label(datetime.fromtimestamp((ms or 0) / 1000, tz=timezone.utc))
+
+    # Week coverage lets attendance stay honest across the trimmed middle:
+    # "all" = weeks the guild raided at all, "scanned" = weeks we actually
+    # read details for. A raided-but-unscanned week is UNKNOWN — streak
+    # walks must stop there instead of guessing.
+    coverage = {"all": {week_of(r.get("startTime")) for r in reports
+                        if not zone_id or (r.get("zone") or {}).get("id") == zone_id},
+                "scanned": set()}
+    history = {"dps": defaultdict(list), "hps": defaultdict(list),
+               "tanks": defaultdict(list)}
     for report in season:
         code = report["code"]
         ts = report.get("startTime") or 0
@@ -510,9 +524,11 @@ def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_rep
         except (RuntimeError, requests.RequestException) as exc:
             logger.warning("Skipping report %s in improvement scan: %s", code, exc)
             continue
+        coverage["scanned"].add(week_of(ts))
         _extract_history(rep.get("dps"), "dps", ts, history["dps"])
         _extract_history(rep.get("hps"), "healers", ts, history["hps"])
-    return history
+        _extract_history(rep.get("dps"), "tanks", ts, history["tanks"])
+    return history, coverage
 
 
 def _extract_history(rankings_blob, role_key, ts, out):
