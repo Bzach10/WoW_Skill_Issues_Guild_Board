@@ -16,9 +16,9 @@
     --uncommon:#1eff00; --goldtext:#ffd100;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  body{width:2600px; background:var(--bg); color:var(--text);
+  body{width:{{ width }}px; background:var(--bg); color:var(--text);
        font-family:'Inter','Segoe UI',sans-serif; font-size:18px;}
-  .board{position:relative; width:2600px; overflow:hidden;}
+  .board{position:relative; width:{{ width }}px; overflow:hidden;}
 
   /* --------- animation set: every period divides the {{ loop_ms }}ms loop --------- */
   @keyframes emberRise { 0%{transform:translate(0,0); opacity:0} 8%{opacity:.95}
@@ -43,12 +43,12 @@
          animation:flamePulse .6s ease-in-out infinite alternate;}
 
   /* ================================ HEADER ================================ */
-  .hdr{position:relative; width:2600px; height:330px; overflow:hidden;
+  .hdr{position:relative; width:{{ width }}px; height:300px; overflow:hidden;
        background:url("assets/wall_header.png");}
   .hdr-glow{position:absolute; left:0; right:0; bottom:-60px; height:220px;
     background:radial-gradient(ellipse 55% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
     animation:glowPulse .6s ease-in-out infinite alternate; pointer-events:none;}
-  .plaque{position:absolute; left:44px; top:30px; width:560px; height:270px; padding:13px;
+  .plaque{position:absolute; left:44px; top:26px; width:520px; height:248px; padding:12px;
     border-radius:12px; background:linear-gradient(160deg, #6b5943, #3d3123);
     box-shadow:0 18px 50px rgba(0,0,0,.7), inset 0 2px 2px rgba(255,255,255,.18), inset 0 -3px 6px rgba(0,0,0,.5);
     transform:rotate(-0.8deg);}
@@ -56,7 +56,7 @@
     background:url("assets/plaque.png") center/cover;
     box-shadow:inset 0 5px 10px rgba(255,255,255,.22), inset 0 -8px 16px rgba(0,0,0,.45);
     display:flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; overflow:hidden;}
-  .plaque-word{font-family:Cinzel,serif; font-size:74px; font-weight:900; line-height:.98;
+  .plaque-word{font-family:Cinzel,serif; font-size:66px; font-weight:900; line-height:.98;
     letter-spacing:.1em; color:#43352a;
     text-shadow:0 2px 1px rgba(255,244,214,.4), 0 -2px 3px rgba(0,0,0,.55);}
   .plaque-sub{font-size:14px; letter-spacing:.38em; color:#5a4a38; font-weight:700; margin-top:7px;
@@ -64,32 +64,32 @@
   .nail{position:absolute; width:15px; height:15px; border-radius:50%;
     background:radial-gradient(circle at 35% 30%, #8d7a5e, #3d3123 70%);
     box-shadow:0 1px 2px rgba(255,255,255,.25);}
-  .widgets{position:absolute; left:660px; top:32px; display:flex; gap:26px;}
-  .widget{background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:16px 22px;}
+  .widgets{position:absolute; left:620px; top:26px; display:flex; gap:24px;}
+  .widget{background:rgba(15,16,22,.9); border:1px solid #3a3427; border-radius:12px; padding:13px 20px;}
   .widget .lbl{font-size:14px; letter-spacing:.14em; font-weight:700; color:var(--accent);}
-  .widget .val{font-size:46px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:5px;}
+  .widget .val{font-size:42px; font-weight:800; font-variant-numeric:tabular-nums; margin-top:4px;}
   .widget .sub{font-size:14px; color:var(--muted); margin-top:3px;}
   .coin{display:inline-block; border-radius:50%; vertical-align:baseline;}
-  .debuffs{position:absolute; left:660px; top:238px; display:flex; gap:20px; align-items:center;}
+  .debuffs{position:absolute; left:620px; top:214px; display:flex; gap:20px; align-items:center;}
   .debuffs .lbl{font-size:13px; letter-spacing:.14em; color:#b8bcc6; font-weight:700; text-shadow:0 1px 3px #000;}
   .debuff{position:relative; width:52px; height:52px; border-radius:8px; overflow:hidden; border:2px solid;}
   .debuff img{width:100%; height:100%; object-fit:cover;}
   .debuff .stack{position:absolute; right:2px; bottom:0; font-size:16px; font-weight:800; color:#fff; text-shadow:0 1px 3px #000;}
   .debuff.bad{border-color:var(--red); box-shadow:0 0 14px rgba(229,72,77,.35);}
   .debuff.good{border-color:var(--green); box-shadow:0 0 14px rgba(76,220,86,.3);}
-  .torch{position:absolute; right:420px; top:36px; width:70px; height:200px;}
+  .torch{position:absolute; right:420px; top:20px; width:70px; height:190px;}
   .torch .handle{position:absolute; bottom:-56px; left:50%; width:14px; height:74px; margin-left:-7px;
     border-radius:7px; background:linear-gradient(180deg, #4a3826, #2b2117);
     box-shadow:0 0 24px rgba(224,122,40,.5);}
   .sign{position:absolute; right:96px; top:0; display:flex; flex-direction:column; align-items:center;
     animation:signSwing .6s ease-in-out infinite alternate; transform-origin:top center;}
   .sign .chains{display:flex; gap:150px;}
-  .sign .chain{width:4px; height:60px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;}
-  .sign .plank{width:250px; padding:16px 0 20px; border-radius:8px;
+  .sign .chain{width:4px; height:50px; background:linear-gradient(180deg, #1c1712, #4a3826); border-radius:2px;}
+  .sign .plank{width:250px; padding:14px 0 18px; border-radius:8px;
     background:repeating-linear-gradient(180deg, #5a4028 0 22px, #4c3520 22px 24px, #63482d 24px 46px, #45301d 46px 48px);
     border:3px solid #2b2117; box-shadow:0 14px 34px rgba(0,0,0,.65), inset 0 2px 3px rgba(255,255,255,.12);
     display:flex; flex-direction:column; align-items:center; gap:2px;}
-  .sign .big{font-family:Cinzel,serif; font-size:42px; font-weight:900; letter-spacing:.1em; color:#251a10;
+  .sign .big{font-family:Cinzel,serif; font-size:38px; font-weight:900; letter-spacing:.1em; color:#251a10;
     text-shadow:0 1px 0 rgba(255,220,160,.28), 0 -1px 2px rgba(0,0,0,.6);}
   .sign .small{font-size:11px; letter-spacing:.22em; color:#2e2114; font-weight:700; white-space:nowrap;}
   .hdr-fade{position:absolute; left:0; right:0; bottom:0; height:26px;
@@ -147,7 +147,7 @@
   .roast .attr{font-size:17px; color:var(--muted); text-align:right; margin-top:2px;}
 
   /* ================================ FOOTER ================================ */
-  .ftr{position:relative; width:2600px; height:470px; overflow:hidden;
+  .ftr{position:relative; width:{{ width }}px; height:430px; overflow:hidden;
     background:url("assets/wall_footer.png");}
   .ftr-fireglow{position:absolute; left:0; right:0; bottom:-70px; height:260px;
     background:radial-gradient(ellipse 60% 100% at 50% 100%, rgba(224,122,40,.30), transparent 70%);
@@ -155,16 +155,16 @@
   .firerow{position:absolute; left:0; right:0; bottom:-6px; height:150px; pointer-events:none;}
   .ftr-in{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
     gap:40px; padding:0 56px;}
-  .tooltip{width:600px; background:rgba(7,7,24,.94); border-radius:8px; padding:22px 28px;
-    font-size:19px; line-height:1.5;}
+  .tooltip{width:620px; background:rgba(7,7,24,.94); border-radius:8px; padding:18px 26px;
+    font-size:17.5px; line-height:1.4;}
   .tooltip.codex{border:1px solid #43435c; box-shadow:inset 0 0 0 1px rgba(120,120,180,.15), 0 14px 40px rgba(0,0,0,.6);}
   .tooltip.item{border:1px solid #5c4a2e; box-shadow:inset 0 0 0 1px rgba(230,180,70,.18), 0 14px 40px rgba(0,0,0,.6);}
-  .tooltip .tt{font-family:Cinzel,serif; font-size:30px; font-weight:800;}
+  .tooltip .tt{font-family:Cinzel,serif; font-size:28px; font-weight:800;}
   .tooltip .split{display:flex; justify-content:space-between;}
-  .item-img{display:block; margin:12px auto 0; border:2px solid #967a3e; border-radius:6px; max-width:540px; max-height:310px;}
+  .item-img{display:block; margin:12px auto 0; border:2px solid #967a3e; border-radius:6px; max-width:560px; max-height:290px;}
   .memorial{display:flex; flex-direction:column; align-items:center; gap:7px;}
   .memorial .mt{font-size:16px; letter-spacing:.28em; color:var(--accent); font-weight:700; text-shadow:0 1px 4px #000;}
-  .gy{position:relative; width:1140px; height:370px; border:3px solid #967a3e; border-radius:10px; overflow:hidden;
+  .gy{position:relative; width:1240px; height:350px; border:3px solid #967a3e; border-radius:10px; overflow:hidden;
     background:linear-gradient(180deg, #12141a 0%, #191d28 55%, #141710 100%);
     box-shadow:0 0 0 1px #2d303a, 0 18px 50px rgba(0,0,0,.65);}
   .gy-glow{position:absolute; left:0; right:0; bottom:-90px; height:260px;
@@ -337,7 +337,7 @@
         <div class="tt" style="color:var(--legendary);">Brewzleeh's Gambling Debt</div>
         <div style="display:flex; align-items:baseline; gap:10px; margin:5px 0 2px; font-variant-numeric:tabular-nums;">
           <span data-count data-base="{{ debt }}" data-step="1337" data-ticks="4"
-                style="font-size:44px; font-weight:800; color:var(--accent); animation:debtGlow .6s ease-in-out infinite alternate;">{{ "{:,}".format(debt) }}</span>
+                style="font-size:40px; font-weight:800; color:var(--accent); animation:debtGlow .6s ease-in-out infinite alternate;">{{ "{:,}".format(debt) }}</span>
           <span class="coin" style="width:18px; height:18px; background:radial-gradient(circle at 35% 30%, #ffe9a8, #e6b446 55%, #8a6420);"></span>
           <span style="font-size:14px; color:var(--muted);">and climbing</span>
         </div>

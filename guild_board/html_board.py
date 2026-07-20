@@ -31,10 +31,11 @@ LOOP_MS = 1200
 TEMPLATE_DIR = Path(__file__).parent / "templates"
 RENDER_HTML = "board_render.html"   # written to cwd so relative assets/ paths work
 
-# band heights — MUST match the template's .hdr/.ftr/.motd/.credits CSS so
-# the GIF encoder knows which rows are animated
-HEADER_H = 330
-FOOTER_TOTAL = 470 + 52 + 40
+# canvas + band heights — MUST match the template's CSS so the viewport is
+# right and the GIF encoder knows which rows are animated
+WIDTH = 3000
+HEADER_H = 300
+FOOTER_TOTAL = 430 + 52 + 40
 
 # tombstone geometry from the design (w, h, arched, cross, rotation)
 STONES = [
@@ -244,6 +245,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
             "watermark_text",
             "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
             if display_cfg.get("watermark") else "",
+        "width": WIDTH,
         "header_embers": _embers(7, 26),
         "footer_embers": _embers(11, 26),
         "footer_flames": _flames_row(),
@@ -281,7 +283,7 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
 
         with sync_playwright() as p:
             browser = p.chromium.launch()
-            page = browser.new_page(viewport={"width": board_image.WIDTH, "height": 1400})
+            page = browser.new_page(viewport={"width": WIDTH, "height": 1400})
             page.goto(html_path.resolve().as_uri())
             page.wait_for_load_state("networkidle")
             page.wait_for_timeout(1200)   # webfonts + CDN icons settle
