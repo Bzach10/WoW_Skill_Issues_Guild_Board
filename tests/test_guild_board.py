@@ -1086,15 +1086,16 @@ def test_weekly_awards_rotate_and_rank():
     kwargs = dict(stats=stats, streaks=streaks, season_scores=scores, previous=previous)
     secs = weekly_awards(0, per_week=2, **kwargs)
     assert len(secs) == 2
-    assert secs[0]["title"].endswith("IRONMAN")
-    assert secs[0]["rows"][0]["value"] == "0"          # zero deaths ranks first
+    assert secs[0]["title"].endswith("ATTENDANCE")
+    assert secs[0]["rows"][0]["name"] == "Alba"
+    # rotation: an odd week leads with the other award
     secs2 = weekly_awards(1, per_week=2, **kwargs)
-    assert secs2[0]["title"].endswith("ATTENDANCE")    # rotation moved on
-    assert secs2[0]["rows"][0]["name"] == "Alba"
+    assert secs2[0]["title"].endswith("BIGGEST CLIMB")
     # climb: only positive gains, largest first
-    climb = weekly_awards(2, per_week=1, **kwargs)[0]
-    assert climb["title"].endswith("BIGGEST CLIMB")
+    climb = secs2[0]
     assert climb["rows"][0]["name"] == "Alba" and climb["rows"][0]["value"] == "+100"
+    # the retired Ironman award never appears
+    assert not any("IRONMAN" in s["title"] for s in secs + secs2)
 
 
 def test_alt_header_footer_modules_render(tmp_path):
@@ -1177,13 +1178,15 @@ def test_tank_sections_and_boss_ranks_move():
     raid_titles = [s["title"] for s in ctx["columns"][0]["sections"]]
     mplus_titles = [s["title"] for s in ctx["columns"][1]["sections"]]
     guild_titles = [s["title"] for s in ctx["columns"][3]["sections"]]
-    assert any(t.startswith("TOP TANK PARSES") for t in raid_titles)
+    assert "TOP PARSES · ALL ROLES" in raid_titles
     assert "TOP M+ TANKS THIS WEEK" in mplus_titles
     assert "WEEKLY BOSS RANKS" not in raid_titles      # moved out of raid...
     assert guild_titles[0] == "WEEKLY BOSS RANKS"      # ...to lead Seasonal Guild
-    # tank rows carry class colors like everyone else
-    tank_sec = next(s for s in ctx["columns"][0]["sections"] if s["title"].startswith("TOP TANK"))
-    assert tank_sec["rows"][0]["name"] == "Brewz"
+    # the all-roles ladder ranks by parse across DPS/HPS/tanks, tagged by role
+    overall = next(s for s in ctx["columns"][0]["sections"] if s["title"] == "TOP PARSES · ALL ROLES")
+    assert overall["rows"][0]["name"] == "Rakell"          # 94.2 DPS
+    assert overall["rows"][1]["name"] == "Brewz"           # 88.0 tank beats 58.0 healer
+    assert overall["rows"][1]["detail_bits"][0] == "Tank"
 
 
 def test_collect_parses_only_returns_tanks(monkeypatch):

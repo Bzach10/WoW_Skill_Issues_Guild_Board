@@ -440,6 +440,25 @@ def _parse_rows(best, unit, top_n, diff_name="", streaks=None):
     return rows
 
 
+def _overall_rows(stats, top_n, diff_name="", streaks=None):
+    """Best parse from ANY role — DPS, healers and tanks compete on one
+    list, each player counted once at their highest percentile."""
+    merged, role_of = {}, {}
+    for key, role in (("best_dps", "DPS"), ("best_hps", "HPS"), ("best_tanks", "Tank")):
+        for name, info in (stats.get(key) or {}).items():
+            prev = merged.get(name)
+            if prev is None or (info.get("parse") or 0) > (prev.get("parse") or 0):
+                merged[name] = info
+                role_of[name.strip().lower()] = role
+    rows = _parse_rows(merged, "", top_n, diff_name, streaks)
+    for row in rows:
+        role = role_of.get(row["name"].strip().lower())
+        if role:
+            row["detail_bits"] = [role] + [b for b in row["detail_bits"] if b]
+            row["detail"] = " · ".join(row["detail_bits"])
+    return rows
+
+
 def _leader_rows(leaders, top_n):
     rows = []
     for entry in leaders[:top_n]:
@@ -682,14 +701,12 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
         if _enabled(sections_cfg, "top_healing"):
             rows = _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name, streaks)
             raid.append(_sec(_titled("TOP HEALING PARSES", stats.get("best_hps")), rows))
-        if _enabled(sections_cfg, "top_tanks"):
-            # tank parses = DPS percentile within the tank bracket (WCL's own
-            # tank ranking); only shown when the collector provided the pool
-            pool = stats.get("best_tanks")
-            if pool is not None:
-                rows = _parse_rows(pool or {}, "DPS", top_n, diff_name, streaks)
-                raid.append(_sec(_titled("TOP TANK PARSES", pool), rows,
-                                 "No tank parses this week"))
+        if _enabled(sections_cfg, "top_parses"):
+            # every role on one ladder — the only place a 91% tank parse
+            # can outrank an 89% DPS parse
+            rows = _overall_rows(stats, top_n, diff_name, streaks)
+            if rows:
+                raid.append(_sec("TOP PARSES · ALL ROLES", rows))
     if stats and _enabled(sections_cfg, "most_deaths"):
         campers_title = "GRAVEYARD CAMPERS"
         camper_diff = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")

@@ -133,8 +133,14 @@ sections:
     difficulty: mythic             # normal / heroic / mythic
     difficulty_fallback: true      # Try mythic -> heroic -> normal sequentially
 
-  # Top tank parses of the week (raid) + Top M+ tanks — WCL ranks tanks
-  # in their own bracket, so the percentiles are tank-vs-tank
+  # Top parses overall — every role on ONE ladder (DPS, healers and
+  # tanks compete head to head at their best percentile)
+  top_parses:
+    order: 10
+    enabled: true
+
+  # Top M+ tanks section in the Mythic Plus column (tank-vs-tank
+  # percentiles from WCL's tank bracket)
   top_tanks:
     order: 10
     enabled: true

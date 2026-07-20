@@ -103,9 +103,9 @@ board still posts.
 
 ### Tune the weekly awards
 
-Rotating spotlights that mid-pack players can win — IRONMAN (fewest deaths),
-IRON ATTENDANCE (longest streak of active weeks), BIGGEST CLIMB (largest M+
-score gain since the last board). Two appear per week:
+Rotating spotlights that mid-pack players can win — IRON ATTENDANCE (longest
+streak of active weeks) and BIGGEST CLIMB (largest M+ score gain since the
+last board):
 
 ```yaml
 awards:

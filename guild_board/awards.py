@@ -4,13 +4,13 @@ The top parsers own most of the board; these sections rotate through
 prizes that reward showing up and improving, computed entirely from data
 the pipeline already has (no extra API calls):
 
-  IRONMAN         — fewest deaths among this week's raiders
   IRON ATTENDANCE — longest consecutive-week activity streaks
   BIGGEST CLIMB   — largest M+ season-score gain since last board
 
 Each week `per_week` of them appear, rotating by ISO week number so the
 spotlight moves even when the data doesn't. Everything fails open: a
 missing dataset just means that award sits out this week.
+(The Ironman fewest-deaths award was retired by popular demand.)
 """
 
 import logging
@@ -25,31 +25,6 @@ def _display(name):
     """Streak/state keys are lowercased; make them presentable again."""
     name = (name or "").strip()
     return name[:1].upper() + name[1:] if name else name
-
-
-def _ironman(stats=None, **_):
-    """Fewest deaths among everyone who raided this week."""
-    if not stats:
-        return None
-    deaths = stats.get("deaths") or {}
-    participants = set(stats.get("participants") or [])
-    participants |= set(stats.get("best_dps") or {})
-    participants |= set(stats.get("best_hps") or {})
-    if not participants:
-        return None
-    pulls = stats.get("pulls") or 0
-    ranked = sorted(participants, key=lambda n: (deaths.get(n, 0), n.lower()))
-    rows = []
-    for name in ranked:
-        d = deaths.get(name, 0)
-        rows.append({
-            "name": name,
-            "detail": f"survived {pulls} pulls" if pulls else "survived the week",
-            "value": str(d),
-            "value_suffix": "deaths",
-            "value_color": GREEN if d == 0 else MUTED,
-        })
-    return rows
 
 
 def _attendance(streaks=None, **_):
@@ -95,7 +70,6 @@ def _biggest_climb(season_scores=None, previous=None, **_):
 
 
 AWARD_POOL = [
-    ("WEEKLY AWARD · IRONMAN", _ironman),
     ("WEEKLY AWARD · IRON ATTENDANCE", _attendance),
     ("WEEKLY AWARD · BIGGEST CLIMB", _biggest_climb),
 ]
