@@ -10,8 +10,8 @@
   /* Readability pass: slimmer art bands (330/470), ~25% larger data text,  */
   /* bigger tombstone lettering, fire along the footer.                     */
   :root{
-    --bg:#111217; --panel:#1a1c23; --hairline:#2d303a;
-    --accent:#e6b446; --text:#ebecf0; --muted:#969aa4; --faint:#5f636e;
+    --bg:#111217; --panel:#1e212b; --hairline:#353b48;
+    --accent:#e6b446; --text:#f2f3f7; --muted:#b3b9c5; --faint:#7f8591;
     --red:#e5484d; --green:#4cdc56; --epic:#a335ee; --legendary:#ff8000;
     --uncommon:#1eff00; --goldtext:#ffd100;
   }
@@ -103,7 +103,7 @@
 
   /* ================================ MIDDLE ================================ */
   .mid{position:relative; padding:26px 36px 26px;
-    background:linear-gradient(rgba(17,18,23,.78), rgba(17,18,23,.78)), url("assets/theme_art.png") center 40%/cover;}
+    background:linear-gradient(rgba(17,18,23,.87), rgba(17,18,23,.87)), url("assets/theme_art.png") center 40%/cover;}
   .hero{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
     padding:18px 24px 16px; margin-bottom:26px;}
   .tiles{display:flex;}
@@ -118,15 +118,18 @@
   .cols{display:flex; gap:24px; align-items:stretch;}
   .col{flex:1; min-width:0; background:var(--panel); border:1px solid var(--hairline);
     border-radius:12px; padding:24px;}
-  .col-h{display:flex; align-items:center; gap:14px; height:28px; margin-bottom:24px;}
+  .col-h{display:flex; align-items:center; gap:14px; padding-bottom:16px; margin-bottom:18px;
+    border-bottom:1px solid var(--hairline);}
   .col-h .tick{width:5px; height:26px; background:var(--accent);}
-  .col-h .t{font-size:25px; font-weight:700; color:var(--text); letter-spacing:.02em;}
+  .col-h .t{font-size:25px; font-weight:700; color:var(--text); letter-spacing:.03em;}
   .sec{margin-bottom:18px;}
   .sec:last-child{margin-bottom:0;}
   .sec-h{display:flex; align-items:center; gap:12px; height:38px;}
-  .sec-h .t{font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap;}
+  .sec-h .t{font-size:18px; font-weight:700; color:var(--accent); white-space:nowrap; letter-spacing:.05em;}
   .sec-h .rule{flex:1; height:1px; background:var(--hairline);}
-  .row{display:flex; align-items:center; height:46px; min-width:0;}
+  .row{display:flex; align-items:center; height:46px; min-width:0;
+    padding:0 12px; margin:0 -12px; border-radius:8px;}
+  .row.alt{background:rgba(255,255,255,.032);}
   .row .badge{width:27px; height:27px; border-radius:50%; flex:none;
     display:flex; align-items:center; justify-content:center;
     font-size:15px; font-weight:700; color:#14141a; margin-right:11px;}
@@ -137,7 +140,7 @@
   .row .detail{font-size:18px; color:var(--muted); margin-left:11px; flex:1; min-width:0;
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
   .row .value{font-size:21px; font-weight:700; white-space:nowrap; margin-left:16px;}
-  .row .value small{font-size:18px; font-weight:400; color:var(--muted);}
+  .row .value small{font-size:18px; font-weight:500; color:#ccd2dd;}
   .row.textrow{font-size:18px; color:var(--muted);}
   .empty{font-size:18px; color:var(--faint); padding-top:8px;}
   .roast{background:var(--panel); border:1px solid var(--hairline); border-radius:12px;
@@ -172,16 +175,19 @@
     animation:glowPulse .6s ease-in-out infinite alternate;}
   .gy-fog{position:absolute; left:0; right:0; bottom:0; height:70px;
     background:linear-gradient(180deg, transparent, #171a10 45%, #0e1009);}
-  .gy-row{position:absolute; left:0; right:0; bottom:24px; display:flex; align-items:flex-end;
-    justify-content:center; gap:40px;}
-  .stone{display:flex; flex-direction:column; align-items:center; padding-top:24px; gap:6px;
+  .gy-row{position:absolute; left:0; right:0; bottom:20px; display:flex; align-items:flex-end;
+    justify-content:center; gap:44px;}
+  .grave{display:flex; flex-direction:column; align-items:center; gap:9px;}
+  .stone{display:flex; justify-content:center; padding-top:26px;
     box-shadow:inset 0 4px 6px rgba(255,255,255,.18), inset 0 -10px 18px rgba(0,0,0,.45), 0 12px 26px rgba(0,0,0,.6);}
-  .stone .rip{font-family:Cinzel,serif; font-size:24px; font-weight:900; color:#211f1b; text-shadow:0 1px 0 rgba(255,255,255,.22);}
-  .stone .cross{width:26px; height:52px; position:relative; margin-bottom:2px;}
+  .stone .rip{font-family:Cinzel,serif; font-size:26px; font-weight:900; color:#211f1b; text-shadow:0 1px 0 rgba(255,255,255,.25);}
+  .stone .cross{width:30px; height:60px; position:relative;}
   .stone .cross i{position:absolute; background:#2c2a25; border-radius:3px;}
-  .stone .nm{font-size:22px; font-weight:800; color:#211f1b;}
-  .stone .dd{font-size:16px; font-weight:700; color:#35301f;}
-  .stone .ep{font-size:14px; color:#413d33; text-align:center; padding:0 14px; font-style:italic; line-height:1.25;}
+  .plate{position:relative; z-index:2; background:rgba(8,10,6,.9); border:2px solid #967a3e;
+    border-radius:8px; padding:8px 16px 9px; text-align:center;
+    box-shadow:0 8px 20px rgba(0,0,0,.55);}
+  .plate .nm{font-size:21px; font-weight:800; color:#f4f0e4; letter-spacing:.02em; white-space:nowrap;}
+  .plate .dd{font-size:15px; font-weight:700; color:var(--accent); margin-top:3px; white-space:nowrap;}
   .plot{display:flex; flex-direction:column; align-items:center; gap:6px; width:190px;}
   .fire{position:relative; width:120px; height:120px;}
   .fire .log{position:absolute; bottom:2px; width:64px; height:12px; border-radius:6px;
@@ -189,7 +195,7 @@
   .reserved{background:#3a2c1a; border:2px solid #211809; border-radius:6px; padding:6px 12px;
     font-size:14px; font-weight:800; letter-spacing:.08em; color:#d9c49a; box-shadow:0 6px 16px rgba(0,0,0,.5);}
   .plot .weeks{font-size:13px; color:#8d93a2; font-style:italic;}
-  .gy-cap{font-size:16px; color:var(--muted); font-style:italic; text-shadow:0 1px 4px #000;}
+  .gy-cap{font-size:16px; color:#c3c8d2; font-style:italic; text-shadow:0 1px 4px #000;}
   .motd{height:52px; display:flex; align-items:stretch; border-top:1px solid var(--hairline); background:#0d0e13;}
   .motd .chip{display:flex; align-items:center; padding:0 24px; background:#1a1c23;
     border-right:1px solid var(--hairline); font-weight:800; letter-spacing:.16em; color:var(--accent); font-size:15px;}
@@ -293,7 +299,7 @@
           {%- if row.text is defined %}
           <div class="row textrow">{{ row.text }}</div>
           {%- else %}
-          <div class="row">
+          <div class="row{{ ' alt' if loop.index % 2 == 0 }}">
             <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
             {%- if icons_on %}{% if row.icon %}<img class="icon" src="{{ row.icon }}" alt="">{% else %}<span class="icon blank"></span>{% endif %}{% endif %}
             <span class="name" style="color:{{ row.color }};">{{ row.name }}</span>
@@ -364,14 +370,17 @@
           <div class="gy-fog"></div>
           <div class="gy-row">
             {%- for s in stones %}
-            <div class="stone" style="width:{{ s.w }}px; height:{{ s.h }}px; transform:rotate({{ s.rot }}deg);
-                 background:linear-gradient(165deg, {{ s.light }} 0%, {{ s.mid }} 55%, {{ s.dark }} 100%);
-                 border-radius:{{ s.radius }};{% if not s.arched %} padding-top:22px;{% else %} padding-top:30px;{% endif %}">
-              {%- if s.cross %}<div class="cross"><i style="left:10px; top:0; width:7px; height:52px;"></i><i style="left:0; top:12px; width:26px; height:7px;"></i></div>
-              {%- else %}<div class="rip">R.I.P.</div>{% endif %}
-              <div class="nm">{{ s.name }}</div>
-              <div class="dd">{{ s.deaths }}</div>
-              <div class="ep">{{ s.epitaph }}</div>
+            <div class="grave">
+              <div class="stone" style="width:{{ s.w }}px; height:{{ s.h }}px; transform:rotate({{ s.rot }}deg);
+                   background:linear-gradient(165deg, {{ s.light }} 0%, {{ s.mid }} 55%, {{ s.dark }} 100%);
+                   border-radius:{{ s.radius }};">
+                {%- if s.cross %}<div class="cross"><i style="left:12px; top:0; width:7px; height:60px;"></i><i style="left:0; top:14px; width:30px; height:7px;"></i></div>
+                {%- else %}<div class="rip">R.I.P.</div>{% endif %}
+              </div>
+              <div class="plate">
+                <div class="nm">{{ s.name }}</div>
+                <div class="dd">{{ s.deaths }}</div>
+              </div>
             </div>
             {%- endfor %}
             <div class="plot">
