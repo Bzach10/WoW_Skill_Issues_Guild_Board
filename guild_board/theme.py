@@ -46,6 +46,12 @@ DEFAULT_THEME = {
         # Wanted-poster column dressing (empty strings hide the lines)
         "poster_eyebrow": "★ WANTED ★",
         "poster_reward": "DEAD OR ALIVE · REWARD: GLORY",
+        # Which LAYOUT the public website uses — a file in templates/web/.
+        # Ships with: poster (the WANTED-poster grid), chronicle (editorial
+        # feature spread), ember_terminal (arcane console log), codex
+        # (illuminated single-column scroll). A guild can add its own in
+        # board_templates/web/. An unknown name falls back to poster.
+        "web_layout": "poster",
     },
     "colors": {
         "background": "#111217",
@@ -188,11 +194,14 @@ def resolve_templates(theme):
         "headers", board.get("header") or "stone_torchlight", "stone_torchlight")
     footer_rel, footer_name = _resolve_module(
         "footers", board.get("footer") or "graveyard", "graveyard")
+    web_rel, _ = _resolve_module(
+        "web", board.get("web_layout") or "poster", "poster")
     header_h = board.get("header_height") or HEADER_HEIGHTS.get(header_name, 300)
     footer_h = (board.get("footer_height") or FOOTER_HEIGHTS.get(footer_name, 430))
     return {
         "header_template": header_rel,
         "footer_template": footer_rel,
+        "web_layout_template": web_rel,
         "header_h": int(header_h),
         "footer_h": int(footer_h),
         "footer_total": int(footer_h) + FOOTER_EXTRA,

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Weekly Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚔️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  /* ================= Responsive web board =================
+     The auto-scaling twin of the Discord image: real HTML, 4 columns on
+     a desktop, stacking to 1 on a phone. Interactive: search, role
+     filters, per-player profile links, and a week archive — all of it
+     fail-quiet, so with JS off you simply get the clean static page. */
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text); font-family:var(--font-body); font-size:16px;
+    background:radial-gradient(1200px 500px at 50% -180px, rgba(224,122,40,.14), transparent 65%), var(--bg);}
+
+  /* ------------------------------ header ------------------------------ */
+  .hdr{position:relative; padding:52px 20px 30px; text-align:center; overflow:hidden;
+    background:radial-gradient(ellipse 90% 140% at 50% -40%, rgba(224,122,40,.25), transparent 62%), #0b0c10;
+    border-bottom:1px solid var(--hairline);}
+  .hdr h1{font-family:var(--font-display); font-weight:900; letter-spacing:.12em;
+    font-size:clamp(30px, 7vw, 62px); text-shadow:0 4px 22px #000, 0 0 46px rgba(230,180,70,.25);}
+  .hdr .sub{margin-top:8px; letter-spacing:.36em; color:var(--accent); font-weight:700;
+    font-size:clamp(11px, 2.6vw, 15px);}
+  .hdr .rule{width:min(360px, 60%); height:2px; margin:18px auto 0;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent); opacity:.7;}
+  .info{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+    padding:12px 20px; color:var(--muted); font-size:14px; border-bottom:1px solid var(--hairline);}
+
+  /* ------------------------- sticky toolbar --------------------------- */
+  .bar{position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:8px;
+    flex-wrap:wrap; padding:10px 16px; background:rgba(11,12,16,.94);
+    backdrop-filter:blur(8px); border-bottom:1px solid var(--hairline);}
+  .bar a, .bar button{font:inherit; font-size:13px; font-weight:700; letter-spacing:.04em;
+    color:var(--muted); background:none; text-decoration:none; padding:6px 12px;
+    border:1px solid var(--hairline); border-radius:999px; cursor:pointer;
+    transition:color .15s, border-color .15s, background .15s; white-space:nowrap;}
+  .bar a:hover, .bar button:hover{color:var(--accent); border-color:var(--accent);}
+  .bar button.on{color:#14141a; background:var(--accent); border-color:var(--accent);}
+  .bar .sp{flex:1;}
+  .bar input{font:inherit; font-size:13px; color:var(--text); background:#15171e;
+    border:1px solid var(--hairline); border-radius:999px; padding:6px 14px; width:150px;
+    outline:none; transition:border-color .15s;}
+  .bar input:focus{border-color:var(--accent);}
+  .bar select{font:inherit; font-size:13px; font-weight:700; color:var(--muted);
+    background:#15171e; border:1px solid var(--hairline); border-radius:999px;
+    padding:6px 10px; outline:none; cursor:pointer;}
+  .filters{display:contents;}
+
+  /* ------------------------------ layout ------------------------------ */
+  .wrap{max-width:1720px; margin:0 auto; padding:22px 16px 8px;}
+  .card{background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.14)), var(--panel);
+    border:1px solid var(--hairline); border-radius:14px;
+    box-shadow:0 12px 34px rgba(0,0,0,.35);}
+  .hero{padding:16px 20px; margin-bottom:20px;}
+  .headline{display:flex; align-items:center; flex-wrap:wrap; gap:10px 14px;
+    padding-bottom:12px; margin-bottom:12px;
+    border-bottom:1px solid var(--hairline);}
+  .headline .tag{font-size:12px; letter-spacing:.16em; font-weight:800; color:var(--accent);
+    background:rgba(230,180,70,.12); border:1px solid rgba(230,180,70,.35);
+    padding:5px 10px; border-radius:6px; flex:none;}
+  .headline .txt{font-family:var(--font-display); font-weight:900; letter-spacing:.02em;
+    font-size:clamp(17px, 3.4vw, 30px); line-height:1.2;}
+  .tiles{display:grid; grid-template-columns:repeat(auto-fit, minmax(130px, 1fr)); gap:10px 18px;}
+  .tile .lbl{font-size:12px; color:var(--muted); letter-spacing:.05em;}
+  .tile .val{font-size:clamp(20px, 3.2vw, 28px); font-weight:800; font-variant-numeric:tabular-nums;}
+  .tile .val small{font-size:.55em; font-weight:600; margin-left:6px;}
+  .bar2{position:relative; height:16px; margin-top:12px; border-radius:8px; background:#262830; overflow:hidden;}
+  .bar2 .fill{position:absolute; inset:0 auto 0 0; border-radius:8px;
+    background:linear-gradient(90deg, var(--accent), #f6c96a);}
+  .bar2 .cap{position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:12px; color:var(--text); text-shadow:0 1px 2px rgba(0,0,0,.6);}
+  .cols{display:grid; grid-template-columns:repeat(auto-fit, minmax(min(390px, 100%), 1fr)); gap:16px;}
+  .col{position:relative; padding:26px 18px 16px; min-width:0;
+    {%- if theme.backgrounds.poster %}
+    background:
+      linear-gradient(rgba(240,228,201,.62), rgba(235,221,190,.68)),
+      url("{{ theme.backgrounds.poster }}") center/cover !important;
+    border:2px solid #5c4526 !important;
+    box-shadow: inset 0 0 0 5px rgba(74,54,26,.22), 0 12px 30px rgba(0,0,0,.5) !important;
+    {%- else %}
+    background:
+      radial-gradient(130% 80% at 50% 0%, rgba(255,222,160,.06), transparent 62%),
+      linear-gradient(172deg, #2b2114 0%, #241b10 55%, #1c140b 100%) !important;
+    border:2px solid #7c6136 !important;
+    {%- endif %}
+    border-radius:3px 10px 4px 12px !important;}
+  {%- if theme.backgrounds.poster %}
+  /* ink-on-paper: match the image board's Imperial Bounty posters */
+  .col .col-h{border-bottom-color:#5c4526;}
+  .col .col-h .eyebrow{color:#4a3113;}
+  .col .col-h .t{color:#2c2010;}
+  .col .col-h .bounty{color:#6b5433;}
+  .col .sec-h .t{color:#4a3113;}
+  .col .sec-h .rule{background:linear-gradient(90deg, #6d5433, transparent);}
+  .col .row.alt{background:rgba(74,49,19,.10);}
+  .col .row:hover{background:rgba(74,49,19,.16);}
+  .col .row .detail{color:#5f4a2e;}
+  .col .row .value small{color:#5f4a2e;}
+  .col .row .badge.plain{border-color:#6d5433; color:#5f4a2e;}
+  .col .row.textrow{color:#5f4a2e;}
+  .col .empty{color:#7a6244;}
+  {%- endif %}
+  .col::before{content:""; position:absolute; top:8px; left:50%; margin-left:-5px;
+    width:10px; height:10px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #cdb789, #3d3123 70%);
+    box-shadow:0 2px 4px rgba(0,0,0,.7);}
+  .col-h{display:block; text-align:center; padding-bottom:10px; margin-bottom:12px;
+    border-bottom:3px double #7c6136;}
+  .col-h .eyebrow{display:block; font-family:var(--font-display); font-size:11px;
+    letter-spacing:.45em; text-indent:.45em; color:#c8a55f;}
+  .col-h .t{display:block; font-family:var(--font-display); font-size:19px; font-weight:400;
+    color:#ecd9b0; letter-spacing:.04em; word-spacing:.35em; margin-top:4px;}
+  .col-h .bounty{display:block; font-size:9px; letter-spacing:.28em; text-indent:.28em;
+    color:#94794c; margin-top:5px; font-weight:700;}
+  .sec{margin-bottom:16px;}
+  .sec:last-child{margin-bottom:0;}
+  .sec-h{display:flex; align-items:center; gap:10px; height:30px;}
+  .sec-h .t{font-size:13px; font-weight:800; color:var(--accent); letter-spacing:.06em; white-space:nowrap;}
+  .sec-h .rule{flex:1; height:1px;
+    background:linear-gradient(90deg, var(--hairline), transparent);}
+
+  /* ------------------------------- rows ------------------------------- */
+  .row{display:flex; align-items:center; min-height:40px; padding:2px 8px; margin:0 -8px;
+    border-radius:8px; min-width:0; transition:background .15s;}
+  .row.alt{background:rgba(255,255,255,.032);}
+  .row:hover{background:rgba(230,180,70,.08);}
+  .row .badge{width:23px; height:23px; border-radius:50%; flex:none; display:flex;
+    align-items:center; justify-content:center; font-size:12px; font-weight:800;
+    color:#14141a; margin-right:9px;
+    box-shadow:inset 0 2px 3px rgba(255,255,255,.35), inset 0 -2px 3px rgba(0,0,0,.3);}
+  .row .badge.plain{background:none; border:1px solid var(--faint); color:var(--muted); box-shadow:none;}
+  .row .icon{width:23px; height:23px; border-radius:5px; flex:none; margin-right:7px;
+    box-shadow:0 0 0 1px rgba(255,255,255,.12);}
+  .row .name{font-size:15px; font-weight:700; white-space:nowrap; text-decoration:none;}
+  .row a.name:hover{text-decoration:underline;}
+  .row .detail{font-size:13px; color:var(--muted); margin-left:9px; flex:1; min-width:0;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  .row .value{font-size:15px; font-weight:800; white-space:nowrap; margin-left:12px;
+    font-variant-numeric:tabular-nums;}
+  .row .value small{font-size:12px; font-weight:500; color:#ccd2dd;}
+  .row.textrow{font-size:13px; color:var(--muted);}
+  .empty{font-size:13px; color:var(--faint); padding:6px 0;}
+  .nohit{display:none !important;}
+
+  /* --------------------------- roast & footer -------------------------- */
+  .roast{padding:16px 20px; margin-top:16px;}
+  .roast .t{font-size:13px; font-weight:800; color:var(--accent); margin-bottom:6px; letter-spacing:.06em;}
+  .roast .q{font-family:var(--font-display); font-size:clamp(16px, 3.2vw, 21px); line-height:1.45;}
+  .roast .attr{font-size:13px; color:var(--muted); text-align:right; margin-top:6px;}
+  .motd{display:flex; align-items:center; gap:12px; margin:18px auto 0; max-width:1720px;
+    padding:12px 16px; color:var(--accent);}
+  .motd .chip{font-weight:800; letter-spacing:.14em; font-size:12px; background:#1a1c23;
+    border:1px solid var(--hairline); border-radius:6px; padding:5px 10px; flex:none;}
+  .motd .q{font-size:14px; min-width:0;}
+  .credits{display:flex; flex-wrap:wrap; gap:4px 16px; justify-content:space-between;
+    padding:14px 20px 28px; color:var(--faint); font-size:12px;}
+  .credits a{color:var(--faint);}
+  @media (max-width:480px){
+    .row .detail{display:none;}   /* phones: name + number is the story */
+    .bar input{width:110px;}
+    .bar{position:static;}        /* a 3-row sticky bar would eat the screen */
+  }
+</style>
+</head>
+<body>
+  <div class="hdr">
+    <h1>{{ guild_name.upper() }}</h1>
+    <div class="sub">{{ realm_label }}</div>
+    <div class="rule"></div>
+  </div>
+  <div class="info"><span>{{ subtitle }}</span><span>{{ date_range }}</span></div>
+  <nav class="bar">
+    {%- for col in columns %}
+    <a href="#col-{{ loop.index }}">{{ col.title }}</a>
+    {%- endfor %}
+    {%- if roast %}<a href="#roast">ROAST</a>{% endif %}
+    <span class="sp"></span>
+    <span class="filters" id="filters" hidden>
+      <button class="on" data-role="all">All</button>
+      <button data-role="dps">DPS</button>
+      <button data-role="healer">Healers</button>
+      <button data-role="tank">Tanks</button>
+    </span>
+    <input id="search" type="search" placeholder="Find a player…" hidden>
+    <select id="weeksel" hidden><option value="">This week</option></select>
+  </nav>
+  <div class="wrap">
+    {%- if hero_tiles %}
+    <div class="card hero">
+      {%- if headline %}
+      <div class="headline"><span class="tag">THIS WEEK</span><span class="txt">{{ headline }}</span></div>
+      {%- endif %}
+      <div class="tiles">
+        {%- for t in hero_tiles %}
+        <div class="tile"><div class="lbl">{{ t.label }}</div>
+          <div class="val">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div></div>
+        {%- endfor %}
+      </div>
+      <div class="bar2">
+        {%- if bar_pct %}<div class="fill" style="width:{{ bar_pct }}%;"></div>{% endif %}
+        <div class="cap">{{ bar_label }}</div>
+      </div>
+    </div>
+    {%- endif %}
+    <div class="cols">
+      {%- for col in columns %}
+      <div class="card col" id="col-{{ loop.index }}" style="scroll-margin-top:64px;">
+        <div class="col-h">
+          {%- if theme.board.poster_eyebrow %}<span class="eyebrow">{{ theme.board.poster_eyebrow }}</span>{% endif %}
+          <span class="t">{{ col.title }}</span>
+          {%- if theme.board.poster_reward %}<span class="bounty">{{ theme.board.poster_reward }}</span>{% endif %}
+        </div>
+        {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
+        {%- for sec in col.sections %}
+        <div class="sec">
+          <div class="sec-h"><span class="t">{{ sec.title }}</span><span class="rule"></span></div>
+          {%- set paper = theme.backgrounds.poster %}
+          {%- for row in sec.rows %}
+          {%- if row.text is defined %}
+          <div class="row textrow">{{ row.text }}</div>
+          {%- else %}
+          <div class="row{{ ' alt' if loop.index % 2 == 0 }}" data-name="{{ row.name | lower }}"
+               data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
+            <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
+            {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
+            <a class="name" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
+               target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
+               style="color:{{ row.ink if paper else row.color }};">{{ row.name }}</a>
+            <span class="detail">{{ row.detail }}</span>
+            <span class="value" style="color:{{ row.value_ink if paper else row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
+          </div>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endfor %}
+      </div>
+      {%- endfor %}
+    </div>
+    {%- if roast %}
+    <div class="card roast" id="roast" style="scroll-margin-top:64px;">
+      <div class="t">ROAST OF THE WEEK</div>
+      <div class="q">{{ roast.quote }}</div>
+      {%- if roast.attr %}<div class="attr">{{ roast.attr }}</div>{% endif %}
+    </div>
+    {%- endif %}
+  </div>
+  <div class="motd"><span class="chip">MOTD</span><span class="q">{{ motd }}</span></div>
+  <div class="credits">
+    <span>{{ theme.credits }}</span>
+    <span>{{ watermark }}</span>
+  </div>
+{% include "web/_interactive.html.j2" %}
+</body>
+</html>
