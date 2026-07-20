@@ -556,10 +556,12 @@ def _improve_rows(entries):
     """Rows for the Most Improved panels: early → late parse, with throughput."""
     rows = []
     for e in entries:
+        # Range first: it is the story of the row, so the fact-fitter
+        # drops difficulty/spec before ever touching it.
         detail_bits = [
+            f"{e['early_parse']:.0f}% → {e['late_parse']:.0f}%",
             e.get("spec") or "",
             DIFFICULTY_NAMES.get(e.get("difficulty"), ""),
-            f"{e['early_parse']:.0f}% → {e['late_parse']:.0f}%",
         ]
         rows.append({
             "name": _cap(e["name"]),

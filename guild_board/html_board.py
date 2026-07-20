@@ -116,6 +116,8 @@ def _html_rows(sections):
                 "name": row.get("name", ""),
                 "color": _css(row.get("color", (235, 236, 240))),
                 "detail": row.get("detail", ""),
+                "detail_bits": [b for b in (row.get("detail_bits")
+                                            or ([row["detail"]] if row.get("detail") else [])) if b],
                 "value": row.get("value", ""),
                 "value_color": _css(row.get("value_color", (235, 236, 240))),
                 "value_suffix": row.get("value_suffix"),
@@ -287,6 +289,8 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
             page.goto(html_path.resolve().as_uri())
             page.wait_for_load_state("networkidle")
             page.wait_for_timeout(1200)   # webfonts + CDN icons settle
+            # drop whole facts (not mid-word ellipses) once fonts are final
+            page.evaluate("window.__fitDetails && window.__fitDetails()")
 
             if not animate:
                 page.screenshot(path=output_path, full_page=True)
@@ -306,23 +310,63 @@ def generate_board_html(cfg, stats, standing, leaders, zone_name,
                 imgs.append(Image.open(io.BytesIO(shot)).convert("RGB"))
             browser.close()
 
-        return _encode_gif(imgs, output_path, frames, duration_ms)
+        return _encode_gif(imgs, output_path, frames, duration_ms,
+                           key_colors=_collect_key_colors(context))
     except Exception as exc:
         logger.warning("HTML board render failed (%s); using the Pillow renderer.", exc)
         return None
 
 
-def _encode_gif(frames_l, output_path, frames, duration_ms):
+def _collect_key_colors(context):
+    """Every text color actually on the board (class colors, parse tiers,
+    medals) plus the fixed UI accents. These get RESERVED palette slots so
+    GIF quantization can never shift them — without this, the fire art's
+    thousand browns crowd the palette and orange parses turn pink."""
+    import re
+    seen = []
+
+    def add(css):
+        m = re.match(r"rgb\((\d+),(\d+),(\d+)\)", css or "")
+        if m:
+            c = tuple(int(v) for v in m.groups())
+            if c not in seen:
+                seen.append(c)
+
+    for col in context.get("columns", []):
+        for sec in col.get("sections", []):
+            for row in sec.get("rows", []):
+                if "text" in row:
+                    continue
+                add(row.get("color"))
+                add(row.get("value_color"))
+                add(row.get("value_suffix_color"))
+                add(row.get("medal"))
+    for c in [(230, 180, 70), (235, 236, 240), (150, 154, 164), (95, 99, 110),
+              (229, 72, 77), (76, 220, 86), (163, 53, 238), (255, 128, 0),
+              (30, 255, 0), (255, 209, 0), (229, 204, 128), (56, 144, 255)]:
+        if c not in seen:
+            seen.append(c)
+    return seen[:80]
+
+
+def _encode_gif(frames_l, output_path, frames, duration_ms, key_colors=None):
     """Shared-palette GIF with the static middle copied verbatim from
-    frame 0 — same anti-shimmer scheme as the Pillow pipeline."""
+    frame 0 — same anti-shimmer scheme as the Pillow pipeline. key_colors
+    get reserved palette slots so text colors survive quantization exactly."""
     base = frames_l[0]
     header_h = HEADER_H
     footer_h = FOOTER_TOTAL
+    key_colors = key_colors or []
     for scale in (1.0, 0.8, 0.65, 0.5):
         imgs = frames_l if scale == 1.0 else [
             im.resize((int(im.width * scale), int(im.height * scale)),
                       Image.LANCZOS) for im in frames_l]
-        pal = imgs[0].quantize(colors=255, method=Image.MEDIANCUT)
+        adaptive = imgs[0].quantize(colors=256 - len(key_colors), method=Image.MEDIANCUT)
+        palette = adaptive.getpalette()[:3 * (256 - len(key_colors))]
+        for c in key_colors:
+            palette.extend(c)
+        pal = Image.new("P", (1, 1))
+        pal.putpalette(palette)
         q = [im.quantize(palette=pal, dither=Image.FLOYDSTEINBERG) for im in imgs]
         mid_top = int(header_h * scale) + 8
         mid_bot = int((base.height - footer_h) * scale) - 8
