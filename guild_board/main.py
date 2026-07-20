@@ -13,7 +13,8 @@ from guild_board.board_image import generate_board_animation, generate_board_ima
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
-from guild_board.state import load_board_state, raid_attendance_streaks, save_board_state, update_records
+from guild_board.state import (baselines_view, load_board_state, raid_attendance_streaks,
+                               raid_week_label, save_board_state, update_records)
 from guild_board.wcl import (
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
@@ -375,10 +376,10 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     previous = load_board_state()
 
     # Attendance streaks: RAID nights only — showing up to raid is what
-    # Iron Attendance rewards, not spamming keys. Keyed by ISO week so
-    # reposting the board never counts the same week twice.
-    iso = end_dt.isocalendar()
-    streaks_week = f"{iso[0]}-W{iso[1]:02d}"
+    # Iron Attendance rewards, not spamming keys. Keyed to the actual
+    # raid week (Tuesday 15:00 UTC reset) so reposting the board never
+    # counts the same week twice, whatever weekday the repost happens.
+    streaks_week = raid_week_label(end_dt)
     streaks = raid_attendance_streaks(previous, stats, week_label=streaks_week)
 
     # Season record book: weekly data plus the full-season sweeps, so

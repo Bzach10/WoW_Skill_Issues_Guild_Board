@@ -97,6 +97,27 @@ def check_records(records, messages):
                   "early-bracket artifact; the season sweep will re-verify next run")
 
 
+def check_streaks(state, messages):
+    """No streak may exceed the weeks physically possible since tracking
+    began — the invariant that would have caught the everyone-at-15 bug
+    (streaks were advancing per POST, not per raid week)."""
+    streaks = (state or {}).get("streaks") or {}
+    started = (state or {}).get("streaks_started")
+    if not streaks or not started:
+        return
+    try:
+        from datetime import date
+        begun = date.fromisoformat(str(started))
+        weeks_possible = max((date.today() - begun).days // 7 + 1, 1)
+    except ValueError:
+        return
+    worst = max(streaks.values())
+    if worst > weeks_possible:
+        _warn(messages,
+              f"max attendance streak is {worst}w but only {weeks_possible}w have "
+              f"elapsed since tracking began ({started}) — per-post inflation bug?")
+
+
 def check_standing(standing, messages):
     """Ranks must be positive integers; anything else is dropped rather
     than rendered (a '#0' or negative rank is worse than a blank)."""
@@ -140,7 +161,9 @@ def main():
         print(f"board_state.json unreadable: {exc}")
         return 1
     messages = run_all(records=state.get("records"), standing=state.get("standing"))
-    hard = [m for m in messages if "clamped" in m or "dropped" in m or "unreadable" in m]
+    check_streaks(state, messages)
+    hard = [m for m in messages
+            if "clamped" in m or "dropped" in m or "unreadable" in m or "inflation" in m]
     print(f"integrity: {len(messages)} finding(s), {len(hard)} needing attention")
     return 1 if hard else 0
 

@@ -1361,3 +1361,68 @@ def test_integrity_cli_on_state_file(tmp_path, monkeypatch):
                        cwd=tmp_path, env={**os.environ, "PYTHONPATH": os.path.dirname(os.path.dirname(os.path.abspath(main.__file__)))})
     assert r.returncode == 0
     assert "0 needing attention" in r.stdout
+
+
+# --- repost-proof week anchoring & baselines --------------------------------------
+
+
+def test_raid_week_label_anchors_to_tuesday_reset():
+    from guild_board.state import raid_week_label
+    tz = timezone.utc
+    # Tuesday 13:00 UTC (the scheduled post, pre-reset) belongs to the PRIOR week
+    assert raid_week_label(datetime(2026, 7, 21, 13, 0, tzinfo=tz)) == "2026-07-14"
+    # Tuesday 16:00 UTC (post-reset) starts the new week
+    assert raid_week_label(datetime(2026, 7, 21, 16, 0, tzinfo=tz)) == "2026-07-21"
+    # Sunday and Monday reposts stay in the same raid week (ISO week would split them)
+    assert raid_week_label(datetime(2026, 7, 19, 22, 0, tzinfo=tz)) == "2026-07-14"
+    assert raid_week_label(datetime(2026, 7, 20, 22, 0, tzinfo=tz)) == "2026-07-14"
+
+
+def test_baseline_survives_reposts(tmp_path, monkeypatch):
+    from guild_board.state import save_board_state, load_board_state, baselines_view
+    monkeypatch.chdir(tmp_path)
+    path = str(tmp_path / "board_state.json")
+    # week 1 final post
+    save_board_state({"realm": 52}, [(3838, "Amrevenge", "BM")], streaks={},
+                     records={}, path=path, streaks_week="2026-07-07")
+    # week 2, first post: baseline rolls to week 1's finals
+    save_board_state({"realm": 49}, [(3908, "Amrevenge", "BM")], streaks={},
+                     records={}, path=path, streaks_week="2026-07-14")
+    view = baselines_view(load_board_state(path))
+    assert view["standing"] == {"realm": 52}
+    assert view["season_scores"] == {"amrevenge": 3838}
+    # week 2, REPOST: baseline must not move — deltas stay vs week 1
+    save_board_state({"realm": 49}, [(3908, "Amrevenge", "BM")], streaks={},
+                     records={}, path=path, streaks_week="2026-07-14")
+    view = baselines_view(load_board_state(path))
+    assert view["standing"] == {"realm": 52}          # ▲3 survives the repost
+    assert view["season_scores"] == {"amrevenge": 3838}  # ▲70 survives the repost
+
+
+def test_record_new_badge_survives_repost():
+    from guild_board.state import update_records
+    sweep = {"dps": {"name": "Amrevenge", "parse": 97, "boss": "Salhadaar",
+                     "spec": "BM", "cls": "Hunter", "difficulty": 4}, "hps": None}
+    baseline = {"best_dps_parse": {"name": "Old", "parse": 90}}
+    first = update_records({}, {"best_dps": {}, "best_hps": {}}, None,
+                           season_parses=sweep, baseline_records=baseline)
+    assert first["best_dps_parse"]["new"] is True
+    # repost: prev now holds the 97, but the badge is judged vs LAST WEEK
+    again = update_records(first, {"best_dps": {}, "best_hps": {}}, None,
+                           season_parses=sweep, baseline_records=baseline)
+    assert again["best_dps_parse"]["new"] is True     # still this week's news
+
+
+def test_integrity_flags_streak_inflation():
+    from guild_board import integrity
+    from datetime import date, timedelta as td
+    state = {"streaks": {"amrevenge": 15},
+             "streaks_started": (date.today() - td(days=14)).isoformat()}
+    msgs = []
+    integrity.check_streaks(state, msgs)
+    assert any("inflation" in m for m in msgs)
+    ok_state = {"streaks": {"amrevenge": 2},
+                "streaks_started": (date.today() - td(days=21)).isoformat()}
+    msgs2 = []
+    integrity.check_streaks(ok_state, msgs2)
+    assert msgs2 == []

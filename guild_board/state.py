@@ -8,11 +8,42 @@ Only real posts update it — previews and dry runs just read.
 
 import json
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 logger = logging.getLogger(__name__)
 
 STATE_FILE = "board_state.json"
+
+
+def raid_week_label(dt):
+    """Date of the most recent NA weekly reset (Tuesday 15:00 UTC) at or
+    before dt — the raid week every number on the board belongs to.
+
+    NOT the ISO week: ISO weeks roll on Monday midnight, so a Monday
+    repost would land in a "new week" while still covering the same raid
+    week. Everything week-scoped (streak advancement, delta baselines)
+    keys off this label so reposts are idempotent no matter the weekday."""
+    dt = dt.astimezone(timezone.utc)
+    days_since_tuesday = (dt.weekday() - 1) % 7   # Monday=0, Tuesday=1
+    tuesday = (dt - timedelta(days=days_since_tuesday)).date()
+    if days_since_tuesday == 0 and dt.hour < 15:
+        tuesday -= timedelta(days=7)
+    return tuesday.isoformat()
+
+
+def baselines_view(state):
+    """The state as delta displays must see it: standing/scores/records
+    from the LAST COMPLETED week's final post, so mid-week reposts never
+    zero the ▲ arrows or eat NEW badges. Falls back to the stored latest
+    values for legacy state files without a baseline."""
+    if not state:
+        return {}
+    base = state.get("baseline") or {}
+    view = dict(state)
+    view["standing"] = base.get("standing", state.get("standing") or {})
+    view["season_scores"] = base.get("season_scores", state.get("season_scores") or {})
+    view["records"] = base.get("records", state.get("records") or {})
+    return view
 
 
 def load_board_state(path=STATE_FILE):
@@ -24,17 +55,35 @@ def load_board_state(path=STATE_FILE):
 
 
 def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE,
-                     streaks_week=None):
+                     streaks_week=None, previous=None):
     """Persist what this board showed, for next week's comparisons.
+
+    Two-slot scheme: "baseline" holds the last COMPLETED week's finals
+    (what deltas compare against) and rolls forward only when the raid
+    week changes; the top-level values always hold the latest post. This
+    makes every repost idempotent for arrows, badges and streaks alike.
 
     Runs the integrity checks first — bad values must never be committed,
     because this file seeds every future week's deltas and records."""
     from guild_board import integrity
     integrity.run_all(records=records, standing=standing)
+    prev = previous if previous is not None else load_board_state(path)
     clean_standing = {
         k: v for k, v in (standing or {}).items()
         if k in ("realm", "region", "world") and v
     }
+    if streaks_week and prev.get("streaks_week") == streaks_week:
+        # Same raid week: the baseline must not move, or reposts would
+        # compare this week against itself and zero every delta.
+        baseline = (prev.get("baseline")
+                    or {"standing": prev.get("standing") or {},
+                        "season_scores": prev.get("season_scores") or {},
+                        "records": prev.get("records") or {}})
+    else:
+        # New raid week: last week's finals become the comparison floor.
+        baseline = {"standing": prev.get("standing") or {},
+                    "season_scores": prev.get("season_scores") or {},
+                    "records": prev.get("records") or {}}
     state = {
         "last_updated": datetime.now(timezone.utc).isoformat(),
         "standing": clean_standing,
@@ -44,6 +93,9 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         },
         "streaks": streaks or {},
         "streaks_week": streaks_week,
+        "streaks_started": prev.get("streaks_started")
+            or datetime.now(timezone.utc).date().isoformat(),
+        "baseline": baseline,
         "records": records or {},
     }
     with open(path, "w", encoding="utf-8") as f:
@@ -84,7 +136,7 @@ def raid_attendance_streaks(previous, stats, week_label=None):
 
 
 def update_records(previous_records, stats=None, mplus_results=None,
-                   season_parses=None, season_key=None):
+                   season_parses=None, season_key=None, baseline_records=None):
     """Season records: highest timed key, best DPS parse, best HPS parse.
 
     Candidates come from this week's data AND full-season sweeps
@@ -154,9 +206,13 @@ def update_records(previous_records, stats=None, mplus_results=None,
             }
             fresh = max((c for c in (sweep, weekly) if c),
                         key=lambda c: c.get("parse") or 0)
-            prev = records.get(key)
-            fresh["new"] = bool(prev is None
-                                or (fresh.get("parse") or 0) > (prev.get("parse") or 0))
+            # NEW is judged against LAST WEEK's record (baseline), not the
+            # last posted run — so a mid-week repost keeps the badge lit
+            # for the whole week the record was actually broken in.
+            ref = ((baseline_records or {}).get(key)
+                   if baseline_records is not None else records.get(key))
+            fresh["new"] = bool(ref is None
+                                or (fresh.get("parse") or 0) > (ref.get("parse") or 0))
             records[key] = fresh
         elif weekly:
             consider(key, weekly, "parse")
