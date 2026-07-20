@@ -321,6 +321,22 @@
   .orn-rule i+i{background:linear-gradient(90deg, currentColor, transparent);}
   .orn-rule svg{flex:none; opacity:.9;}
 
+  /* Imported artwork (the item-of-the-month tooltip) is the one thing
+     that arrives as a hard rectangle and can't be edge-filtered — the
+     displacement would garble the text inside it. So it's treated as a
+     physical object instead: pinned on a slight angle with a real
+     shadow, so it reads as a card lying on the surface rather than a
+     block welded into the layout. */
+  .mod--item .mod-img{
+    /* capped so the tooltip reads as a pinned card, not a slab that
+       dominates the foot of the page */
+    max-width:min(100%, 400px); margin:0 auto;
+    transform:rotate(-1.1deg);
+    border-radius:3px;
+    filter:drop-shadow(0 12px 22px rgba(0,0,0,.5));
+    box-shadow:0 0 0 1px rgba(var(--bg-rgb),.5);}
+  .mod--item{overflow:visible;}
+
   /* a soft vignette instead of a hard border — used where a panel would
      otherwise read as a box */
   .soft-edge{
