@@ -1567,9 +1567,12 @@ def test_ink_darkens_screen_colors_for_paper():
 
 def test_poster_mode_renders_ink_names(tmp_path):
     from guild_board import html_board
+    # must be a REAL file: the integrity asset guard heals missing poster
+    # paths back to None (which would legitimately disable ink mode)
     theme_file = tmp_path / "theme.yml"
-    theme_file.write_text("backgrounds:\n  poster: 'assets/generated/poster.png'\n",
-                          encoding="utf-8")
+    theme_file.write_text(
+        "backgrounds:\n  poster: 'assets/generated/wanted_parchment.png'\n",
+        encoding="utf-8")
     cfg = _image_board_cfg()
     cfg["display"]["theme_file"] = str(theme_file)
     now = datetime.now(timezone.utc)
