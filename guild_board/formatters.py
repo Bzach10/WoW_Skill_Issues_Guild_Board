@@ -484,7 +484,8 @@ def tldr_lines(stats, standing=None):
     lines = []
     if stats:
         for pool_key, icon, label in (("best_dps", "\U0001F5E1️", "Top DPS"),
-                                      ("best_hps", "\U0001F49A", "Top heals")):
+                                      ("best_hps", "\U0001F49A", "Top heals"),
+                                      ("best_tanks", "\U0001F6E1️", "Top tank")):
             pool = stats.get(pool_key) or {}
             if pool:
                 name, info = max(pool.items(), key=lambda kv: kv[1].get("parse") or 0)

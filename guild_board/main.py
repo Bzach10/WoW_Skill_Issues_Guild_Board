@@ -188,17 +188,19 @@ def _collect_weekly_mplus(token, cfg, reports, roster_keep):
     if not sections.get("mplus_weekly_parses", {}).get("enabled", True):
         return None
     try:
-        mdps, mhps = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
+        mdps, mhps, mtanks = collect_parses_only(token, cfg, reports, MPLUS_DIFFICULTY)
         if roster_keep:
             mdps = {n: v for n, v in mdps.items() if roster_keep(n)}
             mhps = {n: v for n, v in mhps.items() if roster_keep(n)}
-        if mdps or mhps:
-            logger.info("Weekly M+ parses: %s DPS, %s HPS", len(mdps), len(mhps))
+            mtanks = {n: v for n, v in mtanks.items() if roster_keep(n)}
+        if mdps or mhps or mtanks:
+            logger.info("Weekly M+ parses: %s DPS, %s HPS, %s tank(s)",
+                        len(mdps), len(mhps), len(mtanks))
         else:
             logger.info("No M+ dungeon logs found this week (players must upload M+ runs to WCL).")
         # Keep the dict even when empty so the board shows the section
         # title with a "no logs" placeholder instead of hiding it.
-        return {"dps": mdps, "hps": mhps}
+        return {"dps": mdps, "hps": mhps, "tanks": mtanks}
     except (RuntimeError, requests.RequestException) as exc:
         logger.warning("Weekly M+ parse lookup failed: %s", exc)
         return None

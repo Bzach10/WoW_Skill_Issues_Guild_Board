@@ -1154,3 +1154,49 @@ def test_debt_card_theme_driven():
     assert card["lines"][1] == {"left": "Ledger", "right": "Unique", "green": False}
     assert card["lines"][2]["green"] is True
     assert _debt_card({"footer": {"debt": {"enabled": False}}}, 5) is None
+
+
+# --- tank sections & boss-ranks relocation ----------------------------------------
+
+
+def test_tank_sections_and_boss_ranks_move():
+    from guild_board import html_board
+    cfg = _image_board_cfg()
+    stats = _image_board_stats()
+    stats["best_tanks"] = {"Brewz": {"parse": 88.0, "amount": 90_000, "boss": "Some Boss",
+                                     "spec": "Brewmaster", "cls": "Monk"}}
+    leaders = [{"name": "Rakell", "spec": "Enhancement Shaman", "realm_rank": 1,
+                "region_rank": 892, "best_avg": 91.3, "boss": "Some Boss"}]
+    mplus_weekly = {"dps": {}, "hps": {},
+                    "tanks": {"Brewz": {"parse": 90.0, "amount": 80_000, "boss": "Skyreach",
+                                        "spec": "Brewmaster", "cls": "Monk", "key_level": 18}}}
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        cfg, stats, None, leaders, "Voidspire", None, None, None,
+        now - timedelta(days=7), now, mplus_weekly=mplus_weekly)
+    raid_titles = [s["title"] for s in ctx["columns"][0]["sections"]]
+    mplus_titles = [s["title"] for s in ctx["columns"][1]["sections"]]
+    guild_titles = [s["title"] for s in ctx["columns"][3]["sections"]]
+    assert any(t.startswith("TOP TANK PARSES") for t in raid_titles)
+    assert "TOP M+ TANKS THIS WEEK" in mplus_titles
+    assert "WEEKLY BOSS RANKS" not in raid_titles      # moved out of raid...
+    assert guild_titles[0] == "WEEKLY BOSS RANKS"      # ...to lead Seasonal Guild
+    # tank rows carry class colors like everyone else
+    tank_sec = next(s for s in ctx["columns"][0]["sections"] if s["title"].startswith("TOP TANK"))
+    assert tank_sec["rows"][0]["name"] == "Brewz"
+
+
+def test_collect_parses_only_returns_tanks(monkeypatch):
+    blob = {"data": [{"encounter": {"name": "Some Boss"}, "fightID": 1, "roles": {
+        "tanks": {"characters": [{"name": "Brewz", "rankPercent": 77.0, "amount": 50_000,
+                                  "spec": "Brewmaster", "class": "Monk"}]},
+        "dps": {"characters": [{"name": "Rakell", "rankPercent": 90.0, "amount": 150_000,
+                                "spec": "Enhancement", "class": "Shaman"}]},
+        "healers": {"characters": []},
+    }}]}
+    monkeypatch.setattr(wcl, "fetch_report_detail",
+                        lambda token, code, difficulty: {"dps": blob, "hps": blob, "fights": []})
+    dps, hps, tanks = wcl.collect_parses_only("tok", {}, [{"code": "abc"}], 5)
+    assert tanks["Brewz"]["parse"] == 77.0
+    assert dps["Rakell"]["parse"] == 90.0
+    assert tanks["Brewz"]["difficulty"] == 5

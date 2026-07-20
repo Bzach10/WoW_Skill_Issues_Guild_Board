@@ -61,6 +61,11 @@ FAKE_STATS = {
         "Healmates": {"parse": 75, "amount": 130_000, "boss": "Imperator Averzian", "spec": "Holy", "cls": "Priest"},
         "Rakdisc": {"parse": 61, "amount": 173_000, "boss": "Fallen-King Salhadaar", "spec": "Discipline", "cls": "Priest"},
     },
+    "best_tanks": {
+        "Brewzleeh": {"parse": 91, "amount": 88_000, "boss": "Chimaerus", "spec": "Brewmaster", "cls": "Monk"},
+        "Chokalock": {"parse": 74, "amount": 79_000, "boss": "Vorasius", "spec": "Protection", "cls": "Warrior"},
+        "Boondocka": {"parse": 52, "amount": 71_000, "boss": "Chimaerus", "spec": "Blood", "cls": "Death Knight"},
+    },
     "deaths": {"Maillo": 32, "Buchalter": 30, "Tommybravoo": 18, "Chokalock": 17,
                "Phyrthepali": 4, "Healmates": 9, "Rakdisc": 11, "Enyo": 2},
     "participants": ["Maillo", "Rakdisc", "Enyo", "Tommybravox", "Tommybravoo",
@@ -118,6 +123,10 @@ FAKE_MPLUS_WEEKLY = {
     "hps": {
         "Rakdisc": {"parse": 96, "amount": 100_000, "boss": "Magisters' Terrace", "spec": "Discipline", "cls": "Priest", "key_level": 19},
         "Healmates": {"parse": 95, "amount": 46_000, "boss": "Algeth'ar Academy", "spec": "Holy", "cls": "Priest", "key_level": 16},
+    },
+    "tanks": {
+        "Brewzleeh": {"parse": 93, "amount": 84_000, "boss": "Pit of Saron", "spec": "Brewmaster", "cls": "Monk", "key_level": 18},
+        "Chokalock": {"parse": 68, "amount": 74_000, "boss": "Skyreach", "spec": "Protection", "cls": "Warrior", "key_level": 15},
     },
 }
 FAKE_PREVIOUS = {

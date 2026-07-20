@@ -133,9 +133,17 @@ sections:
     difficulty: mythic             # normal / heroic / mythic
     difficulty_fallback: true      # Try mythic -> heroic -> normal sequentially
 
-  # Weekly raid boss ranks (WCL All Stars per-boss realm ranks)
-  realm_rank_leaders:
+  # Top tank parses of the week (raid) + Top M+ tanks — WCL ranks tanks
+  # in their own bracket, so the percentiles are tank-vs-tank
+  top_tanks:
     order: 10
+    enabled: true
+
+  # Weekly raid boss ranks (WCL All Stars per-boss realm ranks) — shown
+  # at the top of the SEASONAL GUILD column (moved there to make room
+  # for the tank section in the raid column)
+  realm_rank_leaders:
+    order: 11
     enabled: true
     max_characters: 30
 

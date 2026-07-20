@@ -682,8 +682,14 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
         if _enabled(sections_cfg, "top_healing"):
             rows = _parse_rows(stats.get("best_hps") or {}, "HPS", top_n, diff_name, streaks)
             raid.append(_sec(_titled("TOP HEALING PARSES", stats.get("best_hps")), rows))
-    if (stats or leaders) and _enabled(sections_cfg, "realm_rank_leaders"):
-        raid.append(_sec("WEEKLY BOSS RANKS", _leader_rows(leaders or [], top_n)))
+        if _enabled(sections_cfg, "top_tanks"):
+            # tank parses = DPS percentile within the tank bracket (WCL's own
+            # tank ranking); only shown when the collector provided the pool
+            pool = stats.get("best_tanks")
+            if pool is not None:
+                rows = _parse_rows(pool or {}, "DPS", top_n, diff_name, streaks)
+                raid.append(_sec(_titled("TOP TANK PARSES", pool), rows,
+                                 "No tank parses this week"))
     if stats and _enabled(sections_cfg, "most_deaths"):
         campers_title = "GRAVEYARD CAMPERS"
         camper_diff = DIFFICULTY_NAMES.get(stats.get("difficulty"), "")
@@ -705,11 +711,16 @@ def _build_columns(cfg, stats, leaders, mplus_results, season_scores, season_par
                           _parse_rows(mplus_weekly.get("dps") or {}, "DPS", top_n), empty))
         mplus.append(_sec("TOP M+ HPS THIS WEEK",
                           _parse_rows(mplus_weekly.get("hps") or {}, "HPS", top_n), empty))
+        if "tanks" in mplus_weekly and _enabled(sections_cfg, "top_tanks"):
+            mplus.append(_sec("TOP M+ TANKS THIS WEEK",
+                              _parse_rows(mplus_weekly.get("tanks") or {}, "DPS", top_n),
+                              empty))
 
     return raid, mplus
 
 
-def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=None, records=None):
+def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=None,
+                    records=None, leaders=None):
     """The bottom Seasonal band: two internal columns of season-long data."""
     sections_cfg = cfg.get("sections", {})
     top_n = int(cfg.get("top_n", 5))
@@ -719,6 +730,10 @@ def _build_seasonal(cfg, season_scores, season_parses, improvement, previous=Non
     improve_empty = "No qualifying gains yet — needs 2+ weeks of logs"
 
     mplus_side, guild_side = [], []
+    # Weekly Boss Ranks moved here from the raid column to make room for
+    # the tank section — it leads the guild column as the week's headline
+    if leaders and _enabled(sections_cfg, "realm_rank_leaders"):
+        guild_side.append(_sec("WEEKLY BOSS RANKS", _leader_rows(leaders, top_n)))
     if season_scores is not None and _enabled(sections_cfg, "mplus_season_scores"):
         mplus_side.append(_sec("SEASON M+ SCORES", _season_score_rows(season_scores or [], top_n, prev_scores)))
     if season_parses is not None and _enabled(sections_cfg, "mplus_season_parses", _enabled(sections_cfg, "mplus_season_runs")):
@@ -968,7 +983,7 @@ def generate_board_image(cfg, stats, standing, leaders, zone_name,
         no_logs, mplus_weekly=mplus_weekly, streaks=streaks, zone_name=zone_name)
     seasonal_mp, seasonal_guild = _build_seasonal(
         cfg, mplus_season_scores, mplus_season_parses, improvement, previous=previous,
-        records=records)
+        records=records, leaders=leaders)
 
     sections_cfg = cfg.get("sections", {})
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()

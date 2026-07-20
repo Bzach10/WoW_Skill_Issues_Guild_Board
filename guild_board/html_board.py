@@ -94,10 +94,12 @@ def _class_lookup(stats, leaders, mplus_results, season_scores, season_parses,
         if cls_key:
             lookup[key] = cls_key
 
-    for pool in ((stats or {}).get("best_dps") or {}, (stats or {}).get("best_hps") or {}):
+    for pool in ((stats or {}).get("best_dps") or {}, (stats or {}).get("best_hps") or {},
+                 (stats or {}).get("best_tanks") or {}):
         for name, info in pool.items():
             learn(name, info.get("cls"), info.get("spec"))
-    for pool in ((mplus_weekly or {}).get("dps") or {}, (mplus_weekly or {}).get("hps") or {}):
+    for pool in ((mplus_weekly or {}).get("dps") or {}, (mplus_weekly or {}).get("hps") or {},
+                 (mplus_weekly or {}).get("tanks") or {}):
         for name, info in pool.items():
             learn(name, info.get("cls"), info.get("spec"))
     for entry in leaders or []:
@@ -288,7 +290,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         no_logs, mplus_weekly=mplus_weekly, streaks=streaks, zone_name=zone_name)
     seasonal_mp, seasonal_guild = _build_seasonal(
         cfg, mplus_season_scores, mplus_season_parses, improvement,
-        previous=previous, records=records)
+        previous=previous, records=records, leaders=leaders)
 
     # Rotating mid-pack spotlights ride in the Seasonal Guild column
     awards_cfg = theme.get("awards") or {}
