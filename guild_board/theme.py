@@ -213,7 +213,9 @@ def font_css_url(theme):
     body = (fonts.get("body") or "Inter").replace(" ", "+")
     # Google Fonts rejects requests for weights a family doesn't ship
     # (e.g. Rye only has 400), so the display axis is theme-declared.
-    weights = str(fonts.get("display_weights") or "").strip()
+    # Absent key -> shipped default axes; explicit "" -> plain family.
+    weights = str(fonts.get("display_weights",
+                            DEFAULT_THEME["fonts"]["display_weights"]) or "").strip()
     display_spec = f"{display}:wght@{weights}" if weights else display
     return ("https://fonts.googleapis.com/css2?"
             f"family={display_spec}&"

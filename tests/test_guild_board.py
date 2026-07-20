@@ -1511,3 +1511,39 @@ def test_webhook_skips_missing_extra_files(monkeypatch):
                                extra_image_paths=["also_missing.png"])
     assert "files" not in seen                              # clean JSON post instead
     assert seen["json"]["embeds"][0]["title"] == "t"
+
+
+# --- theme plumbing: font URLs, merge semantics, custom module heights -------------
+
+
+def test_font_css_url_respects_display_weights():
+    from guild_board import theme as theme_mod
+    # single-weight family (e.g. Rye): exactly the declared axis, no fake weights
+    url = theme_mod.font_css_url({"fonts": {"display": "Rye", "display_weights": "400",
+                                            "body": "Inter"}})
+    assert "family=Rye:wght@400&" in url
+    # empty weights -> plain family request (Google serves its default)
+    url2 = theme_mod.font_css_url({"fonts": {"display": "Special Elite",
+                                             "display_weights": "", "body": "Inter"}})
+    assert "family=Special+Elite&" in url2 and ":wght@&" not in url2
+    # defaults keep the shipped Cinzel axes
+    assert "family=Cinzel:wght@700;900&" in theme_mod.font_css_url({})
+
+
+def test_theme_deep_merge_replaces_lists_wholesale():
+    from guild_board.theme import _deep_merge
+    base = {"motd_quips": ["a", "b", "c"], "colors": {"accent": "#111", "red": "#e00"}}
+    out = _deep_merge(base, {"motd_quips": ["only-me"], "colors": {"accent": "#222"}})
+    assert out["motd_quips"] == ["only-me"]          # lists replace, never append
+    assert out["colors"] == {"accent": "#222", "red": "#e00"}   # dicts merge key-wise
+    assert base["motd_quips"] == ["a", "b", "c"]     # base is never mutated
+
+
+def test_resolve_templates_honors_custom_heights():
+    from guild_board import theme as theme_mod
+    mods = theme_mod.resolve_templates({"board": {"header": "banner", "footer": "graveyard",
+                                                  "header_height": 240, "footer_height": 500}})
+    assert mods["header_h"] == 240                   # custom overrides the built-in map
+    assert mods["footer_total"] == 500 + theme_mod.FOOTER_EXTRA
+    defaults = theme_mod.resolve_templates({})
+    assert defaults["header_h"] == theme_mod.HEADER_HEIGHTS["stone_torchlight"]

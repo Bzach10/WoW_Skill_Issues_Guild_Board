@@ -16,3 +16,8 @@ GLORY" bounty line — both editable in theme.yml). Display font switched
 to Rye (classic wanted-poster slab) across board and web; theme.py grew
 fonts.display_weights so single-weight Google Fonts load correctly.
 On 2.0 only — say "merge" to put it on the 9 AM post.
+
+## Iteration 2 (~3:45 AM)
+Theme plumbing tests: font URL weight axes (caught + fixed a real edge —
+partial theme dicts dropped Cinzel's weights), deep-merge list-replace
+semantics, custom header/footer height overrides. 95 tests total.
