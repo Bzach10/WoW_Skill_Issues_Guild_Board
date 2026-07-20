@@ -1608,3 +1608,30 @@ def test_integrity_heals_missing_theme_assets():
     # clean theme produces zero noise
     ok = {"backgrounds": {"middle": "assets/theme_art.png"}}
     assert integrity.run_all(theme=ok) == []
+
+
+def test_custom_board_template_module(tmp_path, monkeypatch):
+    """board_templates/ modules are found first and render end-to-end —
+    the guild-facing 'make your own header' feature from CUSTOMIZING.md."""
+    from guild_board import theme as theme_mod
+    from guild_board import html_board
+    guild_dir = tmp_path / "board_templates"
+    (guild_dir / "headers").mkdir(parents=True)
+    (guild_dir / "headers" / "mine.html.j2").write_text(
+        "<div class='hdr'>CUSTOM HEADER FOR {{ guild_name.upper() }}</div>",
+        encoding="utf-8")
+    monkeypatch.setattr(theme_mod, "GUILD_TEMPLATE_DIR", guild_dir)
+    theme_file = tmp_path / "theme.yml"
+    theme_file.write_text("board:\n  header: mine\n  header_height: 111\n",
+                          encoding="utf-8")
+    cfg = _image_board_cfg()
+    cfg["display"]["theme_file"] = str(theme_file)
+    now = datetime.now(timezone.utc)
+    ctx = html_board.build_context(
+        cfg, _image_board_stats(), None, None, "Voidspire", None, None, None,
+        now - timedelta(days=7), now)
+    assert ctx["header_template"] == "headers/mine.html.j2"
+    assert ctx["header_h"] == 111                     # custom GIF band height honored
+    html = html_board.render_html(ctx)
+    assert "CUSTOM HEADER FOR TEST GUILD" in html     # guild module actually rendered
+    assert "GIT GUD" not in html                      # built-in header fully replaced

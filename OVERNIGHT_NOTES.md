@@ -73,3 +73,8 @@ of the per-difficulty loop (new _sample_week helper) — and the cleanup
 exposed that wcl.week_of relied on function-local datetime imports; the
 module-level import was missing, which would have been a runtime
 NameError in the untested CI path. Smoke-tested the path directly.
+
+## Iteration 9 (~7:02 AM)
+End-to-end test for guild-made template modules: a board_templates/
+header is resolved first, honors its custom GIF band height, renders in
+place of the built-in. The CUSTOMIZING.md recipe is now under test. 99 tests.
