@@ -22,8 +22,10 @@ from PIL import Image
 from guild_board import board_image, theme_bands
 from guild_board.board_image import (
     CLASS_ICONS, DIFFICULTY_NAMES, ICON_CDN, MEDAL_FILLS, SPEC_ICONS,
-    _build_columns, _build_seasonal, _hero_tiles, _plural, _spec_class_keys,
+    _CLASS_KEY_DISPLAY, _build_columns, _build_seasonal, _hero_tiles,
+    _plural, _rgb, _spec_class_keys,
 )
+from guild_board.config import get_class_color
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +72,53 @@ def _icon_url(row):
     return None
 
 
+DEFAULT_TEXT = (235, 236, 240)   # board_image's "no class known" name color
+
+
+def _cls_color(cls_key):
+    return _rgb(get_class_color(_CLASS_KEY_DISPLAY.get(cls_key, cls_key.title())))
+
+
+def _class_lookup(stats, leaders, mplus_results, season_scores, season_parses,
+                  improvement, mplus_weekly, records):
+    """name -> class key, learned from EVERY source on the board. A player
+    whose class is only known in one section (e.g. best_dps carries cls,
+    All Stars only carries 'Holy') gets colored consistently everywhere."""
+    lookup = {}
+
+    def learn(name, cls=None, spec=None):
+        key = (name or "").strip().lower()
+        if not key or key in lookup:
+            return
+        _, cls_key = _spec_class_keys(spec, cls)
+        if cls_key:
+            lookup[key] = cls_key
+
+    for pool in ((stats or {}).get("best_dps") or {}, (stats or {}).get("best_hps") or {}):
+        for name, info in pool.items():
+            learn(name, info.get("cls"), info.get("spec"))
+    for pool in ((mplus_weekly or {}).get("dps") or {}, (mplus_weekly or {}).get("hps") or {}):
+        for name, info in pool.items():
+            learn(name, info.get("cls"), info.get("spec"))
+    for entry in leaders or []:
+        learn(entry.get("name"), entry.get("cls"), entry.get("spec"))
+    for item in mplus_results or []:
+        if len(item) >= 5:
+            learn(item[2], None, item[3])
+    for score, name, spec in season_scores or []:
+        learn(name, None, spec)
+    for item in season_parses or []:
+        if len(item) >= 4:
+            learn(item[2], None, item[3])
+    for lst in ((improvement or {}).get("dps") or [], (improvement or {}).get("hps") or []):
+        for e in lst:
+            learn(e.get("name"), e.get("cls"), e.get("spec"))
+    for rec in (records or {}).values():
+        if isinstance(rec, dict):
+            learn(rec.get("name"), rec.get("cls"), rec.get("spec"))
+    return lookup
+
+
 def _flames_row(seed=13, n=9):
     """Fire licking up from the footer's bottom edge — deterministic
     positions, loop-safe durations."""
@@ -101,8 +150,11 @@ def _embers(seed, n):
     return out
 
 
-def _html_rows(sections):
-    """Convert the Pillow section model into template-ready dicts."""
+def _html_rows(sections, lookup=None):
+    """Convert the Pillow section model into template-ready dicts.
+    Rows that came through class-blind (white name, no icon) get both
+    filled in from the cross-section class lookup."""
+    lookup = lookup or {}
     out = []
     for sec in sections:
         rows = []
@@ -110,12 +162,19 @@ def _html_rows(sections):
             if "text" in row:
                 rows.append({"text": row["text"]})
                 continue
+            key = (row.get("name") or "").strip().lower()
+            color = row.get("color", DEFAULT_TEXT)
+            if color in (None, DEFAULT_TEXT) and key in lookup:
+                color = _cls_color(lookup[key])
+            icon = _icon_url(row)
+            if icon is None and key in lookup:
+                icon = ICON_CDN.format(CLASS_ICONS[lookup[key]])
             rows.append({
                 "rank": i + 1,
                 "medal": _css(MEDAL_FILLS[i]) if i < len(MEDAL_FILLS) else None,
-                "icon": _icon_url(row),
+                "icon": icon,
                 "name": row.get("name", ""),
-                "color": _css(row.get("color", (235, 236, 240))),
+                "color": _css(color),
                 "detail": row.get("detail", ""),
                 "detail_bits": [b for b in (row.get("detail_bits")
                                             or ([row["detail"]] if row.get("detail") else [])) if b],
@@ -156,13 +215,15 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         cfg, mplus_season_scores, mplus_season_parses, improvement,
         previous=previous, records=records)
 
+    lookup = _class_lookup(stats, leaders, mplus_results, mplus_season_scores,
+                           mplus_season_parses, improvement, mplus_weekly, records)
     raid_title = (sections_cfg.get("raid_header") or {}).get("title", "Raid").upper()
     mplus_title = (sections_cfg.get("mplus_header") or {}).get("title", "Mythic Plus").upper()
     columns = [
-        {"title": raid_title, "sections": _html_rows(raid_secs), "empty": "No data this week"},
-        {"title": mplus_title, "sections": _html_rows(mplus_secs), "empty": "No data this week"},
-        {"title": "SEASONAL MYTHIC PLUS", "sections": _html_rows(seasonal_mp), "empty": "Season data still cooking"},
-        {"title": "SEASONAL GUILD", "sections": _html_rows(seasonal_guild), "empty": "Season data still cooking"},
+        {"title": raid_title, "sections": _html_rows(raid_secs, lookup), "empty": "No data this week"},
+        {"title": mplus_title, "sections": _html_rows(mplus_secs, lookup), "empty": "No data this week"},
+        {"title": "SEASONAL MYTHIC PLUS", "sections": _html_rows(seasonal_mp, lookup), "empty": "Season data still cooking"},
+        {"title": "SEASONAL GUILD", "sections": _html_rows(seasonal_guild, lookup), "empty": "Season data still cooking"},
     ]
 
     kills = (stats or {}).get("kills", 0)
@@ -199,11 +260,13 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     for i, (name, count) in enumerate(ranked):
         w, h, arched, cross, rot, (light, mid, dark) = STONES[i % len(STONES)]
         rate = f" · {count / pulls:.1f}/PULL" if pulls else ""
+        cls_key = lookup.get(name.strip().lower())
         stones.append({
             "w": w, "h": h, "arched": arched, "cross": cross, "rot": rot,
             "light": light, "mid": mid, "dark": dark,
             "radius": (f"{w // 2}px {w // 2}px 6px 6px" if arched else "14px 14px 6px 6px"),
             "name": name.upper()[:16],
+            "color": _css(_cls_color(cls_key)) if cls_key else "#f4f0e4",
             "deaths": f"{count} DEATHS{rate}",
         })
 
