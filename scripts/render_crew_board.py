@@ -142,7 +142,11 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
                                profiles=profiles, manifest=manifest,
                                style=style, limit=crew_limit)
     for member in crew:
-        member["art"] = showcase_mod.character_art(member["slug"], cfg, manifest)
+        # Stage roster-worktree art into this tree so every page uses a
+        # repo-relative path and the whole build stays portable.
+        member["art"] = showcase_mod.stage_art(
+            showcase_mod.character_art(member["slug"], cfg, manifest),
+            member["slug"], repo_root=Path(__file__).resolve().parent.parent)
     counts = crew_mod.role_counts(crew)
 
     scenes = crew_mod.resolve_scenes(theme)
@@ -295,6 +299,11 @@ def main():
         pctx["art"] = pctx["member"].get("art") or showcase_mod.character_art(
             pctx["slug"], cfg, manifest)
     profile_dir = out.parent / profiles_mod.PROFILE_DIR
+    if profile_dir.exists():
+        # Clear stale pages from a previous, larger deck — otherwise an
+        # orphan keeps whatever paths it was written with.
+        for old in profile_dir.glob("*.html"):
+            old.unlink()
     profile_dir.mkdir(parents=True, exist_ok=True)
     for pctx in profile_ctxs:
         page = env.get_template("web/pages/profile.html.j2").render(
@@ -304,7 +313,11 @@ def main():
 
     # ---- the private trial page (the "second draft" front door) --------
     by_slug = {p["slug"]: p for p in profile_ctxs}
-    cards = showcase_mod.build_cards(ctx["crew"], by_slug, cfg, manifest)
+    # Once the roster generation has delivered more than the original
+    # three, the showcase becomes the whole cast rather than a trial trio.
+    roster_cards = showcase_mod.build_roster_cards(ctx["crew"], by_slug, cfg, manifest)
+    trial_cards = showcase_mod.build_cards(ctx["crew"], by_slug, cfg, manifest)
+    cards = roster_cards if len(roster_cards) > len(trial_cards) else trial_cards
     for card in cards:
         card["profile_href"] = profiles_mod.profile_href(card["slug"])
 
@@ -317,7 +330,9 @@ def main():
     trial_ctx = dict(ctx)
     trial_ctx.update({
         "cards": cards,
-        "trial_status": showcase_mod.trial_status(cards),
+        "trial_status": ("%d characters drawn so far · %d still in the queue"
+                         % (len(cards), max(len(ctx["crew"]) - len(cards), 0))),
+        "placeholder_count": max(len(ctx["crew"]) - len(cards), 0),
         "board_href": out.name,
         "roster_size": len(index),
         "realm_count": len(realms),

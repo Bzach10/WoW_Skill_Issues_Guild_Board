@@ -61,6 +61,8 @@ def referenced_assets(html_paths):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default=str(DEFAULT_OUT))
+    ap.add_argument("--crew-limit", type=int, default=40,
+                    help="How many characters stand on the deck.")
     args = ap.parse_args()
     out = Path(args.out).resolve()
 
@@ -72,7 +74,8 @@ def main():
         pass
 
     print("1/4  rendering the preview board + profile pages")
-    run([sys.executable, "scripts/render_crew_board.py", "--out", "crew_board.html"])
+    run([sys.executable, "scripts/render_crew_board.py", "--out", "crew_board.html",
+         "--crew-limit", str(args.crew_limit)])
 
     board = ROOT / "crew_board.html"
     trial = ROOT / "trial.html"

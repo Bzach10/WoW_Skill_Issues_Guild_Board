@@ -253,7 +253,7 @@ def build_cards(crew, profiles_by_slug, cfg=None, manifest=None):
             "slug": slug,
             "member": member,
             "profile": profile,
-            "scene": resolve_scene(slug, cfg, manifest),
+            "scene": member.get("art") or resolve_scene(slug, cfg, manifest),
         })
     return cards
 
@@ -276,7 +276,9 @@ def build_roster_cards(crew, profiles_by_slug, cfg=None, manifest=None):
     """
     cards = []
     for member in crew or []:
-        art = character_art(member["slug"], cfg, manifest)
+        # Reuse the art already resolved AND staged onto the member;
+        # re-resolving here would re-introduce absolute worktree paths.
+        art = member.get("art") or character_art(member["slug"], cfg, manifest)
         if art["pending"]:
             continue
         cards.append({
@@ -286,3 +288,86 @@ def build_roster_cards(crew, profiles_by_slug, cfg=None, manifest=None):
             "scene": art,
         })
     return cards
+
+
+# ---------------------------------------------------------------------
+#  Staging
+#
+#  The roster generation lives in its own worktree, so the art it
+#  produces resolves to an ABSOLUTE path outside this tree. An absolute
+#  Windows path is not a usable URL in a rendered page, and it cannot be
+#  bundled. Staging copies each referenced image into the local tree
+#  under a stable relative path, so the page is portable.
+# ---------------------------------------------------------------------
+
+STAGE_DIR = "cast/_roster"
+STAGE_MAX_WIDTH = 900     # ~2x the largest size the board ever draws
+
+
+def _has_alpha(img):
+    return img.mode in ("RGBA", "LA", "PA") or "transparency" in img.info
+
+
+def _downscale(source, dest, max_width):
+    """Write a display-sized copy. Returns the actual destination path, or
+    None if Pillow could not handle it.
+
+    Scene images carry no transparency, so they are stored as JPEG — as
+    PNG they run ~1.7MB each and a roster-sized build becomes too big to
+    hand to anyone. Cutouts keep their alpha and stay PNG.
+    """
+    try:
+        from PIL import Image
+        with Image.open(source) as img:
+            if img.width > max_width:
+                height = round(img.height * max_width / img.width)
+                img = img.resize((max_width, height), Image.LANCZOS)
+            if _has_alpha(img):
+                img.save(dest, optimize=True)
+                return dest
+            jpeg = dest.with_suffix(".jpg")
+            img.convert("RGB").save(jpeg, quality=86, optimize=True,
+                                    progressive=True)
+            return jpeg
+    except Exception as exc:  # noqa: BLE001
+        logger.info("Could not downscale %s (%s); copying as-is.", source, exc)
+        return None
+
+
+def stage_art(art, slug, repo_root=".", stage_dir=STAGE_DIR):
+    """Copy this character's art into the local tree and return the same
+    dict with repo-relative paths. Already-relative art is left alone."""
+    import shutil
+
+    repo_root = Path(repo_root)
+    staged = dict(art)
+    for field, filename in (("src", "profile.png"), ("cutout", "board.png")):
+        value = art.get(field)
+        if not value:
+            continue
+        source = Path(value)
+        if not source.is_absolute():
+            continue                      # already local and relative
+        rel = f"{stage_dir}/{slug}/{filename}"
+        dest = repo_root / rel
+        try:
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            written = None
+            for existing in (dest, dest.with_suffix(".jpg")):
+                if existing.exists() and existing.stat().st_mtime >= source.stat().st_mtime:
+                    written = existing
+                    break
+            if written is None:
+                # The generator outputs ~2K; the board renders these at a
+                # few hundred px. Staging at display size keeps a
+                # roster-sized build shareable instead of ~150MB.
+                written = _downscale(source, dest, STAGE_MAX_WIDTH)
+                if written is None:
+                    shutil.copy2(source, dest)
+                    written = dest
+            staged[field] = f"{stage_dir}/{slug}/{written.name}"
+        except OSError as exc:
+            logger.warning("Could not stage %s for %s (%s); leaving it out.",
+                           source, slug, exc)
+            staged[field] = None
+    return staged

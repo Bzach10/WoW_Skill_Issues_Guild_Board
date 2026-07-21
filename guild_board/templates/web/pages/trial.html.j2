@@ -87,8 +87,8 @@ a{color:var(--accent);}
   margin-top:8px; margin-bottom:28px;}
 
 /* ---------- the three scene cards ---------- */
-.cast{display:grid; gap:26px; grid-template-columns:repeat(3,1fr);
-  padding-bottom:20px;}
+.cast{display:grid; gap:22px; padding-bottom:20px;
+  grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));}
 .card{
   --pip:var(--unknown);
   position:relative; border:1px solid var(--line); border-radius:20px;
@@ -231,8 +231,8 @@ a{color:var(--accent);}
   <div class="kicker">
     {%- if standing %}
     World <b>#{{ '{:,}'.format(standing.world) }}</b> ·
-    Realm <b>#{{ standing.realm }}</b> · {{ cards|length }}-character trial
-    {%- else %}{{ cards|length }}-character trial{% endif %}
+    Realm <b>#{{ standing.realm }}</b> · {{ cards|length }} characters drawn
+    {%- else %}{{ cards|length }} characters drawn{% endif %}
   </div>
   <h1>The Guild Board</h1>
   <div class="rule"></div>
@@ -240,14 +240,13 @@ a{color:var(--accent);}
     A first look at the new board, built around <strong>the guild's own
     characters drawn into their own scenes</strong>. Everything below is
     real data pulled from Raider.io and Warcraft Logs — the scores, the
-    ranks, the streaks. Three characters are in this trial, one of each
-    role, so you can see how a tank, a healer and a damage dealer each sit
-    on the board.
+    ranks, the streaks. Every character is drawn from their own real
+    transmog, in the style you approved.
   </p>
 </section>
 
 <section class="sec wrap">
-  <h2>The Trial Cast</h2>
+  <h2>The Cast</h2>
   <p class="sub">{{ trial_status }}</p>
 
   <div class="cast">
@@ -364,8 +363,8 @@ a{color:var(--accent);}
     </ul>
     <h4 style="margin-top:18px;">Still coming</h4>
     <ul>
-      <li class="todo">Scene art for the rest of the guild — {{ cards|length }} characters
-        are drawn so far.</li>
+      <li class="todo">Scene art for the rest of the guild — {{ cards|length }} drawn,
+        {{ placeholder_count }} still in the queue.</li>
       <li class="todo">The voyage map wired to the live season dungeon list.</li>
       <li class="todo">Victory and defeat poses driven by weekly results.</li>
     </ul>
