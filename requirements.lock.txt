@@ -1,0 +1,10 @@
+# Exact versions this project was last verified green on
+# (230 tests passing, Python 3.13.14, 2026-07-20).
+# For reproducible installs:  pip install -r requirements.lock.txt
+# For normal development:     pip install -e ".[render,dev]"
+requests==2.34.2
+PyYAML==6.0.3
+Pillow==12.3.0
+Jinja2==3.1.6
+playwright==1.61.0
+pytest==9.1.1

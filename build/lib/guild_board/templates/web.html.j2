@@ -1,0 +1,17 @@
+{#
+  The public website's entry point — a dispatcher, not a design.
+
+  The actual layout is chosen in theme.yml:
+
+      board:
+        web_layout: poster      # or chronicle / ember_terminal / codex
+
+  ...and lives in templates/web/<name>.html.j2. A guild can drop its own
+  layout in board_templates/web/ and name it here; an unknown name falls
+  back to the shipped poster layout (see theme.resolve_templates), so a
+  typo can never produce a blank site.
+
+  Callers keep rendering "web.html.j2" exactly as before — swapping the
+  layout is a theme.yml edit, never a code change.
+#}
+{% include web_layout_template %}
