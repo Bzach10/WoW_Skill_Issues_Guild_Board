@@ -357,9 +357,11 @@
                data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
             <span class="rk{{ ' top' if row.medal }}">{{ '%02d' % row.rank }}</span>
             {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
-            <a class="name" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
+            {%- set purl = profile_urls.get(row.name | lower) %}
+            {%- if purl %}<a class="name" href="{{ purl }}"
                target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
                style="color:{{ row.color }}; text-shadow:0 0 16px {{ row.color }}55;">{{ row.name }}</a>
+            {%- else %}<span class="name" style="color:{{ row.color }}; text-shadow:0 0 16px {{ row.color }}55;">{{ row.name }}</span>{% endif %}
             <span class="detail">{{ row.detail }}</span>
             <span class="dot"></span>
             <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>{{ row.value_suffix }}</small>{% endif %}</span>

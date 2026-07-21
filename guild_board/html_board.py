@@ -27,13 +27,14 @@ from PIL import Image
 from guild_board import awards as awards_mod
 from guild_board import board_image
 from guild_board import integrity
+from guild_board import links
 from guild_board import theme as theme_mod
 from guild_board.board_image import (
     CLASS_ICONS, DIFFICULTY_NAMES, ICON_CDN, MEDAL_FILLS, SPEC_ICONS,
     _CLASS_KEY_DISPLAY, _build_columns, _build_seasonal, _hero_tiles,
     _plural, _rgb, _spec_class_keys,
 )
-from guild_board.config import get_class_color
+from guild_board.config import get_class_color, load_roster_cache
 
 logger = logging.getLogger(__name__)
 
@@ -444,6 +445,9 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
 
     guild = cfg.get("guild", {})
     realm = (guild.get("realm_slug") or "").replace("-", " ").upper()
+    # Per-player realms: the guild is cross-realm, so a link built from
+    # the guild realm alone 404s for most of the roster.
+    roster_members, _roster_updated = load_roster_cache(cfg)
     region = (guild.get("region") or "").upper()
 
     stones = _build_stones(stats, pulls, lookup)
@@ -483,9 +487,17 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     return {
         "guild_name": guild.get("name", "Guild"),
         "realm_label": f"{realm} · {region}" if realm else region,
+        # Kept for templates that still build a URL by hand; every shipped
+        # layout now prefers profile_urls, which uses each player's REAL
+        # realm. The guild realm is only correct for the ~30% of the
+        # roster actually on it.
         "profile_base": ("https://www.warcraftlogs.com/character/"
                          f"{(guild.get('region') or 'us').lower()}/"
                          f"{(guild.get('realm_slug') or '').lower()}/"),
+        "profile_urls": links.profile_urls(
+            roster_members,
+            region=guild.get("region") or "us",
+            guild_realm=guild.get("realm_slug") or ""),
         "tldr": LAST_TLDR,
         "subtitle": subtitle,
         "date_range": date_range,

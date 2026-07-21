@@ -1,0 +1,976 @@
+{#
+  LAYOUT: crew_deck — "the crew on the deck"
+
+  The public board as a pirate crew standing together on a ship's deck,
+  with the season laid out behind them as a chain of islands.
+
+  Three switchable themes (Illuminated Codex / Arcane Console /
+  Chronicle) are emitted as CSS-variable blocks keyed on
+  <html data-crew-theme>. Every palette token comes from
+  guild_board.crew.resolve_themes(), which merges theme.yml's
+  crew.themes.* over the shipped values — so a non-coder reskins the
+  whole page from theme.yml and a typo can only ever fall back.
+
+  FAILS OPEN by construction: missing art -> silhouette slot, missing
+  island data -> "no record yet", missing voyage module -> sample chain,
+  JS disabled -> every panel is visible static HTML.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — The Guild Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+/* ---------- THEMES (generated from theme.yml + shipped defaults) ---------- */
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }};
+  --text:{{ t.text }};
+  --heading:{{ t.heading }};
+  --accent:{{ t.accent }};
+  --panel:{{ t.panel }};
+  --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{
+  --tank:{{ role_tint.tank }};
+  --healer:{{ role_tint.healer }};
+  --dps:{{ role_tint.dps }};
+  --unknown:{{ role_tint.unknown }};
+  --measure:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:var(--font-body); font-size:16px; line-height:1.55;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  transition:background .5s ease, color .5s ease;
+}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 20px;}
+a{color:inherit;}
+
+/* ---------- ambient embers ---------- */
+.embers{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+.ember{
+  position:absolute; bottom:-12px; width:4px; height:4px; border-radius:50%;
+  background:var(--accent); opacity:0; filter:blur(.4px);
+  animation:drift linear infinite;
+}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(.6); opacity:0;}
+  12%{opacity:.55;}
+  75%{opacity:.35;}
+  100%{transform:translate3d(var(--dx,20px),-105vh,0) scale(1.1); opacity:0;}
+}
+
+/* ---------- top bar: theme switch ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; backdrop-filter:blur(8px);
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  border-bottom:1px solid var(--line);
+}
+.topbar .wrap{display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding-top:10px; padding-bottom:10px; flex-wrap:wrap;}
+.brandmark{font-family:var(--font-display); letter-spacing:.14em;
+  text-transform:uppercase; font-size:12px; color:var(--muted);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{
+  font:inherit; font-size:12px; letter-spacing:.05em; cursor:pointer;
+  padding:6px 12px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line);
+  transition:all .25s ease;
+}
+.themeswitch button[aria-pressed="true"]{
+  color:var(--bg); background:var(--accent); border-color:var(--accent);
+}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* ---------- masthead ---------- */
+.masthead{position:relative; z-index:1; text-align:center; padding:54px 0 26px;}
+.kicker{
+  font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:16px;
+}
+.kicker b{color:var(--accent); font-weight:700;}
+.masthead h1{
+  font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(38px,9vw,86px); color:var(--heading);
+  letter-spacing:.01em;
+}
+.goldrule{
+  width:min(420px,72%); height:3px; margin:22px auto 18px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.gag{font-style:italic; color:var(--muted); font-size:clamp(14px,2.4vw,18px);}
+.updated{margin-top:10px; font-size:12px; color:var(--muted); opacity:.8;}
+
+/* ---------- controls: role tabs + search ---------- */
+.controls{position:relative; z-index:20; display:flex; gap:14px; flex-wrap:wrap;
+  align-items:center; justify-content:center; padding:6px 0 26px;}
+.tabs{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+.tab{
+  font:inherit; font-size:13px; cursor:pointer; padding:9px 18px;
+  border-radius:999px; border:1px solid var(--line); background:var(--panel);
+  color:var(--text); transition:all .25s ease; position:relative;
+}
+.tab .count{color:var(--muted); font-size:11px; margin-left:6px;}
+.tab:hover{border-color:var(--role,var(--accent)); transform:translateY(-1px);}
+.tab[aria-pressed="true"]{
+  border-color:var(--role,var(--accent));
+  box-shadow:inset 0 0 0 1px var(--role,var(--accent));
+}
+.tab[data-role="tank"]{--role:var(--tank);}
+.tab[data-role="healer"]{--role:var(--healer);}
+.tab[data-role="dps"]{--role:var(--dps);}
+.search{
+  font:inherit; font-size:13px; padding:9px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text);
+  min-width:200px;
+}
+.search::placeholder{color:var(--muted);}
+.search:focus{outline:2px solid var(--accent); outline-offset:1px;}
+
+/* ---------- CREW STAGE ----------
+   THE LAYER STACK, bottom to top. The crew are transparent cut-outs
+   composited over the scene, so the scene can change or animate freely
+   without the character art ever being touched:
+
+     z 0  .scene       backdrop (tint + optional art), crossfades
+     z 1  .deckboard   the ship's deck the crew stand on
+     z 2  .member      the cast — transparent PNGs, constant
+     z 5+ bubbles, spotlights, toggles
+*/
+.stage{
+  position:relative; z-index:1; margin:0 auto 10px; max-width:var(--measure);
+  padding:0 12px;
+}
+.scene{
+  position:absolute; inset:0 0 18px; z-index:0; overflow:hidden;
+  border-radius:26px; pointer-events:none;
+}
+/* Two stacked plates so a scene change CROSSFADES instead of cutting.
+   JS paints the idle plate, then swaps which one is visible. */
+.scene-plate{
+  position:absolute; inset:0; opacity:0; transition:opacity .75s ease;
+  background-position:center bottom; background-size:cover;
+  background-repeat:no-repeat;
+}
+.scene-plate.on{opacity:1;}
+/* The tint is blended against the live theme, so one scene definition
+   reads correctly in codex, console and chronicle alike. */
+.scene-plate::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(ellipse 120% 78% at 50% 108%,
+    color-mix(in srgb, var(--scene-tint, var(--accent)) 42%, transparent),
+    transparent 72%);
+}
+.scene-plate::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 35%,
+    color-mix(in srgb, var(--bg) 72%, transparent));
+}
+/* A slow horizon drift — the scene moves, the crew do not. */
+@keyframes tide{
+  0%,100%{transform:translate3d(-1.5%,0,0) scale(1.04);}
+  50%{transform:translate3d(1.5%,0,0) scale(1.04);}
+}
+.scene-plate.on{animation:tide 26s ease-in-out infinite;}
+.deck{
+  position:relative; display:flex; align-items:flex-end; justify-content:center;
+  min-height:clamp(300px,44vw,430px); padding-bottom:26px;
+  /* A full crew is wider than the measure — let the deck scroll rather
+     than bleeding members off both edges of the page. */
+  overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity;
+  scrollbar-width:thin;
+}
+.deck::-webkit-scrollbar{height:6px;}
+.deck::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+/* the ship's deck the crew stands on */
+.deckboard{
+  position:absolute; left:2%; right:2%; bottom:0; height:64px; z-index:1;
+  border-radius:50%/22px;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--accent) 26%, var(--panel)),
+    var(--panel));
+  border:1px solid var(--line);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.6);
+}
+.deckboard::after{
+  content:""; position:absolute; inset:6px 8% auto; height:1px;
+  background:linear-gradient(90deg,transparent,var(--line),transparent);
+}
+
+.member{
+  position:relative; z-index:2; flex:0 0 auto; width:clamp(96px,15vw,168px);
+  scroll-snap-align:center;
+  display:flex; flex-direction:column; align-items:center;
+  transition:opacity .45s ease, filter .45s ease, transform .45s cubic-bezier(.2,.8,.3,1);
+  cursor:pointer; background:none; border:0; padding:0; color:inherit;
+  font:inherit; text-align:center;
+}
+/* ---------- THE PAPER-DOLL RIG ----------
+   .doll is the character's canvas. Every .bone is absolutely positioned
+   at its authored anchor and rotates about its own pivot, so idle motion
+   is pure transform on a handful of elements — compositor work, no
+   layout, no repaint. That is what keeps a full deck smooth.
+
+   The whole character is transparent and sits ABOVE the scene layer, so
+   scenes can change underneath without the cast being touched. */
+.doll{
+  position:relative; display:block; width:100%;
+  aspect-ratio:832/1216;   /* overridden per character from the manifest */
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));
+  transition:filter .45s ease;
+  /* the breathing bob rides the whole doll; the bones add motion on top */
+  animation:breathe 3.4s ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+}
+.doll .bone{
+  position:absolute; left:0; top:0; width:100%; height:auto; display:block;
+  transform-origin:50% 90%;
+  will-change:transform;
+}
+/* A doll with only one layer (the flat v1 cut-out, or the placeholder)
+   fills its canvas; a real layer stack is placed by its anchors. */
+.doll[data-mode="flat"] .bone,
+.doll[data-mode="placeholder"] .bone{position:relative; left:0 !important; top:0 !important;}
+
+@keyframes breathe{
+  0%,100%{transform:translateY(0) scaleY(1);}
+  50%{transform:translateY(-6px) scaleY(1.012);}
+}
+/* Per-bone idle motion. Each is a small rotation about the joint —
+   shoulders swing, head counter-bobs, cloak and weapons trail. */
+@keyframes boneArms{0%,100%{transform:rotate(-1.6deg);}50%{transform:rotate(1.6deg);}}
+@keyframes boneHead{0%,100%{transform:rotate(.9deg) translateY(0);}50%{transform:rotate(-.9deg) translateY(-2px);}}
+@keyframes boneCloak{0%,100%{transform:rotate(-2.6deg) skewX(1deg);}50%{transform:rotate(2.6deg) skewX(-1deg);}}
+@keyframes boneWeaponMain{0%,100%{transform:rotate(-2.2deg);}50%{transform:rotate(2.6deg);}}
+@keyframes boneWeaponOff{0%,100%{transform:rotate(2deg);}50%{transform:rotate(-2.4deg);}}
+@keyframes boneLegs{0%,100%{transform:rotate(.4deg);}50%{transform:rotate(-.4deg);}}
+@keyframes boneTorso{0%,100%{transform:rotate(-.5deg);}50%{transform:rotate(.5deg);}}
+
+.doll .bone[data-bone="arms"]{animation:boneArms 3.4s ease-in-out infinite;}
+.doll .bone[data-bone="head"]{animation:boneHead 3.4s ease-in-out infinite;}
+.doll .bone[data-bone="cloak"]{animation:boneCloak 4.6s ease-in-out infinite;}
+.doll .bone[data-bone="weapon_main"]{animation:boneWeaponMain 4.1s ease-in-out infinite;}
+.doll .bone[data-bone="weapon_off"]{animation:boneWeaponOff 4.4s ease-in-out infinite;}
+.doll .bone[data-bone="legs"]{animation:boneLegs 3.4s ease-in-out infinite;}
+/* The torso bone only counter-rotates on a REAL layer stack; on a flat
+   cut-out it would wobble the entire character, which reads as a glitch. */
+.doll[data-mode="layered"] .bone[data-bone="torso"]{animation:boneTorso 3.4s ease-in-out infinite;}
+.doll .bone{animation-delay:var(--delay,0s);}
+
+/* Offscreen crew stop animating entirely — this is what lets the deck
+   scale past 100 characters without burning frame budget. */
+.member[data-idle="paused"] .doll,
+.member[data-idle="paused"] .doll .bone{animation-play-state:paused;}
+
+.member img{
+  width:100%; height:auto; display:block;
+}
+.member .plate{
+  margin-top:-6px; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); line-height:1.5;
+}
+.member .plate b{display:block; font-size:13px; letter-spacing:.04em;
+  color:var(--text); text-transform:none;}
+.member .rolepip{
+  display:inline-block; width:7px; height:7px; border-radius:50%;
+  background:var(--pip); margin-right:5px; vertical-align:middle;
+}
+.member .score{color:var(--accent); font-weight:700;}
+
+/* speech bubble */
+.bubble{
+  position:absolute; top:-6px; left:50%; transform:translate(-50%,-100%) scale(.9);
+  background:var(--panel); border:1px solid var(--line); color:var(--text);
+  padding:8px 12px; border-radius:14px; font-size:12px; line-height:1.35;
+  width:max(140px,11vw); opacity:0; pointer-events:none;
+  transition:opacity .3s ease, transform .3s ease; z-index:5;
+  box-shadow:0 8px 20px -10px rgba(0,0,0,.6);
+}
+.bubble::after{
+  content:""; position:absolute; left:50%; bottom:-7px; width:12px; height:12px;
+  background:var(--panel); border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  transform:translateX(-50%) rotate(45deg);
+}
+.member:hover .bubble, .member:focus-visible .bubble{
+  opacity:1; transform:translate(-50%,-100%) scale(1);
+}
+
+/* SIGNATURE INTERACTION — role spotlight */
+.deck[data-spot] .member{opacity:.28; filter:grayscale(.85) brightness(.72);}
+.deck[data-spot] .member[data-role-active]{
+  opacity:1; filter:none;
+  transform:translateY(-22px) scale(1.09); z-index:6;
+}
+.deck[data-spot] .member[data-role-active] .doll{
+  filter:drop-shadow(0 0 26px var(--pip)) drop-shadow(0 12px 18px rgba(0,0,0,.5));
+}
+.deck[data-spot] .member[data-role-active]::before{
+  content:""; position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+  width:130%; height:56px; border-radius:50%;
+  background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
+  opacity:.4; pointer-events:none;
+}
+/* SUMMON — the character steps forward out of the line. This is the
+   hook the story layer will build on. */
+.member[data-summoned]{
+  transform:translateY(-26px) scale(1.12); z-index:8;
+}
+.member[data-summoned] .doll{
+  filter:drop-shadow(0 0 30px var(--pip)) drop-shadow(0 16px 22px rgba(0,0,0,.55));
+}
+.member[data-summoned]::after{
+  content:""; position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+  width:140%; height:60px; border-radius:50%;
+  background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
+  opacity:.45; pointer-events:none; z-index:-1;
+}
+
+/* filtered-out (tab CLICKED, not hovered) */
+.member[hidden]{display:none;}
+
+/* shadowform toggle */
+.sform{
+  /* top-right of the figure, clear of the name plate underneath */
+  position:absolute; top:2px; right:0; z-index:7;
+  font:inherit; font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; cursor:pointer;
+  background:var(--panel); color:var(--accent); border:1px solid var(--accent);
+  transition:all .3s ease;
+}
+.member[data-form="shadow"] .sform{
+  background:#2b0b40; color:#c98bff; border-color:#8b4bd0;
+  box-shadow:0 0 14px -2px #8b4bd0;
+}
+.member[data-form="shadow"] .doll{
+  filter:drop-shadow(0 0 22px #8b4bd0) drop-shadow(0 10px 16px rgba(0,0,0,.5))
+         hue-rotate(-38deg) saturate(1.25);
+}
+
+.stagenote{text-align:center; font-size:11px; color:var(--muted); opacity:.75;
+  padding-bottom:14px;}
+
+/* ---------- SECTION HEADS ---------- */
+.sechead{
+  font-family:var(--font-display); font-size:clamp(22px,4vw,34px);
+  color:var(--heading); text-align:center; margin:44px 0 6px;
+}
+.sechead + .subhead{text-align:center; color:var(--muted); font-size:13px;
+  margin-bottom:22px;}
+
+/* ---------- VOYAGE MAP ---------- */
+.voyage{position:relative; z-index:1; padding:10px 0 30px;}
+.map{
+  position:relative; border:1px solid var(--line); border-radius:22px;
+  background:var(--panel); padding:26px 18px 18px; overflow:hidden;
+  transition:background .5s ease, box-shadow .5s ease;
+}
+.map.washed{box-shadow:inset 0 0 90px -20px var(--wash,transparent);}
+.route{
+  position:relative; display:flex; gap:8px; overflow-x:auto; padding:10px 4px 22px;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+}
+.route::-webkit-scrollbar{height:6px;}
+.route::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+.island{
+  position:relative; flex:0 0 auto; width:118px; scroll-snap-align:center;
+  background:none; border:0; color:inherit; font:inherit; cursor:pointer;
+  padding:8px 4px; text-align:center; border-radius:14px;
+  transition:transform .3s ease, background .3s ease;
+  /* the island's own children must be blockified — a <button> does not
+     blockify them the way a flex container would */
+  display:flex; flex-direction:column; align-items:center;
+}
+.island:hover,.island:focus-visible{transform:translateY(-5px);
+  background:color-mix(in srgb,var(--accent) 12%, transparent);}
+.island[aria-current="true"] .blob{
+  box-shadow:0 0 0 3px var(--accent), 0 0 26px -4px var(--accent);
+}
+.blob{
+  display:block; flex:0 0 auto;
+  width:62px; height:44px; margin:0 auto 8px; border-radius:50% 50% 46% 54%/60% 62% 40% 38%;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--accent) 55%, var(--panel)),
+    color-mix(in srgb,var(--line) 70%, var(--panel)));
+  border:1px solid var(--line); position:relative;
+}
+.island[data-kind="raid_boss"] .blob{
+  border-radius:44% 56% 40% 60%/54% 40% 60% 46%;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--accent) 30%, #6a1f3a),
+    color-mix(in srgb,var(--line) 60%, var(--panel)));
+}
+.island .iname{display:block; font-size:11px; line-height:1.25; color:var(--text);}
+.island .ikind{display:block; font-size:9px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin-top:3px;}
+.ship{font-size:20px; position:absolute; top:-4px; left:50%;
+  transform:translateX(-50%); animation:bob 3.4s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(-6px);}}
+/* the dotted route line, threaded through the middle of the island blobs */
+.route::before{
+  content:""; position:absolute; left:0; right:0; top:40px; height:0;
+  border-top:2px dashed var(--line); z-index:0;
+}
+.islandinfo{
+  border-top:1px solid var(--line); margin-top:6px; padding-top:16px;
+  min-height:96px;
+}
+.islandinfo h3{font-family:var(--font-display); font-size:19px; color:var(--heading);}
+.islandinfo .flavor{color:var(--muted); font-size:13.5px; margin:6px 0 10px; font-style:italic;}
+.islandinfo .rec{font-size:14px;}
+.islandinfo .rec b{color:var(--accent);}
+.islandinfo .norec{color:var(--muted); font-size:13px;}
+
+/* ---------- DATA CARDS (tilted, overlapping — never a rigid grid) ---------- */
+.cards{
+  position:relative; z-index:1; display:grid; gap:18px; padding:8px 0 60px;
+  grid-template-columns:repeat(12,1fr);
+}
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:18px;
+  padding:22px 22px 20px; position:relative; align-self:start;
+  box-shadow:0 22px 44px -26px rgba(0,0,0,.7);
+  transition:transform .35s cubic-bezier(.2,.8,.3,1), box-shadow .35s ease;
+}
+.card:hover{transform:rotate(0deg) translateY(-4px) !important;
+  box-shadow:0 28px 54px -24px rgba(0,0,0,.75); z-index:5;}
+.card h2{font-family:var(--font-display); font-size:22px; color:var(--heading);
+  margin-bottom:4px;}
+.card .cardsub{font-size:12px; color:var(--muted); margin-bottom:14px;
+  letter-spacing:.06em; text-transform:uppercase;}
+/* the deliberate off-grid placement */
+.card--ladder{grid-column:1/8; transform:rotate(-.7deg);}
+.card--roast{grid-column:8/13; transform:rotate(1deg); margin-top:26px;}
+.card--debt{grid-column:3/12; transform:rotate(-.4deg); margin-top:-14px;}
+
+.ladder{list-style:none;}
+.ladder li{
+  display:flex; align-items:baseline; gap:10px; padding:8px 0;
+  border-bottom:1px dashed var(--line);
+}
+.ladder li:last-child{border-bottom:0;}
+.ladder .rank{font-family:var(--font-display); color:var(--accent);
+  font-size:15px; width:28px; flex:0 0 28px;}
+.ladder .who{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;
+  white-space:nowrap;}
+.ladder .who a{text-decoration:none; border-bottom:1px solid transparent;}
+.ladder .who a:hover{border-bottom-color:var(--accent);}
+.ladder .val{font-weight:700; color:var(--text);}
+.ladder li[hidden]{display:none;}
+/* the shared interactive layer hides filtered-out rows/sections */
+.nohit{display:none !important;}
+.tab.on{border-color:var(--role,var(--accent));
+  box-shadow:inset 0 0 0 1px var(--role,var(--accent));}
+
+.roastline{font-family:var(--font-display); font-size:clamp(19px,3vw,26px);
+  color:var(--heading); line-height:1.25; margin:6px 0 12px;}
+.roastmeta{font-size:13px; color:var(--muted);}
+.roastmeta b{color:var(--accent);}
+
+.debtnum{font-family:var(--font-display); font-size:clamp(28px,6vw,46px);
+  color:var(--accent); line-height:1;}
+.debtnote{font-size:12px; color:var(--muted); margin:6px 0 14px;}
+.debtlines{list-style:none; font-size:13.5px;}
+.debtlines li{display:flex; justify-content:space-between; gap:12px;
+  padding:3px 0; color:var(--text);}
+.debtlines li span:last-child{color:var(--muted);}
+.debtflavor{margin-top:12px; font-style:italic; color:var(--muted); font-size:13px;}
+
+/* ---------- footer / archive ---------- */
+.foot{border-top:1px solid var(--line); padding:26px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px; position:relative; z-index:1;}
+.foot a{color:var(--accent);}
+.archive{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin:12px 0 16px;}
+.archive a{
+  font-size:12px; padding:6px 12px; border-radius:999px; text-decoration:none;
+  border:1px solid var(--line); color:var(--muted);
+}
+.archive a:hover{border-color:var(--accent); color:var(--text);}
+.stub{font-size:11px; opacity:.7; margin-top:10px;}
+
+/* ---------- RESPONSIVE (phone first is the real case) ---------- */
+@media (max-width:860px){
+  .card--ladder,.card--roast,.card--debt{
+    grid-column:1/13; transform:none; margin-top:0;
+  }
+  .deck{gap:2px; min-height:280px; overflow-x:auto; justify-content:flex-start;
+    padding:0 8px 26px; scroll-snap-type:x proximity;}
+  .member{width:132px; scroll-snap-align:center;}
+  .bubble{width:150px;}
+  .masthead{padding:34px 0 18px;}
+}
+@media (max-width:480px){
+  body{font-size:15px;}
+  .member{width:118px;}
+  .island{width:104px;}
+}
+
+/* ---------- REDUCED MOTION — kill the loops, keep everything readable ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+  .embers{display:none;}
+  .member{transform:none !important;}
+  .doll, .doll .bone{animation:none !important; transform:none !important;}
+  .deck[data-spot] .member[data-role-active]{transform:none !important;}
+  /* spotlight still communicates, just without movement */
+  .deck[data-spot] .member{opacity:.45;}
+  .bubble{opacity:1; position:static; transform:none; width:auto; margin-bottom:8px;}
+  .bubble::after{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="embers" aria-hidden="true">
+  {%- for e in embers %}
+  <i class="ember" style="left:{{ e.left }}%; --dx:{{ e.dx }}px;
+     width:{{ e.size }}px; height:{{ e.size }}px;
+     animation-duration:{{ e.dur }}s; animation-delay:{{ e.delay }}s;"></i>
+  {%- endfor %}
+</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brandmark">{{ guild_name }}</div>
+    <div class="themeswitch" role="group" aria-label="Board theme">
+      {%- for key, t in themes.items() %}
+      <button type="button" data-theme="{{ key }}"
+              aria-pressed="{{ 'true' if key == default_theme else 'false' }}">{{ t.label }}</button>
+      {%- endfor %}
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="masthead wrap">
+  <div class="kicker">
+    {%- if standing %}
+    World <b>#{{ '{:,}'.format(standing.world) }}</b> ·
+    Region <b>#{{ '{:,}'.format(standing.region) }}</b> ·
+    Realm <b>#{{ standing.realm }}</b>
+    {%- else %}
+    {{ realm_label }}
+    {%- endif %}
+  </div>
+  <h1>The Guild Board</h1>
+  <div class="goldrule"></div>
+  <p class="gag">{{ gag_subtitle }}</p>
+  {%- if updated %}
+  <p class="updated">Last updated {{ updated }}</p>
+  {%- endif %}
+</section>
+
+<section class="controls wrap">
+  {#
+    These are the shared interactive layer's hooks (#filters / #search /
+    #weeksel), so the ladder gets role filtering, remembered player
+    search and the week archive from web/_interactive.html.j2 — the same
+    three features every other layout has. The crew deck's spotlight
+    listens to the SAME buttons, so one control drives both.
+  #}
+  <div class="tabs" id="filters" role="group" aria-label="Filter crew by role" hidden>
+    <button type="button" class="tab on" data-role="all" aria-pressed="true">
+      All Hands <span class="count">{{ counts.all }}</span></button>
+    <button type="button" class="tab" data-role="tank" aria-pressed="false">
+      Tanks <span class="count">{{ counts.tank }}</span></button>
+    <button type="button" class="tab" data-role="healer" aria-pressed="false">
+      Healers <span class="count">{{ counts.healer }}</span></button>
+    <button type="button" class="tab" data-role="dps" aria-pressed="false">
+      DPS <span class="count">{{ counts.dps }}</span></button>
+  </div>
+  <input id="search" class="search" type="search" placeholder="Search a player…"
+         aria-label="Search players" autocomplete="off" hidden>
+  <select id="weeksel" class="search" aria-label="Week archive" hidden>
+    <option value="">This week</option>
+  </select>
+</section>
+
+<!-- ---------------- CREW STAGE ---------------- -->
+<section class="stage" aria-label="The crew">
+  {#
+    The scene layer. Two plates crossfade so an island (or any future
+    animated backdrop) can wash over the board without the crew's
+    transparent cut-outs changing at all.
+  #}
+  <div class="scene" id="scene" aria-hidden="true"
+       style="--scene-tint:{{ opening_scene.tint or 'var(--accent)' }};">
+    <div class="scene-plate on" data-plate="a"
+         {% if opening_scene.image %}style="background-image:url('{{ opening_scene.image }}');"{% endif %}></div>
+    <div class="scene-plate" data-plate="b"></div>
+  </div>
+  <div class="deck" id="deck">
+    <div class="deckboard" aria-hidden="true"></div>
+    {%- for m in crew %}
+    <button type="button" class="member" data-name="{{ m.name|lower }}"
+            data-role="{{ m.role }}" data-slug="{{ m.slug }}"
+            {% if m.has_shadowform %}data-form="light"{% endif %}
+            style="--delay:{{ loop.index0 * 0.28 }}s; --pip:var(--{{ m.role }});"
+            aria-label="{{ m.name }}{% if m.spec %}, {{ m.spec }} {{ m.cls }}{% endif %}">
+      {%- if m.catchphrase %}
+      <span class="bubble">{{ m.catchphrase }}</span>
+      {%- endif %}
+      {#
+        THE PAPER DOLL. Each layer is a bone: positioned at its anchor,
+        rotating about its own pivot. The art never changes — only the
+        transform on each bone — so one idle rig drives every character
+        whatever they are wearing.
+      #}
+      {%- if m.doll and m.doll.layers %}
+      <span class="doll" data-mode="{{ m.doll.mode }}"
+            style="aspect-ratio:{{ m.doll.canvas.w }}/{{ m.doll.canvas.h }};">
+        {%- for L in m.doll.layers %}
+        <img class="bone" data-bone="{{ L.bone }}" data-slot="{{ L.slot }}"
+             src="{{ L.src }}" alt=""
+             {% if loop.first and m.light_art %}data-light="{{ m.light_art }}"{% endif %}
+             {% if loop.first and m.shadow_art %}data-shadow="{{ m.shadow_art }}"{% endif %}
+             style="left:{{ L.left_pct }}%; top:{{ L.top_pct }}%; z-index:{{ L.z }};
+                    transform-origin:{{ L.origin_pct[0] }}% {{ L.origin_pct[1] }}%;"
+             decoding="async">
+        {%- endfor %}
+      </span>
+      {%- else %}
+      <span class="doll" data-mode="placeholder">
+        <img class="bone" data-bone="torso" src="cast/placeholders/crew_slot.png"
+             alt="{{ m.name }} (art pending)" decoding="async"
+             style="transform-origin:50% 95%;">
+      </span>
+      {%- endif %}
+      <span class="plate">
+        <b>{{ m.name }}</b>
+        <span class="rolepip" aria-hidden="true"></span>{{ m.role_label }}
+        {%- if m.score %} · <span class="score">{{ m.score }}</span>{% endif %}
+      </span>
+      {%- if m.has_shadowform %}
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for {{ m.name }}">Light</span>
+      {%- endif %}
+    </button>
+    {%- endfor %}
+  </div>
+  <p class="stagenote">Hover a role tab to spotlight that watch · click a tab to filter the deck</p>
+</section>
+
+<!-- ---------------- VOYAGE MAP ---------------- -->
+<section class="voyage wrap" aria-label="The season's voyage">
+  <h2 class="sechead">The Voyage</h2>
+  <p class="subhead">
+    {{ islands|length }} islands this season · the ship is docked at
+    <b>{{ current_island_name or 'the first port' }}</b>
+  </p>
+  <div class="map" id="map">
+    <div class="route" role="tablist" aria-label="Islands">
+      {%- for isl in islands %}
+      <button type="button" class="island" role="tab"
+              data-island="{{ isl.id }}" data-kind="{{ isl.kind }}"
+              data-name="{{ isl.name }}"
+              data-flavor="{{ isl.flavor|e }}"
+              data-record="{{ isl.record_html|e }}"
+              data-scene-tint="{{ isl.scene.tint or '' }}"
+              data-scene-image="{{ isl.scene.image or '' }}"
+              data-scene-label="{{ isl.scene.label|e }}"
+              aria-current="{{ 'true' if isl.id == current_island else 'false' }}"
+              aria-selected="{{ 'true' if isl.id == current_island else 'false' }}">
+        <span class="blob" aria-hidden="true">
+          {%- if isl.id == current_island %}<span class="ship" title="You are here">⛵</span>{% endif %}
+        </span>
+        <span class="iname">{{ isl.name }}</span>
+        <span class="ikind">{{ 'Boss' if isl.kind == 'raid_boss' else 'Dungeon' }}</span>
+      </button>
+      {%- endfor %}
+    </div>
+    <div class="islandinfo" id="islandinfo" aria-live="polite">
+      <h3 id="ii-name">{{ current_island_name or 'Pick an island' }}</h3>
+      <p class="flavor" id="ii-flavor">{{ current_island_flavor }}</p>
+      <div class="rec" id="ii-rec">{{ current_island_record|safe }}</div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- DATA CARDS ---------------- -->
+<section class="cards wrap">
+
+  <article class="card card--ladder">
+    <h2>The Keystone Ladder</h2>
+    <p class="cardsub">Season Mythic+ score · top {{ ladder|length }}</p>
+    {#
+      .sec / .row / data-tags is the shared partial's DOM contract.
+      data-tags carries the player's REAL spec+class when we know it.
+      TODO(wire-real-data): until blizzard_profile_cache.json lands, most
+      of the ladder has no spec on record, and the shared classifier
+      treats an untagged row as DPS. Once the cache exists every row gets
+      a real tag and the ladder's role filter becomes exact.
+    #}
+    <div class="sec">
+    <ol class="ladder" id="ladder">
+      {%- for row in ladder %}
+      <li class="row" data-name="{{ row.name|lower }}" data-tags="{{ row.tags }}">
+        <span class="rank">{{ row.rank }}</span>
+        <span class="who">
+          {%- if row.url %}<a href="{{ row.url }}" target="_blank" rel="noopener">{{ row.name }}</a>
+          {%- else %}{{ row.name }}{% endif %}
+        </span>
+        <span class="val">{{ row.score }}</span>
+      </li>
+      {%- endfor %}
+    </ol>
+    </div>
+  </article>
+
+  {%- if roast %}
+  <article class="card card--roast">
+    <h2>Roast of the Week</h2>
+    <p class="cardsub">Decided by 🔥</p>
+    <p class="roastline">“{{ roast.roast }}”</p>
+    <p class="roastmeta">
+      — <b>{{ roast.winner }}</b>{% if roast.target %}, on {{ roast.target }}{% endif %}
+    </p>
+  </article>
+  {%- endif %}
+
+  {%- if debt %}
+  <article class="card card--debt">
+    <h2>{{ debt.title }}</h2>
+    <p class="cardsub">The ledger</p>
+    <div class="debtnum">{{ debt.owed }}g</div>
+    <p class="debtnote">{{ debt.note }}</p>
+    <ul class="debtlines">
+      {%- for line in debt.lines %}
+      <li><span>{{ line.left }}</span>{% if line.right %}<span>{{ line.right }}</span>{% endif %}</li>
+      {%- endfor %}
+    </ul>
+    {%- if debt.flavor %}<p class="debtflavor">{{ debt.flavor }}</p>{% endif %}
+  </article>
+  {%- endif %}
+
+</section>
+</main>
+
+<footer class="foot wrap">
+  {%- if archive %}
+  <div class="archive">
+    {%- for a in archive %}<a href="{{ a.url }}">{{ a.label }}</a>{% endfor %}
+  </div>
+  {%- endif %}
+  <p>{{ credits }}</p>
+  {%- if stub_note %}<p class="stub">{{ stub_note }}</p>{% endif %}
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+
+  /* ---------- theme switch (persisted) ---------- */
+  var themeBtns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    themeBtns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+
+  /* ---------- role tabs: hover = spotlight, click = filter ---------- */
+  var deck = document.getElementById('deck');
+  var members = Array.prototype.slice.call(deck.querySelectorAll('.member'));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var activeFilter = 'all';
+  /* The shared partial reveals #filters/#search only when it finds rows
+     to act on. The deck is always here, so make sure the controls are
+     visible either way — the deck's own filtering must not depend on
+     the ladder existing. */
+  ['filters','search'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.hidden = false;
+  });
+
+  function spotlight(role){
+    if (!role || role === 'all'){ deck.removeAttribute('data-spot'); }
+    else { deck.setAttribute('data-spot', role); }
+    members.forEach(function(m){
+      if (role && role !== 'all' && m.dataset.role === role) m.setAttribute('data-role-active','');
+      else m.removeAttribute('data-role-active');
+    });
+  }
+  function applyFilter(){
+    members.forEach(function(m){
+      var okRole = activeFilter === 'all' || m.dataset.role === activeFilter;
+      var okName = !query || m.dataset.name.indexOf(query) !== -1;
+      m.hidden = !(okRole && okName);
+    });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('mouseenter', function(){ spotlight(t.dataset.role); });
+    t.addEventListener('focus', function(){ spotlight(t.dataset.role); });
+    t.addEventListener('mouseleave', function(){ spotlight(activeFilter); });
+    t.addEventListener('blur', function(){ spotlight(activeFilter); });
+    t.addEventListener('click', function(){
+      activeFilter = t.dataset.role;
+      tabs.forEach(function(o){
+        o.setAttribute('aria-pressed', o === t ? 'true' : 'false');
+      });
+      applyFilter();
+      spotlight(activeFilter);
+    });
+  });
+
+  /* ---------- player search (deck + ladder) ---------- */
+  var query = '';
+  var q = document.getElementById('search');
+  if (q) {
+    q.addEventListener('input', function(){
+      query = q.value.trim().toLowerCase();
+      applyFilter();
+    });
+  }
+
+  /* ---------- paper-doll runtime ----------
+     Idle animation is pure CSS on the bones, so the only thing JS has to
+     do is stop paying for characters nobody can see. With a full cast
+     that is the difference between a smooth deck and a hot laptop. */
+  if ('IntersectionObserver' in window) {
+    var idleWatch = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        en.target.dataset.idle = en.isIntersecting ? 'playing' : 'paused';
+      });
+    }, {root: null, rootMargin: '160px'});
+    members.forEach(function(m){ idleWatch.observe(m); });
+  }
+
+  /* Hover/click to SUMMON: the character steps forward out of the line.
+     This is the hook the story layer will hang off — it already emits an
+     event with the character's identity. */
+  var summoned = null;
+  function summon(member){
+    if (summoned === member) return;
+    if (summoned) summoned.removeAttribute('data-summoned');
+    summoned = member || null;
+    if (summoned) {
+      summoned.setAttribute('data-summoned', '');
+      deck.dispatchEvent(new CustomEvent('crew:summon', {detail: {
+        slug: summoned.dataset.slug, name: summoned.dataset.name,
+        role: summoned.dataset.role
+      }}));
+    } else {
+      deck.dispatchEvent(new CustomEvent('crew:dismiss'));
+    }
+  }
+  members.forEach(function(m){
+    m.addEventListener('mouseenter', function(){ summon(m); });
+    m.addEventListener('focus', function(){ summon(m); });
+    m.addEventListener('click', function(ev){
+      if (ev.target.closest('[data-shadowtoggle]')) return;
+      summon(summoned === m ? null : m);
+    });
+  });
+  deck.addEventListener('mouseleave', function(){ summon(null); });
+
+  /* The public surface the story/interactive layer will drive. */
+  window.CrewStage = {
+    summon: function(slug){
+      summon(members.filter(function(m){ return m.dataset.slug === slug; })[0] || null);
+    },
+    dismiss: function(){ summon(null); },
+    spotlightRole: function(role){ spotlight(role); },
+    setScene: function(tint, image){ setScene(tint, image); },
+    roster: function(){
+      return members.map(function(m){
+        return {slug: m.dataset.slug, name: m.dataset.name, role: m.dataset.role,
+                bones: Array.prototype.map.call(
+                  m.querySelectorAll('.bone'), function(b){ return b.dataset.slot; })};
+      });
+    },
+    on: function(type, fn){ deck.addEventListener(type, fn); }
+  };
+
+  /* ---------- Shadowform toggle ---------- */
+  Array.prototype.slice.call(document.querySelectorAll('[data-shadowtoggle]'))
+    .forEach(function(btn){
+      function flip(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        var member = btn.closest('.member');
+        var img = member.querySelector('img');
+        var next = member.dataset.form === 'shadow' ? 'light' : 'shadow';
+        member.dataset.form = next;
+        btn.textContent = next === 'shadow' ? 'Shadow' : 'Light';
+        var src = img.dataset[next];
+        if (src) img.src = src;
+      }
+      btn.addEventListener('click', flip);
+      btn.addEventListener('keydown', function(ev){
+        if (ev.key === 'Enter' || ev.key === ' ') flip(ev);
+      });
+    });
+
+  /* ---------- voyage map ---------- */
+  var islands = Array.prototype.slice.call(document.querySelectorAll('.island'));
+  var map = document.getElementById('map');
+  var iiName = document.getElementById('ii-name');
+  var iiFlavor = document.getElementById('ii-flavor');
+  var iiRec = document.getElementById('ii-rec');
+  var WASH = { dungeon: 'var(--accent)', raid_boss: '#a3335c' };
+
+  /* ---------- scene changes ----------
+     Crossfade between two plates. The crew's cut-outs sit on their own
+     layer above this and are never touched, so the backdrop can change
+     (or animate) freely underneath them. */
+  var scene = document.getElementById('scene');
+  var plates = scene ? Array.prototype.slice.call(
+    scene.querySelectorAll('.scene-plate')) : [];
+  function setScene(tint, image){
+    if (plates.length < 2) return;
+    var visible = plates.filter(function(p){ return p.classList.contains('on'); })[0] || plates[0];
+    var idle = plates.filter(function(p){ return p !== visible; })[0];
+    idle.style.backgroundImage = image ? "url('" + image + "')" : '';
+    scene.style.setProperty('--scene-tint', tint || 'var(--accent)');
+    visible.classList.remove('on');
+    idle.classList.add('on');
+  }
+
+  function showIsland(btn){
+    iiName.textContent = btn.dataset.name;
+    iiFlavor.textContent = btn.dataset.flavor || '';
+    iiRec.innerHTML = btn.dataset.record || '<span class="norec">No record yet.</span>';
+    map.classList.add('washed');
+    map.style.setProperty('--wash', WASH[btn.dataset.kind] || 'transparent');
+    setScene(btn.dataset.sceneTint, btn.dataset.sceneImage);
+    islands.forEach(function(o){
+      o.setAttribute('aria-selected', o === btn ? 'true' : 'false');
+    });
+  }
+  islands.forEach(function(btn){
+    btn.addEventListener('mouseenter', function(){ showIsland(btn); });
+    btn.addEventListener('focus', function(){ showIsland(btn); });
+    btn.addEventListener('click', function(){ showIsland(btn); });
+  });
+})();
+</script>
+{% include "web/_interactive.html.j2" %}
+</body>
+</html>

@@ -25,3 +25,17 @@ redesign_previews/*.png
 build/
 dist/
 *.egg-info/
+
+# Front-end crew board: rendered output + screenshots are build artifacts
+crew_board.html
+previews/
+crew_board_proof.html
+crew_board_watercolor.html
+crew_board_doll.html
+
+# The unanchored `board.png` rule above targets the generated board image
+# at the repo root, but git matches it at ANY depth — so it also swallows
+# the art pipeline's cut-outs (cast/<slug>/<style>/board.png) and the
+# test fixtures. Un-ignore those explicitly; they are real inputs.
+!cast/**/board.png
+!tests/fixtures/**/board.png
