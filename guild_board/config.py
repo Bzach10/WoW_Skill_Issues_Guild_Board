@@ -62,7 +62,7 @@ CLASS_COLORS = {
 
 
 def load_config(path="config.yml"):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     guild_name = ((cfg or {}).get("guild") or {}).get("name", "")
     if guild_name in ("", "Your Guild Name"):
@@ -88,6 +88,31 @@ def slugify_server(server):
         return None
     slug = server.strip().lower().replace("'", "").replace(" ", "-")
     return slug or None
+
+
+def split_name_realm(entry, default_realm=None):
+    """Split a roster entry ("name-realm-slug") into (name, realm_slug).
+
+    THE realm slug usually contains hyphens itself ("bleeding-hollow",
+    "area-52", "wyrmrest-accord"), so this splits on the FIRST hyphen —
+    the character name is a single token, the realm is everything after.
+
+    Splitting on the last hyphen instead (rsplit) silently mangles every
+    multi-word realm: "dathar-area-52" becomes name="dathar-area",
+    realm="52", which 400s/404s at both Blizzard and Raider.io and — because
+    both callers treat a non-200 as "skip this character" — drops the
+    member with no error. That was live for 65 of 135 roster members.
+
+    Returns (name, realm) with both stripped; realm falls back to
+    default_realm when the entry has no hyphen at all.
+    """
+    if not entry:
+        return "", (default_realm or "")
+    if "-" in entry:
+        name, realm = entry.split("-", 1)
+    else:
+        name, realm = entry, (default_realm or "")
+    return name.strip(), realm.strip()
 
 
 def clean_spec_name(spec, class_name=""):
@@ -153,7 +178,7 @@ def get_roster_cache_path(cfg):
 def load_roster_cache(cfg):
     path = get_roster_cache_path(cfg)
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         return data.get("members", []), data.get("last_updated")
     except (FileNotFoundError, json.JSONDecodeError):

@@ -69,7 +69,15 @@ def test_fetch_dungeon_island_data_uses_roster_and_public_raiderio(monkeypatch, 
         json.dump({"last_updated": "2026-07-20T00:00:00+00:00",
                    "members": ["Rakdisc-Proudmoore"]}, f)
 
+    # Raider.io calls now go through guild_board.http's pooled session
+    # (see _rio_get), so the fake is installed there rather than on the
+    # module-level requests.get this used to patch.
+    captured = {}
+
     def fake_get(url, params=None, timeout=None):
+        captured["url"] = url
+        captured["params"] = params
+
         class Resp:
             status_code = 200
             def json(self):
@@ -82,9 +90,19 @@ def test_fetch_dungeon_island_data_uses_roster_and_public_raiderio(monkeypatch, 
                 }
         return Resp()
 
-    monkeypatch.setattr("requests.get", fake_get)
+    class FakeSession:
+        get = staticmethod(fake_get)
+
+    # raiderio does `from guild_board.http import get_session`, so the name
+    # is bound in raiderio's namespace — patching guild_board.http would
+    # not reach it.
+    monkeypatch.setattr("guild_board.raiderio.get_session",
+                        lambda *a, **kw: FakeSession())
 
     cfg = {"guild": {"region": "us"}, "roster_cache": {"enabled": True, "file": "roster_cache.json"}}
     result = voyage.fetch_dungeon_island_data(cfg, "Grim Batol")
     assert result["name"] == "Rakdisc"
     assert result["level"] == 12
+    # Still the public, credential-free Raider.io profile endpoint.
+    assert captured["url"] == "https://raider.io/api/v1/characters/profile"
+    assert captured["params"]["realm"] == "Proudmoore"
