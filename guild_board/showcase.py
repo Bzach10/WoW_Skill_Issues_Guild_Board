@@ -23,24 +23,37 @@ TRIAL_SCENES = {
     "rakdisc": {
         "setting": "The raid hall",
         "candidates": [
+            # Stable handoff paths from the art pipeline (cast/_trial/)
+            # are copies under fixed names, so the site never depends on
+            # a seed number. Originals stay untouched behind them.
+            "cast/_trial/rakdisc.png",
             "cast/rakdisc/scene1_raidhall_w025.png",
         ],
     },
     "floofwall": {
         "setting": "The tavern",
         "candidates": [
-            "cast/floofwall/floofwall_tavern_heavyset_v2_w025.png",
-            "cast/floofwall/floofwall_tavern_heavyset_w025.png",
+            "cast/_trial/floofwall.png",
             "cast/floofwall/floofwall_tavern_w025.png",
         ],
     },
     "healyeah": {
-        "setting": "The moonlit spire",
+        "setting": "The bronze spire",
         "candidates": [
+            "cast/_trial/healyeah.png",
             "cast/healyeah/healyeah_dragonflight_v2_w030.png",
-            "cast/healyeah/healyeah_dragonflight_w025.png",
         ],
     },
+}
+
+# The art pipeline also ships alternates. Swapping one in is a config
+# change, not a code change:
+#
+#   showcase:
+#     scenes:
+#       healyeah: "cast/_trial/healyeah_alt.png"
+ALTERNATES = {
+    "healyeah": "cast/_trial/healyeah_alt.png",
 }
 
 TRIAL_ORDER = ["floofwall", "rakdisc", "healyeah"]   # tank · healer · dps
