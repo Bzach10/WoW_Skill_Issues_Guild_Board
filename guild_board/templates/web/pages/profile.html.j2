@@ -1,0 +1,236 @@
+{#
+  Player profile — one permalink per crew member.
+
+  Reuses the board's theme tokens and the same paper-doll rig, so a
+  profile looks and animates like the deck it came from. Every panel is
+  optional: a member with no score, no records and no art still gets a
+  complete page.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ p.name }} — {{ guild_name }}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--tank:{{ role_tint.tank }}; --healer:{{ role_tint.healer }};
+  --dps:{{ role_tint.dps }}; --unknown:{{ role_tint.unknown }};}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+.wrap{max-width:940px; margin:0 auto; padding:0 20px;}
+.back{display:inline-block; margin:22px 0 6px; font-size:13px; color:var(--muted);
+  text-decoration:none;}
+.back:hover{color:var(--accent);}
+
+.hero{display:grid; grid-template-columns:minmax(180px,300px) 1fr; gap:34px;
+  align-items:end; padding:14px 0 30px;}
+.stage{position:relative;}
+.stage .glow{position:absolute; inset:auto 0 -10px; height:80px;
+  background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
+  opacity:.4;}
+
+/* the same rig the deck uses */
+.doll{position:relative; display:block; width:100%; aspect-ratio:832/1216;
+  filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));
+  animation:breathe 3.4s ease-in-out infinite;}
+.doll .bone{position:absolute; left:0; top:0; width:100%; height:auto;
+  display:block; transform-origin:50% 90%; will-change:transform;}
+.doll[data-mode="flat"] .bone,
+.doll[data-mode="placeholder"] .bone{position:relative;}
+@keyframes breathe{0%,100%{transform:translateY(0) scaleY(1);}
+  50%{transform:translateY(-6px) scaleY(1.012);}}
+@keyframes boneArms{0%,100%{transform:rotate(-1.6deg);}50%{transform:rotate(1.6deg);}}
+@keyframes boneHead{0%,100%{transform:rotate(.9deg);}50%{transform:rotate(-.9deg);}}
+@keyframes boneCloak{0%,100%{transform:rotate(-2.6deg);}50%{transform:rotate(2.6deg);}}
+@keyframes boneLegs{0%,100%{transform:rotate(.4deg);}50%{transform:rotate(-.4deg);}}
+@keyframes boneWeapon{0%,100%{transform:rotate(-2.2deg);}50%{transform:rotate(2.6deg);}}
+.doll .bone[data-bone="arms"]{animation:boneArms 3.4s ease-in-out infinite;}
+.doll .bone[data-bone="head"]{animation:boneHead 3.4s ease-in-out infinite;}
+.doll .bone[data-bone="cloak"]{animation:boneCloak 4.6s ease-in-out infinite;}
+.doll .bone[data-bone="legs"]{animation:boneLegs 3.4s ease-in-out infinite;}
+.doll .bone[data-bone^="weapon"]{animation:boneWeapon 4.1s ease-in-out infinite;}
+
+.ident .role{display:inline-block; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--bg); background:var(--pip);
+  padding:4px 10px; border-radius:999px; margin-bottom:12px;}
+.ident h1{font-family:var(--font-display); font-size:clamp(34px,7vw,62px);
+  line-height:1; color:var(--heading);}
+.ident .sub{color:var(--muted); margin-top:8px; font-size:15px;}
+.ident .phrase{margin-top:14px; font-style:italic; color:var(--muted);
+  border-left:2px solid var(--accent); padding-left:12px;}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:14px; padding:6px 0 30px;}
+.stat{background:var(--panel); border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px;}
+.stat .k{font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted);}
+.stat .v{font-family:var(--font-display); font-size:26px; color:var(--heading);
+  line-height:1.2; margin-top:4px;
+  /* Cinzel's default figures render 1 as a bare I, which reads as a
+     roman numeral in a stat tile. Force lining figures. */
+  font-variant-numeric:lining-nums tabular-nums;}
+.stat .d{font-size:12px; color:var(--muted);}
+.stat .up{color:var(--accent); font-weight:700;}
+
+h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
+  margin:8px 0 12px;}
+.records{list-style:none; display:grid; gap:10px; padding-bottom:28px;}
+.records li{background:var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:14px 16px; display:flex; align-items:baseline;
+  gap:14px; flex-wrap:wrap;}
+.records .val{font-family:var(--font-display); font-size:26px; color:var(--accent);}
+.records .lbl{font-weight:700;}
+.records .det{color:var(--muted); font-size:14px;}
+.records .new{font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--bg); background:var(--accent); padding:3px 8px; border-radius:999px;}
+
+.links{display:flex; gap:10px; flex-wrap:wrap; padding-bottom:20px;}
+.links a{font-size:13px; padding:9px 16px; border-radius:999px;
+  border:1px solid var(--line); text-decoration:none; color:var(--text);}
+.links a:hover{border-color:var(--accent); color:var(--accent);}
+.note{background:var(--panel); border:1px dashed var(--line); border-radius:12px;
+  padding:12px 14px; color:var(--muted); font-size:13.5px; margin-bottom:22px;}
+
+.foot{border-top:1px solid var(--line); margin-top:20px; padding:20px 0 50px;
+  color:var(--muted); font-size:13px;}
+
+@media (max-width:720px){
+  .hero{grid-template-columns:1fr; gap:18px; align-items:start;}
+  .stage{max-width:230px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .doll,.doll .bone{animation:none !important;}
+}
+</style>
+</head>
+<body style="--pip:var(--{{ p.member.role }});">
+<div class="wrap">
+  <a class="back" href="../index.html">← The Guild Board</a>
+
+  <header class="hero">
+    <div class="stage">
+      <div class="glow" aria-hidden="true"></div>
+      {%- if p.member.doll and p.member.doll.layers %}
+      <span class="doll" data-mode="{{ p.member.doll.mode }}"
+            style="aspect-ratio:{{ p.member.doll.canvas.w }}/{{ p.member.doll.canvas.h }};">
+        {%- for L in p.member.doll.layers %}
+        <img class="bone" data-bone="{{ L.bone }}" data-slot="{{ L.slot }}"
+             src="../{{ L.src }}" alt=""
+             style="left:{{ L.left_pct }}%; top:{{ L.top_pct }}%; z-index:{{ L.z }};
+                    transform-origin:{{ L.origin_pct[0] }}% {{ L.origin_pct[1] }}%;">
+        {%- endfor %}
+      </span>
+      {%- else %}
+      <span class="doll" data-mode="placeholder">
+        <img class="bone" data-bone="torso" src="../cast/placeholders/crew_slot.png"
+             alt="{{ p.name }} (art pending)">
+      </span>
+      {%- endif %}
+    </div>
+
+    <div class="ident">
+      <span class="role">{{ p.member.role_label }}</span>
+      <h1>{{ p.name }}</h1>
+      <p class="sub">
+        {%- set bits = [] %}
+        {%- if p.member.race %}{% set _ = bits.append(p.member.race) %}{% endif %}
+        {%- if p.member.spec %}{% set _ = bits.append(p.member.spec) %}{% endif %}
+        {%- if p.member.cls %}{% set _ = bits.append(p.member.cls) %}{% endif %}
+        {{ bits | join(' ') if bits else 'Class and spec not on record yet' }}
+        {%- if p.realm_label %} · {{ p.realm_label }}{% endif %}
+      </p>
+      {%- if p.member.catchphrase %}
+      <p class="phrase">“{{ p.member.catchphrase }}”</p>
+      {%- endif %}
+    </div>
+  </header>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="k">Season M+ score</div>
+      <div class="v">{{ p.score if p.score is not none else '—' }}</div>
+      <div class="d">
+        {%- if p.rank %}#{{ p.rank }} of {{ p.field }} in the guild{% else %}No score on record{% endif %}
+      </div>
+    </div>
+    {%- if p.delta %}
+    <div class="stat">
+      <div class="k">Since baseline</div>
+      <div class="v up">{{ p.delta }}</div>
+      <div class="d">points this season</div>
+    </div>
+    {%- endif %}
+    {%- if p.streak %}
+    <div class="stat">
+      <div class="k">Attendance streak</div>
+      <div class="v">{{ p.streak }}</div>
+      <div class="d">consecutive weeks on the board</div>
+    </div>
+    {%- endif %}
+    <div class="stat">
+      <div class="k">Board art</div>
+      <div class="v">{{ 'Assembled' if p.member.doll.mode == 'layered'
+                        else ('Cut-out' if p.member.art_is_real else 'Pending') }}</div>
+      <div class="d">
+        {%- if p.member.doll.mode == 'layered' %}{{ p.member.doll.layers | length }} layers
+        {%- elif p.member.art_is_real %}single cut-out
+        {%- else %}awaiting the art pipeline{% endif %}
+      </div>
+    </div>
+  </section>
+
+  {%- if p.records %}
+  <h2 class="sec">Records held</h2>
+  <ul class="records">
+    {%- for r in p.records %}
+    <li>
+      <span class="val">{{ r.value }}</span>
+      <span class="lbl">{{ r.label }}</span>
+      {%- if r.detail %}<span class="det">{{ r.detail }}</span>{% endif %}
+      {%- if r.spec %}<span class="det">· {{ r.spec }}</span>{% endif %}
+      {%- if r.fresh %}<span class="new">New</span>{% endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+
+  {%- if p.realm_unknown %}
+  <p class="note">
+    We don't have a realm on record for {{ p.name }} yet, so the external
+    profile links are unavailable — linking to a guessed realm is what
+    produced blank pages before. Everything above is real data from the
+    board.
+  </p>
+  {%- endif %}
+
+  {%- if p.wcl_url or p.rio_url %}
+  <h2 class="sec">Elsewhere</h2>
+  <div class="links">
+    {%- if p.wcl_url %}<a href="{{ p.wcl_url }}" target="_blank" rel="noopener">Warcraft Logs ↗</a>{% endif %}
+    {%- if p.rio_url %}<a href="{{ p.rio_url }}" target="_blank" rel="noopener">Raider.io ↗</a>{% endif %}
+  </div>
+  {%- endif %}
+
+  <footer class="foot">
+    <a href="../index.html">← Back to the board</a>
+    {%- if updated %} · Board data from {{ updated }}{% endif %}
+  </footer>
+</div>
+</body>
+</html>

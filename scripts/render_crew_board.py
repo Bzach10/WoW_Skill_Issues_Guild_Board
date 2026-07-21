@@ -27,6 +27,7 @@ import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
+from guild_board import profiles as profiles_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
 
@@ -91,12 +92,16 @@ def _ladder(season_scores, roster, region, crew=None, top_n=12):
                             member.get("role")) if x).lower()
     # Per-player realms via the shared resolver: the guild is cross-realm,
     # so a link built from the guild realm alone is wrong for most people.
+    on_deck = {m["slug"] for m in (crew or [])}
     index = links_mod.realm_index(roster)
     rows = sorted(season_scores.items(), key=lambda kv: -kv[1])[:top_n]
     out = []
     for i, (slug, score) in enumerate(rows, start=1):
-        url = links_mod.character_url(slug, index, region=region,
-                                      site="raiderio")
+        # Link to the profile page we own when this player is on the deck;
+        # otherwise fall back to their external profile.
+        url = (profiles_mod.profile_href(slug) if slug in on_deck
+               else links_mod.character_url(slug, index, region=region,
+                                            site="raiderio"))
         out.append({"rank": i, "name": slug.title(), "score": score, "url": url,
                     "tags": tags_by_slug.get(slug, "")})
     return out
@@ -199,6 +204,7 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
         "embers": _embers(),
         "crew": crew,
         "counts": counts,
+        "profile_href": {m["slug"]: profiles_mod.profile_href(m["slug"]) for m in crew},
         "active_style": style,
         "styles_available": manifest.get("styles_available") or [],
         "scenes": scenes,
@@ -249,6 +255,18 @@ def main():
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
+
+    # One permalink page per crew member. These are the real destination
+    # for a player's name — the durable fix for links that used to point
+    # at a guessed realm and open a blank page.
+    profile_ctxs = profiles_mod.build_all(ctx["crew"], board_state, cfg, roster)
+    profile_dir = out.parent / profiles_mod.PROFILE_DIR
+    profile_dir.mkdir(parents=True, exist_ok=True)
+    for pctx in profile_ctxs:
+        page = env.get_template("web/pages/profile.html.j2").render(
+            p=pctx, **{k: v for k, v in ctx.items() if k != "p"})
+        (profile_dir / f"{pctx['slug']}.html").write_text(page, encoding="utf-8")
+    logger.info("Wrote %d profile pages to %s/", len(profile_ctxs), profile_dir)
     logger.info("Wrote %s (%d crew, %d islands, %d ladder rows, style=%s, "
                 "%d with real art)",
                 out, len(ctx["crew"]), len(ctx["islands"]), len(ctx["ladder"]),

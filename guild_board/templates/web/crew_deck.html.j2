@@ -285,6 +285,9 @@ a{color:inherit;}
 }
 .member .plate b{display:block; font-size:13px; letter-spacing:.04em;
   color:var(--text); text-transform:none;}
+.member .plate a.plink{color:inherit; text-decoration:none;
+  border-bottom:1px solid transparent;}
+.member:hover .plate a.plink{border-bottom-color:var(--accent);}
 .member .rolepip{
   display:inline-block; width:7px; height:7px; border-radius:50%;
   background:var(--pip); margin-right:5px; vertical-align:middle;
@@ -655,7 +658,8 @@ a{color:inherit;}
       </span>
       {%- endif %}
       <span class="plate">
-        <b>{{ m.name }}</b>
+        <b>{% if profile_href and profile_href.get(m.slug) %}<a class="plink"
+           href="{{ profile_href[m.slug] }}">{{ m.name }}</a>{% else %}{{ m.name }}{% endif %}</b>
         <span class="rolepip" aria-hidden="true"></span>{{ m.role_label }}
         {%- if m.score %} · <span class="score">{{ m.score }}</span>{% endif %}
       </span>

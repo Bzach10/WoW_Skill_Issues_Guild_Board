@@ -1469,6 +1469,8 @@ def test_every_web_layout_includes_the_interactive_partial():
     """A new layout must not silently ship without role filters, player
     search and the week archive — they come from the shared partial."""
     from pathlib import Path
+    # web/ holds board LAYOUTS; web/pages/ holds standalone pages (player
+    # profiles), which have no ranking columns and so no filters to carry.
     layouts = [p for p in Path("guild_board/templates/web").glob("*.html.j2")
                if not p.name.startswith("_")]
     assert layouts, "no web layouts found"
