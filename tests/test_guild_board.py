@@ -25,6 +25,22 @@ def test_deduper():
     assert d.check_and_add(3009, 4, True, 1_010_000, 242_000) is False
 
 
+def test_deduper_tolerance_boundaries():
+    # Exactly at the 60s start / 15s duration tolerance -> still a duplicate
+    d = dedup.FightDeduper()
+    assert d.check_and_add(3009, 4, False, 1_000_000, 240_000) is False
+    assert d.check_and_add(3009, 4, False, 1_060_000, 255_000) is True
+
+    # 1ms past either tolerance -> distinct
+    d = dedup.FightDeduper()
+    assert d.check_and_add(3009, 4, False, 1_000_000, 240_000) is False
+    assert d.check_and_add(3009, 4, False, 1_060_001, 255_000) is False
+
+    d = dedup.FightDeduper()
+    assert d.check_and_add(3009, 4, False, 1_000_000, 240_000) is False
+    assert d.check_and_add(3009, 4, False, 1_060_000, 255_001) is False
+
+
 def test_report_sort_key():
     primary = {"owner": {"name": "MainLogger"}, "startTime": 0, "endTime": 100}
     long_log = {"owner": {"name": "Backup"}, "startTime": 0, "endTime": 10_000}
