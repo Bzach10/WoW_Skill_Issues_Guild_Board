@@ -255,33 +255,36 @@ query ($name: String!, $slug: String!, $region: String!) {
 
 
 def collect_mplus_wcl_parses(cfg, token, raiderio_results):
-    """Attempt to fetch M+ parse percentiles from Warcraft Logs for top Raider.io entries."""
-    logger.info("Attempting WCL parse enrichment for top Raider.io entries")
-    results = []
-    region = cfg["guild"]["region"]
-    default_slug = cfg["guild"]["realm_slug"]
+    """WCL M+ parse enrichment — NOT IMPLEMENTED. Returns [] deliberately.
 
-    for score, dungeon, name, spec, _ in raiderio_results[:15]:
-        try:
-            resp = requests.get(RAIDERIO_URL, params={
-                "region": region,
-                "realm": default_slug,
-                "name": name,
-                "fields": "mythic_plus_best_runs",
-            }, timeout=30)
-            if resp.status_code != 200:
-                continue
-            rio = resp.json()
-            runs = rio.get("mythic_plus_best_runs") or []
-            for run in runs:
-                if _normalize_dungeon_name(run.get("dungeon", "")) == _normalize_dungeon_name(dungeon):
-                    from_wcl = run.get("score", 0)
-                    if from_wcl:
-                        results.append((from_wcl, dungeon, name, spec, True))
-                        break
-        except requests.RequestException:
-            continue
-    return results
+    This function's name and its previous body disagreed. Despite claiming
+    to fetch parse percentiles from Warcraft Logs it never contacted WCL:
+    it re-queried Raider.io (ignoring `token` entirely), took Raider.io's
+    dungeon *score*, and returned it tagged is_wcl=True. formatters.py
+    renders anything tagged that way with a percent sign, so the board
+    published lines like:
+
+        Rakdisc (Discipline Priest) - 456% on Skyreach
+
+    A parse percentile is 0-100 by definition; those were unbounded
+    Raider.io scores. It also looked every character up on the guild's own
+    realm slug regardless of their actual realm, so cross-realm members
+    either missed or matched a same-named stranger.
+
+    Returning [] leaves the caller's Raider.io results untouched, and those
+    already render correctly as "<n> score". That is strictly better than
+    publishing a fabricated percentage, and it saves 15 redundant requests
+    per run.
+
+    To implement this for real: WCL_MPLUS_QUERY above is the (currently
+    unused) GraphQL query for it. It needs a per-character serverSlug from
+    split_name_realm(), and its parse.percent values then genuinely are
+    percentiles and can carry is_wcl=True.
+    """
+    logger.info(
+        "WCL M+ parse enrichment is not implemented; keeping Raider.io "
+        "scores as-is. See collect_mplus_wcl_parses.__doc__.")
+    return []
 
 
 def _mplus_dungeon_name(cfg, token, encounter_id):
