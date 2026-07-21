@@ -129,7 +129,7 @@ def _island_record_html(island):
 
 
 def build_context(cfg, theme, board_state, roster, profiles=None,
-                  manifest=None, style=None):
+                  manifest=None, style=None, crew_limit=10):
     season_scores = (board_state or {}).get("season_scores") or {}
     standing = (board_state or {}).get("standing") or None
     guild_cfg = cfg.get("guild") or {}
@@ -140,7 +140,7 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
 
     crew = crew_mod.build_crew(cfg, theme, season_scores=season_scores,
                                profiles=profiles, manifest=manifest,
-                               style=style)
+                               style=style, limit=crew_limit)
     for member in crew:
         member["art"] = showcase_mod.character_art(member["slug"], cfg, manifest)
     counts = crew_mod.role_counts(crew)
@@ -235,6 +235,8 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="crew_board.html")
     ap.add_argument("--config", default="config.yml")
+    ap.add_argument("--crew-limit", type=int, default=10,
+                    help="How many characters stand on the deck (default 10).")
     ap.add_argument("--i-know-this-publishes", action="store_true",
                     help="Allow writing into site/, which CI publishes. "
                          "Off by default: this is a preview renderer.")
@@ -251,10 +253,20 @@ def main():
     board_state = _load_json("board_state.json", {})
     roster = (_load_json("roster_cache.json", {}) or {}).get("members") or []
 
-    manifest = (crew_mod.load_manifest(args.manifest)
-                if args.manifest else crew_mod.load_manifest())
+    if args.manifest:
+        manifest = crew_mod.load_manifest(args.manifest)
+    else:
+        # Prefer the roster generation's manifest in its own worktree;
+        # fall back to a local one.
+        roster_manifest = showcase_mod.roster_root(cfg) / "cast_manifest.json"
+        manifest = (crew_mod.load_manifest(str(roster_manifest))
+                    if roster_manifest.exists() else crew_mod.load_manifest())
+        logger.info("Manifest: %s (%d characters)",
+                    roster_manifest if roster_manifest.exists() else "local",
+                    len((manifest or {}).get("characters") or {}))
     ctx = build_context(cfg, theme, board_state, roster,
-                        manifest=manifest, style=args.style)
+                        manifest=manifest, style=args.style,
+                        crew_limit=args.crew_limit)
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(str(TEMPLATE_DIR)),

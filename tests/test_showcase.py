@@ -18,7 +18,6 @@ LEGACY = [
     "cast/rakdisc/scene1_raidhall_w025.png",
     "cast/floofwall/floofwall_tavern_w025.png",
     "cast/healyeah/healyeah_dragonflight_v2_w030.png",
-    "cast/rakdisc/board.png",
     "cast/rakdisc/composite.png",
 ]
 
@@ -57,6 +56,14 @@ def test_a_config_override_cannot_smuggle_in_legacy_art(monkeypatch):
     assert art["src"] is None or "_trial" not in art["src"]
 
 
+def test_board_png_is_no_longer_legacy_by_filename():
+    """The roster generation writes its NEW cutout to board.png, so the
+    filename alone cannot mark art as legacy any more. Protection now
+    comes from the layer filenames and the roster root."""
+    assert showcase.is_legacy_art("cast/x/one_piece/board.png") is False
+    assert showcase.is_legacy_art("cast/x/one_piece/body.png") is True
+
+
 def test_a_manifest_pointing_at_layers_is_ignored():
     """Layer sets are the old paper-doll art; the manifest must not be
     able to route them onto the page."""
@@ -66,7 +73,9 @@ def test_a_manifest_pointing_at_layers_is_ignored():
                                  "layers": [{"slot": "body",
                                              "src": "cast/rakdisc-proudmoore/one_piece/body.png"}]}},
     }}}
+    # a layer set's `board` is the OLD flat cut-out, not the roster's new one
     assert showcase._manifest_art("rakdisc", manifest) is None
+    assert showcase.character_art("rakdisc", manifest=manifest)["cutout"] is None
 
 
 def test_a_manifest_scene_entry_is_used_when_the_roster_lands(tmp_path):

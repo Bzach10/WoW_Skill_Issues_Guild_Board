@@ -11,6 +11,7 @@ code change. Every character degrades on its own: no scene art means the
 card still renders with real data and says the art is pending.
 """
 
+import json
 import logging
 import os
 from pathlib import Path
@@ -29,16 +30,31 @@ logger = logging.getLogger(__name__)
 # Any art path matching one of these is LEGACY and must never render.
 # This is a hard floor: even if a manifest or a config override points at
 # one, it is refused. Purging old art is a guarantee, not a convention.
-OLD_ART_MARKERS = (
-    "/one_piece/",       # paper-doll layer sets
+# Legacy detection is by FILENAME, not by directory.
+#
+# It used to key on "/one_piece/" and "/board.png", which was fine while
+# those only ever held paper-doll layers — but the roster generation
+# writes its new art to exactly those paths in its own worktree, so the
+# directory name is no longer a discriminator. What actually identifies
+# the old art is the paper-doll LAYER filenames and the pre-restyle
+# scene picks.
+LEGACY_FILENAMES = {
+    "body.png", "legs.png", "chest.png", "arms.png", "face.png",
+    "head.png", "headgear.png", "cloak.png", "composite.png",
+    "weapon_main.png", "weapon_off.png",
+}
+
+LEGACY_PATTERNS = (
     "cast/_trial/",      # the earlier IP-Adapter handoff
-    "scene1_raidhall",   # pre-restyle scene picks
-    "scene2_dungeon", "scene3_vista",
+    "scene1_raidhall", "scene2_dungeon", "scene3_vista",
     "_tavern_", "_dragonflight_", "_plainbg_",
     "char_flat_", "char_form_", "il_light_", "il2_light_",
     "il_shadow_", "il2_shadow_", "hybrid_", "nightborne_",
-    "/board.png", "composite.png",
 )
+
+# The roster generation's worktree. Art resolved from here is new by
+# definition — it is a separate tree that only ever held restyle output.
+DEFAULT_ROSTER_ROOT = "C:/wt/cg"
 
 # Where the restyle pipeline writes each character's final image.
 NEW_ART_TEMPLATE = "cast/{slug}/{slug}_anime_final.png"
@@ -59,28 +75,64 @@ def is_legacy_art(path):
     if not path or not isinstance(path, str):
         return False
     probe = path.replace("\\", "/").lower()
-    return any(marker.lower() in probe for marker in OLD_ART_MARKERS)
+    if Path(probe).name in LEGACY_FILENAMES:
+        return True
+    return any(pattern.lower() in probe for pattern in LEGACY_PATTERNS)
 
 
-def _usable(path):
-    """A path that exists on disk AND is not legacy art."""
+def roster_root(cfg=None):
+    """Where the roster generation writes. Overridable in config.yml:
+
+        showcase:
+          roster_root: "C:/wt/cg"
+    """
+    configured = ((cfg or {}).get("showcase") or {}).get("roster_root")
+    root = configured if isinstance(configured, str) and configured.strip() else DEFAULT_ROSTER_ROOT
+    return Path(root)
+
+
+def _usable(path, root=None):
+    """A path that exists on disk AND is not legacy art.
+
+    `root` is the roster generation's worktree; its paths are relative to
+    that root and are trusted as new art regardless of filename, because
+    that tree only ever held restyle output.
+    """
     if not path or not isinstance(path, str):
         return None
-    if is_legacy_art(path):
+    candidate = Path(path)
+    trusted = False
+    if root is not None and not candidate.is_absolute():
+        rooted = Path(root) / path
+        if rooted.exists():
+            candidate, trusted = rooted, True
+    if not trusted and is_legacy_art(path):
         logger.info("Refusing legacy art %s — the site shows the new style only.",
                     path)
         return None
-    return path.replace(os.sep, "/") if Path(path).exists() else None
+    if not candidate.exists():
+        return None
+    return str(candidate).replace(os.sep, "/")
 
 
-def _manifest_art(slug, manifest):
-    """The character's image from cast_manifest.json, if the roster
-    generation has delivered one. Accepts either a flat `board`-style
-    entry or an explicit `scene`/`final` key, and ignores layer sets —
-    those are the old paper-doll art."""
+def flagged_cutouts(cfg=None):
+    """Character keys whose transparent cutout the generation flagged as
+    imperfect (a leftover un-removed blob from rich fire/magic scenes).
+    Those fall back to the full scene rather than showing a bad cutout."""
+    path = roster_root(cfg) / "cast" / "_rnd_img2img" / "roster_progress.json"
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            flagged = (json.load(fh) or {}).get("flagged_cutouts") or []
+        return {str(k).lower() for k in flagged} if isinstance(flagged, list) else set()
+    except (OSError, ValueError):
+        return set()
+
+
+def _manifest_entry(slug, manifest):
+    """(character_key, style_assets) for this slug, or (None, None)."""
     characters = (manifest or {}).get("characters")
     if not isinstance(characters, dict):
-        return None
+        return None, None
     active = (manifest or {}).get("active_style")
     for key, character in characters.items():
         if not isinstance(character, dict):
@@ -89,15 +141,28 @@ def _manifest_art(slug, manifest):
             continue
         styles = character.get("styles")
         if not isinstance(styles, dict):
-            return None
-        # the active style first, then any other style the character has
+            return key, None
         ordered = ([styles[active]] if isinstance(styles.get(active), dict) else [])
         ordered += [v for k, v in styles.items() if k != active and isinstance(v, dict)]
-        for assets in ordered:
-            for field in ("scene", "final", "board"):
-                found = _usable(assets.get(field))
-                if found:
-                    return found
+        return key, (ordered[0] if ordered else None)
+    return None, None
+
+
+def _manifest_art(slug, manifest, cfg=None):
+    """Back-compatible single-image lookup (the scene WITH background)."""
+    _key, assets = _manifest_entry(slug, manifest)
+    if not assets:
+        return None
+    root = roster_root(cfg)
+    fields = ("profile", "scene", "final")
+    if not assets.get("layers"):
+        # `board` is only the roster's new cutout when the entry is NOT a
+        # paper-doll layer set; in a layered entry it is the old flat art.
+        fields += ("board",)
+    for field in fields:
+        found = _usable(assets.get(field), root)
+        if found:
+            return found
     return None
 
 
@@ -124,28 +189,43 @@ ASPECT_TOLERANCE = 0.04       # anything this close fills the frame cleanly
 
 
 def character_art(slug, cfg=None, manifest=None):
-    """The one image for this character, wherever they are displayed.
+    """Everything a surface needs to show this character.
 
-    Resolution order — new art only, at every step:
-      1. config.yml showcase.scenes.<slug>   (officer override)
-      2. cast_manifest.json                  (the roster generation)
-      3. cast/<slug>/<slug>_anime_final.png  (filesystem convention)
+    The roster generation ships TWO images per character:
+      * `profile` — the full scene WITH its background, for the profile
+        page and the showcase cards
+      * `board`   — the same character as a transparent cutout, for the
+        animated crew standing over the board's own scene layer
+
+    A cutout the generation flagged as imperfect is not used; that
+    character falls back to their scene image on the deck too.
     """
     slug = slugify(slug)
-    override = (((cfg or {}).get("showcase") or {}).get("scenes") or {}).get(slug)
-    src = (_usable(override)
-           or _manifest_art(slug, manifest)
-           or _usable(NEW_ART_TEMPLATE.format(slug=slug)))
+    root = roster_root(cfg)
+    key, assets = _manifest_entry(slug, manifest)
+    assets = assets or {}
 
-    aspect = image_aspect(src) if src else None
+    override = (((cfg or {}).get("showcase") or {}).get("scenes") or {}).get(slug)
+    scene = (_usable(override, root)
+             or _usable(assets.get("profile"), root)
+             or _usable(assets.get("scene"), root)
+             or _usable(assets.get("final"), root)
+             or _usable(NEW_ART_TEMPLATE.format(slug=slug), root))
+
+    flagged = (key or "").lower() in flagged_cutouts(cfg)
+    # Same rule for the deck cutout: a layered entry's `board` is legacy.
+    cutout = (None if (flagged or assets.get("layers"))
+              else _usable(assets.get("board"), root))
+
+    aspect = image_aspect(scene) if scene else None
     fills = aspect is not None and abs(aspect - TARGET_ASPECT) <= ASPECT_TOLERANCE
     return {
-        "src": src,
+        "src": scene,                 # what the cards and profile show
+        "cutout": cutout,             # transparent, for the crew deck
+        "cutout_flagged": flagged,
         "setting": SETTINGS.get(slug, ""),
-        "pending": src is None,
+        "pending": scene is None,
         "aspect": aspect,
-        # True once the art matches the 3:4 roster spec, so the card can
-        # fill edge to edge instead of letterboxing.
         "fills": bool(fills),
     }
 

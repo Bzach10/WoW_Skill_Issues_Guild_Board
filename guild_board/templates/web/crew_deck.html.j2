@@ -148,12 +148,10 @@ a{color:inherit;}
 
      z 0  .scene       backdrop (tint + optional art), crossfades
      z 1  .deckboard   the ship's deck the crew stand on
-     z 2  .member      the cast, as framed scene portraits
+     z 2  .member      the cast — transparent cutouts where the roster
+                       generation supplied one, otherwise the full scene
+                       image in a frame
      z 5+ bubbles, spotlights, toggles
-
-   The restyled art is scene-baked, so the cast are framed rather than
-   composited as transparent cut-outs. The scene layer still changes
-   underneath them.
 */
 .stage{
   position:relative; z-index:1; margin:0 auto 10px; max-width:var(--measure);
@@ -228,6 +226,18 @@ a{color:inherit;}
    rather than transparent cut-outs composited over the scene layer.
    3:4 art fills its frame; anything off-spec is contained over a
    blurred copy of itself so no composition is ever cropped. */
+/* A transparent cutout needs no frame — it stands on the deck and the
+   scene layer shows through behind it, which is the whole point. */
+.figure{
+  position:relative; display:block; width:100%; aspect-ratio:3/4;
+  animation:breathe 3.4s ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+  transition:filter .45s ease;
+}
+.figure img{width:100%; height:100%; object-fit:contain; display:block;
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+.member[data-idle="paused"] .figure{animation-play-state:paused;}
+
 .portrait{
   position:relative; display:block; width:100%; aspect-ratio:3/4;
   overflow:hidden; border-radius:14px; border:1px solid var(--line);
@@ -298,7 +308,8 @@ a{color:inherit;}
   opacity:1; filter:none;
   transform:translateY(-22px) scale(1.09); z-index:6;
 }
-.deck[data-spot] .member[data-role-active] .portrait{
+.deck[data-spot] .member[data-role-active] .portrait,
+.deck[data-spot] .member[data-role-active] .figure{
   filter:drop-shadow(0 0 26px var(--pip)) drop-shadow(0 12px 18px rgba(0,0,0,.5));
 }
 .deck[data-spot] .member[data-role-active]::before{
@@ -312,7 +323,8 @@ a{color:inherit;}
 .member[data-summoned]{
   transform:translateY(-26px) scale(1.12); z-index:8;
 }
-.member[data-summoned] .portrait{
+.member[data-summoned] .portrait,
+.member[data-summoned] .figure{
   filter:drop-shadow(0 0 30px var(--pip)) drop-shadow(0 16px 22px rgba(0,0,0,.55));
 }
 .member[data-summoned]::after{
@@ -338,7 +350,8 @@ a{color:inherit;}
   background:#2b0b40; color:#c98bff; border-color:#8b4bd0;
   box-shadow:0 0 14px -2px #8b4bd0;
 }
-.member[data-form="shadow"] .portrait{
+.member[data-form="shadow"] .portrait,
+.member[data-form="shadow"] .figure{
   filter:drop-shadow(0 0 22px #8b4bd0) drop-shadow(0 10px 16px rgba(0,0,0,.5))
          hue-rotate(-38deg) saturate(1.25);
 }
@@ -511,7 +524,7 @@ a{color:inherit;}
   }
   .embers{display:none;}
   .member{transform:none !important;}
-  .portrait{animation:none !important;}
+  .portrait, .figure{animation:none !important;}
   .deck[data-spot] .member[data-role-active]{transform:none !important;}
   /* spotlight still communicates, just without movement */
   .deck[data-spot] .member{opacity:.45;}
@@ -611,15 +624,21 @@ a{color:inherit;}
       <span class="bubble">{{ m.catchphrase }}</span>
       {%- endif %}
       {#
-        The character's scene art — the same image the trial cards and
-        the profile view use, resolved once in guild_board.showcase.
+        Two art shapes, one rig:
 
-        NOTE: the new art is scene-baked (it has its own background), so
-        the crew can no longer be transparent cut-outs standing on a
-        shared deck. They are framed here instead. The standing-crew
-        composite needs cut-outs on transparency; see the report.
+        * a transparent CUTOUT — the character stands on the deck,
+          composited over the board's own scene layer, which is the
+          original concept and what the scene-change interaction needs
+        * otherwise the full SCENE image, framed — used when the cutout
+          is missing or the generation flagged it as imperfect
+
+        The plate, spotlight and summon behave identically either way.
       #}
-      {%- if m.art and m.art.src %}
+      {%- if m.art and m.art.cutout %}
+      <span class="figure">
+        <img src="{{ m.art.cutout }}" alt="{{ m.name }}" decoding="async">
+      </span>
+      {%- elif m.art and m.art.src %}
       <span class="portrait{{ ' fills' if m.art.fills }}"
             style="--fill:url('{{ m.art.src }}');">
         <img src="{{ m.art.src }}" alt="{{ m.name }}" decoding="async">
