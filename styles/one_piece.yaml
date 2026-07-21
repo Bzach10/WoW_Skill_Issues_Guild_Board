@@ -1,0 +1,81 @@
+# One Piece style preset — every knob that defines this art style lives
+# here. The pipeline (guild_board/render_pipeline.py) never hardcodes any
+# of this; it just reads this file. To make a NEW style later, copy this
+# file, change the knobs (and probably the LoRA), and point
+# cast_manifest.json's active_style at the new name.
+#
+# Locked from the R&D pass: img2img from a bbox-cropped transmog render
+# (see render_pipeline.crop_to_content) at denoise ~0.6-0.65, restyled
+# through Illustrious-XL + the one_piece_wano_style LoRA. ControlNet
+# (Canny, from the same render) is layered on top specifically to stop
+# the identity-loss-at-higher-denoise problem seen in testing (Rakdisc
+# lost her hair/ears/skin tone at denoise 0.7 with no ControlNet).
+name: one_piece
+
+model:
+  checkpoint: "Illustrious-XL-v1.1.safetensors"
+  clip_skip: 2
+
+loras:
+  - name: "one_piece_wano_style.safetensors"
+    strength: 1.0
+
+sampler:
+  name: "dpmpp_2m"
+  scheduler: "karras"
+  cfg: 6.5
+  steps: 30
+
+img2img:
+  denoise: 0.63
+
+controlnet:
+  enabled: true
+  model: "controlnet-union-sdxl-1.0.safetensors"
+  union_type: "canny/lineart/anime_lineart/mlsd"   # xinsir union "thin line" slot
+  preprocessor: "canny"
+  canny_low_threshold: 0.2    # normalized 0-1, NOT 0-255
+  canny_high_threshold: 0.4
+  strength: 0.5
+  start_percent: 0.0
+  end_percent: 0.6
+
+canvas:
+  width: 832
+  height: 1216
+
+prompt:
+  positive_suffix: >
+    one_piece_wano_style, One Piece anime art style, bold thick black ink
+    outlines, cel shading with subtle soft-edged shadow shapes for a light
+    touch of volume and form, a faint hint of rim light, mostly
+    flat-colored fills, expressive anime-style face with big eyes, single
+    character illustration, full body, original character, no text, no
+    watermark, no signature, no logo, isolated on a plain solid flat
+    light-gray background, no scenery, no environment
+  negative: >
+    Luffy, Monkey D. Luffy, straw hat, strawhat pirates, Roronoa Zoro,
+    Zoro, Nami, Sanji, Usopp, Tony Tony Chopper, Chopper, Nico Robin,
+    Franky, Brook, Trafalgar Law, Ace, Shanks, named anime characters,
+    existing anime characters, copyrighted characters, photorealistic,
+    photo, 3d render, video game render, realistic skin texture,
+    semi-realistic shading, painterly, soft airbrushed shading, smooth
+    gradient shading, western comic style, dark muddy colors, canvas
+    texture, fabric texture, blurry, low detail, text, watermark,
+    signature, logo, extra limbs, extra fingers, deformed hands, cropped,
+    out of frame, reference sheet, turnaround, multiple poses, grid,
+    chibi, abstract, illegible, calligraphy, symbol, logo shape, dark
+    background, night sky, busy background, background scenery, ornate
+    background
+
+background:
+  mode: "neutral"
+
+cutout:
+  model: "u2net"
+  # Off: tested both ways during pipeline validation. Alpha matting
+  # didn't fix a genuine segmentation failure (needed a neutral
+  # background at generation time instead) and introduced a color-bleed
+  # artifact on an otherwise-clean white-background render. Plain u2net
+  # was clean in both cases.
+  alpha_matting: false
