@@ -77,7 +77,7 @@ def test_real_cutout_is_picked_up(tmp_path, monkeypatch):
 
 def test_crew_is_ordered_by_real_season_score():
     scores = {"amrevenge": 3908.1, "rakdisc": 3529.2, "brewzleeh": 3685.8}
-    built = crew.build_crew({}, {}, season_scores=scores)
+    built = crew.build_crew({}, {}, season_scores=scores, manifest={})
     named = [m["name"] for m in built if m["score"]]
     assert named[:3] == ["Amrevenge", "Brewzleeh", "Rakdisc"]
 
@@ -87,7 +87,7 @@ def test_profile_cache_beats_derived_entries():
     profiles = {"rakdisc-bleeding-hollow": {
         "name": "Rakdisc", "class": "Priest", "active_spec": "Shadow"}}
     built = crew.build_crew({}, {}, season_scores={"rakdisc": 1.0},
-                            profiles=profiles)
+                            profiles=profiles, manifest={})
     rak = next(m for m in built if m["slug"] == "rakdisc")
     assert rak["source"] == "real"
     assert rak["role"] == "dps"          # Shadow is a DPS spec
@@ -96,13 +96,13 @@ def test_profile_cache_beats_derived_entries():
 
 def test_opt_out_is_respected():
     built = crew.build_crew({"cast": {"opt_out": ["rakdisc"]}}, {},
-                            season_scores={"rakdisc": 3529.2})
+                            season_scores={"rakdisc": 3529.2}, manifest={})
     assert all(m["slug"] != "rakdisc" for m in built)
 
 
 def test_every_member_carries_its_receipt():
     """Nothing stands on the deck without a reason we can point at."""
-    built = crew.build_crew({}, {}, season_scores={"amrevenge": 3908.1})
+    built = crew.build_crew({}, {}, season_scores={"amrevenge": 3908.1}, manifest={})
     assert all(m["evidence"] for m in built)
 
 
@@ -166,3 +166,13 @@ def test_sample_islands_used_when_voyage_module_is_absent(monkeypatch):
     islands, _current, real = crew.load_islands({})
     assert real is False
     assert islands and all(i.get("sample") for i in islands)
+
+
+def test_build_crew_does_not_read_the_manifest_when_one_is_supplied(tmp_path,
+                                                                    monkeypatch):
+    """Passing manifest={} must mean "no manifest", not "go find one on
+    disk" — otherwise every test result depends on the working directory."""
+    monkeypatch.setattr(crew, "CAST_MANIFEST", str(tmp_path / "not_here.json"))
+    built = crew.build_crew({}, {}, season_scores={"rakdisc": 1.0}, manifest={})
+    rak = next(m for m in built if m["slug"] == "rakdisc")
+    assert rak["source"] == "derived"

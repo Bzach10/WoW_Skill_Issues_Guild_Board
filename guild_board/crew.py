@@ -24,6 +24,8 @@ import logging
 import os
 from pathlib import Path
 
+from guild_board import paperdoll
+
 logger = logging.getLogger(__name__)
 
 PROFILE_CACHE = "blizzard_profile_cache.json"
@@ -398,11 +400,17 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
         }
     # The manifest outranks the profile cache: it is the pipeline's own
     # record of the character it actually rendered.
-    for slug, character in characters.items():
+    for manifest_id, character in characters.items():
         if not isinstance(character, dict):
             continue
-        slug = slugify(slug)
+        # The manifest keys characters as "<name>-<realm>", but every
+        # other real data source in this repo (season scores, streaks,
+        # catchphrases, opt-outs) keys them by bare character name. Key
+        # on the name so a manifest character actually matches their own
+        # M+ score instead of silently showing up unscored.
+        slug = slugify(character.get("name") or manifest_id.split("-")[0])
         candidates[slug] = {
+            "manifest_id": manifest_id,
             "display": character.get("name") or slug.title(),
             "cls": character.get("class"),
             "spec": character.get("spec"),
@@ -468,9 +476,30 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
                 "version": None, "generated_at": None,
             }
 
+        # ---- paper-doll assembly: the layer stack this character is
+        # built from. Falls back to the flat cut-out, then to nothing,
+        # in which case the silhouette below carries the slot.
+        style_assets, used_style = _manifest_style_assets(entry.get("_character"), style)
+        doll = paperdoll.assemble(style_assets, fallback_board=art_info["art"])
+        if doll["mode"] == "none" and art_info["art"]:
+            doll = paperdoll.assemble({"board": art_info["art"]})
+
+        # A character assembled from real layers HAS real art, even though
+        # a layered manifest carries no flat `board` key for the older
+        # cut-out path to find.
+        if doll["mode"] == "layered":
+            art_info["art_is_real"] = True
+            art_info["art"] = doll["layers"][0]["src"]
+            if art_info["style_used"] is None:
+                art_info["style_used"] = used_style
+                art_info["style_is_fallback"] = bool(
+                    style and used_style and used_style != style)
+
         has_forms = bool(art_info["light_art"] and art_info["shadow_art"])
         crew.append({
             "slug": slug,
+            "manifest_id": entry.get("manifest_id"),
+            "doll": doll,
             "name": entry["display"],
             "cls": entry.get("cls") or "",
             "spec": entry.get("spec") or "",
