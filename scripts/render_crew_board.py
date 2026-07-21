@@ -32,6 +32,7 @@ import jinja2  # noqa: E402
 from guild_board import crew as crew_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
+from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
@@ -327,8 +328,20 @@ def main():
     guild_realm = ((cfg.get("guild") or {}).get("realm_slug") or "").lower()
     off = [n for n, r in index.items() if r != guild_realm]
 
+    # the month's scene: character-baked hero, character-free backdrop
+    scene = scenery_mod.scene_for_month(cfg=cfg)
+    if scene:
+        staged = showcase_mod.stage_art(
+            {"src": scene["hero"], "cutout": scene["backdrop"]},
+            f"_scene_{scene['key']}",
+            repo_root=Path(__file__).resolve().parent.parent)
+        scene = dict(scene, hero=staged["src"], backdrop=staged["cutout"])
+        logger.info("Scene for %s: %s", scene["month_name"], scene["title"])
+
     trial_ctx = dict(ctx)
     trial_ctx.update({
+        "scene": scene,
+        "year_plan": scenery_mod.year_plan(cfg),
         "cards": cards,
         "trial_status": ("%d characters drawn so far · %d still in the queue"
                          % (len(cards), max(len(ctx["crew"]) - len(cards), 0))),
