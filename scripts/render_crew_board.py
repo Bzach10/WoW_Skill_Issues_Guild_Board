@@ -2,7 +2,11 @@
 """Render the public crew board (layout: crew_deck) from the real data
 already on disk — no network, no credentials, no CI required.
 
-    python scripts/render_crew_board.py [--out site/index.html]
+    python scripts/render_crew_board.py [--out crew_board.html]
+
+PREVIEW ONLY. This renderer is deliberately NOT wired into the weekly
+Discord post or the GitHub Pages publish. CI publishes site/index.html;
+writing there is refused unless you pass --i-know-this-publishes.
 
 Reads: config.yml, theme.yml, board_state.json, roster_cache.json, and
 (when the art workstream has produced them) blizzard_profile_cache.json
@@ -228,6 +232,9 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="crew_board.html")
     ap.add_argument("--config", default="config.yml")
+    ap.add_argument("--i-know-this-publishes", action="store_true",
+                    help="Allow writing into site/, which CI publishes. "
+                         "Off by default: this is a preview renderer.")
     ap.add_argument("--manifest", default=None,
                     help="Path to a cast_manifest.json (defaults to the one "
                          "in the working directory).")
@@ -253,6 +260,15 @@ def main():
     html = env.get_template("web/crew_deck.html.j2").render(**ctx)
 
     out = Path(args.out)
+    # CI publishes site/index.html to GitHub Pages and posts the board to
+    # Discord. This is a preview renderer; refuse to write into the
+    # published directory by accident.
+    parts = {part.lower() for part in out.parts}
+    if "site" in parts and not args.i_know_this_publishes:
+        raise SystemExit(
+            f"Refusing to write {out}: site/ is what CI publishes to GitHub "
+            f"Pages. This is a preview build. Pass --i-know-this-publishes "
+            f"only if you really intend to make this live.")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
 
