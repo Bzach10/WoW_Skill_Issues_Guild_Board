@@ -415,3 +415,89 @@ no generations launched. Summary: the pipeline already caches shared layers, so 
 roster is ~60-140 min (not per-character); the largest safe win is parallelising the
 CPU-only compositing step (~25 min saved, byte-identical output); cloud GPU is cheap but
 the setup does not pay back yet.
+
+---
+
+## 7. Per-slot equipment data (art pipeline blocker)
+
+**Status: code is built, tested and wired. Data is NOT flowing yet — it needs credentials
+this environment does not have.** Detail below, because the distinction matters.
+
+### The cache was never missing — it has never existed
+
+The art team reported `blizzard_profile_cache.json` missing from their worktree. It is
+missing from **every** tree:
+
+```
+find C:/wt "…/WoW_Skill_Issues_Guild_Board" -name blizzard_profile_cache.json
+→ (no results)
+```
+
+It is **not** gitignored, so nothing is discarding it. It has simply never been generated,
+because generating it needs `BLIZZARD_CLIENT_ID` / `BLIZZARD_CLIENT_SECRET`, which are set
+only in GitHub Actions repo secrets — not in any local shell here. This is not a sync
+problem between worktrees and no amount of copying will fix it.
+
+### What was built
+
+`fetch_character_equipment()` against
+`/profile/wow/character/{realm}/{name}/equipment`, wired into `fetch_character_profile()`
+so it lands in the profile cache, and carried through `cast_manifest.add_character()` so
+the art pipeline can read it from the manifest too.
+
+Per visible slot: item id/name, quality, class/subclass, inventory type, and the transmog
+appearance. **The distinction that matters for art:** `item` is what the character wears,
+`transmog` is what it looks like — `appearance_item_id` resolves to the transmog when
+present, the real item otherwise.
+
+Also derives **`armor_weight`** (Cloth/Leather/Mail/Plate) from the five core armour slots,
+which maps directly onto the art pipeline's existing kit taxonomy
+(`cloth_robe_*`, `leather_*`, `mail_*`, `plate_*`). Cloaks are excluded — they are always
+Cloth and would misclassify a plate wearer. Rings, trinkets and neck are dropped; they have
+no model on the character.
+
+Verified end-to-end through the real call chain (`refresh_profile_cache` →
+`fetch_roster_profiles` → `fetch_character_profile` → `fetch_character_equipment` →
+`save_profile_cache`) with a stubbed API. What lands in the cache:
+
+```
+race/class/spec : Nightborne Priest Discipline
+armor_weight    : Cloth
+equipment       : CHEST  wears=333 looks_like=9333 (Fancy Xmog Robe)
+                  LEGS   wears=444 looks_like=444  (Real Legs)
+                  (rings/trinkets dropped)
+```
+
+12 new tests; 242 green overall.
+
+### ⚠️ One honest risk
+
+The response shape is from Blizzard API knowledge, **not a live response** — I have no
+credentials to confirm it. The parser is defensive (`.get()` throughout), so a shape
+mismatch yields `None` fields rather than crashing, which would regress *silently* to
+generic art. To catch that, `validate_data.py` now errors when equipment slots exist but
+carry no `appearance_item_id` — the exact signature of a shape mismatch.
+
+**The first credentialed run should be checked against that gate before trusting the data.**
+
+### To make data flow — needs someone with credentials
+
+```bash
+export BLIZZARD_CLIENT_ID=...  BLIZZARD_CLIENT_SECRET=...
+python scripts/refresh_blizzard_profiles.py --force   # writes the cache
+python scripts/validate_data.py                       # confirms equipment landed
+git add blizzard_profile_cache.json && git commit     # share it with every worktree
+```
+
+Committing it is consistent with existing practice — `roster_cache.json` is already tracked
+the same way, and it is how the art worktree gets the file at all.
+
+Two things make this run materially better than it would have before: the `rsplit` fix
+(§2) means it will fetch **135 members instead of ~70**, and the equipment call is the
+first time per-slot gear is captured at all.
+
+**Cost note:** equipment adds a 4th API call per character — 135 × 4 = 540 requests.
+Blizzard's limits (36k/hour, 100/s) absorb that comfortably, so no throttling is needed.
+Unlike the Raider.io collectors, `blizzard.py` still uses bare `requests.get` rather than
+the pooled session from §3; worth routing through it later, but it would churn the existing
+Blizzard tests for a one-off weekly job, so I left it.
