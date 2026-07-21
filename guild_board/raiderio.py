@@ -1,14 +1,26 @@
 import logging
-import time
 
 import requests
 
 from guild_board.config import clean_spec_name, split_name_realm
+from guild_board.http import RateLimiter, get_session
 from guild_board.wcl import gql
 
 logger = logging.getLogger(__name__)
 
 RAIDERIO_URL = "https://raider.io/api/v1/characters/profile"
+
+# One limiter shared by every collector in this module, so three roster
+# passes in the same run cannot stack up to 3x the intended request rate.
+_rio_limiter = RateLimiter()
+
+
+def _rio_get(params, timeout=30):
+    """GET the Raider.io profile endpoint through the pooled session, paced
+    by the shared limiter. Replaces per-call requests.get + sleep(0.3)."""
+    _rio_limiter.acquire()
+    return get_session().get(RAIDERIO_URL, params=params, timeout=timeout)
+
 
 DUNGEON_NAME_FIXES = {
     "Ara-Kara, City of Echoes": "Ara-Kara, City of Echoes",
@@ -40,7 +52,7 @@ def collect_mplus(cfg, token=None):
     for entry in roster:
         name, realm = _split_name_realm(entry, cfg)
         try:
-            resp = requests.get(RAIDERIO_URL, params={
+            resp = _rio_get(params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
@@ -66,7 +78,6 @@ def collect_mplus(cfg, token=None):
         except requests.RequestException as exc:
             logger.warning("Error fetching %s: %s", name, exc)
             continue
-        time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
     logger.info("Found %s players with weekly runs", len(results))
     return results
@@ -86,7 +97,7 @@ def collect_mplus_season_scores(cfg, token=None):
     for entry in roster:
         name, realm = _split_name_realm(entry, cfg)
         try:
-            resp = requests.get(RAIDERIO_URL, params={
+            resp = _rio_get(params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
@@ -121,7 +132,6 @@ def collect_mplus_season_scores(cfg, token=None):
         except Exception as exc:
             logger.warning("Unexpected error for %s: %s", name, exc)
             continue
-        time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
     logger.info("Found %s players with season scores", len(results))
     return results
@@ -180,7 +190,7 @@ def collect_mplus_raiderio_season_runs(cfg, roster):
     for entry in roster:
         name, realm = _split_name_realm(entry, cfg)
         try:
-            resp = requests.get(RAIDERIO_URL, params={
+            resp = _rio_get(params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
@@ -216,7 +226,6 @@ def collect_mplus_raiderio_season_runs(cfg, roster):
         except requests.RequestException as exc:
             logger.warning("Error fetching %s: %s", name, exc)
             continue
-        time.sleep(0.3)
     return results, top_key
 
 
