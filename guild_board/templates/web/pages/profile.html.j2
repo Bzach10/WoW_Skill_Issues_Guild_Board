@@ -1,8 +1,8 @@
 {#
   Player profile — one permalink per crew member.
 
-  Reuses the board's theme tokens and the same paper-doll rig, so a
-  profile looks and animates like the deck it came from. Every panel is
+  Reuses the board's theme tokens and the same character art the cards
+  and the deck use, so a profile always matches what you clicked from. Every panel is
   optional: a member with no score, no records and no art still gets a
   complete page.
 #}
@@ -44,26 +44,26 @@ a{color:var(--accent);}
   background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
   opacity:.4;}
 
-/* the same rig the deck uses */
-.doll{position:relative; display:block; width:100%; aspect-ratio:832/1216;
-  filter:drop-shadow(0 14px 22px rgba(0,0,0,.5));
-  animation:breathe 3.4s ease-in-out infinite;}
-.doll .bone{position:absolute; left:0; top:0; width:100%; height:auto;
-  display:block; transform-origin:50% 90%; will-change:transform;}
-.doll[data-mode="flat"] .bone,
-.doll[data-mode="placeholder"] .bone{position:relative;}
-@keyframes breathe{0%,100%{transform:translateY(0) scaleY(1);}
-  50%{transform:translateY(-6px) scaleY(1.012);}}
-@keyframes boneArms{0%,100%{transform:rotate(-1.6deg);}50%{transform:rotate(1.6deg);}}
-@keyframes boneHead{0%,100%{transform:rotate(.9deg);}50%{transform:rotate(-.9deg);}}
-@keyframes boneCloak{0%,100%{transform:rotate(-2.6deg);}50%{transform:rotate(2.6deg);}}
-@keyframes boneLegs{0%,100%{transform:rotate(.4deg);}50%{transform:rotate(-.4deg);}}
-@keyframes boneWeapon{0%,100%{transform:rotate(-2.2deg);}50%{transform:rotate(2.6deg);}}
-.doll .bone[data-bone="arms"]{animation:boneArms 3.4s ease-in-out infinite;}
-.doll .bone[data-bone="head"]{animation:boneHead 3.4s ease-in-out infinite;}
-.doll .bone[data-bone="cloak"]{animation:boneCloak 4.6s ease-in-out infinite;}
-.doll .bone[data-bone="legs"]{animation:boneLegs 3.4s ease-in-out infinite;}
-.doll .bone[data-bone^="weapon"]{animation:boneWeapon 4.1s ease-in-out infinite;}
+/* The scene art, framed. 3:4 art fills the frame edge to edge; anything
+   off-spec is contained over a blurred copy of itself so nothing is cut. */
+.portrait{position:relative; aspect-ratio:3/4; overflow:hidden;
+  border-radius:18px; border:1px solid var(--line);
+  box-shadow:0 18px 36px -22px rgba(0,0,0,.7);}
+.portrait::before{content:""; position:absolute; inset:-6%;
+  background-image:var(--fill); background-size:cover; background-position:center;
+  filter:blur(26px) saturate(.75) brightness(.7);}
+.portrait img{position:relative; width:100%; height:100%; object-fit:contain;
+  display:block;}
+.portrait.fills img{object-fit:cover;}
+.portrait.fills::before{display:none;}
+.portrait .setting{position:absolute; top:10px; left:10px; z-index:2;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  padding:5px 10px; border-radius:999px; color:var(--text);
+  background:color-mix(in srgb,var(--bg) 72%, transparent);
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);}
+.portrait.pending{display:grid; place-items:center; text-align:center;
+  color:var(--muted); font-size:13px; padding:22px; background:var(--panel);}
+.portrait.pending::before{display:none;}
 
 .ident .role{display:inline-block; font-size:11px; letter-spacing:.16em;
   text-transform:uppercase; color:var(--bg); background:var(--pip);
@@ -115,7 +115,6 @@ h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
   .stage{max-width:230px;}
 }
 @media (prefers-reduced-motion:reduce){
-  .doll,.doll .bone{animation:none !important;}
 }
 </style>
 </head>
@@ -126,23 +125,23 @@ h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
   <header class="hero">
     <div class="stage">
       <div class="glow" aria-hidden="true"></div>
-      {%- if p.member.doll and p.member.doll.layers %}
-      <span class="doll" data-mode="{{ p.member.doll.mode }}"
-            style="aspect-ratio:{{ p.member.doll.canvas.w }}/{{ p.member.doll.canvas.h }};">
-        {%- for L in p.member.doll.layers %}
-        <img class="bone" data-bone="{{ L.bone }}" data-slot="{{ L.slot }}"
-             src="../{{ L.src }}" alt=""
-             style="left:{{ L.left_pct }}%; top:{{ L.top_pct }}%; z-index:{{ L.z }};
-                    {% if L.width_pct %}width:{{ L.width_pct }}%;{% endif %}
-                    {% if L.height_pct %}height:{{ L.height_pct }}%;{% endif %}
-                    transform-origin:{{ L.origin_pct[0] }}% {{ L.origin_pct[1] }}%;">
-        {%- endfor %}
-      </span>
+      {#
+        The character's scene art — the SAME image the trial cards and
+        the deck use, resolved once in guild_board.showcase. Before this
+        the profile rendered the old paper-doll layers, so opening a
+        character showed art in the previous style.
+      #}
+      {%- if p.art and p.art.src %}
+      <div class="portrait{{ ' fills' if p.art.fills }}"
+           style="--fill:url('../{{ p.art.src }}');">
+        <img src="../{{ p.art.src }}" alt="{{ p.name }}{% if p.art.setting %} — {{ p.art.setting }}{% endif %}">
+        {%- if p.art.setting %}<span class="setting">{{ p.art.setting }}</span>{% endif %}
+      </div>
       {%- else %}
-      <span class="doll" data-mode="placeholder">
-        <img class="bone" data-bone="torso" src="../cast/placeholders/crew_slot.png"
-             alt="{{ p.name }} (art pending)">
-      </span>
+      <div class="portrait pending">
+        <span>Art in progress for {{ p.name }}<br>
+        <small>everything else on this page is real</small></span>
+      </div>
       {%- endif %}
     </div>
 
@@ -187,11 +186,9 @@ h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
     {%- endif %}
     <div class="stat">
       <div class="k">Board art</div>
-      <div class="v">{{ 'Assembled' if p.member.doll.mode == 'layered'
-                        else ('Cut-out' if p.member.art_is_real else 'Pending') }}</div>
+      <div class="v">{{ 'Ready' if p.art and p.art.src else 'Pending' }}</div>
       <div class="d">
-        {%- if p.member.doll.mode == 'layered' %}{{ p.member.doll.layers | length }} layers
-        {%- elif p.member.art_is_real %}single cut-out
+        {%- if p.art and p.art.src %}{{ p.art.setting or 'scene art' }}
         {%- else %}awaiting the art pipeline{% endif %}
       </div>
     </div>

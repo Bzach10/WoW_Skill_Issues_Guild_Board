@@ -141,6 +141,8 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
     crew = crew_mod.build_crew(cfg, theme, season_scores=season_scores,
                                profiles=profiles, manifest=manifest,
                                style=style)
+    for member in crew:
+        member["art"] = showcase_mod.character_art(member["slug"], cfg, manifest)
     counts = crew_mod.role_counts(crew)
 
     scenes = crew_mod.resolve_scenes(theme)
@@ -277,6 +279,9 @@ def main():
     # for a player's name — the durable fix for links that used to point
     # at a guessed realm and open a blank page.
     profile_ctxs = profiles_mod.build_all(ctx["crew"], board_state, cfg, roster)
+    for pctx in profile_ctxs:
+        pctx["art"] = pctx["member"].get("art") or showcase_mod.character_art(
+            pctx["slug"], cfg, manifest)
     profile_dir = out.parent / profiles_mod.PROFILE_DIR
     profile_dir.mkdir(parents=True, exist_ok=True)
     for pctx in profile_ctxs:
@@ -287,7 +292,7 @@ def main():
 
     # ---- the private trial page (the "second draft" front door) --------
     by_slug = {p["slug"]: p for p in profile_ctxs}
-    cards = showcase_mod.build_cards(ctx["crew"], by_slug, cfg)
+    cards = showcase_mod.build_cards(ctx["crew"], by_slug, cfg, manifest)
     for card in cards:
         card["profile_href"] = profiles_mod.profile_href(card["slug"])
 
@@ -313,6 +318,9 @@ def main():
         encoding="utf-8")
     logger.info("Wrote the trial showcase to %s (%s)",
                 trial_page, showcase_mod.trial_status(cards))
+    with_new = [m["name"] for m in ctx["crew"] if not m["art"]["pending"]]
+    logger.info("New-style art showing for %d of %d crew: %s",
+                len(with_new), len(ctx["crew"]), ", ".join(with_new) or "none")
     logger.info("Wrote %s (%d crew, %d islands, %d ladder rows, style=%s, "
                 "%d with real art)",
                 out, len(ctx["crew"]), len(ctx["islands"]), len(ctx["ladder"]),
