@@ -57,15 +57,38 @@ def main():
             pass
 
         print("  recording the tour")
-        # 1. the board at rest, crew breathing
+        # 0. the trial page — the front door Zach opens
+        beat(page, "00_trial_top", media, 2400)
+        page.evaluate("document.querySelector('.cast').scrollIntoView({block:'center'})")
+        beat(page, "01_trial_cast", media, 2600)
+        # hover a card so the scene art breathes
+        page.hover(".card[data-role='healer']")
+        beat(page, "02_trial_card_hover", media, 1800)
+        page.evaluate("document.querySelector('.steps').scrollIntoView({block:'center'})")
+        beat(page, "03_how_it_works", media, 2200)
+        page.evaluate("document.querySelector('.notes').scrollIntoView({block:'center'})")
+        beat(page, "04_what_changed", media, 2400)
+        # themes on the trial page
+        for key, label in (("chronicle", "05_trial_chronicle"),
+                           ("console", "06_trial_console"),
+                           ("codex", "07_trial_codex")):
+            page.click(f'.themeswitch button[data-theme="{key}"]')
+            page.evaluate("document.querySelector('.cast').scrollIntoView({block:'center'})")
+            beat(page, label, media, 1500)
+
+        # then through to the animated board
+        board = bundle / "crew_board.html"
+        if board.exists():
+            page.goto(board.as_uri(), wait_until="domcontentloaded")
+            page.wait_for_timeout(900)
         page.evaluate("document.querySelector('.stage').scrollIntoView({block:'center'})")
-        beat(page, "01_deck_idle", media, 2200)
+        beat(page, "08_deck_idle", media, 2200)
 
         # 2. role spotlight — the signature interaction
         page.hover(".tab[data-role='healer']")
-        beat(page, "02_healer_spotlight", media, 1600)
+        beat(page, "09_healer_spotlight", media, 1600)
         page.hover(".tab[data-role='tank']")
-        beat(page, "03_tank_spotlight", media, 1600)
+        beat(page, "10_tank_spotlight", media, 1600)
 
         # 3. summon a character forward.
         # Move the pointer off the tabs first, or the role spotlight from
@@ -82,25 +105,25 @@ def main():
               .find(x => x.querySelector('.doll[data-mode="layered"]'));
             if (m) m.dispatchEvent(new MouseEvent('mouseenter', {bubbles:true}));
         }""")
-        beat(page, "04_summon", media, 1700)
+        beat(page, "11_summon", media, 1700)
 
         # 4. scene change behind a constant cast
         page.evaluate("""() => {
             const b = document.querySelector(".island[data-kind='raid_boss']");
             if (b) b.dispatchEvent(new MouseEvent('mouseenter'));
         }""")
-        beat(page, "05_scene_change", media, 1800)
+        beat(page, "12_scene_change", media, 1800)
 
         # 5. themes
-        for key, label in (("console", "06_theme_console"),
-                           ("chronicle", "07_theme_chronicle"),
-                           ("codex", "08_theme_codex")):
+        for key, label in (("console", "13_board_console"),
+                           ("chronicle", "14_board_chronicle"),
+                           ("codex", "15_board_codex")):
             page.click(f'.themeswitch button[data-theme="{key}"]')
             beat(page, label, media, 1400)
 
         # 6. the data cards
         page.evaluate("document.querySelector('.cards').scrollIntoView({block:'start'})")
-        beat(page, "09_cards", media, 1800)
+        beat(page, "16_cards", media, 1800)
 
         # 7. into a profile page
         page.evaluate("document.querySelector('.stage').scrollIntoView({block:'center'})")
@@ -112,7 +135,7 @@ def main():
         }""")
         if href:
             page.goto((bundle / href).as_uri(), wait_until="domcontentloaded")
-            beat(page, "10_profile", media, 2400)
+            beat(page, "17_profile", media, 2400)
 
         ctx.close()          # finalises the video
         browser.close()

@@ -75,12 +75,14 @@ def main():
     run([sys.executable, "scripts/render_crew_board.py", "--out", "crew_board.html"])
 
     board = ROOT / "crew_board.html"
+    trial = ROOT / "trial.html"
     profiles = sorted((ROOT / "p").glob("*.html"))
     if not board.exists():
         raise SystemExit("crew_board.html was not produced")
 
-    print(f"2/4  collecting assets for {1 + len(profiles)} pages")
-    assets = referenced_assets([board] + profiles)
+    pages = [board] + profiles + ([trial] if trial.exists() else [])
+    print(f"2/4  collecting assets for {len(pages)} pages")
+    assets = referenced_assets(pages)
     print(f"     {len(assets)} asset files referenced")
 
     print(f"3/4  writing the bundle to {out}")
@@ -88,8 +90,13 @@ def main():
         shutil.rmtree(out)
     out.mkdir(parents=True)
 
-    # index.html is the entry point Zach double-clicks.
-    shutil.copy2(board, out / "index.html")
+    # The trial showcase is the front door; the animated board sits
+    # behind it, linked from the call to action.
+    if trial.exists():
+        shutil.copy2(trial, out / "index.html")
+        shutil.copy2(board, out / "crew_board.html")
+    else:
+        shutil.copy2(board, out / "index.html")
     (out / "p").mkdir()
     for page in profiles:
         # profiles link back to ../index.html, which now exists
@@ -122,7 +129,10 @@ def main():
 
     print("4/4  verifying the bundle is self-contained")
     missing = []
-    for page in [out / "index.html"] + sorted((out / "p").glob("*.html")):
+    checkable = [out / "index.html"] + sorted((out / "p").glob("*.html"))
+    if (out / "crew_board.html").exists():
+        checkable.append(out / "crew_board.html")
+    for page in checkable:
         text = page.read_text(encoding="utf-8", errors="ignore")
         for ref in SRC_RE.findall(text):
             ref = ref.split("?")[0].split("#")[0]

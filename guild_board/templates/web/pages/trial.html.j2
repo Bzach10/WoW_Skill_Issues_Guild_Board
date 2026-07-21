@@ -1,0 +1,400 @@
+{#
+  THE TRIAL PAGE — "second draft".
+
+  A private showcase of three characters in the approved
+  character-in-scene art direction, with their real board data, plus a
+  plain-language explanation of how the whole thing works.
+
+  Deliberately not a board layout: no ranking columns, no filters. It is
+  the front door for a private review.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{ guild_name }} — Trial Build</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--tank:{{ role_tint.tank }}; --healer:{{ role_tint.healer }};
+  --dps:{{ role_tint.dps }}; --unknown:{{ role_tint.unknown }}; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; transition:background .5s ease;}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+a{color:var(--accent);}
+
+/* private banner — unmistakable, never let this be confused for live */
+.private{
+  background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center;
+  padding:9px 16px; font-size:12px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text);
+}
+.private b{color:var(--accent);}
+
+.topbar{position:sticky; top:0; z-index:40; backdrop-filter:blur(8px);
+  background:color-mix(in srgb,var(--bg) 88%, transparent);
+  border-bottom:1px solid var(--line);}
+.topbar .wrap{display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding-top:10px; padding-bottom:10px; flex-wrap:wrap;}
+.brandmark{font-family:var(--font-display); letter-spacing:.14em;
+  text-transform:uppercase; font-size:12px; color:var(--muted);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 12px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .25s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* masthead */
+.mast{text-align:center; padding:56px 0 26px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:16px;}
+.kicker b{color:var(--accent);}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(38px,8.5vw,80px); color:var(--heading);}
+.rule{width:min(420px,72%); height:3px; margin:22px auto 18px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.lede{max-width:64ch; margin:0 auto; color:var(--muted);
+  font-size:clamp(15px,2.2vw,18px);}
+.lede strong{color:var(--text);}
+
+/* section furniture */
+.sec{padding:44px 0 10px;}
+.sec h2{font-family:var(--font-display); font-size:clamp(24px,4vw,38px);
+  color:var(--heading); text-align:center;}
+.sec .sub{text-align:center; color:var(--muted); font-size:14px;
+  margin-top:8px; margin-bottom:28px;}
+
+/* ---------- the three scene cards ---------- */
+.cast{display:grid; gap:26px; grid-template-columns:repeat(3,1fr);
+  padding-bottom:20px;}
+.card{
+  --pip:var(--unknown);
+  position:relative; border:1px solid var(--line); border-radius:20px;
+  background:var(--panel); overflow:hidden; display:flex; flex-direction:column;
+  box-shadow:0 24px 48px -30px rgba(0,0,0,.75);
+  transition:transform .4s cubic-bezier(.2,.8,.3,1), box-shadow .4s ease;
+}
+.card:hover{transform:translateY(-6px);
+  box-shadow:0 32px 60px -28px rgba(0,0,0,.8);}
+.card[data-role="tank"]{--pip:var(--tank);}
+.card[data-role="healer"]{--pip:var(--healer);}
+.card[data-role="dps"]{--pip:var(--dps);}
+.card::before{content:""; position:absolute; inset:0 0 auto; height:3px;
+  background:var(--pip); z-index:3;}
+
+.scene{position:relative; aspect-ratio:832/1216; overflow:hidden;
+  background:color-mix(in srgb,var(--pip) 12%, var(--panel));}
+.scene img{width:100%; height:100%; object-fit:cover; display:block;
+  transition:transform 6s ease;}
+.card:hover .scene img{transform:scale(1.045);}
+/* the illustration meets the card body in a soft wash, not a hard cut */
+.scene::after{content:""; position:absolute; inset:auto 0 0; height:44%;
+  background:linear-gradient(180deg, transparent,
+    color-mix(in srgb,var(--panel) 92%, transparent) 78%, var(--panel));
+  pointer-events:none;}
+.scene .setting{position:absolute; top:12px; left:12px; z-index:2;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  padding:5px 10px; border-radius:999px; color:var(--text);
+  background:color-mix(in srgb,var(--bg) 72%, transparent);
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);
+  backdrop-filter:blur(4px);}
+.scene .pending{position:absolute; inset:0; display:grid; place-items:center;
+  text-align:center; color:var(--muted); font-size:13px; padding:24px;}
+
+.body{padding:0 20px 22px; margin-top:-42px; position:relative; z-index:2;
+  flex:1; display:flex; flex-direction:column;}
+.role{align-self:flex-start; display:inline-block; font-size:10px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--bg); background:var(--pip);
+  padding:4px 10px; border-radius:999px;}
+.body h3{font-family:var(--font-display); font-size:30px; color:var(--heading);
+  line-height:1.05; margin:10px 0 4px;}
+.body h3 a{color:inherit; text-decoration:none;
+  border-bottom:1px solid transparent;}
+.body h3 a:hover{border-bottom-color:var(--accent);}
+.who{color:var(--muted); font-size:13.5px;}
+/* headings/paragraphs in the flex column keep their own width */
+.body h3, .who, .phrase{align-self:stretch;}
+.phrase{margin-top:12px; font-style:italic; color:var(--muted); font-size:14px;
+  border-left:2px solid var(--pip); padding-left:11px;}
+
+/* margin-top:auto pushes the numbers and button to the bottom, so the
+   three cards line up whether or not a character has a catchphrase */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+  border-top:1px solid var(--line); padding-top:14px; margin-top:auto;
+  padding-top:14px;}
+.stat .k{font-size:9.5px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted);}
+.stat .v{font-family:var(--font-body); font-weight:700; font-size:19px;
+  color:var(--heading); font-variant-numeric:lining-nums tabular-nums;
+  line-height:1.25; letter-spacing:-.01em;}
+.more{align-self:flex-start; margin-top:16px; display:inline-block; font-size:13px;
+  text-decoration:none; padding:8px 15px; border-radius:999px;
+  border:1px solid var(--line); color:var(--text);}
+.more:hover{border-color:var(--accent); color:var(--accent);}
+
+/* ---------- how it works ---------- */
+.steps{display:grid; gap:16px; grid-template-columns:repeat(4,1fr);
+  padding-bottom:16px;}
+.step{background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; padding:20px;}
+.step .n{font-family:var(--font-display); font-size:13px; color:var(--accent);
+  letter-spacing:.12em;}
+.step h4{font-size:15px; margin:8px 0 8px; color:var(--heading);}
+.step p{font-size:13.5px; color:var(--muted); line-height:1.55;}
+
+.notes{background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; padding:22px 24px; margin-top:8px;}
+.notes h4{font-family:var(--font-display); font-size:18px; color:var(--heading);
+  margin-bottom:10px;}
+.notes ul{list-style:none; display:grid; gap:11px;}
+.notes li{font-size:14px; color:var(--muted); padding-left:22px; position:relative;}
+.notes li::before{content:"✓"; position:absolute; left:0; color:var(--accent);
+  font-weight:700;}
+.notes li b{color:var(--text); font-weight:600;}
+.notes li.todo::before{content:"◷"; color:var(--muted);}
+
+.cta{text-align:center; padding:40px 0 20px;}
+.cta a{display:inline-block; font-size:15px; text-decoration:none;
+  padding:14px 26px; border-radius:999px; color:var(--bg);
+  background:var(--accent); font-weight:600;}
+.cta a:hover{filter:brightness(1.08);}
+.cta .hint{display:block; margin-top:12px; font-size:13px; color:var(--muted);}
+
+.foot{border-top:1px solid var(--line); margin-top:34px; padding:22px 0 60px;
+  color:var(--muted); font-size:13px; text-align:center;}
+
+@media (max-width:960px){
+  .cast{grid-template-columns:1fr; max-width:420px; margin:0 auto;}
+  .steps{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:560px){
+  .steps{grid-template-columns:1fr;}
+  .mast{padding:34px 0 18px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important; transition:none !important;}
+  .card:hover{transform:none;}
+  .card:hover .scene img{transform:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="private">Private trial build · <b>not published</b> · local preview only</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brandmark">{{ guild_name }} — second draft</div>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      {%- for key, t in themes.items() %}
+      <button type="button" data-theme="{{ key }}"
+              aria-pressed="{{ 'true' if key == default_theme else 'false' }}">{{ t.label }}</button>
+      {%- endfor %}
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="mast wrap">
+  <div class="kicker">
+    {%- if standing %}
+    World <b>#{{ '{:,}'.format(standing.world) }}</b> ·
+    Realm <b>#{{ standing.realm }}</b> · {{ cards|length }}-character trial
+    {%- else %}{{ cards|length }}-character trial{% endif %}
+  </div>
+  <h1>The Guild Board</h1>
+  <div class="rule"></div>
+  <p class="lede">
+    A first look at the new board, built around <strong>the guild's own
+    characters drawn into their own scenes</strong>. Everything below is
+    real data pulled from Raider.io and Warcraft Logs — the scores, the
+    ranks, the streaks. Three characters are in this trial, one of each
+    role, so you can see how a tank, a healer and a damage dealer each sit
+    on the board.
+  </p>
+</section>
+
+<section class="sec wrap">
+  <h2>The Trial Cast</h2>
+  <p class="sub">{{ trial_status }}</p>
+
+  <div class="cast">
+    {%- for c in cards %}
+    <article class="card" data-role="{{ c.member.role }}">
+      <div class="scene">
+        {%- if c.scene.src %}
+        <img src="{{ c.scene.src }}" alt="{{ c.member.name }} — {{ c.scene.setting }}">
+        {%- if c.scene.setting %}<span class="setting">{{ c.scene.setting }}</span>{% endif %}
+        {%- else %}
+        <div class="pending">
+          <span><b>{{ c.member.name }}</b><br>scene art in progress<br>
+          <small>everything else on this card is already real</small></span>
+        </div>
+        {%- endif %}
+      </div>
+      <div class="body">
+        <span class="role">{{ c.member.role_label }}</span>
+        <h3>
+          {%- if c.profile_href %}<a href="{{ c.profile_href }}">{{ c.member.name }}</a>
+          {%- else %}{{ c.member.name }}{% endif %}
+        </h3>
+        <p class="who">
+          {{ [c.member.race, c.member.spec, c.member.cls] | select | join(' ') }}
+          {%- if c.profile.realm_label %} · {{ c.profile.realm_label }}{% endif %}
+        </p>
+        {%- if c.member.catchphrase %}
+        <p class="phrase">“{{ c.member.catchphrase }}”</p>
+        {%- endif %}
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">{{ c.member.score if c.member.score is not none else '—' }}</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">{{ '#' ~ c.profile.rank if c.profile.rank else '—' }}</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">{{ c.profile.streak if c.profile.streak else '—' }}</div>
+          </div>
+        </div>
+        {%- if c.profile_href %}
+        <a class="more" href="{{ c.profile_href }}">Full profile →</a>
+        {%- endif %}
+      </div>
+    </article>
+    {%- endfor %}
+  </div>
+</section>
+
+<section class="sec wrap">
+  <h2>How it works</h2>
+  <p class="sub">Nobody has to type anything in by hand</p>
+  <div class="steps">
+    <div class="step">
+      <div class="n">STEP 1</div>
+      <h4>The data comes in</h4>
+      <p>Every week the board pulls real numbers from Raider.io and
+         Warcraft Logs — Mythic+ scores, timed keys, parses, attendance.
+         The guild roster is fetched automatically.</p>
+    </div>
+    <div class="step">
+      <div class="n">STEP 2</div>
+      <h4>The cast is drawn</h4>
+      <p>Each member's real character — race, class, spec, transmog — is
+         turned into original art in the style you're looking at. New
+         art drops in and the board picks it up on the next build.</p>
+    </div>
+    <div class="step">
+      <div class="n">STEP 3</div>
+      <h4>The board assembles</h4>
+      <p>Art and data are combined into the page: the crew, the ladder,
+         the roast, the voyage map. Anything missing degrades quietly
+         instead of breaking the page.</p>
+    </div>
+    <div class="step">
+      <div class="n">STEP 4</div>
+      <h4>It posts itself</h4>
+      <p>Once you're happy, the weekly board posts to Discord and updates
+         the website automatically every Tuesday. <b>Not switched on for
+         this trial.</b></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap">
+  <h2>What changed in this draft</h2>
+  <p class="sub">Fixes and additions since the first look</p>
+  <div class="notes">
+    <h4>Fixed</h4>
+    <ul>
+      <li><b>Character links opened blank pages.</b> Every player link was
+        built from the guild's realm, but most of the roster plays on
+        other realms — {{ offrealm_pct }}% of {{ roster_size }} members, across
+        {{ realm_count }} realms. Rakdisc is on <b>{{ rakdisc_realm }}</b>, not the
+        guild realm. Links now use each player's real realm, and anyone
+        we can't confirm gets no link rather than a broken one.</li>
+      <li><b>The Raid / Mythic+ view didn't filter.</b> Those buttons were
+        scroll anchors that looked like tabs. They now actually filter
+        the board, and remember your choice.</li>
+      <li><b>Headgear was invisible.</b> The art layers put faces above
+        hats, so Rakdisc's mitre was hidden. Fixed in the layer spec —
+        you can see the mitre in her scene above.</li>
+    </ul>
+    <h4 style="margin-top:18px;">Added</h4>
+    <ul>
+      <li><b>A real page for every member</b>, with their art, score,
+        guild rank, streak and records.</li>
+      <li><b>An animated crew deck</b> where the cast stand together and
+        react when you hover a role.</li>
+      <li><b>Three themes</b>, switchable at the top right — try them.</li>
+    </ul>
+    <h4 style="margin-top:18px;">Still coming</h4>
+    <ul>
+      <li class="todo">Scene art for the rest of the guild — {{ cards|length }} characters
+        are drawn so far.</li>
+      <li class="todo">The voyage map wired to the live season dungeon list.</li>
+      <li class="todo">Victory and defeat poses driven by weekly results.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="cta wrap">
+  <a href="{{ board_href }}">Open the animated crew board →</a>
+  <span class="hint">The cast standing together on deck, with the ladder,
+    the roast and the voyage map.</span>
+</section>
+</main>
+
+<footer class="foot wrap">
+  <p>{{ credits }}</p>
+  <p style="margin-top:8px;">Private trial build{% if updated %} · board data from {{ updated }}{% endif %}
+     · not connected to Discord or the guild website</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>

@@ -32,6 +32,7 @@ import jinja2  # noqa: E402
 from guild_board import crew as crew_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
+from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
 
@@ -283,6 +284,35 @@ def main():
             p=pctx, **{k: v for k, v in ctx.items() if k != "p"})
         (profile_dir / f"{pctx['slug']}.html").write_text(page, encoding="utf-8")
     logger.info("Wrote %d profile pages to %s/", len(profile_ctxs), profile_dir)
+
+    # ---- the private trial page (the "second draft" front door) --------
+    by_slug = {p["slug"]: p for p in profile_ctxs}
+    cards = showcase_mod.build_cards(ctx["crew"], by_slug, cfg)
+    for card in cards:
+        card["profile_href"] = profiles_mod.profile_href(card["slug"])
+
+    # Real figures for the bug-fix note, computed rather than asserted.
+    index = links_mod.realm_index(roster)
+    realms = set(index.values())
+    guild_realm = ((cfg.get("guild") or {}).get("realm_slug") or "").lower()
+    off = [n for n, r in index.items() if r != guild_realm]
+
+    trial_ctx = dict(ctx)
+    trial_ctx.update({
+        "cards": cards,
+        "trial_status": showcase_mod.trial_status(cards),
+        "board_href": out.name,
+        "roster_size": len(index),
+        "realm_count": len(realms),
+        "offrealm_pct": round(len(off) / len(index) * 100) if index else 0,
+        "rakdisc_realm": (index.get("rakdisc") or "another realm").replace("-", " ").title(),
+    })
+    trial_page = out.parent / "trial.html"
+    trial_page.write_text(
+        env.get_template("web/pages/trial.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the trial showcase to %s (%s)",
+                trial_page, showcase_mod.trial_status(cards))
     logger.info("Wrote %s (%d crew, %d islands, %d ladder rows, style=%s, "
                 "%d with real art)",
                 out, len(ctx["crew"]), len(ctx["islands"]), len(ctx["ladder"]),
