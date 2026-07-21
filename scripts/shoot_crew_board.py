@@ -5,6 +5,7 @@ theme. Run scripts/render_crew_board.py first.
     python scripts/shoot_crew_board.py
 """
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -25,10 +26,18 @@ SHOTS = [
 
 
 def main():
-    if not PAGE.exists():
-        sys.exit(f"{PAGE} not found — run scripts/render_crew_board.py first.")
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--page", default=str(PAGE))
+    ap.add_argument("--prefix", default="")
+    args = ap.parse_args()
+    page_path = Path(args.page)
+    if not page_path.is_absolute():
+        page_path = ROOT / page_path
+    if not page_path.exists():
+        sys.exit(f"{page_path} not found — run scripts/render_crew_board.py first.")
     OUT.mkdir(exist_ok=True)
-    url = PAGE.as_uri()
+    url = page_path.as_uri()
+    pfx = args.prefix
 
     with sync_playwright() as p:
         browser = p.chromium.launch()
@@ -45,8 +54,8 @@ def main():
             # the captured page shows the true pressed state.
             page.click(f'.themeswitch button[data-theme="{theme}"]')
             page.wait_for_timeout(900)
-            page.screenshot(path=str(OUT / f"{label}.png"), full_page=full)
-            print("shot", label)
+            page.screenshot(path=str(OUT / f"{pfx}{label}.png"), full_page=full)
+            print("shot", pfx + label)
             page.close()
 
         # The signature interaction, caught mid-spotlight: hover the
@@ -57,14 +66,33 @@ def main():
         page.wait_for_timeout(700)
         page.hover(".tab[data-role='healer']")
         page.wait_for_timeout(900)
-        page.screenshot(path=str(OUT / "interaction_healer_spotlight.png"))
-        print("shot interaction_healer_spotlight")
+        page.screenshot(path=str(OUT / f"{pfx}interaction_healer_spotlight.png"))
+        print("shot", pfx + "interaction_healer_spotlight")
 
         # Shadowform, toggled on.
         page.evaluate("document.querySelector('[data-shadowtoggle]').click()")
         page.wait_for_timeout(700)
-        page.screenshot(path=str(OUT / "interaction_shadowform.png"))
-        print("shot interaction_shadowform")
+        page.screenshot(path=str(OUT / f"{pfx}interaction_shadowform.png"))
+        print("shot", pfx + "interaction_shadowform")
+        # A scene change: hover a raid-boss island so the backdrop washes
+        # crimson. The crew's cut-outs must be identical to the shot above.
+        page = browser.new_page(viewport={"width": 1440, "height": 950},
+                                device_scale_factor=2)
+        page.goto(url, wait_until="domcontentloaded")
+        page.wait_for_timeout(800)
+        # Dispatch the hover WITHOUT scrolling the island into view, so the
+        # crew stage stays framed — the whole point is that the backdrop
+        # changed while the cast did not.
+        changed = page.evaluate("""() => {
+            const b = document.querySelector(".island[data-kind='raid_boss']");
+            if (!b) return false;
+            b.dispatchEvent(new MouseEvent('mouseenter'));
+            return true;
+        }""")
+        if changed:
+            page.wait_for_timeout(1400)
+            page.screenshot(path=str(OUT / f"{pfx}scene_boss_island.png"))
+            print("shot", pfx + "scene_boss_island")
         page.close()
         browser.close()
 

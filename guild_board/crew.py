@@ -27,6 +27,7 @@ from pathlib import Path
 logger = logging.getLogger(__name__)
 
 PROFILE_CACHE = "blizzard_profile_cache.json"
+CAST_MANIFEST = "cast_manifest.json"
 CAST_DIR = Path("cast")
 PLACEHOLDER_DIR = CAST_DIR / "placeholders"
 
@@ -217,6 +218,131 @@ def _light_art(slug):
     return None
 
 
+# ---------------------------------------------------------------------
+#  cast_manifest.json — the shared contract with the art pipeline.
+#
+#  { "active_style": "one_piece", "styles_available": [...],
+#    "characters": { "<slug>": {
+#        "name","realm","race","class","spec","gender","role",
+#        "transmog_fingerprint","render_url",
+#        "styles": { "<style>": {
+#            "board": "cast/<slug>/<style>/board.png",
+#            "forms": {"light": "...", "shadow": "..."},
+#            "version": N, "generated_at": "ISO" } },
+#        "history": [...] } } }
+#
+#  The pipeline owns this file. We only ever READ it, and every field is
+#  treated as optional — a half-written manifest degrades to silhouettes
+#  rather than breaking the board.
+# ---------------------------------------------------------------------
+
+def load_manifest(path=CAST_MANIFEST):
+    """The art pipeline's cast manifest, or {} until it lands."""
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            data = json.load(fh)
+    except (OSError, ValueError) as exc:
+        logger.info("No cast manifest yet (%s); falling back to derived crew.", exc)
+        return {}
+    if not isinstance(data, dict):
+        logger.warning("cast_manifest.json is not an object; ignoring it.")
+        return {}
+    return data
+
+
+def resolve_style(manifest, theme=None, override=None):
+    """Which art style the board renders.
+
+    Precedence: an explicit override (CLI/preview) > theme.yml's
+    crew.style > the manifest's own active_style. A style nobody has
+    assets for still resolves — per-character lookup falls back on its
+    own, so a bad value can never blank the deck.
+    """
+    manifest = manifest or {}
+    available = manifest.get("styles_available") or []
+    if not isinstance(available, list):
+        available = []
+
+    for candidate, source in (
+        (override, "override"),
+        ((((theme or {}).get("crew") or {}) if isinstance((theme or {}).get("crew"), dict)
+          else {}).get("style"), "theme.yml crew.style"),
+        (manifest.get("active_style"), "manifest active_style"),
+    ):
+        if candidate and isinstance(candidate, str):
+            if available and candidate not in available:
+                logger.info("Style %r (%s) is not in styles_available %s; using it "
+                            "anyway if assets exist.", candidate, source, available)
+            return candidate
+    # Nothing declared anywhere — take the first style the manifest lists.
+    return available[0] if available else None
+
+
+def _manifest_style_assets(character, style):
+    """(assets, style_used) for one character, or (None, None).
+
+    If the character has no assets for the requested style we fall back
+    to any style they DO have, so flipping active_style before every
+    character has been regenerated leaves a full deck rather than a row
+    of silhouettes.
+    """
+    styles = (character or {}).get("styles")
+    if not isinstance(styles, dict) or not styles:
+        return None, None
+    if style and isinstance(styles.get(style), dict):
+        return styles[style], style
+    for key, assets in styles.items():
+        if isinstance(assets, dict):
+            return assets, key
+    return None, None
+
+
+def _usable_cutout(path):
+    """A manifest path is only usable if the file is really there and
+    really transparent — the deck must never paste a solid rectangle."""
+    if not path or not isinstance(path, str):
+        return None
+    candidate = Path(path)
+    if not candidate.exists() or not _is_cutout(candidate):
+        return None
+    return str(candidate).replace(os.sep, "/")
+
+
+def manifest_art(character, style):
+    """Resolve one character's art from the manifest.
+
+    Returns a dict the deck can render directly. Every field degrades on
+    its own: a missing/opaque board falls back to the silhouette, and
+    missing forms simply mean no art swap on the Shadowform toggle.
+    """
+    assets, style_used = _manifest_style_assets(character, style)
+    if not assets:
+        return None
+
+    board = _usable_cutout(assets.get("board"))
+    forms = assets.get("forms") if isinstance(assets.get("forms"), dict) else {}
+    light = _usable_cutout(forms.get("light"))
+    shadow = _usable_cutout(forms.get("shadow"))
+
+    # A character with only form art and no board pick still stands:
+    # the light form is the natural default.
+    if not board:
+        board = light or shadow
+    if not board:
+        return None
+
+    return {
+        "art": board,
+        "art_is_real": True,
+        "light_art": light,
+        "shadow_art": shadow,
+        "style_used": style_used,
+        "style_is_fallback": bool(style and style_used and style_used != style),
+        "version": assets.get("version"),
+        "generated_at": assets.get("generated_at"),
+    }
+
+
 def load_profiles(path=PROFILE_CACHE):
     """The Blizzard profile cache the art pipeline writes, or {} if it
     has not landed yet."""
@@ -228,15 +354,30 @@ def load_profiles(path=PROFILE_CACHE):
         return {}
 
 
-def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10):
+def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
+               manifest=None, style=None):
     """The cast standing on the deck.
 
     Ordered by real season M+ score (highest first) so the deck reflects
-    the actual ladder. Role/class come from the profile cache when it
-    exists, else from DERIVED_CREW's evidenced entries.
+    the actual ladder.
+
+    Source precedence for who someone IS:
+      1. cast_manifest.json  — the art pipeline's contract (richest: real
+         race/class/spec/gender/role straight off their WoW character)
+      2. blizzard_profile_cache.json
+      3. DERIVED_CREW        — only what this repo can evidence
+      4. season_scores       — a real player with a real score, no role
+
+    Art always comes from the manifest's active style when it is there,
+    and degrades to the silhouette slot when it is not.
     """
     season_scores = season_scores or {}
     profiles = load_profiles() if profiles is None else profiles
+    manifest = load_manifest() if manifest is None else manifest
+    style = resolve_style(manifest, theme) if style is None else style
+    characters = manifest.get("characters") if isinstance(manifest, dict) else None
+    characters = characters if isinstance(characters, dict) else {}
+
     crew_cfg = (cfg or {}).get("cast") or {}
     opt_out = {n.lower() for n in (crew_cfg.get("opt_out") or [])}
     phrases = dict(DEFAULT_CATCHPHRASES)
@@ -255,6 +396,27 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10):
             "evidence": "blizzard_profile_cache.json",
             "source": "real",
         }
+    # The manifest outranks the profile cache: it is the pipeline's own
+    # record of the character it actually rendered.
+    for slug, character in characters.items():
+        if not isinstance(character, dict):
+            continue
+        slug = slugify(slug)
+        candidates[slug] = {
+            "display": character.get("name") or slug.title(),
+            "cls": character.get("class"),
+            "spec": character.get("spec"),
+            "race": character.get("race"),
+            "gender": character.get("gender"),
+            # The pipeline may state the role outright; we still validate
+            # it rather than trusting an arbitrary string.
+            "declared_role": character.get("role"),
+            "render_url": character.get("render_url"),
+            "evidence": "cast_manifest.json (real WoW character)",
+            "source": "manifest",
+            "_character": character,
+        }
+
     for slug, entry in DERIVED_CREW.items():
         if slug in candidates:
             continue
@@ -279,29 +441,57 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10):
     for slug, entry in candidates.items():
         if slug in opt_out or f"{slug}-" in opt_out:
             continue
-        role = role_for(entry.get("cls"), entry.get("spec"))
-        art, art_is_real = _art_slot(slug)
-        shadow = _shadow_art(slug)
-        light = _light_art(slug)
+
+        # ---- role: a declared role is honoured only if it is a real
+        # role name; otherwise we derive it from the real spec, and only
+        # then fall back to "unknown". No step ever guesses.
+        declared = (entry.get("declared_role") or "").strip().lower()
+        if declared in ("tank", "healer", "dps"):
+            role = declared
+        else:
+            if declared:
+                logger.info("cast_manifest role %r for %s is not a known role; "
+                            "deriving from spec instead.", declared, slug)
+            role = role_for(entry.get("cls"), entry.get("spec"))
+
+        # ---- art: the manifest's active style first, then the legacy
+        # folder scan, then the silhouette.
+        art_info = manifest_art(entry.get("_character"), style)
+        if art_info is None:
+            art, art_is_real = _art_slot(slug)
+            shadow, light = _shadow_art(slug), _light_art(slug)
+            art_info = {
+                "art": art, "art_is_real": art_is_real,
+                "light_art": light if (shadow and light) else None,
+                "shadow_art": shadow if (shadow and light) else None,
+                "style_used": None, "style_is_fallback": False,
+                "version": None, "generated_at": None,
+            }
+
+        has_forms = bool(art_info["light_art"] and art_info["shadow_art"])
         crew.append({
             "slug": slug,
             "name": entry["display"],
             "cls": entry.get("cls") or "",
             "spec": entry.get("spec") or "",
+            "race": entry.get("race") or "",
             "role": role,
             "role_label": ROLE_LABEL.get(role, "Deckhand"),
             "tint": ROLE_TINT.get(role, ROLE_TINT["unknown"]),
             "score": season_scores.get(slug),
-            "art": art,
-            "art_is_real": art_is_real,
+            "art": art_info["art"],
+            "art_is_real": art_info["art_is_real"],
+            "style_used": art_info["style_used"],
+            "style_is_fallback": art_info["style_is_fallback"],
+            "art_version": art_info["version"],
             # Shadowform belongs to Priests, so the toggle is offered to
             # any real Priest. When the art set actually has light+shadow
-            # renders we swap the image; until then the toggle still
+            # cut-outs we swap the image; until then the toggle still
             # works and is expressed purely in CSS — the interaction
             # never waits on the art pipeline.
-            "has_shadowform": (entry.get("cls") == "Priest") or bool(shadow and light),
-            "shadow_art": shadow if (shadow and light) else None,
-            "light_art": light if (shadow and light) else None,
+            "has_shadowform": (entry.get("cls") == "Priest") or has_forms,
+            "shadow_art": art_info["shadow_art"] if has_forms else None,
+            "light_art": art_info["light_art"] if has_forms else None,
             "catchphrase": phrases.get(slug),
             "evidence": entry.get("evidence"),
             "source": entry.get("source", "derived"),
@@ -310,6 +500,80 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10):
     # Real ladder order; unscored crew trail behind, alphabetically.
     crew.sort(key=lambda c: (c["score"] is None, -(c["score"] or 0), c["name"]))
     return crew[:limit]
+
+
+# ---------------------------------------------------------------------
+#  SCENES — the layer BEHIND the crew.
+#
+#  The cast are transparent cut-outs composited over this layer, so a
+#  scene can change or animate underneath without touching the character
+#  art. A scene is deliberately thin: a tint plus an optional image. The
+#  tint is blended against the active theme's own colors in CSS, so one
+#  scene definition reads correctly in all three themes.
+# ---------------------------------------------------------------------
+
+DEFAULT_SCENES = {
+    "open_sea": {"label": "Open sea", "tint": None, "image": None},
+    "dungeon": {"label": "Dungeon approach", "tint": None, "image": None},
+    "raid_boss": {"label": "Boss arena", "tint": "#a3335c", "image": None},
+}
+
+
+def resolve_scenes(theme):
+    """Scene definitions, theme.yml overridable:
+
+        crew:
+          scenes:
+            grim-batol:
+              tint: "#8a3b1f"
+              image: "assets/scenes/grim_batol.png"
+
+    Keys may be an island id (most specific) or one of the built-in
+    kinds. Anything missing falls back to the shipped definition, and an
+    image that is not actually on disk is dropped rather than rendering
+    as a broken tile.
+    """
+    crew_cfg = (theme or {}).get("crew") or {}
+    if not isinstance(crew_cfg, dict):
+        crew_cfg = {}
+    overrides = crew_cfg.get("scenes") or {}
+    if not isinstance(overrides, dict):
+        logger.info("theme.yml crew.scenes is not a mapping; using shipped scenes.")
+        overrides = {}
+
+    scenes = {key: dict(value) for key, value in DEFAULT_SCENES.items()}
+    for key, value in overrides.items():
+        if not isinstance(value, dict):
+            logger.info("theme.yml crew.scenes.%s is not a mapping; ignored.", key)
+            continue
+        scene = dict(scenes.get(key) or {"label": str(key), "tint": None, "image": None})
+        tint = value.get("tint")
+        if isinstance(tint, str) and tint.strip():
+            scene["tint"] = tint.strip()
+        image = value.get("image")
+        if isinstance(image, str) and image.strip():
+            if Path(image.strip()).exists():
+                scene["image"] = image.strip().replace(os.sep, "/")
+            else:
+                logger.info("Scene image %s for %r is not on disk; using the "
+                            "tint alone.", image, key)
+        label = value.get("label")
+        if isinstance(label, str) and label.strip():
+            scene["label"] = label.strip()
+        scenes[key] = scene
+    return scenes
+
+
+def scene_for_island(island, scenes):
+    """The scene an island washes over the board: its own definition if
+    the theme names it, else the default for its kind."""
+    scenes = scenes or {}
+    island = island or {}
+    for key in (island.get("id"), island.get("kind")):
+        if key and key in scenes:
+            return dict(scenes[key], key=key)
+    fallback = scenes.get("open_sea") or DEFAULT_SCENES["open_sea"]
+    return dict(fallback, key="open_sea")
 
 
 def role_counts(crew):

@@ -76,19 +76,80 @@ voyage:
   current_island: "grim-batol"     # blank = the first dungeon
 ```
 
-## The art contract
+## The art contract — `cast_manifest.json`
 
-The deck expects **transparent PNG cut-outs** at `cast/<name>/`:
+The art pipeline owns `cast_manifest.json`; the board only reads it.
 
-* `cast/<name>/board.png` is the curated pick, used first if present.
-* Otherwise the first transparent PNG in that folder is used.
-* A PNG with no alpha channel (a raw generation still on its studio
-  background) is **rejected** — it would paste a solid rectangle onto the
-  ship. Those members fall back to the silhouette slot instead.
+```json
+{ "active_style": "one_piece",
+  "styles_available": ["one_piece", "watercolor"],
+  "characters": {
+    "<slug>": {
+      "name": "...", "realm": "...", "race": "...", "class": "...",
+      "spec": "...", "gender": "...", "role": "healer",
+      "transmog_fingerprint": "...", "render_url": "...",
+      "styles": {
+        "<style>": {
+          "board": "cast/<slug>/<style>/board.png",
+          "forms": { "light": "...", "shadow": "..." },
+          "version": 3, "generated_at": "2026-07-20T12:00:00Z" } },
+      "history": [] } } }
+```
 
-A member with both `*light*.png` and `*shadow*.png` cut-outs gets a real
-art swap on the Shadowform toggle. Any Priest gets the toggle regardless;
-without the art it is expressed purely in CSS.
+How the board uses it:
+
+* **Art** comes from `styles[active_style].board`. If a character has no
+  assets for the active style, they borrow a style they *do* have
+  (flagged in the footer) rather than dropping to a silhouette.
+* **`forms.light` / `forms.shadow`** drive the real art swap on the
+  Shadowform toggle.
+* **Roles** come from `role` when it is a real role name, else derived
+  from the real `spec`. A nonsense role is not trusted.
+* **Transparency is enforced.** A PNG with no alpha channel is rejected
+  even when the manifest points straight at it — it would paste a solid
+  rectangle onto the ship. Those members fall back to the silhouette.
+* A missing file, a missing style, a malformed manifest, or no manifest
+  at all all degrade to the silhouette slot. The board never breaks.
+
+### Swapping the whole cast's style
+
+Flip `active_style` in the manifest and re-render — the entire cast
+reskins. Nothing is hardcoded to one style. To preview without editing
+the manifest:
+
+```
+python scripts/render_crew_board.py --style watercolor
+python scripts/render_crew_board.py --manifest path/to/other.json
+```
+
+`theme.yml`'s `crew.style` also overrides the manifest's `active_style`
+if a guild wants to pin one.
+
+## Scenes (the layer behind the crew)
+
+The cast are transparent cut-outs composited **above** the scene layer,
+so backgrounds can change or animate without touching the character art:
+
+```
+z 0  .scene       backdrop (tint + optional image), crossfades between plates
+z 1  .deckboard   the ship's deck
+z 2  .member      the cast — transparent PNGs, constant
+```
+
+Landing on an island washes that island's scene over the board. Define
+scenes per island id, or per kind (`dungeon`, `raid_boss`, `open_sea`):
+
+```yaml
+crew:
+  scenes:
+    grim-batol:
+      tint: "#8a3b1f"
+      image: "assets/scenes/grim_batol.png"
+```
+
+The tint is blended against the live theme in CSS, so one scene reads
+correctly in all three themes. An `image` that isn't on disk is dropped
+and the tint carries the scene on its own.
 
 ## What is real and what is still stubbed
 

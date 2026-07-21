@@ -141,11 +141,51 @@ a{color:inherit;}
 .search::placeholder{color:var(--muted);}
 .search:focus{outline:2px solid var(--accent); outline-offset:1px;}
 
-/* ---------- CREW STAGE ---------- */
+/* ---------- CREW STAGE ----------
+   THE LAYER STACK, bottom to top. The crew are transparent cut-outs
+   composited over the scene, so the scene can change or animate freely
+   without the character art ever being touched:
+
+     z 0  .scene       backdrop (tint + optional art), crossfades
+     z 1  .deckboard   the ship's deck the crew stand on
+     z 2  .member      the cast — transparent PNGs, constant
+     z 5+ bubbles, spotlights, toggles
+*/
 .stage{
   position:relative; z-index:1; margin:0 auto 10px; max-width:var(--measure);
   padding:0 12px;
 }
+.scene{
+  position:absolute; inset:0 0 18px; z-index:0; overflow:hidden;
+  border-radius:26px; pointer-events:none;
+}
+/* Two stacked plates so a scene change CROSSFADES instead of cutting.
+   JS paints the idle plate, then swaps which one is visible. */
+.scene-plate{
+  position:absolute; inset:0; opacity:0; transition:opacity .75s ease;
+  background-position:center bottom; background-size:cover;
+  background-repeat:no-repeat;
+}
+.scene-plate.on{opacity:1;}
+/* The tint is blended against the live theme, so one scene definition
+   reads correctly in codex, console and chronicle alike. */
+.scene-plate::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(ellipse 120% 78% at 50% 108%,
+    color-mix(in srgb, var(--scene-tint, var(--accent)) 42%, transparent),
+    transparent 72%);
+}
+.scene-plate::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 35%,
+    color-mix(in srgb, var(--bg) 72%, transparent));
+}
+/* A slow horizon drift — the scene moves, the crew do not. */
+@keyframes tide{
+  0%,100%{transform:translate3d(-1.5%,0,0) scale(1.04);}
+  50%{transform:translate3d(1.5%,0,0) scale(1.04);}
+}
+.scene-plate.on{animation:tide 26s ease-in-out infinite;}
 .deck{
   position:relative; display:flex; align-items:flex-end; justify-content:center;
   min-height:clamp(300px,44vw,430px); padding-bottom:26px;
@@ -158,7 +198,8 @@ a{color:inherit;}
 .deck::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
 /* the ship's deck the crew stands on */
 .deckboard{
-  position:absolute; left:2%; right:2%; bottom:0; height:64px; border-radius:50%/22px;
+  position:absolute; left:2%; right:2%; bottom:0; height:64px; z-index:1;
+  border-radius:50%/22px;
   background:linear-gradient(180deg,
     color-mix(in srgb,var(--accent) 26%, var(--panel)),
     var(--panel));
@@ -171,7 +212,7 @@ a{color:inherit;}
 }
 
 .member{
-  position:relative; flex:0 0 auto; width:clamp(96px,15vw,168px);
+  position:relative; z-index:2; flex:0 0 auto; width:clamp(96px,15vw,168px);
   scroll-snap-align:center;
   display:flex; flex-direction:column; align-items:center;
   transition:opacity .45s ease, filter .45s ease, transform .45s cubic-bezier(.2,.8,.3,1);
@@ -500,6 +541,17 @@ a{color:inherit;}
 
 <!-- ---------------- CREW STAGE ---------------- -->
 <section class="stage" aria-label="The crew">
+  {#
+    The scene layer. Two plates crossfade so an island (or any future
+    animated backdrop) can wash over the board without the crew's
+    transparent cut-outs changing at all.
+  #}
+  <div class="scene" id="scene" aria-hidden="true"
+       style="--scene-tint:{{ opening_scene.tint or 'var(--accent)' }};">
+    <div class="scene-plate on" data-plate="a"
+         {% if opening_scene.image %}style="background-image:url('{{ opening_scene.image }}');"{% endif %}></div>
+    <div class="scene-plate" data-plate="b"></div>
+  </div>
   <div class="deck" id="deck">
     <div class="deckboard" aria-hidden="true"></div>
     {%- for m in crew %}
@@ -515,9 +567,9 @@ a{color:inherit;}
       <img src="{{ m.art }}" alt="{{ m.name }}"
            {% if m.light_art %}data-light="{{ m.light_art }}"{% endif %}
            {% if m.shadow_art %}data-shadow="{{ m.shadow_art }}"{% endif %}
-           loading="lazy">
+           decoding="async">
       {%- else %}
-      <img src="cast/placeholders/crew_slot.png" alt="{{ m.name }} (art pending)" loading="lazy">
+      <img src="cast/placeholders/crew_slot.png" alt="{{ m.name }} (art pending)" decoding="async">
       {%- endif %}
       <span class="plate">
         <b>{{ m.name }}</b>
@@ -549,6 +601,9 @@ a{color:inherit;}
               data-name="{{ isl.name }}"
               data-flavor="{{ isl.flavor|e }}"
               data-record="{{ isl.record_html|e }}"
+              data-scene-tint="{{ isl.scene.tint or '' }}"
+              data-scene-image="{{ isl.scene.image or '' }}"
+              data-scene-label="{{ isl.scene.label|e }}"
               aria-current="{{ 'true' if isl.id == current_island else 'false' }}"
               aria-selected="{{ 'true' if isl.id == current_island else 'false' }}">
         <span class="blob" aria-hidden="true">
@@ -739,12 +794,30 @@ a{color:inherit;}
   var iiRec = document.getElementById('ii-rec');
   var WASH = { dungeon: 'var(--accent)', raid_boss: '#a3335c' };
 
+  /* ---------- scene changes ----------
+     Crossfade between two plates. The crew's cut-outs sit on their own
+     layer above this and are never touched, so the backdrop can change
+     (or animate) freely underneath them. */
+  var scene = document.getElementById('scene');
+  var plates = scene ? Array.prototype.slice.call(
+    scene.querySelectorAll('.scene-plate')) : [];
+  function setScene(tint, image){
+    if (plates.length < 2) return;
+    var visible = plates.filter(function(p){ return p.classList.contains('on'); })[0] || plates[0];
+    var idle = plates.filter(function(p){ return p !== visible; })[0];
+    idle.style.backgroundImage = image ? "url('" + image + "')" : '';
+    scene.style.setProperty('--scene-tint', tint || 'var(--accent)');
+    visible.classList.remove('on');
+    idle.classList.add('on');
+  }
+
   function showIsland(btn){
     iiName.textContent = btn.dataset.name;
     iiFlavor.textContent = btn.dataset.flavor || '';
     iiRec.innerHTML = btn.dataset.record || '<span class="norec">No record yet.</span>';
     map.classList.add('washed');
     map.style.setProperty('--wash', WASH[btn.dataset.kind] || 'transparent');
+    setScene(btn.dataset.sceneTint, btn.dataset.sceneImage);
     islands.forEach(function(o){
       o.setAttribute('aria-selected', o === btn ? 'true' : 'false');
     });

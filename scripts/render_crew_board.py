@@ -120,19 +120,26 @@ def _island_record_html(island):
             f'{data.get("name")}{suffix}')
 
 
-def build_context(cfg, theme, board_state, roster, profiles=None):
+def build_context(cfg, theme, board_state, roster, profiles=None,
+                  manifest=None, style=None):
     season_scores = (board_state or {}).get("season_scores") or {}
     standing = (board_state or {}).get("standing") or None
     guild_cfg = cfg.get("guild") or {}
     region = (guild_cfg.get("region") or "us").lower()
 
+    manifest = crew_mod.load_manifest() if manifest is None else manifest
+    style = crew_mod.resolve_style(manifest, theme, override=style)
+
     crew = crew_mod.build_crew(cfg, theme, season_scores=season_scores,
-                               profiles=profiles)
+                               profiles=profiles, manifest=manifest,
+                               style=style)
     counts = crew_mod.role_counts(crew)
 
+    scenes = crew_mod.resolve_scenes(theme)
     islands, current, voyage_real = crew_mod.load_islands(cfg, board_state)
     for island in islands:
         island["record_html"] = _island_record_html(island)
+        island["scene"] = crew_mod.scene_for_island(island, scenes)
     current = current or (islands[0]["id"] if islands else None)
     current_island = next((i for i in islands if i["id"] == current), None)
 
@@ -163,8 +170,18 @@ def build_context(cfg, theme, board_state, roster, profiles=None):
             pass
 
     stubbed = []
-    if not any(m["art_is_real"] for m in crew):
-        stubbed.append("crew art (placeholder slots — the art pipeline fills cast/<name>/)")
+    with_art = [m for m in crew if m["art_is_real"]]
+    if not manifest:
+        stubbed.append("crew art (no cast_manifest.json yet — silhouette slots)")
+    elif not with_art:
+        stubbed.append("crew art (manifest present, but no usable cut-outs on disk yet)")
+    elif len(with_art) < len(crew):
+        stubbed.append(f"crew art for {len(crew) - len(with_art)} of {len(crew)} "
+                       f"(the rest are rendered)")
+    borrowed = [m["name"] for m in crew if m.get("style_is_fallback")]
+    if borrowed:
+        stubbed.append(f"style {style!r} missing for {', '.join(borrowed)} "
+                       f"(showing their other style)")
     if not voyage_real:
         stubbed.append("voyage islands (sample chain — guild_board.voyage not on this branch)")
     if not any(i.get("data") for i in islands):
@@ -184,6 +201,11 @@ def build_context(cfg, theme, board_state, roster, profiles=None):
         "embers": _embers(),
         "crew": crew,
         "counts": counts,
+        "active_style": style,
+        "styles_available": manifest.get("styles_available") or [],
+        "scenes": scenes,
+        "opening_scene": (current_island["scene"] if current_island
+                          else crew_mod.scene_for_island(None, scenes)),
         "islands": islands,
         "current_island": current,
         "current_island_name": current_island["name"] if current_island else "",
@@ -202,6 +224,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="crew_board.html")
     ap.add_argument("--config", default="config.yml")
+    ap.add_argument("--manifest", default=None,
+                    help="Path to a cast_manifest.json (defaults to the one "
+                         "in the working directory).")
+    ap.add_argument("--style", default=None,
+                    help="Preview a specific cast style instead of the "
+                         "manifest's active_style (e.g. --style one_piece).")
     args = ap.parse_args()
 
     cfg = _load_cfg(args.config)
@@ -209,7 +237,10 @@ def main():
     board_state = _load_json("board_state.json", {})
     roster = (_load_json("roster_cache.json", {}) or {}).get("members") or []
 
-    ctx = build_context(cfg, theme, board_state, roster)
+    manifest = (crew_mod.load_manifest(args.manifest)
+                if args.manifest else crew_mod.load_manifest())
+    ctx = build_context(cfg, theme, board_state, roster,
+                        manifest=manifest, style=args.style)
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(str(TEMPLATE_DIR)),
@@ -220,8 +251,11 @@ def main():
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
-    logger.info("Wrote %s (%d crew, %d islands, %d ladder rows)",
-                out, len(ctx["crew"]), len(ctx["islands"]), len(ctx["ladder"]))
+    logger.info("Wrote %s (%d crew, %d islands, %d ladder rows, style=%s, "
+                "%d with real art)",
+                out, len(ctx["crew"]), len(ctx["islands"]), len(ctx["ladder"]),
+                ctx["active_style"] or "none",
+                sum(1 for m in ctx["crew"] if m["art_is_real"]))
     if ctx["stub_note"]:
         logger.info(ctx["stub_note"])
 
