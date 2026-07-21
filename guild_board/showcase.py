@@ -184,6 +184,19 @@ def image_aspect(path):
     return None
 
 
+# The cutout pipeline is being repaired separately — weapons and other
+# parts were being over-removed, and 30 of 81 cutouts are flagged. The
+# scene images keep their backgrounds and are unaffected, so the board
+# uses those everywhere until the fix lands. Flip this back on (or set
+# showcase.use_cutouts: true in config.yml) once it does.
+USE_CUTOUTS_DEFAULT = False
+
+
+def cutouts_enabled(cfg=None):
+    value = ((cfg or {}).get("showcase") or {}).get("use_cutouts")
+    return bool(value) if isinstance(value, bool) else USE_CUTOUTS_DEFAULT
+
+
 TARGET_ASPECT = 0.75          # 3:4 portrait, the agreed roster spec
 ASPECT_TOLERANCE = 0.04       # anything this close fills the frame cleanly
 
@@ -214,7 +227,8 @@ def character_art(slug, cfg=None, manifest=None):
 
     flagged = (key or "").lower() in flagged_cutouts(cfg)
     # Same rule for the deck cutout: a layered entry's `board` is legacy.
-    cutout = (None if (flagged or assets.get("layers"))
+    cutout = (None if (flagged or assets.get("layers")
+                       or not cutouts_enabled(cfg))
               else _usable(assets.get("board"), root))
 
     aspect = image_aspect(scene) if scene else None
