@@ -1,0 +1,27 @@
+version: 2
+
+# Two ecosystems matter here: the Python deps the board renders with, and
+# the Actions the workflows call (an unpinned action is a supply-chain path
+# into a job that holds Discord and WCL secrets).
+updates:
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+    open-pull-requests-limit: 5
+    labels: [dependencies, security]
+    commit-message:
+      prefix: "deps"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "08:00"
+    open-pull-requests-limit: 5
+    labels: [dependencies, security]
+    commit-message:
+      prefix: "actions"
