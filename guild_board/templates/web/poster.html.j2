@@ -52,6 +52,8 @@
     transition:color .15s, border-color .15s, background .15s; white-space:nowrap;}
   .bar a:hover, .bar button:hover{color:var(--accent); border-color:var(--accent);}
   .bar button.on{color:#14141a; background:var(--accent); border-color:var(--accent);}
+  /* the column names are real view tabs, not just jump links */
+  .bar a.view.on{color:#14141a; background:var(--accent); border-color:var(--accent);}
   .bar .sp{flex:1;}
   .bar input{font:inherit; font-size:13px; color:var(--text); background:#15171e;
     border:1px solid var(--hairline); border-radius:999px; padding:6px 14px; width:150px;
@@ -241,8 +243,9 @@
   </div>
   <div class="info"><span>{{ subtitle }}</span><span>{{ date_range }}</span></div>
   <nav class="bar">
+    <a href="#top" class="view on" data-view="all">ALL</a>
     {%- for col in columns %}
-    <a href="#col-{{ loop.index }}">{{ col.title }}</a>
+    <a href="#col-{{ loop.index }}" class="view" data-view="col-{{ loop.index }}">{{ col.title }}</a>
     {%- endfor %}
     {%- if roast %}<a href="#roast">ROAST</a>{% endif %}
     <span class="sp"></span>
@@ -275,7 +278,8 @@
     {%- endif %}
     <div class="cols">
       {%- for col in columns %}
-      <div class="col" id="col-{{ loop.index }}" style="scroll-margin-top:64px;">
+      <div class="col" id="col-{{ loop.index }}" data-viewid="col-{{ loop.index }}"
+           style="scroll-margin-top:64px;">
         <div class="col-h">
           {%- if theme.board.poster_eyebrow %}<span class="eyebrow">{{ theme.board.poster_eyebrow }}</span>{% endif %}
           <span class="t">{{ col.title }}</span>
@@ -294,9 +298,11 @@
                data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
             <span class="badge{{ ' plain' if not row.medal }}" {% if row.medal %}style="background:{{ row.medal }};"{% endif %}>{{ row.rank }}</span>
             {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
-            <a class="name" href="{{ profile_base }}{{ row.name | lower | urlencode }}"
+            {%- set purl = profile_urls.get(row.name | lower) %}
+            {%- if purl %}<a class="name" href="{{ purl }}"
                target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
                style="color:{{ row.ink if paper else row.color }};">{{ row.name }}</a>
+            {%- else %}<span class="name" style="color:{{ row.ink if paper else row.color }};">{{ row.name }}</span>{% endif %}
             <span class="detail">{{ row.detail }}</span>
             <span class="value" style="color:{{ row.value_ink if paper else row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>· {{ row.value_suffix }}</small>{% endif %}</span>
           </div>

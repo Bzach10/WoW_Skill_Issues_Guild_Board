@@ -15,6 +15,8 @@
     #filters                   wrapper holding button[data-role=all|dps|healer|tank]
     #search                    <input type="search">
     #weeksel                   <select> for the archive
+    a[data-view="all"|"<id>"]  view tabs (e.g. RAID vs MYTHIC PLUS)
+    [data-viewid="<id>"]       the block each view tab shows
 
   #filters, #search and #weeksel ship hidden and are revealed by this
   script only when there is something to act on.
@@ -50,6 +52,7 @@
       try {
         localStorage.setItem('gb.role', activeRole);
         localStorage.setItem('gb.query', query);
+        localStorage.setItem('gb.view', activeView);
       } catch (e) { /* private mode etc. — filters just reset next visit */ }
     }
     function apply() {
@@ -64,6 +67,39 @@
         s.classList.toggle('nohit', Boolean(filtering && !any));
       });
     }
+    /* --- view filter (e.g. RAID vs MYTHIC PLUS) ---
+       These tabs used to be plain #anchor jump links sitting in the same
+       bar as the role filters, so they read as a view switcher but only
+       scrolled — and on desktop, where every column is already on screen,
+       that looked like nothing happened at all. Now they actually filter.
+       The href is left intact, so with JS off they still jump. */
+    var activeView = 'all';
+    var viewTabs = Array.prototype.slice.call(document.querySelectorAll('a[data-view]'));
+    var viewBlocks = Array.prototype.slice.call(document.querySelectorAll('[data-viewid]'));
+    function applyView() {
+      viewBlocks.forEach(function (b) {
+        b.classList.toggle('nohit',
+          activeView !== 'all' && b.getAttribute('data-viewid') !== activeView);
+      });
+      viewTabs.forEach(function (t) {
+        t.classList.toggle('on', t.getAttribute('data-view') === activeView);
+      });
+    }
+    if (viewTabs.length && viewBlocks.length) {
+      viewTabs.forEach(function (t) {
+        t.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          activeView = t.getAttribute('data-view') || 'all';
+          remember();
+          applyView();
+          if (activeView !== 'all') {
+            var target = document.querySelector('[data-viewid="' + activeView + '"]');
+            if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
+        });
+      });
+    }
+
     var filters = document.getElementById('filters');
     var search = document.getElementById('search');
     if (filters && rows.length) {
@@ -88,6 +124,11 @@
     }
     /* restore the last visit's view */
     try {
+      var savedView = localStorage.getItem('gb.view');
+      if (savedView && document.querySelector('a[data-view="' + savedView + '"]')) {
+        activeView = savedView;
+        applyView();
+      }
       var savedRole = localStorage.getItem('gb.role');
       var savedQuery = localStorage.getItem('gb.query') || '';
       if (filters && savedRole && savedRole !== 'all') {

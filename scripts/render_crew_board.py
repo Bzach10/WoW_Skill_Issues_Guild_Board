@@ -26,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
+from guild_board import links as links_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
 
@@ -88,17 +89,14 @@ def _ladder(season_scores, roster, region, crew=None, top_n=12):
             tags_by_slug[member["slug"]] = " ".join(
                 x for x in (member.get("spec"), member.get("cls"),
                             member.get("role")) if x).lower()
-    realm_by_slug = {}
-    for entry in roster:
-        if "-" in entry:
-            name, realm = entry.split("-", 1)
-            realm_by_slug.setdefault(name.lower(), realm)
+    # Per-player realms via the shared resolver: the guild is cross-realm,
+    # so a link built from the guild realm alone is wrong for most people.
+    index = links_mod.realm_index(roster)
     rows = sorted(season_scores.items(), key=lambda kv: -kv[1])[:top_n]
     out = []
     for i, (slug, score) in enumerate(rows, start=1):
-        realm = realm_by_slug.get(slug)
-        url = (f"https://raider.io/characters/{region}/{realm}/{slug}"
-               if realm else None)
+        url = links_mod.character_url(slug, index, region=region,
+                                      site="raiderio")
         out.append({"rank": i, "name": slug.title(), "score": score, "url": url,
                     "tags": tags_by_slug.get(slug, "")})
     return out
