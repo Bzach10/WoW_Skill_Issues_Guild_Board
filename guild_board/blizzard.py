@@ -147,7 +147,7 @@ def get_profile_cache_path(cfg):
 def load_profile_cache(cfg):
     path = get_profile_cache_path(cfg)
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         return data.get("characters", {}), data.get("last_updated")
     except (FileNotFoundError, json.JSONDecodeError):

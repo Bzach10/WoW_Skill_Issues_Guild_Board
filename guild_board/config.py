@@ -62,7 +62,7 @@ CLASS_COLORS = {
 
 
 def load_config(path="config.yml"):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     guild_name = ((cfg or {}).get("guild") or {}).get("name", "")
     if guild_name in ("", "Your Guild Name"):
@@ -178,7 +178,7 @@ def get_roster_cache_path(cfg):
 def load_roster_cache(cfg):
     path = get_roster_cache_path(cfg)
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             data = json.load(f)
         return data.get("members", []), data.get("last_updated")
     except (FileNotFoundError, json.JSONDecodeError):
