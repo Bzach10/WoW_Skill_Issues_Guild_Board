@@ -21,11 +21,15 @@ logger = logging.getLogger(__name__)
 # order, newest/approved first — drop a better file in and it wins.
 TRIAL_SCENES = {
     "rakdisc": {
-        "setting": "The raid hall",
+        "setting": "The stone temple",
         "candidates": [
             # Stable handoff paths from the art pipeline (cast/_trial/)
             # are copies under fixed names, so the site never depends on
             # a seed number. Originals stay untouched behind them.
+            # Nano Banana Pro Edit restyle — most consistent set across
+            # all three, and the only one where every character is
+            # unambiguously the right species.
+            "cast/rakdisc/rakdisc_anime_final.png",
             "cast/_trial/rakdisc.png",
             "cast/rakdisc/scene1_raidhall_w025.png",
         ],
@@ -33,13 +37,21 @@ TRIAL_SCENES = {
     "floofwall": {
         "setting": "The tavern",
         "candidates": [
+            # Nano Banana Pro Edit restyle — most consistent set across
+            # all three, and the only one where every character is
+            # unambiguously the right species.
+            "cast/floofwall/floofwall_anime_final.png",
             "cast/_trial/floofwall.png",
             "cast/floofwall/floofwall_tavern_w025.png",
         ],
     },
     "healyeah": {
-        "setting": "The bronze spire",
+        "setting": "The Dragon Isles",
         "candidates": [
+            # Nano Banana Pro Edit restyle — most consistent set across
+            # all three, and the only one where every character is
+            # unambiguously the right species.
+            "cast/healyeah/healyeah_anime_final.png",
             "cast/_trial/healyeah.png",
             "cast/healyeah/healyeah_dragonflight_v2_w030.png",
         ],

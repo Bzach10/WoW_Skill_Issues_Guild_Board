@@ -104,10 +104,20 @@ a{color:var(--accent);}
 .card::before{content:""; position:absolute; inset:0 0 auto; height:3px;
   background:var(--pip); z-index:3;}
 
-.scene{position:relative; aspect-ratio:832/1216; overflow:hidden;
+/* The art arrives in whatever aspect the generator produced — the trial
+   set mixes a 0.68 portrait with two 1.33 landscapes. Cropping them all
+   to one portrait box severs Floofwall's outstretched arms, so instead
+   the full artwork is CONTAINED and the letterbox is filled with a
+   blurred, dimmed copy of itself. Nothing is ever cut, the cards stay a
+   uniform height, and any future aspect just works. */
+.scene{position:relative; aspect-ratio:1/1; overflow:hidden;
   background:color-mix(in srgb,var(--pip) 12%, var(--panel));}
-.scene img{width:100%; height:100%; object-fit:cover; display:block;
-  transition:transform 6s ease;}
+.scene::before{content:""; position:absolute; inset:-6%;
+  background-image:var(--fill); background-size:cover;
+  background-position:center; filter:blur(26px) saturate(.75) brightness(.72);
+  transform:scale(1.06);}
+.scene img{position:relative; width:100%; height:100%; object-fit:contain;
+  display:block; transition:transform 6s ease;}
 .card:hover .scene img{transform:scale(1.045);}
 /* the illustration meets the card body in a soft wash, not a hard cut */
 .scene::after{content:""; position:absolute; inset:auto 0 0; height:44%;
@@ -243,7 +253,7 @@ a{color:var(--accent);}
   <div class="cast">
     {%- for c in cards %}
     <article class="card" data-role="{{ c.member.role }}">
-      <div class="scene">
+      <div class="scene"{% if c.scene.src %} style="--fill:url('{{ c.scene.src }}');"{% endif %}>
         {%- if c.scene.src %}
         <img src="{{ c.scene.src }}" alt="{{ c.member.name }} — {{ c.scene.setting }}">
         {%- if c.scene.setting %}<span class="setting">{{ c.scene.setting }}</span>{% endif %}
