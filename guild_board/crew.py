@@ -430,13 +430,14 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
             continue
         candidates[slug] = dict(entry, source="derived")
 
-    # Fill the remaining deck slots with the top of the REAL season
-    # ladder. We know these people play and we know their score; we do
-    # not know their spec until the profile cache lands, so they stand
-    # as role-less deckhands rather than getting a guessed role.
+    # EVERY player with a real season score is a candidate. This loop
+    # used to stop once `limit` candidates existed, which meant that once
+    # the art manifest held more characters than the deck had slots, the
+    # deck was drawn from "who has art" instead of "who ranks highest" —
+    # silently dropping the guild's #2, #3, #6 and #10 players because
+    # they had not been generated yet. Membership is decided by score;
+    # having art is not a qualification for being on the board.
     for slug, _score in sorted(season_scores.items(), key=lambda kv: -kv[1]):
-        if len(candidates) >= limit + len(opt_out):
-            break
         if slug in candidates:
             continue
         candidates[slug] = {
