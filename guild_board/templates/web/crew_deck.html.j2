@@ -241,6 +241,11 @@ a{color:inherit;}
   transform-origin:50% 90%;
   will-change:transform;
 }
+/* Props (headgear, weapons) are authored square and declare their own
+   size, so they occupy a square region instead of being stretched to the
+   full body frame. object-fit keeps the art honest if the declared size
+   and the file's own aspect ever disagree. */
+.doll .bone[data-prop]{height:auto; object-fit:contain;}
 /* A doll with only one layer (the flat v1 cut-out, or the placeholder)
    fills its canvas; a real layer stack is placed by its anchors. */
 .doll[data-mode="flat"] .bone,
@@ -642,10 +647,13 @@ a{color:inherit;}
             style="aspect-ratio:{{ m.doll.canvas.w }}/{{ m.doll.canvas.h }};">
         {%- for L in m.doll.layers %}
         <img class="bone" data-bone="{{ L.bone }}" data-slot="{{ L.slot }}"
+             {% if L.is_prop %}data-prop{% endif %}
              src="{{ L.src }}" alt=""
              {% if loop.first and m.light_art %}data-light="{{ m.light_art }}"{% endif %}
              {% if loop.first and m.shadow_art %}data-shadow="{{ m.shadow_art }}"{% endif %}
              style="left:{{ L.left_pct }}%; top:{{ L.top_pct }}%; z-index:{{ L.z }};
+                    {% if L.width_pct %}width:{{ L.width_pct }}%;{% endif %}
+                    {% if L.height_pct %}height:{{ L.height_pct }}%;{% endif %}
                     transform-origin:{{ L.origin_pct[0] }}% {{ L.origin_pct[1] }}%;"
              decoding="async">
         {%- endfor %}

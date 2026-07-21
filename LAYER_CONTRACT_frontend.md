@@ -1,3 +1,44 @@
+> **UPDATE 2026-07-21 — two breaking-ish additions, both back-compatible.
+> Read this block if you read nothing else.**
+>
+> **1. Headgear was impossible.** `face` sat at the top of the head stack
+> (z=61), so mitres/helms/hoods were drawn underneath it and occluded.
+> There is now a **`headgear` slot at z=65, above `face`**. Ship headgear
+> in that slot. It rides the `head` bone, so hats nod with the head.
+>
+> Please ALSO make `face` a **tight facial mask** — features only, on
+> transparency — not a full-head crop. The new slot fixes occlusion of
+> headgear, but a head-shaped `face` plate will still cover hair and the
+> head silhouette that `head` (z=60) carries underneath.
+>
+> **2. Props were being stretched.** Every layer used to be stretched to
+> the full 832×1216 body canvas, so a square-authored mitre or staff came
+> out tall and thin. Props now declare their own square region:
+>
+> ```json
+> {"slot": "headgear", "anchor": {"x": 208, "y": 0},
+>  "size": {"w": 416, "h": 416}, "pivot": {"x": 416, "y": 365}, "z": 65}
+> ```
+>
+> Applies to **`headgear`, `weapon_main`, `weapon_off`**: author the PNG
+> square, declare `size` with equal w and h, position with `anchor`, and
+> leave `pivot` in canvas coordinates (the runtime rebases it).
+>
+> **Recommended headgear box: `anchor {x:208, y:0}`, `size {w:416,h:416}`.**
+> Derived from your own pilot art — the `face` layers span x 293–571,
+> y 68–264 across Floofwall, Healyeah and Rakdisc, so that square contains
+> every head with headroom for a tall hat.
+>
+> **Nothing you have already shipped breaks.** Existing body layers
+> declare no `size` and keep the full-canvas behaviour. A prop without a
+> `size` still renders (stretched) and the renderer logs a warning naming
+> the slot.
+>
+> Verified end to end: a mitre and staff rendered on Rakdisc crown her
+> head above the face with ears and hair visible, and both props measure
+> a 1.000 aspect ratio in the browser. See
+> `previews/headgear_check.png`.
+
 # Paper-doll layer/anchor contract — what the web runtime consumes
 
 The art pipeline session **owns** this contract. This document records

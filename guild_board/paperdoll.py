@@ -52,8 +52,9 @@ SLOT_Z = {
     "legs": 30,
     "chest": 40,
     "arms": 50,
-    "head": 60,
-    "face": 61,
+    "head": 60,      # head + hair base
+    "face": 61,      # facial features ONLY — a tight mask, not a head crop
+    "headgear": 65,  # mitres, helms, hoods — must sit above the face
     "weapon_off": 70,
     "weapon_main": 71,
     # the v1 flat cut-out, which stands in for the whole stack
@@ -61,7 +62,12 @@ SLOT_Z = {
 }
 
 SLOT_ORDER = ["cloak", "body", "legs", "chest", "arms", "head", "face",
-              "weapon_off", "weapon_main", "composite"]
+              "headgear", "weapon_off", "weapon_main", "composite"]
+
+# Slots that are PROPS: discrete objects rather than body-shaped layers.
+# Authored on a square canvas region so they keep their proportions —
+# a mitre squeezed into the 832x1216 body frame renders stretched.
+PROP_SLOTS = {"headgear", "weapon_main", "weapon_off"}
 
 # Which bone drives each slot. Bones are what the runtime animates; the
 # art never changes, only the transform applied to it.
@@ -73,6 +79,7 @@ SLOT_BONE = {
     "arms": "arms",
     "head": "head",
     "face": "head",
+    "headgear": "head",   # rides the head bone, so a mitre nods with it
     "weapon_off": "weapon_off",
     "weapon_main": "weapon_main",
     "composite": "torso",
@@ -89,6 +96,7 @@ DEFAULT_PIVOT = {
     "arms": (0.50, 0.30),
     "head": (0.50, 0.30),
     "face": (0.50, 0.30),
+    "headgear": (0.50, 0.30),
     "weapon_off": (0.32, 0.42),
     "weapon_main": (0.68, 0.42),
     "composite": (0.50, 0.95),
@@ -153,17 +161,44 @@ def _layer_from_entry(entry, canvas, index):
     except (TypeError, ValueError):
         z = SLOT_Z.get(slot, 25 + index)
 
+    # A layer may declare the SIZE of the region it occupies on the
+    # canvas. Body-shaped layers are authored full-canvas and need none.
+    # Props (headgear, weapons) are authored SQUARE, so without this they
+    # get stretched to the 832x1216 body frame — a mitre comes out tall
+    # and thin. With a size, we place them in their own square region and
+    # the aspect ratio is preserved.
+    size = entry.get("size") if isinstance(entry.get("size"), dict) else {}
+    sw, sh = _num(size.get("w"), 0.0), _num(size.get("h"), 0.0)
+    width_pct = round(sw / canvas["w"] * 100, 4) if sw > 0 else None
+    height_pct = round(sh / canvas["h"] * 100, 4) if sh > 0 else None
+
+    if slot in PROP_SLOTS and width_pct is None:
+        logger.info(
+            "Prop layer %r declares no size; it will be stretched to the full "
+            "%dx%d canvas. Author props square and declare "
+            "size:{w,h} — see LAYER_CONTRACT.", slot, canvas["w"], canvas["h"])
+
     return {
         "slot": slot or f"layer{index}",
         "src": src,
         "bone": SLOT_BONE.get(slot, "torso"),
         "z": z,
+        "is_prop": slot in PROP_SLOTS,
         # Percentages so the doll scales with its container instead of
         # being pinned to authored pixels.
         "left_pct": round(ax / canvas["w"] * 100, 4),
         "top_pct": round(ay / canvas["h"] * 100, 4),
-        "origin_pct": (round(px / canvas["w"] * 100, 4),
-                       round(py / canvas["h"] * 100, 4)),
+        # None means "fill the canvas", the original full-frame behaviour.
+        "width_pct": width_pct,
+        "height_pct": height_pct,
+        # CSS transform-origin is relative to the ELEMENT's own box, not
+        # the canvas. A pivot is authored in canvas pixels, so it has to
+        # be rebased against the layer's own region — otherwise a small
+        # square prop rotates about a point far outside itself.
+        "origin_pct": (
+            round((px - ax) / (sw if sw > 0 else canvas["w"]) * 100, 4),
+            round((py - ay) / (sh if sh > 0 else canvas["h"]) * 100, 4),
+        ),
     }
 
 
@@ -214,6 +249,14 @@ def contract_summary():
     return {
         "canvas": dict(DEFAULT_CANVAS),
         "slot_z_order": [s for s in SLOT_ORDER if s != "composite"],
+        "slot_z": {s: SLOT_Z[s] for s in SLOT_ORDER if s != "composite"},
         "bones": sorted(set(SLOT_BONE.values())),
-        "layer_fields": ["slot", "src", "anchor{x,y}", "pivot{x,y}", "z"],
+        "layer_fields": ["slot", "src", "anchor{x,y}", "size{w,h}",
+                         "pivot{x,y}", "z"],
+        # Props are authored square and MUST declare size, or they get
+        # stretched to the portrait body canvas.
+        "prop_slots": sorted(PROP_SLOTS),
+        # Recommended square region for headgear, measured from the
+        # pilot face layers (x 293-571, y 68-264 across all three).
+        "headgear_box": {"x": 208, "y": 0, "w": 416, "h": 416},
     }
