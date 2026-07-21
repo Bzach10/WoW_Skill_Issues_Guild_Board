@@ -13,6 +13,7 @@ along in a commit.
 """
 
 import argparse
+import os
 import re
 import shutil
 import subprocess
@@ -89,9 +90,15 @@ def main():
     print(f"     {len(assets)} asset files referenced")
 
     print(f"3/4  writing the bundle to {out}")
-    if out.exists():
-        shutil.rmtree(out)
-    out.mkdir(parents=True)
+    # A live tunnel may be serving `out`. Never delete it: build into a
+    # sibling staging directory and sync in, so the folder is always
+    # present and the link never 404s mid-rebuild.
+    live = out.exists()
+    staging = out.with_name(out.name + "__staging")
+    if staging.exists():
+        shutil.rmtree(staging)
+    staging.mkdir(parents=True)
+    build_target, out = out, staging
 
     # The trial showcase is the front door; the animated board sits
     # behind it, linked from the call to action.
@@ -149,6 +156,38 @@ def main():
             print("   ", m)
     else:
         print("  every local reference resolves")
+
+    # ---- sync staging -> live, in place -------------------------------
+    out, staging = build_target, out
+    if live:
+        print(f"     syncing into the live folder (kept in place)")
+    out.mkdir(parents=True, exist_ok=True)
+    written = set()
+    for src in staging.rglob("*"):
+        rel = src.relative_to(staging)
+        dest = out / rel
+        if src.is_dir():
+            dest.mkdir(parents=True, exist_ok=True)
+            continue
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        # write to a temp name then replace, so a reader never sees a
+        # half-written file
+        tmp = dest.with_name(dest.name + ".tmp")
+        shutil.copy2(src, tmp)
+        os.replace(tmp, dest)
+        written.add(rel)
+    # drop files from a previous, larger build
+    removed = 0
+    for existing in sorted(out.rglob("*"), key=lambda p: -len(p.parts)):
+        rel = existing.relative_to(out)
+        if existing.is_file() and rel not in written and not str(rel).startswith("_preview_media"):
+            existing.unlink()
+            removed += 1
+        elif existing.is_dir() and not any(existing.iterdir()):
+            existing.rmdir()
+    if removed:
+        print(f"     removed {removed} stale file(s)")
+    shutil.rmtree(staging, ignore_errors=True)
 
     total = sum(f.stat().st_size for f in out.rglob("*") if f.is_file())
     print(f"\nBundle ready: {out}")
