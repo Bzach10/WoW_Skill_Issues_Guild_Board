@@ -108,7 +108,7 @@ def build_workflow(job, model):
 
 
 def _get(server, path, timeout=30):
-    with urllib.request.urlopen(f"{server}{path}", timeout=timeout) as r:
+    with urllib.request.urlopen(f"{server}{path}", timeout=timeout) as r:  # nosec B310 - server scheme pinned to http(s) in main()
         return json.loads(r.read())
 
 
@@ -133,7 +133,7 @@ def submit(server, workflow):
     payload = json.dumps({"prompt": workflow}).encode()
     req = urllib.request.Request(f"{server}/prompt", data=payload,
                                  headers={"Content-Type": "application/json"})
-    with urllib.request.urlopen(req, timeout=60) as r:
+    with urllib.request.urlopen(req, timeout=60) as r:  # nosec B310 - server scheme pinned to http(s) in main()
         return json.loads(r.read())["prompt_id"]
 
 
@@ -165,7 +165,7 @@ def fetch_image(server, descriptor):
         "subfolder": descriptor.get("subfolder", ""),
         "type": descriptor.get("type", "output"),
     })
-    with urllib.request.urlopen(f"{server}/view?{query}", timeout=120) as r:
+    with urllib.request.urlopen(f"{server}/view?{query}", timeout=120) as r:  # nosec B310 - server scheme pinned to http(s) in main()
         return r.read()
 
 
@@ -188,6 +188,13 @@ def main():
     ap.add_argument("--dry-run", action="store_true",
                     help="print the resolved prompts without generating")
     args = ap.parse_args()
+
+    # --server is pasted by hand and then concatenated into every request
+    # URL below. Pin it to http(s) so a typo can't turn these into file://
+    # reads that get handed straight back to a server.
+    if not args.server.startswith(("http://", "https://")):
+        print(f"--server must be an http:// or https:// URL, got {args.server!r}")
+        return 1
 
     try:
         spec = load_spec()

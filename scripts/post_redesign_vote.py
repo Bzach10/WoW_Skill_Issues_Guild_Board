@@ -144,7 +144,7 @@ def _post_webhook(webhook, content, paths):
     req = urllib.request.Request(
         f"{webhook}{sep}wait=true", data=body, method="POST",
         headers={"Content-Type": f"multipart/form-data; boundary={boundary}"})
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    with urllib.request.urlopen(req, timeout=120) as resp:  # nosec B310 - webhook pinned to https:// in main()
         return json.loads(resp.read())
 
 
@@ -160,7 +160,7 @@ def _seed_reactions(token, channel_id, message_id, count):
             method="PUT",
             headers={"Authorization": f"Bot {token}", "Content-Length": "0"})
         try:
-            urllib.request.urlopen(req, timeout=30)
+            urllib.request.urlopen(req, timeout=30)  # nosec B310 - DISCORD_API is a literal https:// constant
             time.sleep(0.35)          # stay under the reaction rate limit
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", "replace")[:200]
@@ -220,6 +220,13 @@ def main():
     webhook = os.environ.get("DISCORD_WEBHOOK_URL", "").strip()
     if not webhook:
         print("DISCORD_WEBHOOK_URL is not set — nothing sent.", file=sys.stderr)
+        return 1
+    # urlopen honours file:// and ftp:// too. A truncated or mis-pasted
+    # secret should fail here, not turn an attachment POST into a local
+    # file read whose contents we then hand to a remote server.
+    if not webhook.startswith("https://"):
+        print("DISCORD_WEBHOOK_URL must be an https:// URL — nothing sent.",
+              file=sys.stderr)
         return 1
 
     # Discord caps attachments at 25MB total on most guilds; full-page

@@ -8,6 +8,12 @@ name: Board Skin Vote
 on:
   workflow_dispatch:
 
+# This job only reads the repo and posts to Discord; it never writes back.
+# Without this block the job inherits the repository default, which on most
+# repos is read+write across every scope.
+permissions:
+  contents: read
+
 jobs:
   post-vote:
     runs-on: ubuntu-latest

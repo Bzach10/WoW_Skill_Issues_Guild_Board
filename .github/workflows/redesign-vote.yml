@@ -24,6 +24,10 @@ on:
         type: string
         default: ""
 
+# Renders and posts only; nothing is committed back to the repo.
+permissions:
+  contents: read
+
 jobs:
   post-redesign-vote:
     runs-on: ubuntu-latest

