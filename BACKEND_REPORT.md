@@ -405,3 +405,13 @@ bd805ac  Fix name/realm split that silently dropped 48% of the roster
 Every behavioural fix is paired with tests that fail against the original code — verified
 by reverting each fix and confirming the new tests catch it (16 failures for the split
 bug, 2 of 2 for the parse mislabelling).
+
+---
+
+## 6. Generation throughput
+
+See [THROUGHPUT_ANALYSIS.md](THROUGHPUT_ANALYSIS.md) — measured from the art team logs,
+no generations launched. Summary: the pipeline already caches shared layers, so the full
+roster is ~60-140 min (not per-character); the largest safe win is parallelising the
+CPU-only compositing step (~25 min saved, byte-identical output); cloud GPU is cheap but
+the setup does not pay back yet.
