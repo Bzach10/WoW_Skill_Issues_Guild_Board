@@ -13,6 +13,8 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
+from guild_board.config import split_name_realm
+
 logger = logging.getLogger(__name__)
 
 BLIZZARD_TOKEN_URL = "https://oauth.battle.net/token"
@@ -110,13 +112,26 @@ def fetch_roster_profiles(token, region, roster):
     entries that failed or came back empty are simply omitted.
     """
     profiles = {}
+    missed = []
     for entry in roster:
         if "-" not in entry:
             continue
-        name, realm = entry.rsplit("-", 1)
+        name, realm = split_name_realm(entry)
         profile = fetch_character_profile(token, region, realm, name)
         if profile:
             profiles[entry.lower()] = profile
+        else:
+            missed.append(entry)
+    if missed:
+        # One missing character is routine (transferred, renamed, or an
+        # opted-out profile). A large share of the roster missing is not —
+        # it means a systemic fault (bad name/realm split, wrong namespace,
+        # expired token). Logging the count surfaces that instead of
+        # letting the cast quietly shrink.
+        logger.warning(
+            "Blizzard profile unavailable for %d of %d roster entries: %s",
+            len(missed), len(missed) + len(profiles),
+            ", ".join(sorted(missed)[:10]) + (" ..." if len(missed) > 10 else ""))
     return profiles
 
 

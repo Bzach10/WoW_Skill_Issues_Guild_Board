@@ -90,6 +90,31 @@ def slugify_server(server):
     return slug or None
 
 
+def split_name_realm(entry, default_realm=None):
+    """Split a roster entry ("name-realm-slug") into (name, realm_slug).
+
+    THE realm slug usually contains hyphens itself ("bleeding-hollow",
+    "area-52", "wyrmrest-accord"), so this splits on the FIRST hyphen —
+    the character name is a single token, the realm is everything after.
+
+    Splitting on the last hyphen instead (rsplit) silently mangles every
+    multi-word realm: "dathar-area-52" becomes name="dathar-area",
+    realm="52", which 400s/404s at both Blizzard and Raider.io and — because
+    both callers treat a non-200 as "skip this character" — drops the
+    member with no error. That was live for 65 of 135 roster members.
+
+    Returns (name, realm) with both stripped; realm falls back to
+    default_realm when the entry has no hyphen at all.
+    """
+    if not entry:
+        return "", (default_realm or "")
+    if "-" in entry:
+        name, realm = entry.split("-", 1)
+    else:
+        name, realm = entry, (default_realm or "")
+    return name.strip(), realm.strip()
+
+
 def clean_spec_name(spec, class_name=""):
     """Return a clean 'Spec Class' display name from Raider.io/WCL spec data."""
     if isinstance(spec, dict):

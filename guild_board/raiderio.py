@@ -3,7 +3,7 @@ import time
 
 import requests
 
-from guild_board.config import clean_spec_name
+from guild_board.config import clean_spec_name, split_name_realm
 from guild_board.wcl import gql
 
 logger = logging.getLogger(__name__)
@@ -321,11 +321,10 @@ def _mplus_dungeon_name(cfg, token, encounter_id):
 
 
 def _split_name_realm(entry, cfg):
-    if "-" in entry:
-        name, realm = entry.split("-", 1)
-    else:
-        name, realm = entry, cfg["guild"]["realm_slug"]
-    return name.strip(), realm.strip()
+    """Thin wrapper over config.split_name_realm that supplies this guild's
+    realm as the fallback. Kept so the existing call sites in this module
+    read unchanged; the splitting rule itself lives in one place now."""
+    return split_name_realm(entry, default_realm=cfg["guild"]["realm_slug"])
 
 
 def _normalize_dungeon_name(name):

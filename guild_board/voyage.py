@@ -133,7 +133,7 @@ def fetch_dungeon_island_data(cfg, dungeon_display_name):
     """
     import requests
 
-    from guild_board.config import clean_spec_name, load_roster_cache
+    from guild_board.config import clean_spec_name, load_roster_cache, split_name_realm
 
     region = ((cfg or {}).get("guild") or {}).get("region", "us")
     roster, _ = load_roster_cache(cfg)
@@ -141,7 +141,7 @@ def fetch_dungeon_island_data(cfg, dungeon_display_name):
     for entry in roster:
         if "-" not in entry:
             continue
-        name, realm = entry.rsplit("-", 1)
+        name, realm = split_name_realm(entry)
         try:
             resp = requests.get(
                 "https://raider.io/api/v1/characters/profile",
