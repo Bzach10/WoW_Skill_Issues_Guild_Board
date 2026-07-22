@@ -74,11 +74,24 @@ a{color:var(--accent);}
 .map{position:relative; border:1px solid var(--line); border-radius:22px;
   background:var(--panel); padding:26px 18px 20px; margin-bottom:26px;
   overflow:hidden;}
-.leg{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+.mapbar{display:flex; gap:16px; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; padding-bottom:16px;}
+.leg{display:flex; gap:16px; flex-wrap:wrap;
   font-size:11px; letter-spacing:.1em; text-transform:uppercase;
-  color:var(--muted); padding-bottom:16px;}
+  color:var(--muted);}
 .leg i{display:inline-block; width:9px; height:9px; border-radius:50%;
   margin-right:5px; vertical-align:middle;}
+/* how much of the season the crew has charted, at a glance */
+.charted{display:flex; align-items:center; gap:9px; font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  white-space:nowrap;}
+.chartnum{font-family:var(--font-display); font-size:16px; color:var(--accent);
+  letter-spacing:0;}
+.chartbar{display:inline-block; width:90px; height:7px; border-radius:999px;
+  overflow:hidden; background:color-mix(in srgb,var(--line) 85%, var(--bg));
+  border:1px solid var(--line);}
+.chartfill{display:block; height:100%; border-radius:999px; background:var(--accent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 60%, transparent); min-width:2px;}
 
 .route{position:relative; display:flex; flex-wrap:wrap; gap:10px 4px;
   justify-content:center; padding:8px 4px 20px;}
@@ -475,10 +488,17 @@ a{color:var(--accent);}
   </section>
 
   <section class="map">
-    <div class="leg">
-      <span><i style="background:var(--dungeon);"></i>Dungeon</span>
-      <span><i style="background:var(--raid);"></i>Raid boss</span>
-      <span><i style="background:var(--line);"></i>No record yet</span>
+    <div class="mapbar">
+      <div class="leg">
+        <span><i style="background:var(--dungeon);"></i>Dungeon</span>
+        <span><i style="background:var(--raid);"></i>Raid boss</span>
+        <span><i style="background:var(--line);"></i>No record yet</span>
+      </div>
+      <div class="charted" title="Islands the guild has cleared this season">
+        <span class="chartnum">13</span> of 17 charted
+        <span class="chartbar"><span class="chartfill"
+          style="width:76.0%;"></span></span>
+      </div>
     </div>
 
     <div class="route" role="tablist">
@@ -663,10 +683,17 @@ a{color:var(--accent);}
      hidden>
 
   <section class="map">
-    <div class="leg">
-      <span><i style="background:var(--dungeon);"></i>Dungeon</span>
-      <span><i style="background:var(--raid);"></i>Raid boss</span>
-      <span><i style="background:var(--line);"></i>No record yet</span>
+    <div class="mapbar">
+      <div class="leg">
+        <span><i style="background:var(--dungeon);"></i>Dungeon</span>
+        <span><i style="background:var(--raid);"></i>Raid boss</span>
+        <span><i style="background:var(--line);"></i>No record yet</span>
+      </div>
+      <div class="charted" title="Islands the guild has cleared this season">
+        <span class="chartnum">0</span> of 16 charted
+        <span class="chartbar"><span class="chartfill"
+          style="width:0.0%;"></span></span>
+      </div>
     </div>
 
     <div class="route" role="tablist">

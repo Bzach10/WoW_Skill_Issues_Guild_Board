@@ -130,11 +130,14 @@ def build_season_view(season, live):
         rows.append({"label": label, "killed": killed[key], "total": killed["total"],
                      "pct": round(killed[key] / total * 100)})
 
+    cleared = sum(1 for i in islands if i["state"] == "cleared")
     return {
         "id": season.get("id"),
         "label": season.get("label") or season.get("id"),
         "raid_name": raid.get("name"),
         "islands": islands,
+        "cleared": cleared,
+        "island_total": len(islands),
         "progression": rows if any(r["killed"] for r in rows) else None,
         "note": (f"{season.get('label')} · {len(season.get('dungeons') or [])} dungeons + "
                  f"{len(raid.get('bosses') or [])} bosses in {raid.get('name')}"
