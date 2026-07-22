@@ -1,0 +1,1280 @@
+
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="codex">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Skill Issues — The Grand Hall (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&amp;family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+html[data-crew-theme="codex"]{
+  --bg:#e7d3ad; --text:#3a2c17; --heading:#4a2f12;
+  --accent:#9b5e1f; --panel:#f7eed8; --line:#c8ad7e;
+  --muted:#6b5637;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:light;
+}
+html[data-crew-theme="console"]{
+  --bg:#120c1e; --text:#e7dcf7; --heading:#e7dcf7;
+  --accent:#38e0c8; --panel:#191128; --line:#33264d;
+  --muted:#9d8fbb;
+  --font-display:'JetBrains Mono',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html[data-crew-theme="chronicle"]{
+  --bg:#180f28; --text:#efe7dd; --heading:#efe7dd;
+  --accent:#d8a24a; --panel:#20152c; --line:#3c2e4a;
+  --muted:#b0a08f;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+
+/* the title card floats over the top of the wall, then lifts on scroll */
+.hallhead{position:relative; text-align:center; padding:52px 22px 26px;
+  z-index:2;}
+.hallhead .kicker{font-size:12px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.hallhead .kicker b{color:var(--accent);}
+.hallhead h1{font-family:var(--font-display); font-weight:900; line-height:.92;
+  font-size:clamp(38px,9vw,92px); color:var(--heading);
+  text-shadow:0 6px 40px color-mix(in srgb,var(--bg) 70%, transparent);}
+.hallhead .sub{max-width:56ch; margin:16px auto 0; color:var(--muted);}
+.hallhead .count{color:var(--accent); font-weight:700;}
+
+/* ---------------- the wall ---------------- */
+.hall{--cols:8; --gap:6px;
+  display:grid; grid-template-columns:repeat(var(--cols),1fr); gap:var(--gap);
+  padding:8px 8px 40px;}
+@media (max-width:1100px){.hall{--cols:6;}}
+@media (max-width:760px){.hall{--cols:4;}}
+@media (max-width:460px){.hall{--cols:3;}}
+
+.face{position:relative; display:block; aspect-ratio:3/4; overflow:hidden;
+  border-radius:10px; background:color-mix(in srgb,var(--line) 60%, var(--bg));
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);
+  /* each tile rises into place on load, staggered by its index */
+  opacity:0; transform:translateY(26px) scale(.96);
+  animation:rise .6s cubic-bezier(.2,.7,.2,1) both;
+  animation-delay:calc(var(--i,0) * 22ms);
+  transition:transform .3s, box-shadow .3s, z-index 0s, border-color .3s;}
+@keyframes rise{to{opacity:1; transform:none;}}
+.face img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center 20%; display:block;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1);}
+.face::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(transparent 52%,
+    color-mix(in srgb,var(--bg) 86%, transparent));
+  opacity:.85; transition:opacity .3s;}
+/* a role pip in the corner, always readable */
+.face .pip{position:absolute; top:7px; left:7px; z-index:3; width:9px; height:9px;
+  border-radius:50%; box-shadow:0 0 0 2px color-mix(in srgb,var(--bg) 70%, transparent);}
+.face[data-role="tank"] .pip{background:var(--tank);}
+.face[data-role="healer"] .pip{background:var(--healer);}
+.face[data-role="dps"] .pip{background:var(--dps);}
+/* the name rides in from the bottom on hover / focus */
+.face .who{position:absolute; left:0; right:0; bottom:0; z-index:3;
+  padding:20px 9px 8px; text-align:center; pointer-events:none;
+  transform:translateY(6px); opacity:0; transition:transform .3s, opacity .3s;}
+.face .who b{display:block; font-size:12px; line-height:1.2; color:#fff;
+  text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.face .who span{font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:color-mix(in srgb,#fff 78%, var(--accent));
+  text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.face:hover,.face:focus-visible{transform:translateY(-4px) scale(1.04); z-index:5;
+  border-color:var(--accent);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.8),
+    0 0 0 2px color-mix(in srgb,var(--accent) 55%, transparent);
+  outline:none;}
+.face:hover img,.face:focus-visible img{transform:scale(1.08);}
+.face:hover::after,.face:focus-visible::after{opacity:.35;}
+.face:hover .who,.face:focus-visible .who{transform:none; opacity:1;}
+
+/* a gentle wash of role colour across the whole wall, so it reads as a
+   composed hall rather than a contact sheet */
+.hall::selection{background:var(--accent);}
+
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+
+@media (prefers-reduced-motion:reduce){
+  .face{animation:none; opacity:1; transform:none;}
+  .face img{transition:none;}
+}
+
+.sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom:1px solid var(--line);}
+.sitenav .wrap{display:flex; align-items:center; gap:18px;
+  padding-top:10px; padding-bottom:10px;}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none;
+  color:var(--heading); font-family:var(--font-display); font-weight:700;
+  letter-spacing:.04em; margin-right:auto;}
+.brand-mark{font-size:18px; filter:saturate(1.2);}
+.brand-name{font-size:15px;}
+.navlinks{display:flex; gap:6px;}
+.navlinks a{font-size:13px; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border-radius:999px; transition:all .2s;}
+.navlinks a:hover{color:var(--text); background:color-mix(in srgb, var(--line) 45%, transparent);}
+.navlinks a[aria-current="page"]{color:var(--bg); background:var(--accent);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 11px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .2s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* the return affordance — a full-width bar, impossible to miss */
+.backbar{position:sticky; top:53px; z-index:45; display:block;
+  padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
+  text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, var(--accent) 16%, var(--bg));
+  border-bottom:1px solid var(--line);
+  max-width:var(--measure); margin:0 auto;}
+.backbar:hover{background:color-mix(in srgb, var(--accent) 26%, var(--bg));
+  color:var(--accent);}
+
+/* on small screens the brand name yields before the links do */
+@media (max-width:560px){
+  .sitenav .wrap{gap:10px; flex-wrap:wrap;}
+  .brand-name{display:none;}
+  .navlinks a{padding:7px 11px;}
+  .themeswitch button{font-size:0; padding:6px;}
+  .themeswitch button::before{content:attr(data-theme); font-size:11px;
+    text-transform:capitalize;}
+}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+
+<header class="sitenav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">⚓</span>
+      <span class="brand-name">Skill Issues</span>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="index.html"
+         >Board</a>
+      <a href="voyage.html"
+         >Voyage</a>
+      <a href="hall.html"
+         aria-current="page">The Hall</a>
+    </nav>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      <button type="button" data-theme="codex"
+              aria-pressed="true"
+              title="Illuminated Codex">Illuminated Codex</button>
+      <button type="button" data-theme="console"
+              aria-pressed="false"
+              title="Arcane Console">Arcane Console</button>
+      <button type="button" data-theme="chronicle"
+              aria-pressed="false"
+              title="Chronicle">Chronicle</button>
+    </div>
+  </div>
+</header>
+
+<a class="backbar" href="index.html">← Back to the board</a>
+
+<header class="hallhead">
+  <div class="kicker">Skill Issues · <b>the whole crew, at once</b></div>
+  <h1>The Grand Hall</h1>
+  <p class="sub">Every character the guild has drawn so far —
+    <span class="count">130 strong</span> — under one roof.
+    Any face is a door to that member.</p>
+</header>
+
+<main class="hall" aria-label="The full cast">
+  <a class="face" style="--i:0;" data-role="dps"
+     href="p/amrevenge.html"
+     aria-label="Amrevenge — DPS">
+    <img src="cast/_roster/amrevenge/profile.jpg" alt="Amrevenge" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Amrevenge</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:1;" data-role="healer"
+     href="p/shadoxii.html"
+     aria-label="Shadoxii — Healer">
+    <img src="cast/_roster/shadoxii/profile.jpg" alt="Shadoxii" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Shadoxii</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:2;" data-role="dps"
+     href="p/tommybravoo.html"
+     aria-label="Tommybravoo — DPS">
+    <img src="cast/_roster/tommybravoo/profile.jpg" alt="Tommybravoo" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tommybravoo</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:3;" data-role="tank"
+     href="p/brewzleeh.html"
+     aria-label="Brewzleeh — Tank">
+    <img src="cast/_roster/brewzleeh/profile.jpg" alt="Brewzleeh" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Brewzleeh</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:4;" data-role="healer"
+     href="p/rakdisc.html"
+     aria-label="Rakdisc — Healer">
+    <img src="cast/_roster/rakdisc/profile.jpg" alt="Rakdisc" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Rakdisc</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:5;" data-role="dps"
+     href="p/rhansìk.html"
+     aria-label="Rhansìk — DPS">
+    <img src="cast/_roster/rhansìk/profile.jpg" alt="Rhansìk" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Rhansìk</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:6;" data-role="tank"
+     href="p/floofwall.html"
+     aria-label="Floofwall — Tank">
+    <img src="cast/_roster/floofwall/profile.jpg" alt="Floofwall" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Floofwall</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:7;" data-role="unknown"
+     href="p/enyò.html"
+     aria-label="Enyò — Deckhand">
+    <img src="cast/_roster/enyò/profile.jpg" alt="Enyò" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Enyò</b>
+      <span>Deckhand</span></span>
+  </a>
+  <a class="face" style="--i:8;" data-role="tank"
+     href="p/ellebasi.html"
+     aria-label="Ellebasi — Tank">
+    <img src="cast/_roster/ellebasi/profile.jpg" alt="Ellebasi" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Ellebasi</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:9;" data-role="dps"
+     href="p/tommybravox.html"
+     aria-label="Tommybravox — DPS">
+    <img src="cast/_roster/tommybravox/profile.jpg" alt="Tommybravox" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tommybravox</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:10;" data-role="tank"
+     href="p/jovala.html"
+     aria-label="Jovala — Tank">
+    <img src="cast/_roster/jovala/profile.jpg" alt="Jovala" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Jovala</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:11;" data-role="dps"
+     href="p/hellful.html"
+     aria-label="Hellful — DPS">
+    <img src="cast/_roster/hellful/profile.jpg" alt="Hellful" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Hellful</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:12;" data-role="tank"
+     href="p/kegsmashroll.html"
+     aria-label="Kegsmashroll — Tank">
+    <img src="cast/_roster/kegsmashroll/profile.jpg" alt="Kegsmashroll" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kegsmashroll</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:13;" data-role="healer"
+     href="p/onessarain.html"
+     aria-label="Onessarain — Healer">
+    <img src="cast/_roster/onessarain/profile.jpg" alt="Onessarain" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Onessarain</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:14;" data-role="healer"
+     href="p/healmates.html"
+     aria-label="Healmates — Healer">
+    <img src="cast/_roster/healmates/profile.jpg" alt="Healmates" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Healmates</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:15;" data-role="dps"
+     href="p/flogeron.html"
+     aria-label="Flogeron — DPS">
+    <img src="cast/_roster/flogeron/profile.jpg" alt="Flogeron" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Flogeron</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:16;" data-role="dps"
+     href="p/shadoxi.html"
+     aria-label="Shadoxi — DPS">
+    <img src="cast/_roster/shadoxi/profile.jpg" alt="Shadoxi" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Shadoxi</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:17;" data-role="healer"
+     href="p/healyeah.html"
+     aria-label="Healyeah — Healer">
+    <img src="cast/_roster/healyeah/profile.jpg" alt="Healyeah" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Healyeah</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:18;" data-role="dps"
+     href="p/impkiller.html"
+     aria-label="Impkiller — DPS">
+    <img src="cast/_roster/impkiller/profile.jpg" alt="Impkiller" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Impkiller</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:19;" data-role="tank"
+     href="p/yur.html"
+     aria-label="Yur — Tank">
+    <img src="cast/_roster/yur/profile.jpg" alt="Yur" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Yur</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:20;" data-role="dps"
+     href="p/rexxhavocc.html"
+     aria-label="Rexxhavocc — DPS">
+    <img src="cast/_roster/rexxhavocc/profile.jpg" alt="Rexxhavocc" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Rexxhavocc</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:21;" data-role="dps"
+     href="p/buchalter.html"
+     aria-label="Buchalter — DPS">
+    <img src="cast/_roster/buchalter/profile.jpg" alt="Buchalter" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Buchalter</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:22;" data-role="tank"
+     href="p/kelova.html"
+     aria-label="Kelova — Tank">
+    <img src="cast/_roster/kelova/profile.jpg" alt="Kelova" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kelova</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:23;" data-role="dps"
+     href="p/ohnomyais.html"
+     aria-label="Ohnomyais — DPS">
+    <img src="cast/_roster/ohnomyais/profile.jpg" alt="Ohnomyais" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Ohnomyais</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:24;" data-role="healer"
+     href="p/aiime.html"
+     aria-label="Aiime — Healer">
+    <img src="cast/_roster/aiime/profile.jpg" alt="Aiime" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Aiime</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:25;" data-role="dps"
+     href="p/boondocka.html"
+     aria-label="Boondocka — DPS">
+    <img src="cast/_roster/boondocka/profile.jpg" alt="Boondocka" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Boondocka</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:26;" data-role="dps"
+     href="p/kirrá.html"
+     aria-label="Kirrá — DPS">
+    <img src="cast/_roster/kirrá/profile.jpg" alt="Kirrá" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kirrá</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:27;" data-role="dps"
+     href="p/martylol.html"
+     aria-label="Martylol — DPS">
+    <img src="cast/_roster/martylol/profile.jpg" alt="Martylol" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Martylol</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:28;" data-role="dps"
+     href="p/arfas.html"
+     aria-label="Arfas — DPS">
+    <img src="cast/_roster/arfas/profile.jpg" alt="Arfas" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Arfas</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:29;" data-role="tank"
+     href="p/tinyx.html"
+     aria-label="Tinyx — Tank">
+    <img src="cast/_roster/tinyx/profile.jpg" alt="Tinyx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tinyx</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:30;" data-role="dps"
+     href="p/beastfriend.html"
+     aria-label="Beastfriend — DPS">
+    <img src="cast/_roster/beastfriend/profile.jpg" alt="Beastfriend" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Beastfriend</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:31;" data-role="dps"
+     href="p/marvinah.html"
+     aria-label="Marvinah — DPS">
+    <img src="cast/_roster/marvinah/profile.jpg" alt="Marvinah" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Marvinah</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:32;" data-role="dps"
+     href="p/nokori.html"
+     aria-label="Nokori — DPS">
+    <img src="cast/_roster/nokori/profile.jpg" alt="Nokori" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Nokori</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:33;" data-role="healer"
+     href="p/delusionz.html"
+     aria-label="Delusionz — Healer">
+    <img src="cast/_roster/delusionz/profile.jpg" alt="Delusionz" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Delusionz</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:34;" data-role="dps"
+     href="p/scounddrel.html"
+     aria-label="Scounddrel — DPS">
+    <img src="cast/_roster/scounddrel/profile.jpg" alt="Scounddrel" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Scounddrel</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:35;" data-role="dps"
+     href="p/gandamar.html"
+     aria-label="Gandamar — DPS">
+    <img src="cast/_roster/gandamar/profile.jpg" alt="Gandamar" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Gandamar</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:36;" data-role="dps"
+     href="p/maillo.html"
+     aria-label="Maillo — DPS">
+    <img src="cast/_roster/maillo/profile.jpg" alt="Maillo" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Maillo</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:37;" data-role="dps"
+     href="p/rakell.html"
+     aria-label="Rakell — DPS">
+    <img src="cast/_roster/rakell/profile.jpg" alt="Rakell" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Rakell</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:38;" data-role="dps"
+     href="p/wabisukee.html"
+     aria-label="Wabisukee — DPS">
+    <img src="cast/_roster/wabisukee/profile.jpg" alt="Wabisukee" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Wabisukee</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:39;" data-role="dps"
+     href="p/slicerdicer.html"
+     aria-label="Slicerdicer — DPS">
+    <img src="cast/_roster/slicerdicer/profile.jpg" alt="Slicerdicer" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Slicerdicer</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:40;" data-role="dps"
+     href="p/tommybravo.html"
+     aria-label="Tommybravo — DPS">
+    <img src="cast/_roster/tommybravo/profile.jpg" alt="Tommybravo" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tommybravo</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:41;" data-role="healer"
+     href="p/widowx.html"
+     aria-label="Widowx — Healer">
+    <img src="cast/_roster/widowx/profile.jpg" alt="Widowx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Widowx</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:42;" data-role="dps"
+     href="p/autable.html"
+     aria-label="Autable — DPS">
+    <img src="cast/_roster/autable/profile.jpg" alt="Autable" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Autable</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:43;" data-role="dps"
+     href="p/duskwolf.html"
+     aria-label="Duskwolf — DPS">
+    <img src="cast/_roster/duskwolf/profile.jpg" alt="Duskwolf" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Duskwolf</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:44;" data-role="dps"
+     href="p/flemel.html"
+     aria-label="Flemel — DPS">
+    <img src="cast/_roster/flemel/profile.jpg" alt="Flemel" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Flemel</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:45;" data-role="dps"
+     href="p/glinkz.html"
+     aria-label="Glinkz — DPS">
+    <img src="cast/_roster/glinkz/profile.jpg" alt="Glinkz" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Glinkz</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:46;" data-role="dps"
+     href="p/paleghost.html"
+     aria-label="Paleghost — DPS">
+    <img src="cast/_roster/paleghost/profile.jpg" alt="Paleghost" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Paleghost</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:47;" data-role="dps"
+     href="p/dragoonx.html"
+     aria-label="Dragoonx — DPS">
+    <img src="cast/_roster/dragoonx/profile.jpg" alt="Dragoonx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Dragoonx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:48;" data-role="tank"
+     href="p/rakbear.html"
+     aria-label="Rakbear — Tank">
+    <img src="cast/_roster/rakbear/profile.jpg" alt="Rakbear" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Rakbear</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:49;" data-role="dps"
+     href="p/chokalock.html"
+     aria-label="Chokalock — DPS">
+    <img src="cast/_roster/chokalock/profile.jpg" alt="Chokalock" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Chokalock</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:50;" data-role="tank"
+     href="p/chohno.html"
+     aria-label="Chohno — Tank">
+    <img src="cast/_roster/chohno/profile.jpg" alt="Chohno" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Chohno</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:51;" data-role="dps"
+     href="p/skoala.html"
+     aria-label="Skoala — DPS">
+    <img src="cast/_roster/skoala/profile.jpg" alt="Skoala" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Skoala</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:52;" data-role="dps"
+     href="p/heximal.html"
+     aria-label="Heximal — DPS">
+    <img src="cast/_roster/heximal/profile.jpg" alt="Heximal" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Heximal</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:53;" data-role="dps"
+     href="p/onetruemorty.html"
+     aria-label="Onetruemorty — DPS">
+    <img src="cast/_roster/onetruemorty/profile.jpg" alt="Onetruemorty" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Onetruemorty</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:54;" data-role="tank"
+     href="p/sidarien.html"
+     aria-label="Sidarien — Tank">
+    <img src="cast/_roster/sidarien/profile.jpg" alt="Sidarien" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Sidarien</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:55;" data-role="dps"
+     href="p/icyx.html"
+     aria-label="Icyx — DPS">
+    <img src="cast/_roster/icyx/profile.jpg" alt="Icyx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Icyx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:56;" data-role="dps"
+     href="p/coned.html"
+     aria-label="Coned — DPS">
+    <img src="cast/_roster/coned/profile.jpg" alt="Coned" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Coned</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:57;" data-role="dps"
+     href="p/valkyrïe.html"
+     aria-label="Valkyrïe — DPS">
+    <img src="cast/_roster/valkyrïe/profile.jpg" alt="Valkyrïe" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Valkyrïe</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:58;" data-role="healer"
+     href="p/cptbenimaru.html"
+     aria-label="Cptbenimaru — Healer">
+    <img src="cast/_roster/cptbenimaru/profile.jpg" alt="Cptbenimaru" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Cptbenimaru</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:59;" data-role="dps"
+     href="p/jilk.html"
+     aria-label="Jilk — DPS">
+    <img src="cast/_roster/jilk/profile.jpg" alt="Jilk" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Jilk</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:60;" data-role="tank"
+     href="p/azell.html"
+     aria-label="Azell — Tank">
+    <img src="cast/_roster/azell/profile.jpg" alt="Azell" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Azell</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:61;" data-role="healer"
+     href="p/viôlence.html"
+     aria-label="Viôlence — Healer">
+    <img src="cast/_roster/viôlence/profile.jpg" alt="Viôlence" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Viôlence</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:62;" data-role="dps"
+     href="p/gener.html"
+     aria-label="Gener — DPS">
+    <img src="cast/_roster/gener/profile.jpg" alt="Gener" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Gener</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:63;" data-role="dps"
+     href="p/eponax.html"
+     aria-label="Eponax — DPS">
+    <img src="cast/_roster/eponax/profile.jpg" alt="Eponax" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Eponax</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:64;" data-role="dps"
+     href="p/huntlowx.html"
+     aria-label="Huntlowx — DPS">
+    <img src="cast/_roster/huntlowx/profile.jpg" alt="Huntlowx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Huntlowx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:65;" data-role="dps"
+     href="p/violënce.html"
+     aria-label="Violënce — DPS">
+    <img src="cast/_roster/violënce/profile.jpg" alt="Violënce" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Violënce</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:66;" data-role="tank"
+     href="p/thiccat.html"
+     aria-label="Thiccat — Tank">
+    <img src="cast/_roster/thiccat/profile.jpg" alt="Thiccat" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Thiccat</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:67;" data-role="dps"
+     href="p/aime.html"
+     aria-label="Aime — DPS">
+    <img src="cast/_roster/aime/profile.jpg" alt="Aime" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Aime</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:68;" data-role="healer"
+     href="p/kathrobbin.html"
+     aria-label="Kathrobbin — Healer">
+    <img src="cast/_roster/kathrobbin/profile.jpg" alt="Kathrobbin" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kathrobbin</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:69;" data-role="dps"
+     href="p/nivella.html"
+     aria-label="Nivella — DPS">
+    <img src="cast/_roster/nivella/profile.jpg" alt="Nivella" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Nivella</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:70;" data-role="tank"
+     href="p/milkbreath.html"
+     aria-label="Milkbreath — Tank">
+    <img src="cast/_roster/milkbreath/profile.jpg" alt="Milkbreath" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Milkbreath</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:71;" data-role="dps"
+     href="p/holyx.html"
+     aria-label="Holyx — DPS">
+    <img src="cast/_roster/holyx/profile.jpg" alt="Holyx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Holyx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:72;" data-role="tank"
+     href="p/beroben.html"
+     aria-label="Beroben — Tank">
+    <img src="cast/_roster/beroben/profile.jpg" alt="Beroben" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Beroben</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:73;" data-role="healer"
+     href="p/fugaku.html"
+     aria-label="Fugaku — Healer">
+    <img src="cast/_roster/fugaku/profile.jpg" alt="Fugaku" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Fugaku</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:74;" data-role="dps"
+     href="p/anbux.html"
+     aria-label="Anbux — DPS">
+    <img src="cast/_roster/anbux/profile.jpg" alt="Anbux" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Anbux</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:75;" data-role="dps"
+     href="p/junzolo.html"
+     aria-label="Junzolo — DPS">
+    <img src="cast/_roster/junzolo/profile.jpg" alt="Junzolo" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Junzolo</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:76;" data-role="dps"
+     href="p/kitez.html"
+     aria-label="Kitez — DPS">
+    <img src="cast/_roster/kitez/profile.jpg" alt="Kitez" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kitez</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:77;" data-role="healer"
+     href="p/wirmati.html"
+     aria-label="Wirmati — Healer">
+    <img src="cast/_roster/wirmati/profile.jpg" alt="Wirmati" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Wirmati</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:78;" data-role="tank"
+     href="p/sinistrad.html"
+     aria-label="Sinistrad — Tank">
+    <img src="cast/_roster/sinistrad/profile.jpg" alt="Sinistrad" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Sinistrad</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:79;" data-role="dps"
+     href="p/critorical.html"
+     aria-label="Critorical — DPS">
+    <img src="cast/_roster/critorical/profile.jpg" alt="Critorical" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Critorical</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:80;" data-role="dps"
+     href="p/grëywolf.html"
+     aria-label="Grëywolf — DPS">
+    <img src="cast/_roster/grëywolf/profile.jpg" alt="Grëywolf" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Grëywolf</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:81;" data-role="dps"
+     href="p/danethegreat.html"
+     aria-label="Danethegreat — DPS">
+    <img src="cast/_roster/danethegreat/profile.jpg" alt="Danethegreat" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Danethegreat</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:82;" data-role="dps"
+     href="p/mushabi.html"
+     aria-label="Mushabi — DPS">
+    <img src="cast/_roster/mushabi/profile.jpg" alt="Mushabi" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Mushabi</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:83;" data-role="tank"
+     href="p/breakdruid.html"
+     aria-label="Breakdruid — Tank">
+    <img src="cast/_roster/breakdruid/profile.jpg" alt="Breakdruid" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Breakdruid</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:84;" data-role="dps"
+     href="p/uddershock.html"
+     aria-label="Uddershock — DPS">
+    <img src="cast/_roster/uddershock/profile.jpg" alt="Uddershock" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Uddershock</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:85;" data-role="tank"
+     href="p/ravokoflight.html"
+     aria-label="Ravokoflight — Tank">
+    <img src="cast/_roster/ravokoflight/profile.jpg" alt="Ravokoflight" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Ravokoflight</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:86;" data-role="dps"
+     href="p/ranaria.html"
+     aria-label="Ranaria — DPS">
+    <img src="cast/_roster/ranaria/profile.jpg" alt="Ranaria" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Ranaria</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:87;" data-role="dps"
+     href="p/dathar.html"
+     aria-label="Dathar — DPS">
+    <img src="cast/_roster/dathar/profile.jpg" alt="Dathar" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Dathar</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:88;" data-role="dps"
+     href="p/zackoh.html"
+     aria-label="Zackoh — DPS">
+    <img src="cast/_roster/zackoh/profile.jpg" alt="Zackoh" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Zackoh</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:89;" data-role="unknown"
+     href="p/nythrael.html"
+     aria-label="Nythrael — Deckhand">
+    <img src="cast/_roster/nythrael/profile.jpg" alt="Nythrael" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Nythrael</b>
+      <span>Deckhand</span></span>
+  </a>
+  <a class="face" style="--i:90;" data-role="dps"
+     href="p/ricodandolo.html"
+     aria-label="Ricodandolo — DPS">
+    <img src="cast/_roster/ricodandolo/profile.jpg" alt="Ricodandolo" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Ricodandolo</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:91;" data-role="healer"
+     href="p/fluffy.html"
+     aria-label="Fluffy — Healer">
+    <img src="cast/_roster/fluffy/profile.jpg" alt="Fluffy" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Fluffy</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:92;" data-role="healer"
+     href="p/padremort.html"
+     aria-label="Padremort — Healer">
+    <img src="cast/_roster/padremort/profile.jpg" alt="Padremort" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Padremort</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:93;" data-role="dps"
+     href="p/unholyx.html"
+     aria-label="Unholyx — DPS">
+    <img src="cast/_roster/unholyx/profile.jpg" alt="Unholyx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Unholyx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:94;" data-role="unknown"
+     href="p/sandgs.html"
+     aria-label="Sandgs — Deckhand">
+    <img src="cast/_roster/sandgs/profile.jpg" alt="Sandgs" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Sandgs</b>
+      <span>Deckhand</span></span>
+  </a>
+  <a class="face" style="--i:95;" data-role="dps"
+     href="p/xavira.html"
+     aria-label="Xavira — DPS">
+    <img src="cast/_roster/xavira/profile.jpg" alt="Xavira" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Xavira</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:96;" data-role="dps"
+     href="p/aimme.html"
+     aria-label="Aimme — DPS">
+    <img src="cast/_roster/aimme/profile.jpg" alt="Aimme" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Aimme</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:97;" data-role="dps"
+     href="p/balcmeg.html"
+     aria-label="Balcmeg — DPS">
+    <img src="cast/_roster/balcmeg/profile.jpg" alt="Balcmeg" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Balcmeg</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:98;" data-role="tank"
+     href="p/botso.html"
+     aria-label="Botso — Tank">
+    <img src="cast/_roster/botso/profile.jpg" alt="Botso" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Botso</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:99;" data-role="healer"
+     href="p/bwonsombro.html"
+     aria-label="Bwonsombro — Healer">
+    <img src="cast/_roster/bwonsombro/profile.jpg" alt="Bwonsombro" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Bwonsombro</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:100;" data-role="dps"
+     href="p/deckler.html"
+     aria-label="Deckler — DPS">
+    <img src="cast/_roster/deckler/profile.jpg" alt="Deckler" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Deckler</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:101;" data-role="unknown"
+     href="p/fleshripper.html"
+     aria-label="Fleshripper — Deckhand">
+    <img src="cast/_roster/fleshripper/profile.jpg" alt="Fleshripper" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Fleshripper</b>
+      <span>Deckhand</span></span>
+  </a>
+  <a class="face" style="--i:102;" data-role="dps"
+     href="p/gnomelyfans.html"
+     aria-label="Gnomelyfans — DPS">
+    <img src="cast/_roster/gnomelyfans/profile.jpg" alt="Gnomelyfans" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Gnomelyfans</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:103;" data-role="dps"
+     href="p/gregus.html"
+     aria-label="Gregus — DPS">
+    <img src="cast/_roster/gregus/profile.jpg" alt="Gregus" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Gregus</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:104;" data-role="dps"
+     href="p/iamdapopemon.html"
+     aria-label="Iamdapopemon — DPS">
+    <img src="cast/_roster/iamdapopemon/profile.jpg" alt="Iamdapopemon" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Iamdapopemon</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:105;" data-role="dps"
+     href="p/imshaman.html"
+     aria-label="Imshaman — DPS">
+    <img src="cast/_roster/imshaman/profile.jpg" alt="Imshaman" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Imshaman</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:106;" data-role="dps"
+     href="p/kibli.html"
+     aria-label="Kibli — DPS">
+    <img src="cast/_roster/kibli/profile.jpg" alt="Kibli" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kibli</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:107;" data-role="dps"
+     href="p/kreleran.html"
+     aria-label="Kreleran — DPS">
+    <img src="cast/_roster/kreleran/profile.jpg" alt="Kreleran" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Kreleran</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:108;" data-role="dps"
+     href="p/lebock.html"
+     aria-label="Lebock — DPS">
+    <img src="cast/_roster/lebock/profile.jpg" alt="Lebock" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Lebock</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:109;" data-role="dps"
+     href="p/obstorm.html"
+     aria-label="Obstorm — DPS">
+    <img src="cast/_roster/obstorm/profile.jpg" alt="Obstorm" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Obstorm</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:110;" data-role="tank"
+     href="p/omikogo.html"
+     aria-label="Omikogo — Tank">
+    <img src="cast/_roster/omikogo/profile.jpg" alt="Omikogo" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Omikogo</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:111;" data-role="dps"
+     href="p/onesubstance.html"
+     aria-label="Onesubstance — DPS">
+    <img src="cast/_roster/onesubstance/profile.jpg" alt="Onesubstance" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Onesubstance</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:112;" data-role="tank"
+     href="p/orx.html"
+     aria-label="Orx — Tank">
+    <img src="cast/_roster/orx/profile.jpg" alt="Orx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Orx</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:113;" data-role="healer"
+     href="p/oynax.html"
+     aria-label="Oynax — Healer">
+    <img src="cast/_roster/oynax/profile.jpg" alt="Oynax" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Oynax</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:114;" data-role="dps"
+     href="p/ragedx.html"
+     aria-label="Ragedx — DPS">
+    <img src="cast/_roster/ragedx/profile.jpg" alt="Ragedx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Ragedx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:115;" data-role="dps"
+     href="p/rougex.html"
+     aria-label="Rougex — DPS">
+    <img src="cast/_roster/rougex/profile.jpg" alt="Rougex" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Rougex</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:116;" data-role="unknown"
+     href="p/shadowbelle.html"
+     aria-label="Shadowbelle — Deckhand">
+    <img src="cast/_roster/shadowbelle/profile.jpg" alt="Shadowbelle" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Shadowbelle</b>
+      <span>Deckhand</span></span>
+  </a>
+  <a class="face" style="--i:117;" data-role="healer"
+     href="p/shamanmates.html"
+     aria-label="Shamanmates — Healer">
+    <img src="cast/_roster/shamanmates/profile.jpg" alt="Shamanmates" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Shamanmates</b>
+      <span>Healer</span></span>
+  </a>
+  <a class="face" style="--i:118;" data-role="dps"
+     href="p/shamnos.html"
+     aria-label="Shamnos — DPS">
+    <img src="cast/_roster/shamnos/profile.jpg" alt="Shamnos" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Shamnos</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:119;" data-role="dps"
+     href="p/shaollynn.html"
+     aria-label="Shaollynn — DPS">
+    <img src="cast/_roster/shaollynn/profile.jpg" alt="Shaollynn" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Shaollynn</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:120;" data-role="dps"
+     href="p/sômbrá.html"
+     aria-label="Sômbrá — DPS">
+    <img src="cast/_roster/sômbrá/profile.jpg" alt="Sômbrá" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Sômbrá</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:121;" data-role="tank"
+     href="p/tankmates.html"
+     aria-label="Tankmates — Tank">
+    <img src="cast/_roster/tankmates/profile.jpg" alt="Tankmates" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tankmates</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:122;" data-role="dps"
+     href="p/tarvos.html"
+     aria-label="Tarvos — DPS">
+    <img src="cast/_roster/tarvos/profile.jpg" alt="Tarvos" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tarvos</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:123;" data-role="dps"
+     href="p/thunderbloom.html"
+     aria-label="Thunderbloom — DPS">
+    <img src="cast/_roster/thunderbloom/profile.jpg" alt="Thunderbloom" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Thunderbloom</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:124;" data-role="dps"
+     href="p/tommybravoox.html"
+     aria-label="Tommybravoox — DPS">
+    <img src="cast/_roster/tommybravoox/profile.jpg" alt="Tommybravoox" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tommybravoox</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:125;" data-role="dps"
+     href="p/tommybravoxx.html"
+     aria-label="Tommybravoxx — DPS">
+    <img src="cast/_roster/tommybravoxx/profile.jpg" alt="Tommybravoxx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Tommybravoxx</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:126;" data-role="tank"
+     href="p/trollimon.html"
+     aria-label="Trollimon — Tank">
+    <img src="cast/_roster/trollimon/profile.jpg" alt="Trollimon" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Trollimon</b>
+      <span>Tank</span></span>
+  </a>
+  <a class="face" style="--i:127;" data-role="dps"
+     href="p/târheel.html"
+     aria-label="Târheel — DPS">
+    <img src="cast/_roster/târheel/profile.jpg" alt="Târheel" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Târheel</b>
+      <span>DPS</span></span>
+  </a>
+  <a class="face" style="--i:128;" data-role="unknown"
+     href="p/waifumllkers.html"
+     aria-label="Waifumllkers — Deckhand">
+    <img src="cast/_roster/waifumllkers/profile.jpg" alt="Waifumllkers" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Waifumllkers</b>
+      <span>Deckhand</span></span>
+  </a>
+  <a class="face" style="--i:129;" data-role="healer"
+     href="p/wolfx.html"
+     aria-label="Wolfx — Healer">
+    <img src="cast/_roster/wolfx/profile.jpg" alt="Wolfx" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>Wolfx</b>
+      <span>Healer</span></span>
+  </a>
+</main>
+
+<footer class="foot">
+  Skill Issues · a private test run · the hall grows as the cast is drawn
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  if (!btns.length) return;
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>

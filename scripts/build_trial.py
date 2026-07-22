@@ -87,12 +87,14 @@ def main():
     board = ROOT / "crew_board.html"
     trial = ROOT / "trial.html"
     voyage = ROOT / "voyage.html"
+    hall = ROOT / "hall.html"
     profiles = sorted((ROOT / "p").glob("*.html"))
     if not board.exists():
         raise SystemExit("crew_board.html was not produced")
 
     pages = ([board] + profiles + ([trial] if trial.exists() else [])
-             + ([voyage] if voyage.exists() else []))
+             + ([voyage] if voyage.exists() else [])
+             + ([hall] if hall.exists() else []))
     print(f"2/4  collecting assets for {len(pages)} pages")
     assets = referenced_assets(pages)
     print(f"     {len(assets)} asset files referenced")
@@ -117,6 +119,8 @@ def main():
         shutil.copy2(board, out / "index.html")
     if voyage.exists():
         shutil.copy2(voyage, out / "voyage.html")   # the nav's Voyage link
+    if hall.exists():
+        shutil.copy2(hall, out / "hall.html")       # the nav's Hall link
     (out / "p").mkdir()
     for page in profiles:
         # profiles link back to ../index.html, which now exists
@@ -152,6 +156,9 @@ def main():
     checkable = [out / "index.html"] + sorted((out / "p").glob("*.html"))
     if (out / "crew_board.html").exists():
         checkable.append(out / "crew_board.html")
+    for extra in ("voyage.html", "hall.html"):
+        if (out / extra).exists():
+            checkable.append(out / extra)
     for page in checkable:
         text = page.read_text(encoding="utf-8", errors="ignore")
         for ref in _refs(text):

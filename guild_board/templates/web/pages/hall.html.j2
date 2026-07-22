@@ -1,0 +1,151 @@
+{#
+  THE GRAND HALL (B-02) — the full-cast hero wall.
+
+  Every drawn character in one edge-to-edge mosaic that rises into place
+  on load: the signature "whoa" shot. Each face is a door to that
+  member's profile. Characters still awaiting art are not invented here;
+  the unlock meter (ENG-10) is where the un-drawn cast will appear.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{ guild_name }} — The Grand Hall (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+
+/* the title card floats over the top of the wall, then lifts on scroll */
+.hallhead{position:relative; text-align:center; padding:52px 22px 26px;
+  z-index:2;}
+.hallhead .kicker{font-size:12px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.hallhead .kicker b{color:var(--accent);}
+.hallhead h1{font-family:var(--font-display); font-weight:900; line-height:.92;
+  font-size:clamp(38px,9vw,92px); color:var(--heading);
+  text-shadow:0 6px 40px color-mix(in srgb,var(--bg) 70%, transparent);}
+.hallhead .sub{max-width:56ch; margin:16px auto 0; color:var(--muted);}
+.hallhead .count{color:var(--accent); font-weight:700;}
+
+/* ---------------- the wall ---------------- */
+.hall{--cols:8; --gap:6px;
+  display:grid; grid-template-columns:repeat(var(--cols),1fr); gap:var(--gap);
+  padding:8px 8px 40px;}
+@media (max-width:1100px){.hall{--cols:6;}}
+@media (max-width:760px){.hall{--cols:4;}}
+@media (max-width:460px){.hall{--cols:3;}}
+
+.face{position:relative; display:block; aspect-ratio:3/4; overflow:hidden;
+  border-radius:10px; background:color-mix(in srgb,var(--line) 60%, var(--bg));
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);
+  /* each tile rises into place on load, staggered by its index */
+  opacity:0; transform:translateY(26px) scale(.96);
+  animation:rise .6s cubic-bezier(.2,.7,.2,1) both;
+  animation-delay:calc(var(--i,0) * 22ms);
+  transition:transform .3s, box-shadow .3s, z-index 0s, border-color .3s;}
+@keyframes rise{to{opacity:1; transform:none;}}
+.face img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center 20%; display:block;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1);}
+.face::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(transparent 52%,
+    color-mix(in srgb,var(--bg) 86%, transparent));
+  opacity:.85; transition:opacity .3s;}
+/* a role pip in the corner, always readable */
+.face .pip{position:absolute; top:7px; left:7px; z-index:3; width:9px; height:9px;
+  border-radius:50%; box-shadow:0 0 0 2px color-mix(in srgb,var(--bg) 70%, transparent);}
+.face[data-role="tank"] .pip{background:var(--tank);}
+.face[data-role="healer"] .pip{background:var(--healer);}
+.face[data-role="dps"] .pip{background:var(--dps);}
+/* the name rides in from the bottom on hover / focus */
+.face .who{position:absolute; left:0; right:0; bottom:0; z-index:3;
+  padding:20px 9px 8px; text-align:center; pointer-events:none;
+  transform:translateY(6px); opacity:0; transition:transform .3s, opacity .3s;}
+.face .who b{display:block; font-size:12px; line-height:1.2; color:#fff;
+  text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.face .who span{font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:color-mix(in srgb,#fff 78%, var(--accent));
+  text-shadow:0 1px 6px rgba(0,0,0,.8);}
+.face:hover,.face:focus-visible{transform:translateY(-4px) scale(1.04); z-index:5;
+  border-color:var(--accent);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.8),
+    0 0 0 2px color-mix(in srgb,var(--accent) 55%, transparent);
+  outline:none;}
+.face:hover img,.face:focus-visible img{transform:scale(1.08);}
+.face:hover::after,.face:focus-visible::after{opacity:.35;}
+.face:hover .who,.face:focus-visible .who{transform:none; opacity:1;}
+
+/* a gentle wash of role colour across the whole wall, so it reads as a
+   composed hall rather than a contact sheet */
+.hall::selection{background:var(--accent);}
+
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+
+@media (prefers-reduced-motion:reduce){
+  .face{animation:none; opacity:1; transform:none;}
+  .face img{transition:none;}
+}
+{% include "web/_nav_css.html.j2" %}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+{% set nav_here = "hall" %}{% include "web/_nav.html.j2" %}
+
+<header class="hallhead">
+  <div class="kicker">{{ guild_name }} · <b>the whole crew, at once</b></div>
+  <h1>The Grand Hall</h1>
+  <p class="sub">Every character the guild has drawn so far —
+    <span class="count">{{ cards|length }} strong</span> — under one roof.
+    Any face is a door to that member.</p>
+</header>
+
+<main class="hall" aria-label="The full cast">
+  {%- for c in cards %}
+  {%- if c.scene.src %}
+  <a class="face" style="--i:{{ loop.index0 }};" data-role="{{ c.member.role }}"
+     {% if c.profile_href %}href="{{ c.profile_href }}"{% endif %}
+     aria-label="{{ c.member.name }} — {{ c.member.role_label }}">
+    <img src="{{ c.scene.src }}" alt="{{ c.member.name }}" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>{{ c.member.name }}</b>
+      <span>{{ c.member.role_label }}</span></span>
+  </a>
+  {%- endif %}
+  {%- endfor %}
+</main>
+
+<footer class="foot">
+  {{ guild_name }} · a private test run · the hall grows as the cast is drawn
+</footer>
+{% include "web/_nav_script.html.j2" %}
+</body>
+</html>

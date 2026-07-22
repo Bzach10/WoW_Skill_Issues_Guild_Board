@@ -371,6 +371,15 @@ def main():
     trial_page.write_text(
         env.get_template("web/pages/trial.html.j2").render(**trial_ctx),
         encoding="utf-8")
+
+    # the grand hall (B-02): the whole drawn cast in one animated wall,
+    # reusing the same staged card art the showcase already resolved
+    hall_page = out.parent / "hall.html"
+    hall_page.write_text(
+        env.get_template("web/pages/hall.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the grand hall to %s (%d faces)", hall_page, len(cards))
+
     # the voyage map, rendered into the same site so the nav link resolves
     try:
         import subprocess

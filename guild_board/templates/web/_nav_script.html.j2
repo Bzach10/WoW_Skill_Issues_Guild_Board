@@ -1,0 +1,31 @@
+{#
+  The persistent nav's theme switch, as behaviour.
+
+  The nav (and its three theme buttons) sits on every page, so the code
+  that makes those buttons work has to be on every page too. It lived
+  inline in the board only, which left the switch dead on the voyage and
+  hall pages. This partial is the one copy; include it once per page that
+  renders _nav.html.j2 but has no theme JS of its own.
+#}
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  if (!btns.length) return;
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+})();
+</script>

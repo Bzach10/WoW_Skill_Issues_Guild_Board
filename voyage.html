@@ -280,6 +280,8 @@ a{color:var(--accent);}
          >Board</a>
       <a href="voyage.html"
          aria-current="page">Voyage</a>
+      <a href="hall.html"
+         >The Hall</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       <button type="button" data-theme="codex"
@@ -917,6 +919,29 @@ a{color:var(--accent);}
       route.scrollLeft = here.offsetLeft - (route.clientWidth - here.offsetWidth) / 2;
     }
   })();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  if (!btns.length) return;
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+})();
 </script>
 </body>
 </html>
