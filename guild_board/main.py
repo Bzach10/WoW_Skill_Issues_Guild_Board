@@ -13,6 +13,7 @@ from guild_board.board_image import generate_board_animation, generate_board_ima
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
+from guild_board.web_stats import dump_web_stats
 from guild_board.state import (baselines_view, load_board_state, raid_attendance_streaks,
                                raid_week_label, save_board_state, streaks_from_attendance,
                                update_records)
@@ -511,6 +512,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                             mplus_results, mplus_season_scores, mplus_season_parses,
                             start_dt, end_dt, no_logs,
                             progress_image_url=progress_image_url)
+
+    # The website's Standings hub reads these same WCL ladders from
+    # web_stats.json (fail-open on both sides). Snapshot, not memory --
+    # written on preview/dry-run too so the site can be tested offline.
+    dump_web_stats(stats)
 
     if preview:
         return embed, image_path
