@@ -171,8 +171,13 @@ def test_sample_islands_used_when_voyage_module_is_absent(monkeypatch):
 def test_build_crew_does_not_read_the_manifest_when_one_is_supplied(tmp_path,
                                                                     monkeypatch):
     """Passing manifest={} must mean "no manifest", not "go find one on
-    disk" — otherwise every test result depends on the working directory."""
+    disk" — otherwise every test result depends on the working directory.
+    profiles={} for the same reason: build_crew's deliberate
+    load_profiles() fallback would otherwise find the real
+    blizzard_profile_cache.json (tracked since main's Blizzard
+    integration) and promote rakdisc to source "real"."""
     monkeypatch.setattr(crew, "CAST_MANIFEST", str(tmp_path / "not_here.json"))
-    built = crew.build_crew({}, {}, season_scores={"rakdisc": 1.0}, manifest={})
+    built = crew.build_crew({}, {}, season_scores={"rakdisc": 1.0}, manifest={},
+                            profiles={})
     rak = next(m for m in built if m["slug"] == "rakdisc")
     assert rak["source"] == "derived"
