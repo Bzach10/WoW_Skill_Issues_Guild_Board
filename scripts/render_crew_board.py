@@ -272,6 +272,24 @@ def main():
     board_state = _load_json("board_state.json", {})
     roster = (_load_json("roster_cache.json", {}) or {}).get("members") or []
 
+    # Reconcile every roster authority before rendering anything, and say
+    # out loud what disagrees. roster_cache.json alone is Warcraft-Logs
+    # derived and on 2026-07-22 was missing 15 real members, so a build
+    # that trusts it silently ships an incomplete guild.
+    try:
+        from guild_board import guild_roster as guild_roster_mod
+
+        _members, _recon = guild_roster_mod.resolve(cfg, wcl_roster=roster)
+        guild_roster_mod.warn_about_collisions(_members)
+        logger.info("Roster reconciliation: %s members across %s; %s disputed. "
+                    "Written to %s.", _recon["roster_total"],
+                    ", ".join(f"{k}={v}" for k, v in sorted(_recon["sources"].items())),
+                    len(_recon["disputed_members"]),
+                    guild_roster_mod.RECONCILIATION_PATH)
+    except Exception as exc:  # noqa: BLE001 - never block a render
+        logger.warning("Roster reconciliation skipped (%s); the roster below is "
+                       "roster_cache.json alone and may be incomplete.", exc)
+
     if args.manifest:
         manifest = crew_mod.load_manifest(args.manifest)
     else:
