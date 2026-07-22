@@ -25,14 +25,21 @@ from pathlib import Path
 from PIL import Image
 
 from guild_board import awards as awards_mod
-from guild_board import board_image
-from guild_board import integrity
-from guild_board import links
+from guild_board import board_image, integrity, links
 from guild_board import theme as theme_mod
 from guild_board.board_image import (
-    CLASS_ICONS, DIFFICULTY_NAMES, ICON_CDN, MEDAL_FILLS, SPEC_ICONS,
-    _CLASS_KEY_DISPLAY, _build_columns, _build_seasonal, _hero_tiles,
-    _plural, _rgb, _spec_class_keys,
+    _CLASS_KEY_DISPLAY,
+    CLASS_ICONS,
+    DIFFICULTY_NAMES,
+    ICON_CDN,
+    MEDAL_FILLS,
+    SPEC_ICONS,
+    _build_columns,
+    _build_seasonal,
+    _hero_tiles,
+    _plural,
+    _rgb,
+    _spec_class_keys,
 )
 from guild_board.config import get_class_color, load_roster_cache
 
