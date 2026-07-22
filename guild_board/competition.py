@@ -173,12 +173,17 @@ def build_competition(fetched=None, board_state=None, season=None,
 
     baseline_scores = ((board_state.get("baseline") or {}).get("season_scores")) or {}
     current_scores = board_state.get("season_scores") or {}
+    # Day-over-day: yesterday's cache scores, keyed by roster slug, carried
+    # forward by refresh_competition. This is what makes the board feel alive
+    # between the weekly board_state snapshots.
+    prev_day_scores = (fetched.get("prev_day_scores")) or {}
 
     def _base_name(rec):
         # board_state convention: lowercase first name token.
         return (rec.get("name") or rec.get("key", "").split("-")[0]).lower()
 
-    # Per-character detail + deltas.
+    # Per-character detail + deltas (week-over-week from board_state baseline,
+    # day-over-day from yesterday's cache).
     detail = []
     for rec in chars:
         bname = _base_name(rec)
@@ -186,12 +191,15 @@ def build_competition(fetched=None, board_state=None, season=None,
         # had no season entry for them.
         score = rec.get("score") or current_scores.get(bname, 0)
         prior = baseline_scores.get(bname)
-        delta = round(score - prior, 1) if prior is not None else None
+        delta_week = round(score - prior, 1) if prior is not None else None
+        prior_day = prev_day_scores.get(rec.get("key"))
+        delta_day = round(score - prior_day, 1) if prior_day is not None else None
         detail.append({
             **rec,
             "role": canonical_role(rec.get("role")),
             "score": score,
-            "delta_week": delta,
+            "delta_week": delta_week,
+            "delta_day": delta_day,
             "is_new": prior is None and score > 0,
             "parse": None,  # filled below from board records where available
         })
@@ -217,7 +225,7 @@ def build_competition(fetched=None, board_state=None, season=None,
             "rank": r["rank"], "name": r["name"], "key": r["key"],
             "score": r["score"], "class": r["class"], "spec": r["spec"],
             "role": r["role"], "top5": r["top5"], "delta_week": r["delta_week"],
-            "is_new": r["is_new"],
+            "delta_day": r.get("delta_day"), "is_new": r["is_new"],
         }
 
     overall = [_ladder_row(r) for r in ranked]
@@ -240,8 +248,12 @@ def build_competition(fetched=None, board_state=None, season=None,
     with_delta = [r for r in ranked if r.get("delta_week") is not None]
     climbers = sorted([r for r in with_delta if r["delta_week"] > 0],
                       key=lambda r: r["delta_week"], reverse=True)
+    # Day-over-day movers — what changed since yesterday, the "alive today" feed.
+    day_movers = sorted([r for r in ranked if (r.get("delta_day") or 0) > 0],
+                        key=lambda r: r["delta_day"], reverse=True)
     new_to_board = [r for r in ranked if r["is_new"]]
     biggest = climbers[0] if climbers else None
+    biggest_today = day_movers[0] if day_movers else None
 
     # Guild key levels cleared (parity with the Discord board's M+ keys +
     # the highest-timed-key record) — derived live from everyone's best runs.
@@ -283,11 +295,17 @@ def build_competition(fetched=None, board_state=None, season=None,
         "movement": {
             "climbers": [{"name": r["name"], "key": r["key"],
                           "delta_week": r["delta_week"]} for r in climbers],
+            "climbers_today": [{"name": r["name"], "key": r["key"],
+                                "delta_day": r["delta_day"]} for r in day_movers],
             "new_to_board": [{"name": r["name"], "key": r["key"],
                               "score": r["score"]} for r in new_to_board],
             "biggest_gain": ({"name": biggest["name"], "key": biggest["key"],
                               "delta_week": biggest["delta_week"]}
                              if biggest else None),
+            "biggest_gain_today": ({"name": biggest_today["name"],
+                                    "key": biggest_today["key"],
+                                    "delta_day": biggest_today["delta_day"]}
+                                   if biggest_today else None),
         },
         "parses": parses,
     }

@@ -100,6 +100,26 @@ def test_movement_biggest_gain_and_new_to_board():
     assert all(c["delta_week"] > 0 for c in mv["climbers"])
 
 
+def test_day_over_day_deltas_and_today_movers():
+    fetched = dict(FETCHED)
+    fetched["prev_day_scores"] = {"amrevenge-stormrage": 3900.0,   # +8.1 today
+                                  "tommybravoo-bleeding-hollow": 3753.4}  # flat
+    comp = build_competition(fetched, BOARD_STATE)
+    amr = next(c for c in comp["characters"] if c["key"] == "amrevenge-stormrage")
+    assert amr["delta_day"] == 8.1
+    tommy = next(c for c in comp["characters"] if c["key"] == "tommybravoo-bleeding-hollow")
+    assert tommy["delta_day"] == 0.0
+    # Only positive movers, biggest first.
+    assert comp["movement"]["biggest_gain_today"]["name"] == "Amrevenge"
+    assert [m["name"] for m in comp["movement"]["climbers_today"]] == ["Amrevenge"]
+
+
+def test_day_delta_is_none_without_a_previous_snapshot():
+    comp = build_competition(FETCHED, BOARD_STATE)   # no prev_day_scores
+    assert all(c["delta_day"] is None for c in comp["characters"])
+    assert comp["movement"]["biggest_gain_today"] is None
+
+
 # --- browsable detail
 
 def test_every_character_has_full_browsable_detail():

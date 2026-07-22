@@ -158,7 +158,10 @@ def _cchar(name, key, cls, spec, role, score, runs=None):
             "best_runs": runs or [], "ranks": {"realm_overall": 800, "realm_class": 20}}
 
 
-COMPETITION_FETCHED = {"characters": [
+COMPETITION_FETCHED = {"prev_day_scores": {
+    "amrevenge-stormrage": 3902.0,        # +6.1 today
+    "tommybravoo-bleeding-hollow": 3700.0,  # +53.4 today
+}, "characters": [
     _cchar("Amrevenge", "amrevenge-stormrage", "Hunter", "Beast Mastery Hunter", "DPS", 3908.1,
            runs=[{"dungeon": "Pit of Saron", "short": "POS", "level": 20, "timed": True,
                   "upgrades": 1, "score": 492.2, "clear_ms": 1456281, "par_ms": 1800999}]),

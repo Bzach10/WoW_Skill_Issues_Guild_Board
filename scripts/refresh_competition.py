@@ -54,6 +54,10 @@ def main(argv=None):
 
     old = _load_cache()
     old_count = old.get("count", 0)
+    # Carry yesterday's scores forward so build_competition can compute
+    # day-over-day deltas. Keyed by roster slug.
+    prev_day_scores = {c["key"]: c["score"] for c in old.get("characters") or []
+                       if c.get("key")}
 
     print(f"Fetching M+ competition data for {len(roster)} roster members "
           f"from Raider.io…")
@@ -70,6 +74,8 @@ def main(argv=None):
         return 0
 
     fresh["last_updated"] = datetime.now(timezone.utc).isoformat()
+    fresh["prev_day_scores"] = prev_day_scores
+    fresh["prev_day_at"] = old.get("last_updated")
     with open(CACHE_PATH, "w", encoding="utf-8") as f:
         json.dump(fresh, f, indent=2, ensure_ascii=False)
     print(f"  wrote {CACHE_PATH}")
