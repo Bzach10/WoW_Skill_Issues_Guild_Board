@@ -543,7 +543,8 @@ a{color:var(--accent);}
               <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">{{ pp.label }}</div>
               {%- for row in pp.rows %}
               <div class="lad" style="grid-template-columns:1fr auto;"><span class="nm"><b>{{ row.name }}</b><br><span>{{ row.detail or '' }}</span></span><span class="vl">{{ row.value }}{{ '%' if standings.has_web_stats and row.value is number }}</span></div>
-              {%- else %}<div style="color:var(--muted);font-size:12px;">—</div>{% endfor %}
+              {%- else %}<div style="color:var(--muted);font-size:12px;" title="{{ pp.unavailable_reason }}">BOUNTY UNCONFIRMED</div>
+              <div style="color:var(--muted);font-size:10px;line-height:1.35;margin-top:4px;">{{ pp.unavailable_reason }}</div>{% endfor %}
             </div>
             {%- endfor %}
           </div>
@@ -574,8 +575,11 @@ a{color:var(--accent);}
     {%- endif %}
 
     {%- if not standings.has_web_stats %}
-    <p class="refresh-note">Top parses show each role's season record. The full top-5 weekly
-      parse ladders + weekly M+ parses populate automatically from the daily data refresh.</p>
+    <p class="refresh-note">Top parses show each role's season record — the single best
+      logged parse, not a weekly top-5. The full weekly ladders need Warcraft Logs
+      credentials (<code>WCL_CLIENT_ID</code> / <code>WCL_CLIENT_SECRET</code>) on the
+      pipeline; until those are set they cannot populate from any other source, because
+      Raider.io does not expose parses.</p>
     {%- endif %}
   </div>
   <div style="text-align:center;">

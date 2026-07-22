@@ -136,6 +136,35 @@ def fetch_blizzard_guild_roster(cfg, token=None):
     return None
 
 
+SUPPLEMENT_PATHS = ("data/roster_supplement.json", "roster_supplement.json")
+
+
+def load_supplement(path=None):
+    """Members confirmed real by a human or a live API, absent from the pull.
+
+    The lowest-tech source and the highest-trust one: every entry carries
+    re-checkable `evidence`. Loaded by default so that when *every* network
+    source is unreachable, the members we already know the pull misses do
+    not disappear again. Entries without evidence are skipped and named.
+    """
+    candidates = [path] if path else SUPPLEMENT_PATHS
+    for candidate in candidates:
+        try:
+            with open(candidate, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except (FileNotFoundError, json.JSONDecodeError):
+            continue
+        rows = []
+        for entry in data.get("characters") or []:
+            if not entry.get("evidence"):
+                logger.warning("roster_supplement entry %r has no `evidence`; "
+                               "skipping it.", entry.get("key") or entry)
+                continue
+            rows.append(entry)
+        return rows
+    return []
+
+
 def wcl_roster_entries(roster_list):
     """The existing `name-realm` string list (roster_cache.json / WCL) as
     the same dict shape, so every source can be merged uniformly."""
@@ -261,6 +290,10 @@ def resolve(cfg, wcl_roster=None, supplement=None, raiderio_fetch=None,
         sources["blizzard"] = None
 
     sources["wcl_cache"] = wcl_roster_entries(wcl_roster) if wcl_roster else None
+
+    # Default to the on-disk supplement. Passing supplement=[] disables it.
+    if supplement is None:
+        supplement = load_supplement()
 
     if supplement:
         # Human-confirmed members with evidence. Lowest-tech source, highest

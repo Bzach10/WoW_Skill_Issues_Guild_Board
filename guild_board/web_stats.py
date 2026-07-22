@@ -44,11 +44,52 @@ def build_payload(stats):
     return ladders
 
 
+def absence_payload(stats):
+    """Why there are no ladders this run — written instead of nothing.
+
+    A *missing* web_stats.json is ambiguous: it looks identical whether the
+    pipeline never ran, crashed, or ran fine against a source that returned
+    no parses. The site then renders a bare em-dash under Top Tank with no
+    explanation, and the page footer claims the ladders "populate
+    automatically from the daily data refresh" — which is not true when the
+    credentials that would populate them are unset.
+
+    So record the absence as a fact. Missing data should fail visibly.
+    """
+    if not stats:
+        reason = ("The board run produced no stats at all — Warcraft Logs was "
+                  "not queried this run.")
+    else:
+        reason = ("Warcraft Logs returned no parse pools. The usual cause is "
+                  "unset WCL_CLIENT_ID / WCL_CLIENT_SECRET: without them the "
+                  "parse ladders cannot be built from any other source, "
+                  "because Raider.io does not expose parses.")
+    return {
+        "available": False,
+        "reason": reason,
+        "top_dps": [], "top_hps": [], "top_tanks": [],
+        "difficulty": (stats or {}).get("difficulty"),
+    }
+
+
 def dump_web_stats(stats, path="web_stats.json"):
-    """Write web_stats.json next to board_state.json. Fail open, always."""
+    """Write web_stats.json next to board_state.json. Fail open, always.
+
+    Returns True only when real ladders were written; an absence record
+    still lands on disk but reports False, so callers and CI keep their
+    existing "did we get parses this week?" semantics.
+    """
     payload = build_payload(stats)
     if payload is None:
-        logger.info("No parse data this run; web_stats.json not written.")
+        absence = absence_payload(stats)
+        logger.warning("No parse data this run: %s Recording the absence in "
+                       "%s so the site can say why rather than showing a "
+                       "blank ladder.", absence["reason"], path)
+        try:
+            with open(path, "w", encoding="utf-8") as f:
+                json.dump(absence, f, indent=2, ensure_ascii=False)
+        except OSError as exc:
+            logger.warning("Could not write %s: %s", path, exc)
         return False
     try:
         with open(path, "w", encoding="utf-8") as f:

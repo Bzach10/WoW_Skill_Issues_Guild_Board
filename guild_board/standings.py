@@ -153,7 +153,14 @@ def _parses(board_state, web_stats, roster=None):
                 "name": _title(rec.get("name")), "value": rec["parse"],
                 "detail": " · ".join(b for b in (rec.get("boss"), rec.get("spec")) if b),
             }], "source": "record", "label": label}
-        return {"rows": [], "source": None, "label": label}
+        # Nothing to show. Say why, if the pipeline told us — an unexplained
+        # em-dash reads as "the site is broken" when the truth is usually
+        # "Warcraft Logs credentials are unset" or "no tank parse recorded
+        # yet this season". Both are fixable; neither is visible as a dash.
+        return {"rows": [], "source": None, "label": label,
+                "unavailable_reason": ws.get("reason") or
+                ("No season record for this role yet." if records
+                 else "No parse data has reached the site yet.")}
 
     return {
         "dps": ladder("top_dps", "best_dps_parse", "Top DPS parses"),
