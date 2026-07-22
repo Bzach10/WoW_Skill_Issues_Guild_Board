@@ -58,6 +58,7 @@ for it. Until then Raider.io's guild roster is the closest reachable stand-in
 
 import json
 import logging
+import os
 from datetime import datetime, timezone
 
 import requests
@@ -78,6 +79,14 @@ def member_key(name, realm_slug):
     who are two different people on the same realm.
     """
     return f"{(name or '').strip().lower()}-{(realm_slug or '').strip().lower()}"
+
+
+def _guild_slug(name):
+    """Blizzard's guild slug: lowercased, spaces to hyphens.
+
+    "Skill Issues" -> "skill-issues".
+    """
+    return (name or "").strip().lower().replace("'", "").replace(" ", "-")
 
 
 def _realm_slug(realm):
@@ -125,15 +134,127 @@ def fetch_raiderio_guild_roster(cfg, timeout=30):
     return members
 
 
-def fetch_blizzard_guild_roster(cfg, token=None):
-    """Seam for Blizzard's `/data/wow/guild/{realm}/{guild}/roster`.
+BLIZZARD_OAUTH_URL = "https://oauth.battle.net/token"
+BLIZZARD_API_HOST = "https://{region}.api.blizzard.com"
 
-    Not implemented: this project has never held guild-roster credentials,
-    and inventing a roster here would be worse than admitting there isn't
-    one. Returns None, which the resolver records as `unavailable` — a
-    stated gap, not a silent zero.
+
+def fetch_blizzard_access_token(cfg, timeout=30):
+    """OAuth client-credentials -> a bearer token, or None if unconfigured.
+
+    Returns None (not an exception) when the credentials are absent, because
+    "nobody has set these up yet" is the project's normal state and should
+    read as an unavailable source rather than a crash. Anything else — bad
+    credentials, a 5xx, a transport error — raises, because that is a
+    genuine failure and a roster that silently falls back to a stale source
+    is exactly how fifteen members went missing in the first place.
     """
-    return None
+    client_id = os.environ.get("BLIZZARD_CLIENT_ID")
+    client_secret = os.environ.get("BLIZZARD_CLIENT_SECRET")
+    if not client_id or not client_secret:
+        return None
+
+    region = ((cfg or {}).get("guild") or {}).get("region", "us")
+    resp = requests.post(
+        BLIZZARD_OAUTH_URL,
+        auth=(client_id, client_secret),
+        data={"grant_type": "client_credentials"},
+        timeout=timeout,
+    )
+    resp.raise_for_status()
+    token = (resp.json() or {}).get("access_token")
+    if not token:
+        raise RuntimeError(
+            "Blizzard OAuth returned 200 with no access_token; refusing to "
+            "continue with an unauthenticated roster call."
+        )
+    logger.info("Blizzard OAuth: token acquired for region %s.", region)
+    return token
+
+
+def fetch_blizzard_guild_roster(cfg, token=None, timeout=30):
+    """Blizzard's `/data/wow/guild/{realm}/{guild}/roster` -> {key: {...}}.
+
+    **This is the authoritative roster.** Every other source in this module
+    is a stand-in for it. Warcraft Logs knows who has appeared in an
+    uploaded report; Raider.io knows who it last crawled; Blizzard knows who
+    is in the guild. Only the third is the question being asked.
+
+    Returns None when credentials are unset — the resolver records that as
+    `unavailable`, a stated gap rather than a silent zero. It never invents
+    a roster and never falls back quietly.
+
+    Identity: the key is `name-realm` with the **exact Unicode name
+    preserved**, because Viôlence and Violënce are two different people on
+    one realm and folding accents merges them. Blizzard's own stable
+    character `id` is carried through as `blizzard_id` so downstream code
+    can key on it once every source can supply one.
+
+    UNVERIFIED AGAINST THE LIVE API. Written 2026-07-22 in an environment
+    with no network egress and no credentials, so it has never made a real
+    request. The request shape follows Blizzard's documented profile API
+    (client-credentials OAuth, `namespace=profile-{region}`). Treat the
+    first live run as the test: it will either return members or raise.
+    """
+    guild = (cfg or {}).get("guild") or {}
+    region = guild.get("region", "us")
+    realm_slug = guild.get("realm_slug", "")
+    guild_slug = guild.get("name_slug") or _guild_slug(guild.get("name", ""))
+
+    if not realm_slug or not guild_slug:
+        logger.warning(
+            "Blizzard guild roster: cfg.guild is missing realm_slug or name "
+            "(realm=%r guild=%r). Not guessing — reporting unavailable.",
+            realm_slug, guild_slug)
+        return None
+
+    token = token or fetch_blizzard_access_token(cfg, timeout=timeout)
+    if not token:
+        logger.info(
+            "Blizzard guild roster: BLIZZARD_CLIENT_ID / "
+            "BLIZZARD_CLIENT_SECRET are unset, so the authoritative roster "
+            "cannot be fetched. Falling back to the reachable sources and "
+            "recording this one as unavailable.")
+        return None
+
+    url = "{host}/data/wow/guild/{realm}/{guild}/roster".format(
+        host=BLIZZARD_API_HOST.format(region=region),
+        realm=realm_slug, guild=guild_slug)
+    resp = requests.get(
+        url, timeout=timeout,
+        headers={"Authorization": "Bearer %s" % token},
+        params={"namespace": "profile-%s" % region, "locale": "en_US"},
+    )
+    resp.raise_for_status()
+    payload = resp.json() or {}
+
+    members = {}
+    for entry in payload.get("members") or []:
+        char = entry.get("character") or {}
+        name = char.get("name")
+        realm = (char.get("realm") or {})
+        slug = realm.get("slug") or _realm_slug(realm.get("name"))
+        if not name or not slug:
+            # Never skip silently: a member the authority returned and we
+            # could not key is a roster gap, and roster gaps fail loud.
+            logger.warning(
+                "Blizzard guild roster: member with name=%r realm=%r could "
+                "not be keyed and was NOT counted. This is a gap, not a "
+                "no-op.", name, slug)
+            continue
+        members[member_key(name, slug)] = {
+            "name": name,                       # exact, Unicode preserved
+            "realm_slug": slug,
+            "realm": realm.get("name"),
+            "rank": entry.get("rank"),
+            "class": ((char.get("playable_class") or {}).get("name")),
+            "spec": None,                       # not in the roster payload
+            "role": None,                       # derived downstream from spec
+            "blizzard_id": char.get("id"),      # stable identity, when present
+            "level": char.get("level"),
+        }
+    logger.info("Blizzard guild roster: %d members (the authority).",
+                len(members))
+    return members
 
 
 SUPPLEMENT_PATHS = ("data/roster_supplement.json", "roster_supplement.json")
