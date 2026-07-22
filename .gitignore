@@ -42,3 +42,13 @@ crew_board_doll.html
 
 # Generated website data bundle (build with scripts/build_site_data.py)
 web_data/
+
+# Front-end: rendered per-player pages, season views, bounty output
+p/
+seasons/
+bounty/
+
+# local admin tool output — never publish
+config.yml.tmp
+featured_this_week.json
+featured_history.json

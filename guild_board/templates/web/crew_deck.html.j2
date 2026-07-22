@@ -148,7 +148,9 @@ a{color:inherit;}
 
      z 0  .scene       backdrop (tint + optional art), crossfades
      z 1  .deckboard   the ship's deck the crew stand on
-     z 2  .member      the cast — transparent PNGs, constant
+     z 2  .member      the cast — transparent cutouts where the roster
+                       generation supplied one, otherwise the full scene
+                       image in a frame
      z 5+ bubbles, spotlights, toggles
 */
 .stage{
@@ -219,62 +221,49 @@ a{color:inherit;}
   cursor:pointer; background:none; border:0; padding:0; color:inherit;
   font:inherit; text-align:center;
 }
-/* ---------- THE PAPER-DOLL RIG ----------
-   .doll is the character's canvas. Every .bone is absolutely positioned
-   at its authored anchor and rotates about its own pivot, so idle motion
-   is pure transform on a handful of elements — compositor work, no
-   layout, no repaint. That is what keeps a full deck smooth.
-
-   The whole character is transparent and sits ABOVE the scene layer, so
-   scenes can change underneath without the cast being touched. */
-.doll{
-  position:relative; display:block; width:100%;
-  aspect-ratio:832/1216;   /* overridden per character from the manifest */
-  filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));
-  transition:filter .45s ease;
-  /* the breathing bob rides the whole doll; the bones add motion on top */
+/* ---------- THE CREW PORTRAITS ----------
+   The restyled art is scene-baked, so members are framed portraits
+   rather than transparent cut-outs composited over the scene layer.
+   3:4 art fills its frame; anything off-spec is contained over a
+   blurred copy of itself so no composition is ever cropped. */
+/* A transparent cutout needs no frame — it stands on the deck and the
+   scene layer shows through behind it, which is the whole point. */
+.figure{
+  position:relative; display:block; width:100%; aspect-ratio:3/4;
   animation:breathe 3.4s ease-in-out infinite;
   animation-delay:var(--delay,0s);
+  transition:filter .45s ease;
 }
-.doll .bone{
-  position:absolute; left:0; top:0; width:100%; height:auto; display:block;
-  transform-origin:50% 90%;
-  will-change:transform;
+.figure img{width:100%; height:100%; object-fit:contain; display:block;
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+.member[data-idle="paused"] .figure{animation-play-state:paused;}
+
+.portrait{
+  position:relative; display:block; width:100%; aspect-ratio:3/4;
+  overflow:hidden; border-radius:14px; border:1px solid var(--line);
+  box-shadow:0 12px 22px -12px rgba(0,0,0,.6);
+  animation:breathe 3.4s ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+  transition:filter .45s ease;
 }
-/* A doll with only one layer (the flat v1 cut-out, or the placeholder)
-   fills its canvas; a real layer stack is placed by its anchors. */
-.doll[data-mode="flat"] .bone,
-.doll[data-mode="placeholder"] .bone{position:relative; left:0 !important; top:0 !important;}
+.portrait::before{content:""; position:absolute; inset:-6%;
+  background-image:var(--fill); background-size:cover; background-position:center;
+  filter:blur(22px) saturate(.75) brightness(.7);}
+.portrait img{position:relative; width:100%; height:100%; object-fit:contain;
+  display:block;}
+.portrait.fills img{object-fit:cover;}
+.portrait.fills::before{display:none;}
+.portrait.pending{background:var(--panel);}
+.portrait.pending::before{display:none;}
+.portrait.pending img{object-fit:contain; padding:12%;}
 
 @keyframes breathe{
-  0%,100%{transform:translateY(0) scaleY(1);}
-  50%{transform:translateY(-6px) scaleY(1.012);}
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
 }
-/* Per-bone idle motion. Each is a small rotation about the joint —
-   shoulders swing, head counter-bobs, cloak and weapons trail. */
-@keyframes boneArms{0%,100%{transform:rotate(-1.6deg);}50%{transform:rotate(1.6deg);}}
-@keyframes boneHead{0%,100%{transform:rotate(.9deg) translateY(0);}50%{transform:rotate(-.9deg) translateY(-2px);}}
-@keyframes boneCloak{0%,100%{transform:rotate(-2.6deg) skewX(1deg);}50%{transform:rotate(2.6deg) skewX(-1deg);}}
-@keyframes boneWeaponMain{0%,100%{transform:rotate(-2.2deg);}50%{transform:rotate(2.6deg);}}
-@keyframes boneWeaponOff{0%,100%{transform:rotate(2deg);}50%{transform:rotate(-2.4deg);}}
-@keyframes boneLegs{0%,100%{transform:rotate(.4deg);}50%{transform:rotate(-.4deg);}}
-@keyframes boneTorso{0%,100%{transform:rotate(-.5deg);}50%{transform:rotate(.5deg);}}
-
-.doll .bone[data-bone="arms"]{animation:boneArms 3.4s ease-in-out infinite;}
-.doll .bone[data-bone="head"]{animation:boneHead 3.4s ease-in-out infinite;}
-.doll .bone[data-bone="cloak"]{animation:boneCloak 4.6s ease-in-out infinite;}
-.doll .bone[data-bone="weapon_main"]{animation:boneWeaponMain 4.1s ease-in-out infinite;}
-.doll .bone[data-bone="weapon_off"]{animation:boneWeaponOff 4.4s ease-in-out infinite;}
-.doll .bone[data-bone="legs"]{animation:boneLegs 3.4s ease-in-out infinite;}
-/* The torso bone only counter-rotates on a REAL layer stack; on a flat
-   cut-out it would wobble the entire character, which reads as a glitch. */
-.doll[data-mode="layered"] .bone[data-bone="torso"]{animation:boneTorso 3.4s ease-in-out infinite;}
-.doll .bone{animation-delay:var(--delay,0s);}
-
 /* Offscreen crew stop animating entirely — this is what lets the deck
    scale past 100 characters without burning frame budget. */
-.member[data-idle="paused"] .doll,
-.member[data-idle="paused"] .doll .bone{animation-play-state:paused;}
+.member[data-idle="paused"] .portrait{animation-play-state:paused;}
 
 .member img{
   width:100%; height:auto; display:block;
@@ -285,6 +274,9 @@ a{color:inherit;}
 }
 .member .plate b{display:block; font-size:13px; letter-spacing:.04em;
   color:var(--text); text-transform:none;}
+.member .plate a.plink{color:inherit; text-decoration:none;
+  border-bottom:1px solid transparent;}
+.member:hover .plate a.plink{border-bottom-color:var(--accent);}
 .member .rolepip{
   display:inline-block; width:7px; height:7px; border-radius:50%;
   background:var(--pip); margin-right:5px; vertical-align:middle;
@@ -316,7 +308,8 @@ a{color:inherit;}
   opacity:1; filter:none;
   transform:translateY(-22px) scale(1.09); z-index:6;
 }
-.deck[data-spot] .member[data-role-active] .doll{
+.deck[data-spot] .member[data-role-active] .portrait,
+.deck[data-spot] .member[data-role-active] .figure{
   filter:drop-shadow(0 0 26px var(--pip)) drop-shadow(0 12px 18px rgba(0,0,0,.5));
 }
 .deck[data-spot] .member[data-role-active]::before{
@@ -330,7 +323,8 @@ a{color:inherit;}
 .member[data-summoned]{
   transform:translateY(-26px) scale(1.12); z-index:8;
 }
-.member[data-summoned] .doll{
+.member[data-summoned] .portrait,
+.member[data-summoned] .figure{
   filter:drop-shadow(0 0 30px var(--pip)) drop-shadow(0 16px 22px rgba(0,0,0,.55));
 }
 .member[data-summoned]::after{
@@ -356,7 +350,8 @@ a{color:inherit;}
   background:#2b0b40; color:#c98bff; border-color:#8b4bd0;
   box-shadow:0 0 14px -2px #8b4bd0;
 }
-.member[data-form="shadow"] .doll{
+.member[data-form="shadow"] .portrait,
+.member[data-form="shadow"] .figure{
   filter:drop-shadow(0 0 22px #8b4bd0) drop-shadow(0 10px 16px rgba(0,0,0,.5))
          hue-rotate(-38deg) saturate(1.25);
 }
@@ -529,7 +524,7 @@ a{color:inherit;}
   }
   .embers{display:none;}
   .member{transform:none !important;}
-  .doll, .doll .bone{animation:none !important; transform:none !important;}
+  .portrait, .figure{animation:none !important;}
   .deck[data-spot] .member[data-role-active]{transform:none !important;}
   /* spotlight still communicates, just without movement */
   .deck[data-spot] .member{opacity:.45;}
@@ -629,33 +624,34 @@ a{color:inherit;}
       <span class="bubble">{{ m.catchphrase }}</span>
       {%- endif %}
       {#
-        THE PAPER DOLL. Each layer is a bone: positioned at its anchor,
-        rotating about its own pivot. The art never changes — only the
-        transform on each bone — so one idle rig drives every character
-        whatever they are wearing.
+        Two art shapes, one rig:
+
+        * a transparent CUTOUT — the character stands on the deck,
+          composited over the board's own scene layer, which is the
+          original concept and what the scene-change interaction needs
+        * otherwise the full SCENE image, framed — used when the cutout
+          is missing or the generation flagged it as imperfect
+
+        The plate, spotlight and summon behave identically either way.
       #}
-      {%- if m.doll and m.doll.layers %}
-      <span class="doll" data-mode="{{ m.doll.mode }}"
-            style="aspect-ratio:{{ m.doll.canvas.w }}/{{ m.doll.canvas.h }};">
-        {%- for L in m.doll.layers %}
-        <img class="bone" data-bone="{{ L.bone }}" data-slot="{{ L.slot }}"
-             src="{{ L.src }}" alt=""
-             {% if loop.first and m.light_art %}data-light="{{ m.light_art }}"{% endif %}
-             {% if loop.first and m.shadow_art %}data-shadow="{{ m.shadow_art }}"{% endif %}
-             style="left:{{ L.left_pct }}%; top:{{ L.top_pct }}%; z-index:{{ L.z }};
-                    transform-origin:{{ L.origin_pct[0] }}% {{ L.origin_pct[1] }}%;"
-             decoding="async">
-        {%- endfor %}
+      {%- if m.art and m.art.cutout %}
+      <span class="figure">
+        <img src="{{ m.art.cutout }}" alt="{{ m.name }}" decoding="async">
+      </span>
+      {%- elif m.art and m.art.src %}
+      <span class="portrait{{ ' fills' if m.art.fills }}"
+            style="--fill:url('{{ m.art.src }}');">
+        <img src="{{ m.art.src }}" alt="{{ m.name }}" decoding="async">
       </span>
       {%- else %}
-      <span class="doll" data-mode="placeholder">
-        <img class="bone" data-bone="torso" src="cast/placeholders/crew_slot.png"
-             alt="{{ m.name }} (art pending)" decoding="async"
-             style="transform-origin:50% 95%;">
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="{{ m.name }} (art pending)"
+             decoding="async">
       </span>
       {%- endif %}
       <span class="plate">
-        <b>{{ m.name }}</b>
+        <b>{% if profile_href and profile_href.get(m.slug) %}<a class="plink"
+           href="{{ profile_href[m.slug] }}">{{ m.name }}</a>{% else %}{{ m.name }}{% endif %}</b>
         <span class="rolepip" aria-hidden="true"></span>{{ m.role_label }}
         {%- if m.score %} · <span class="score">{{ m.score }}</span>{% endif %}
       </span>
@@ -850,10 +846,10 @@ a{color:inherit;}
     });
   }
 
-  /* ---------- paper-doll runtime ----------
-     Idle animation is pure CSS on the bones, so the only thing JS has to
-     do is stop paying for characters nobody can see. With a full cast
-     that is the difference between a smooth deck and a hot laptop. */
+  /* ---------- idle runtime ----------
+     Idle animation is pure CSS, so the only thing JS has to do is stop
+     paying for characters nobody can see. With a full cast that is the
+     difference between a smooth deck and a hot laptop. */
   if ('IntersectionObserver' in window) {
     var idleWatch = new IntersectionObserver(function(entries){
       entries.forEach(function(en){
@@ -902,8 +898,8 @@ a{color:inherit;}
     roster: function(){
       return members.map(function(m){
         return {slug: m.dataset.slug, name: m.dataset.name, role: m.dataset.role,
-                bones: Array.prototype.map.call(
-                  m.querySelectorAll('.bone'), function(b){ return b.dataset.slot; })};
+                art: (m.querySelector('.portrait img') || {}).getAttribute
+                     ? m.querySelector('.portrait img').getAttribute('src') : null};
       });
     },
     on: function(type, fn){ deck.addEventListener(type, fn); }

@@ -20,6 +20,18 @@
         "8899"
       ],
       "port": 8899
+    },
+    {
+      "name": "trial-bundle",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8790",
+        "--directory",
+        "C:/wt/GuildBoardTrial"
+      ],
+      "port": 8790
     }
   ]
 }

@@ -3,9 +3,13 @@ ship currently is on the voyage.
 
 Everything here is REAL-DATA-FIRST and fails open:
 
-  * Roles come from Blizzard's profile cache (active spec -> role) when
-    the art/profile pipeline has written one. That file is the single
-    source of truth for class/spec/gender/race.
+  * The ROSTER comes from the backend's live pull (competition.json)
+    when it is present: all members, keyed `name-realm` — the only key
+    that survives two crewmates sharing a name (there are two Berobens).
+    URL slugs stay short for unique names and disambiguate only on
+    collision, so no existing page address breaks without cause.
+  * Roles come from the live pull, else Blizzard's profile cache
+    (active spec -> role) when the art/profile pipeline has written one.
   * When there is no profile cache yet, we fall back ONLY to characters
     whose class or role is actually evidenced somewhere in this repo
     (a parse record naming their spec, the debt gag naming Brewzleeh's
@@ -30,6 +34,12 @@ logger = logging.getLogger(__name__)
 
 PROFILE_CACHE = "blizzard_profile_cache.json"
 CAST_MANIFEST = "cast_manifest.json"
+# The merged roster the bounty extract produces from the live pull PLUS
+# data/roster_supplement.json (the pull alone is a floor, not the guild —
+# it missed a real, actively-raiding member on the guild's own realm).
+# extract_roster.py also owns the slug policy: short names, accent-folded,
+# ordinals only for true collisions. One derivation, consumed everywhere.
+CREW_ROSTER = "roster.json"
 CAST_DIR = Path("cast")
 PLACEHOLDER_DIR = CAST_DIR / "placeholders"
 
@@ -356,8 +366,35 @@ def load_profiles(path=PROFILE_CACHE):
         return {}
 
 
+def load_crew_roster(path=CREW_ROSTER):
+    """The extract's merged roster: every member, keyed `name-realm`,
+    slug policy already applied (see extract_roster.py in the docs repo).
+
+    This is the roster authority when present (133 members: the 132-row
+    2026-07-20 pull + the evidence-mandatory supplement). Returns [] when
+    the file is absent or unreadable so build_crew can fall back to the
+    legacy candidate sources — fail open, never fail the render.
+    """
+    try:
+        with open(path, "r", encoding="utf-8") as fh:
+            data = json.load(fh) or {}
+    except (OSError, ValueError) as exc:
+        logger.info("No %s (%s); crew falls back to legacy sources.", path, exc)
+        return []
+    rows = data.get("characters")
+    rows = [r for r in rows if isinstance(r, dict)
+            and r.get("name") and r.get("slug") and r.get("key")] \
+        if isinstance(rows, list) else []
+    if rows:
+        meta = data.get("meta") or {}
+        logger.info("Roster from %s: %d members (pull %s, %d supplemented).",
+                    path, len(rows), meta.get("based_on", "undated"),
+                    meta.get("supplement_count", 0))
+    return rows
+
+
 def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
-               manifest=None, style=None):
+               manifest=None, style=None, competition=None):
     """The cast standing on the deck.
 
     Ordered by real season M+ score (highest first) so the deck reflects
@@ -379,35 +416,117 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
     style = resolve_style(manifest, theme) if style is None else style
     characters = manifest.get("characters") if isinstance(manifest, dict) else None
     characters = characters if isinstance(characters, dict) else {}
+    # The caller opts in to the live pull explicitly (render_crew_board
+    # passes load_competition()). No silent disk read here: what a test
+    # or preview builds must not depend on the working directory.
+    competition = competition or []
 
     crew_cfg = (cfg or {}).get("cast") or {}
     opt_out = {n.lower() for n in (crew_cfg.get("opt_out") or [])}
     phrases = dict(DEFAULT_CATCHPHRASES)
     phrases.update(((theme or {}).get("crew") or {}).get("catchphrases") or {})
 
-    # Candidate slugs: everyone we have a profile for, plus everyone we
-    # have repo evidence for, intersected with people who actually have
-    # a real season score (i.e. they really play).
     candidates = {}
-    for key, profile in (profiles or {}).items():
-        slug = slugify((profile.get("name") or key).split("-")[0])
-        candidates[slug] = {
-            "display": profile.get("name") or slug.title(),
-            "cls": profile.get("class"),
-            "spec": profile.get("active_spec"),
-            "evidence": "blizzard_profile_cache.json",
-            "source": "real",
-        }
-    # The manifest outranks the profile cache: it is the pipeline's own
-    # record of the character it actually rendered.
+
+    if competition:
+        # ------------------------------------------------------------------
+        # THE MERGED ROSTER IS THE AUTHORITY. Every member of the guild,
+        # keyed name-realm — the only keying that keeps two same-named
+        # crewmates apart. Legacy sources below ENRICH these entries (art,
+        # race/gender) but may not add members: someone in an old cache but
+        # not in the roster is not on the crew (they are parked instead).
+        # ------------------------------------------------------------------
+        def _bare_spec(spec, cls):
+            """'Protection Paladin' -> 'Protection': some sources suffix the
+            class onto the spec; every other source here keeps them apart."""
+            s, c = (spec or "").strip(), (cls or "").strip()
+            if c and s.lower().endswith(" " + c.lower()):
+                return s[:-(len(c) + 1)].strip()
+            return s
+
+        # {"healing"/"heal" -> "healer"} etc: the extract says "healing"
+        # where the deck says "healer". Unknown strings still derive from
+        # the real spec rather than being trusted.
+        role_alias = {"healing": "healer", "heal": "healer", "damage": "dps"}
+
+        name_counts = {}
+        for row in competition:
+            n = slugify(row.get("name"))
+            name_counts[n] = name_counts.get(n, 0) + 1
+        for row in competition:
+            key, slug = row["key"], row["slug"]
+            name_slug = slugify(row.get("name"))
+            declared = (row.get("role") or "").strip().lower()
+            candidates[slug] = {
+                "display": row.get("name") or slug.title(),
+                "cls": row.get("class"),
+                "spec": _bare_spec(row.get("spec"), row.get("class")),
+                "declared_role": role_alias.get(declared, declared) or None,
+                "evidence": f"roster.json (live pull + supplement, {key})",
+                "source": "real",
+                "key": key,
+                "realm": row.get("realm"),
+                "realm_slug": row.get("realm_slug") or key[len(name_slug) + 1:] or None,
+                # A zero is NOT a score (§5.6: never render 0 where a score
+                # belongs, never sort the scoreless as if they placed last).
+                "comp_score": row.get("score") or None,
+                "comp_rank": row.get("rank"),
+                # Bare-name data (board_state deltas, streaks, catchphrases)
+                # may only be matched when the name is unambiguous. The
+                # diacritic-preserving name slug is the board_state key.
+                "legacy_slug": name_slug if name_counts.get(name_slug) == 1 else None,
+            }
+    else:
+        # Candidate slugs: everyone we have a profile for, plus everyone we
+        # have repo evidence for, intersected with people who actually have
+        # a real season score (i.e. they really play).
+        for key, profile in (profiles or {}).items():
+            slug = slugify((profile.get("name") or key).split("-")[0])
+            candidates[slug] = {
+                "display": profile.get("name") or slug.title(),
+                "cls": profile.get("class"),
+                "spec": profile.get("active_spec"),
+                "evidence": "blizzard_profile_cache.json",
+                "source": "real",
+            }
+
+    # The manifest outranks the caches for art identity: it is the
+    # pipeline's own record of the character it actually rendered.
     for manifest_id, character in characters.items():
         if not isinstance(character, dict):
             continue
-        # The manifest keys characters as "<name>-<realm>", but every
-        # other real data source in this repo (season scores, streaks,
-        # catchphrases, opt-outs) keys them by bare character name. Key
-        # on the name so a manifest character actually matches their own
-        # M+ score instead of silently showing up unscored.
+        # The manifest keys characters as "<name>-<realm>". With the live
+        # pull present that key matches directly; without it, every other
+        # data source keys by bare name, so fall back to the name.
+        slug = None
+        if competition:
+            for cand_slug, cand in candidates.items():
+                if cand.get("key") == manifest_id:
+                    slug = cand_slug
+                    break
+            if slug is None:
+                name_slug = slugify(character.get("name") or manifest_id.split("-")[0])
+                slug = name_slug if name_slug in candidates else None
+            if slug is None:
+                # In the manifest but not the live pull: keep the art on
+                # file, but a non-member does not stand on the deck.
+                logger.info("cast_manifest character %s is not in the live "
+                            "pull; not adding them to the crew.", manifest_id)
+                continue
+            candidates[slug].update({
+                "manifest_id": manifest_id,
+                "race": character.get("race"),
+                "gender": character.get("gender"),
+                "render_url": character.get("render_url"),
+                "_character": character,
+            })
+            # The live pull's class/spec/role are fresher than the
+            # manifest's copy; only fill gaps, never overwrite.
+            for field in ("cls", "spec"):
+                src = character.get("class" if field == "cls" else "spec")
+                if not candidates[slug].get(field) and src:
+                    candidates[slug][field] = src
+            continue
         slug = slugify(character.get("name") or manifest_id.split("-")[0])
         candidates[slug] = {
             "manifest_id": manifest_id,
@@ -428,26 +547,42 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
     for slug, entry in DERIVED_CREW.items():
         if slug in candidates:
             continue
+        if competition:
+            # Evidenced in this repo but absent from the live pull. Kept as
+            # PARKED (page renders, excluded from counts and boards) until
+            # Zach resolves whether they are real. As of 2026-07-22 this is
+            # exactly one character: phyrthepali.
+            candidates[slug] = dict(entry, source="unresolved", parked=True,
+                                    legacy_slug=slug)
+            logger.info("%s is evidenced locally but absent from the live "
+                        "pull; parked (page only, no counts).", slug)
+            continue
         candidates[slug] = dict(entry, source="derived")
 
-    # Fill the remaining deck slots with the top of the REAL season
-    # ladder. We know these people play and we know their score; we do
-    # not know their spec until the profile cache lands, so they stand
-    # as role-less deckhands rather than getting a guessed role.
-    for slug, _score in sorted(season_scores.items(), key=lambda kv: -kv[1]):
-        if len(candidates) >= limit + len(opt_out):
-            break
-        if slug in candidates:
-            continue
-        candidates[slug] = {
-            "display": slug.title(), "cls": None, "spec": None,
-            "evidence": "board_state.json season_scores (real M+ score)",
-            "source": "derived",
-        }
+    # EVERY player with a real season score is a candidate. This loop
+    # used to stop once `limit` candidates existed, which meant that once
+    # the art manifest held more characters than the deck had slots, the
+    # deck was drawn from "who has art" instead of "who ranks highest" —
+    # silently dropping the guild's #2, #3, #6 and #10 players because
+    # they had not been generated yet. Membership is decided by score;
+    # having art is not a qualification for being on the board.
+    # (With the live pull present the roster is already complete — a
+    # bare-name score can add nobody the pull does not know.)
+    if not competition:
+        for slug, _score in sorted(season_scores.items(), key=lambda kv: -kv[1]):
+            if slug in candidates:
+                continue
+            candidates[slug] = {
+                "display": slug.title(), "cls": None, "spec": None,
+                "evidence": "board_state.json season_scores (real M+ score)",
+                "source": "derived",
+            }
 
     crew = []
     for slug, entry in candidates.items():
-        if slug in opt_out or f"{slug}-" in opt_out:
+        key = entry.get("key") or slug
+        if (slug in opt_out or f"{slug}-" in opt_out
+                or key in opt_out or entry.get("legacy_slug") in opt_out):
             continue
 
         # ---- role: a declared role is honoured only if it is a real
@@ -463,10 +598,14 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
             role = role_for(entry.get("cls"), entry.get("spec"))
 
         # ---- art: the manifest's active style first, then the legacy
-        # folder scan, then the silhouette.
+        # folder scan, then the silhouette. Art directories are keyed by
+        # the pipeline's name-realm key when we know it (cast/<key>/),
+        # falling back to the page slug for pre-keyed art.
         art_info = manifest_art(entry.get("_character"), style)
         if art_info is None:
-            art, art_is_real = _art_slot(slug)
+            art, art_is_real = _art_slot(key)
+            if not art_is_real and key != slug:
+                art, art_is_real = _art_slot(slug)
             shadow, light = _shadow_art(slug), _light_art(slug)
             art_info = {
                 "art": art, "art_is_real": art_is_real,
@@ -496,8 +635,23 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
                     style and used_style and used_style != style)
 
         has_forms = bool(art_info["light_art"] and art_info["shadow_art"])
+        # Score: the live pull's own number first (it is per name-realm,
+        # so both Berobens keep their real scores); a bare-name score may
+        # only fill in when the name is unambiguous.
+        legacy = entry.get("legacy_slug")
+        if legacy is None and "key" not in entry:
+            legacy = slug  # legacy sources are bare-name keyed already
+        score = entry.get("comp_score")
+        if score is None and legacy:
+            score = season_scores.get(legacy)
         crew.append({
             "slug": slug,
+            "key": key,
+            "legacy_slug": legacy,
+            "realm": entry.get("realm"),
+            "realm_slug": entry.get("realm_slug"),
+            "rank": entry.get("comp_rank"),
+            "parked": bool(entry.get("parked")),
             "manifest_id": entry.get("manifest_id"),
             "doll": doll,
             "name": entry["display"],
@@ -507,7 +661,7 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
             "role": role,
             "role_label": ROLE_LABEL.get(role, "Deckhand"),
             "tint": ROLE_TINT.get(role, ROLE_TINT["unknown"]),
-            "score": season_scores.get(slug),
+            "score": score,
             "art": art_info["art"],
             "art_is_real": art_info["art_is_real"],
             "style_used": art_info["style_used"],
@@ -521,13 +675,15 @@ def build_crew(cfg, theme, season_scores=None, profiles=None, limit=10,
             "has_shadowform": (entry.get("cls") == "Priest") or has_forms,
             "shadow_art": art_info["shadow_art"] if has_forms else None,
             "light_art": art_info["light_art"] if has_forms else None,
-            "catchphrase": phrases.get(slug),
+            "catchphrase": phrases.get(legacy or slug),
             "evidence": entry.get("evidence"),
             "source": entry.get("source", "derived"),
         })
 
-    # Real ladder order; unscored crew trail behind, alphabetically.
-    crew.sort(key=lambda c: (c["score"] is None, -(c["score"] or 0), c["name"]))
+    # Real ladder order; unscored crew trail behind, alphabetically;
+    # parked (unresolved) members trail everyone — page only, no billing.
+    crew.sort(key=lambda c: (c.get("parked", False), c["score"] is None,
+                             -(c["score"] or 0), c["name"]))
     return crew[:limit]
 
 

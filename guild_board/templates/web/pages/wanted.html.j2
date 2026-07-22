@@ -1,0 +1,71 @@
+{#
+  THE WANTED BOARD — the guild's leaderboard as One Piece bounty posters.
+  Standalone page; the same board is embedded on the ship's Main Deck.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>S.S. Wipe Fest — The Wanted Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📜</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+.mast{text-align:center; padding:46px 0 26px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading)); font-weight:800;}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(34px,7vw,66px); color:var(--heading);}
+.rule{width:min(360px,70%); height:3px; margin:20px auto 4px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px; margin-top:40px;}
+{% include "web/_wanted_css.html.j2" %}
+{% include "web/_nav_css.html.j2" %}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+{% set nav_here = "wanted" %}{% include "web/_nav.html.j2" %}
+
+<main class="wrap">
+<section class="mast">
+  <div class="kicker">S.S. Wipe Fest · <b>dead or alive</b></div>
+  <h1>The Wanted Board</h1>
+  <div class="rule"></div>
+</section>
+{% include "web/_wanted.html.j2" %}
+</main>
+
+<footer class="foot">S.S. Wipe Fest · a private test run · bounties are live Mythic+ scores, refreshed daily</footer>
+{% include "web/_wanted_script.html.j2" %}
+{% include "web/_nav_script.html.j2" %}
+</body>
+</html>

@@ -1,0 +1,428 @@
+{#
+  THE VOYAGE MAP — test run, for review.
+
+  The season's Mythic+ dungeons and raid laid out as islands on a route,
+  each carrying the guild's real data. Both seasons are rendered into the
+  page so the swap can be demonstrated live: Season 2's island set is
+  already here, it is simply not the active one yet.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{ guild_name }} — Voyage Map (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--dungeon:#4fc9a2; --raid:#d06a8a; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+
+.mast{text-align:center; padding:44px 0 18px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading));
+  font-weight:800;}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(34px,7vw,68px); color:var(--heading);}
+.rule{width:min(400px,72%); height:3px; margin:20px auto 16px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.lede{max-width:62ch; margin:0 auto; color:var(--muted); font-size:16px;}
+
+/* season switch — the point of the review */
+.seasons{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  padding:18px 0 6px;}
+.seasons button{font:inherit; font-size:13px; cursor:pointer; padding:10px 18px;
+  border-radius:999px; border:1px solid var(--line); background:var(--panel);
+  color:var(--text); transition:all .25s;}
+.seasons button[aria-pressed="true"]{background:var(--accent); color:var(--bg);
+  border-color:var(--accent);}
+.seasonnote{text-align:center; color:var(--muted); font-size:13px;
+  padding-bottom:22px;}
+
+/* ---------------- the map ---------------- */
+.map{position:relative; border:1px solid var(--line); border-radius:22px;
+  background:var(--panel); padding:26px 18px 20px; margin-bottom:26px;
+  overflow:hidden;}
+.mapbar{display:flex; gap:16px; justify-content:space-between; align-items:center;
+  flex-wrap:wrap; padding-bottom:16px;}
+.leg{display:flex; gap:16px; flex-wrap:wrap;
+  font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted);}
+.leg i{display:inline-block; width:9px; height:9px; border-radius:50%;
+  margin-right:5px; vertical-align:middle;}
+/* how much of the season the crew has charted, at a glance */
+.charted{display:flex; align-items:center; gap:9px; font-size:11px;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--muted);
+  white-space:nowrap;}
+.chartnum{font-family:var(--font-display); font-size:16px; color:var(--accent);
+  letter-spacing:0;}
+.chartbar{display:inline-block; width:90px; height:7px; border-radius:999px;
+  overflow:hidden; background:color-mix(in srgb,var(--line) 85%, var(--bg));
+  border:1px solid var(--line);}
+.chartfill{display:block; height:100%; border-radius:999px; background:var(--accent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 60%, transparent); min-width:2px;}
+
+.route{position:relative; display:flex; flex-wrap:wrap; gap:10px 4px;
+  justify-content:center; padding:8px 4px 20px;}
+/* the dashed route threads behind each row of islands */
+.island::before{content:""; position:absolute; top:27px; left:-2px; right:-2px;
+  border-top:2px dashed var(--line); z-index:0;}
+.island:first-child::before{left:50%;}
+.island:last-child::before{right:50%;}
+.blob{position:relative; z-index:1;}
+
+.island{position:relative; flex:0 0 auto; width:120px; scroll-snap-align:center;
+  background:none; border:0; color:inherit; font:inherit; cursor:pointer;
+  padding:6px 4px; border-radius:14px; display:flex; flex-direction:column;
+  align-items:center; text-align:center; transition:transform .3s, background .3s;}
+.island:hover,.island:focus-visible{transform:translateY(-5px);
+  background:color-mix(in srgb,var(--accent) 12%, transparent);}
+.island[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 18%, transparent);}
+.blob{display:block; width:58px; height:42px; margin:0 auto 8px; position:relative;
+  border-radius:50% 50% 46% 54%/60% 62% 40% 38%; border:1px solid var(--line);
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--dungeon) 55%, var(--panel)),
+    color-mix(in srgb,var(--line) 70%, var(--panel)));}
+.island[data-kind="raid_boss"] .blob{
+  border-radius:44% 56% 40% 60%/54% 40% 60% 46%;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--raid) 55%, var(--panel)),
+    color-mix(in srgb,var(--line) 70%, var(--panel)));}
+/* a cleared island is filled in; an untouched one stays hollow */
+.island[data-state="none"] .blob{opacity:.42; border-style:dashed;}
+.island[data-state="cleared"] .blob::after{content:"✦"; position:absolute;
+  inset:0; display:grid; place-items:center; font-size:15px; color:var(--bg);}
+.iname{display:block; font-size:11px; line-height:1.25; min-height:2.5em;}
+.imeta{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); margin-top:3px;}
+.ship{position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+  font-size:19px;}
+
+/* ---------------- detail ---------------- */
+.detail{border-top:1px solid var(--line); margin-top:4px; padding-top:18px;
+  min-height:150px;}
+.detail h3{font-family:var(--font-display); font-size:23px; color:var(--heading);}
+.detail .tag{display:inline-block; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; padding:3px 9px; border-radius:999px;
+  color:var(--bg); background:var(--dungeon); margin-bottom:8px;}
+.detail .tag.raid{background:var(--raid);}
+.stats{display:grid; gap:12px; margin-top:14px;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+.stat{background:color-mix(in srgb,var(--bg) 45%, var(--panel));
+  border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+.stat .k{font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted);}
+.stat .v{font-weight:700; font-size:20px; color:var(--heading); margin-top:3px;
+  font-variant-numeric:lining-nums tabular-nums;}
+.stat .d{font-size:12px; color:var(--muted);}
+.norec{color:var(--muted); font-style:italic;}
+
+.progress{background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; padding:20px 22px; margin-bottom:26px;}
+.progress h2{font-family:var(--font-display); font-size:20px; color:var(--heading);
+  margin-bottom:12px;}
+.bars{display:grid; gap:10px;}
+.bar{display:grid; grid-template-columns:70px 1fr 60px; gap:12px;
+  align-items:center; font-size:13px;}
+/* both are <span>s — without display:block the width is ignored and
+   every bar renders full, which is exactly what it did. */
+.bar .track{display:block; height:11px; border-radius:999px; overflow:hidden;
+  background:color-mix(in srgb,var(--line) 85%, var(--bg));
+  border:1px solid var(--line);}
+.bar .fill{display:block; height:100%; border-radius:999px; background:var(--accent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 60%, transparent);
+  min-width:3px;}
+.bar .num{text-align:right; color:var(--muted); font-variant-numeric:tabular-nums;}
+
+.note{background:var(--panel); border:1px dashed var(--line); border-radius:14px;
+  padding:16px 18px; color:var(--muted); font-size:13.5px; margin-bottom:30px;}
+.note b{color:var(--text);}
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+
+@media (max-width:640px){
+  .island{width:96px;}
+  .bar{grid-template-columns:60px 1fr 52px;}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+{% include "web/_nav_css.html.j2" %}
+
+/* ---------- VOY-07: scene ports ---------- */
+.ports{max-width:var(--measure); margin:0 auto 30px; padding:0 22px;}
+.portroute{position:relative; display:flex; gap:6px; overflow-x:auto;
+  padding:14px 6px 18px; scroll-snap-type:x proximity;}
+.portroute::before{content:""; position:absolute; left:14px; right:14px; top:52px;
+  border-top:3px dotted var(--line);}
+.portroute::-webkit-scrollbar{height:6px;}
+.portroute::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+.port{position:relative; flex:0 0 auto; width:96px; scroll-snap-align:center;
+  background:none; border:0; color:inherit; font:inherit; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:4px; border-radius:12px; transition:transform .25s;}
+.port:hover,.port:focus-visible{transform:translateY(-5px);}
+.portdot{position:relative; z-index:1; width:70px; height:70px; border-radius:50%;
+  background-size:cover; background-position:center;
+  background-color:color-mix(in srgb,var(--accent) 20%, var(--panel));
+  border:2px solid var(--line); box-shadow:0 6px 16px -8px rgba(0,0,0,.6);
+  transition:border-color .25s, box-shadow .25s;}
+.port:hover .portdot{border-color:var(--accent);}
+.port.here .portdot{border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 40%, transparent), 0 8px 20px -6px rgba(0,0,0,.6);}
+.port.uncharted .portdot{filter:grayscale(1) brightness(.6); border-style:dashed;}
+.port.uncharted .portname{opacity:.5;}
+.ship{position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+  font-size:20px; animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-4px);}}
+.portmon{display:block; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); margin-top:7px;}
+.portname{display:block; font-size:11px; line-height:1.2; color:var(--text); margin-top:1px;}
+
+/* the diorama viewer — docking opens the scene */
+.diorama{position:fixed; inset:0; z-index:80; display:grid; place-items:center;
+  background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(6px);
+  padding:22px; animation:fade .25s ease;}
+.diorama[hidden]{display:none;}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+.diorama-in{position:relative; max-width:min(1000px,94vw); width:100%;
+  border-radius:18px; overflow:hidden; border:1px solid var(--line);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.8); background:var(--panel);}
+.diorama-img{display:block; width:100%; height:auto; max-height:78vh; object-fit:cover;}
+.diorama-cap{position:absolute; left:0; right:0; bottom:0; padding:52px 22px 18px;
+  background:linear-gradient(transparent,
+    color-mix(in srgb,var(--bg) 60%, transparent) 42%,
+    color-mix(in srgb,var(--bg) 95%, transparent));
+  display:flex; flex-direction:column; gap:2px;}
+.diorama-title{font-family:var(--font-display); font-size:clamp(22px,4vw,34px); color:var(--heading);
+  text-shadow:0 2px 14px color-mix(in srgb,var(--bg) 85%, transparent);}
+.diorama-sub{color:var(--muted); font-size:13px; letter-spacing:.06em; text-transform:uppercase;
+  text-shadow:0 1px 8px color-mix(in srgb,var(--bg) 85%, transparent);}
+.diorama-close{position:absolute; top:12px; right:12px; z-index:2; cursor:pointer;
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+  background:color-mix(in srgb,var(--bg) 70%, transparent); color:var(--text);
+  font-size:16px; backdrop-filter:blur(6px);}
+.diorama-close:hover{border-color:var(--accent); color:var(--accent);}
+@media (prefers-reduced-motion:reduce){.ship{animation:none;} .diorama{animation:none;}}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+{% set nav_here = "voyage" %}{% include "web/_nav.html.j2" %}
+<main class="wrap">
+<section class="mast">
+  <div class="kicker">{{ guild_name }} · the season as a voyage</div>
+  <h1>The Voyage Map</h1>
+  <div class="rule"></div>
+  <p class="lede">
+    The crew's year at sea. Twelve <strong>ports of call</strong> — the
+    guild's monthly scenes — with the ship docked at this month's port.
+    Dock at any port to step ashore, then scroll on for the season's
+    dungeons and raid laid out as islands.
+  </p>
+</section>
+
+{%- if ports %}
+{# VOY-07: the 12 monthly scene dioramas AS the voyage's ports #}
+<section class="ports" aria-label="Ports of call">
+  <div class="portroute">
+    {%- for pt in ports %}
+    <button type="button" class="port{{ ' here' if pt.current }}{{ '' if pt.ready else ' uncharted' }}"
+            data-month="{{ pt.month }}" data-title="{{ pt.title }}"
+            data-monthname="{{ pt.month_name }}"
+            {% if pt.hero %}data-hero="{{ pt.hero }}"{% endif %}
+            aria-label="{{ pt.month_name }} — {{ pt.title }}">
+      <span class="portdot"{% if pt.hero %} style="background-image:url('{{ pt.hero }}');"{% endif %}>
+        {%- if pt.current %}<span class="ship" title="The ship is here">⛵</span>{% endif %}
+      </span>
+      <span class="portmon">{{ pt.month_abbr }}</span>
+      <span class="portname">{{ pt.title }}</span>
+    </button>
+    {%- endfor %}
+  </div>
+</section>
+
+<div class="diorama" id="diorama" hidden>
+  <div class="diorama-in">
+    <button type="button" class="diorama-close" aria-label="Cast off">✕</button>
+    <img class="diorama-img" alt="">
+    <div class="diorama-cap"><b class="diorama-title"></b><span class="diorama-sub"></span></div>
+  </div>
+</div>
+{%- endif %}
+
+<div class="seasons" role="group" aria-label="Season">
+  {%- for s in season_list %}
+  <button type="button" data-season="{{ s.id }}"
+          aria-pressed="{{ 'true' if s.id == active_season else 'false' }}">{{ s.label }}</button>
+  {%- endfor %}
+</div>
+<p class="seasonnote" id="seasonnote"></p>
+
+{%- for s in season_list %}
+<div class="season-pane" data-season-pane="{{ s.id }}"
+     {% if s.id != active_season %}hidden{% endif %}>
+
+  {%- if s.progression %}
+  <section class="progress">
+    <h2>Raid progress — {{ s.raid_name }}</h2>
+    <div class="bars">
+      {%- for row in s.progression %}
+      <div class="bar">
+        <span>{{ row.label }}</span>
+        <span class="track"><span class="fill" style="width:{{ row.pct }}%;"></span></span>
+        <span class="num">{{ row.killed }}/{{ row.total }}</span>
+      </div>
+      {%- endfor %}
+    </div>
+  </section>
+  {%- endif %}
+
+  <section class="map">
+    <div class="mapbar">
+      <div class="leg">
+        <span><i style="background:var(--dungeon);"></i>Dungeon</span>
+        <span><i style="background:var(--raid);"></i>Raid boss</span>
+        <span><i style="background:var(--line);"></i>No record yet</span>
+      </div>
+      {%- if s.island_total %}
+      <div class="charted" title="Islands the guild has cleared this season">
+        <span class="chartnum">{{ s.cleared }}</span> of {{ s.island_total }} charted
+        <span class="chartbar"><span class="chartfill"
+          style="width:{{ (s.cleared / s.island_total * 100) | round }}%;"></span></span>
+      </div>
+      {%- endif %}
+    </div>
+
+    <div class="route" role="tablist">
+      {%- for isl in s.islands %}
+      <button type="button" class="island" role="tab"
+              data-kind="{{ isl.kind }}" data-state="{{ isl.state }}"
+              data-season="{{ s.id }}"
+              data-name="{{ isl.name|e }}"
+              data-detail="{{ isl.detail_html|e }}"
+              aria-selected="{{ 'true' if loop.first else 'false' }}">
+        <span class="blob">{% if loop.first and s.id == active_season %}<span class="ship">⛵</span>{% endif %}</span>
+        <span class="iname">{{ isl.name }}</span>
+        <span class="imeta">{{ 'Boss' if isl.kind == 'raid_boss' else 'Dungeon' }}</span>
+      </button>
+      {%- endfor %}
+    </div>
+
+    <div class="detail" data-detail-for="{{ s.id }}" aria-live="polite">
+      {{ s.islands[0].detail_html|safe if s.islands else '' }}
+    </div>
+  </section>
+</div>
+{%- endfor %}
+
+<p class="note">
+  <b>What's real here:</b> the dungeon and raid lists come straight from
+  Raider.io's season data, and every key, score and kill count is the
+  guild's own live data. <b>What isn't:</b> the islands are coloured
+  shapes, not art — that's the next step if you like the layout. Per-boss
+  kill detail isn't published by the API, so a boss is marked cleared
+  from the guild's progression counts and encounter order.
+</p>
+
+<footer class="foot">
+  <p>Test run · {{ fetched_note }}</p>
+  <p style="margin-top:6px;">Not connected to Discord or the guild website.</p>
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var notes = {{ season_notes|tojson }};
+  var buttons = [].slice.call(document.querySelectorAll('.seasons button'));
+  var panes = [].slice.call(document.querySelectorAll('[data-season-pane]'));
+  var note = document.getElementById('seasonnote');
+
+  function show(id){
+    panes.forEach(function(p){ p.hidden = p.dataset.seasonPane !== id; });
+    buttons.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.season === id ? 'true' : 'false');
+    });
+    note.textContent = notes[id] || '';
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ show(b.dataset.season); });
+  });
+  show(document.querySelector('.seasons button[aria-pressed="true"]').dataset.season);
+
+  [].slice.call(document.querySelectorAll('.island')).forEach(function(btn){
+    function pick(){
+      var pane = btn.closest('[data-season-pane]');
+      var target = pane.querySelector('.detail');
+      if (target) target.innerHTML = btn.dataset.detail || '';
+      pane.querySelectorAll('.island').forEach(function(o){
+        o.setAttribute('aria-selected', o === btn ? 'true' : 'false');
+      });
+    }
+    btn.addEventListener('click', pick);
+    btn.addEventListener('mouseenter', pick);
+    btn.addEventListener('focus', pick);
+  });
+})();
+
+  /* ---------- VOY-07: dock at a port, step ashore ---------- */
+  (function(){
+    var dio = document.getElementById('diorama');
+    if (!dio) return;
+    var img = dio.querySelector('.diorama-img');
+    var title = dio.querySelector('.diorama-title');
+    var sub = dio.querySelector('.diorama-sub');
+    function open(btn){
+      if (!btn.dataset.hero) return;   // uncharted port, nothing ashore yet
+      img.src = btn.dataset.hero; img.alt = btn.dataset.title;
+      title.textContent = btn.dataset.title;
+      sub.textContent = btn.dataset.monthname;
+      dio.hidden = false; document.body.style.overflow = 'hidden';
+    }
+    function close(){ dio.hidden = true; document.body.style.overflow = ''; }
+    Array.prototype.forEach.call(document.querySelectorAll('.port'), function(btn){
+      btn.addEventListener('click', function(){ open(btn); });
+    });
+    dio.querySelector('.diorama-close').addEventListener('click', close);
+    dio.addEventListener('click', function(e){ if (e.target === dio) close(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !dio.hidden) close(); });
+
+    // Bring the ship's current port into view within the route, so "docked
+    // at this month" reads at a glance — but only scroll the route itself,
+    // never the page, so the map still opens at the top.
+    var route = document.querySelector('.portroute');
+    var here = document.querySelector('.port.here');
+    if (route && here) {
+      route.scrollLeft = here.offsetLeft - (route.clientWidth - here.offsetWidth) / 2;
+    }
+  })();
+</script>
+{% include "web/_nav_script.html.j2" %}
+</body>
+</html>

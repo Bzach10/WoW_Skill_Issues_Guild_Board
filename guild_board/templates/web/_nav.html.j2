@@ -1,0 +1,41 @@
+{#
+  Persistent top nav — shared by the board and every second page.
+
+  `nav_root` is "" on the board and "../" on a profile page, so the same
+  links resolve from either depth. `nav_here` marks the current page so
+  its link reads as active.
+
+  The theme switch is included here too, so it is on every page and only
+  defined once. Its JS lives in _nav_script.
+#}
+<header class="sitenav">
+  <div class="wrap">
+    <a class="brand" href="{{ nav_root }}index.html">
+      <span class="brand-mark">⚓</span>
+      <span class="brand-name">{{ guild_name }}</span>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="{{ nav_root }}index.html"
+         {% if nav_here == 'board' %}aria-current="page"{% endif %}>Board</a>
+      <a href="{{ nav_root }}voyage.html"
+         {% if nav_here == 'voyage' %}aria-current="page"{% endif %}>Voyage</a>
+      <a href="{{ nav_root }}wanted.html"
+         {% if nav_here == 'wanted' %}aria-current="page"{% endif %}>Wanted</a>
+      <a href="{{ nav_root }}hall.html"
+         {% if nav_here == 'hall' %}aria-current="page"{% endif %}>The Hall</a>
+      <a href="{{ nav_root }}trophy.html"
+         {% if nav_here == 'trophy' %}aria-current="page"{% endif %}>Trophies</a>
+    </nav>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      {%- for key, t in themes.items() %}
+      <button type="button" data-theme="{{ key }}"
+              aria-pressed="{{ 'true' if key == default_theme else 'false' }}"
+              title="{{ t.label }}">{{ t.label }}</button>
+      {%- endfor %}
+    </div>
+  </div>
+</header>
+{%- if nav_here != 'board' %}
+{# a big, obvious return affordance — the thing Zach could not find #}
+<a class="backbar" href="{{ nav_root }}index.html">← Back to the board</a>
+{%- endif %}

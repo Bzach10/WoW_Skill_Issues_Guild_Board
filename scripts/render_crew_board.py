@@ -2,7 +2,11 @@
 """Render the public crew board (layout: crew_deck) from the real data
 already on disk — no network, no credentials, no CI required.
 
-    python scripts/render_crew_board.py [--out site/index.html]
+    python scripts/render_crew_board.py [--out crew_board.html]
+
+PREVIEW ONLY. This renderer is deliberately NOT wired into the weekly
+Discord post or the GitHub Pages publish. CI publishes site/index.html;
+writing there is refused unless you pass --i-know-this-publishes.
 
 Reads: config.yml, theme.yml, board_state.json, roster_cache.json, and
 (when the art workstream has produced them) blizzard_profile_cache.json
@@ -26,7 +30,17 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
+from guild_board import featured as featured_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
+from guild_board import manga as manga_mod  # noqa: E402
+from guild_board import profiles as profiles_mod  # noqa: E402
+from guild_board import recap as recap_mod  # noqa: E402
+from guild_board import scenery as scenery_mod  # noqa: E402
+from guild_board import ship as ship_mod  # noqa: E402
+from guild_board import standings as standings_mod  # noqa: E402
+from guild_board import showcase as showcase_mod  # noqa: E402
+from guild_board import site_data as site_data_mod  # noqa: E402
+from guild_board import wanted as wanted_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
 
@@ -91,12 +105,16 @@ def _ladder(season_scores, roster, region, crew=None, top_n=12):
                             member.get("role")) if x).lower()
     # Per-player realms via the shared resolver: the guild is cross-realm,
     # so a link built from the guild realm alone is wrong for most people.
+    on_deck = {m["slug"] for m in (crew or [])}
     index = links_mod.realm_index(roster)
     rows = sorted(season_scores.items(), key=lambda kv: -kv[1])[:top_n]
     out = []
     for i, (slug, score) in enumerate(rows, start=1):
-        url = links_mod.character_url(slug, index, region=region,
-                                      site="raiderio")
+        # Link to the profile page we own when this player is on the deck;
+        # otherwise fall back to their external profile.
+        url = (profiles_mod.profile_href(slug) if slug in on_deck
+               else links_mod.character_url(slug, index, region=region,
+                                            site="raiderio"))
         out.append({"rank": i, "name": slug.title(), "score": score, "url": url,
                     "tags": tags_by_slug.get(slug, "")})
     return out
@@ -119,7 +137,7 @@ def _island_record_html(island):
 
 
 def build_context(cfg, theme, board_state, roster, profiles=None,
-                  manifest=None, style=None):
+                  manifest=None, style=None, crew_limit=10):
     season_scores = (board_state or {}).get("season_scores") or {}
     standing = (board_state or {}).get("standing") or None
     guild_cfg = cfg.get("guild") or {}
@@ -128,9 +146,21 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
     manifest = crew_mod.load_manifest() if manifest is None else manifest
     style = crew_mod.resolve_style(manifest, theme, override=style)
 
-    crew = crew_mod.build_crew(cfg, theme, season_scores=season_scores,
+    crew = crew_mod.build_crew(cfg, theme, competition=crew_mod.load_crew_roster(),
+                               season_scores=season_scores,
                                profiles=profiles, manifest=manifest,
-                               style=style)
+                               style=style, limit=crew_limit)
+    # Parked members (evidenced locally, absent from the live pull —
+    # unresolved) keep a profile page but appear on NO crew surface:
+    # no deck, no wanted board, no hall, no ladders, no counts.
+    parked_crew = [m for m in crew if m.get("parked")]
+    crew = [m for m in crew if not m.get("parked")]
+    for member in crew:
+        # Stage roster-worktree art into this tree so every page uses a
+        # repo-relative path and the whole build stays portable.
+        member["art"] = showcase_mod.stage_art(
+            showcase_mod.character_art(member["slug"], cfg, manifest),
+            member["slug"], repo_root=Path(__file__).resolve().parent.parent)
     counts = crew_mod.role_counts(crew)
 
     scenes = crew_mod.resolve_scenes(theme)
@@ -198,7 +228,9 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
         "font_css_url": FONT_CSS_URL,
         "embers": _embers(),
         "crew": crew,
+        "parked_crew": parked_crew,
         "counts": counts,
+        "profile_href": {m["slug"]: profiles_mod.profile_href(m["slug"]) for m in crew},
         "active_style": style,
         "styles_available": manifest.get("styles_available") or [],
         "scenes": scenes,
@@ -222,6 +254,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--out", default="crew_board.html")
     ap.add_argument("--config", default="config.yml")
+    ap.add_argument("--crew-limit", type=int, default=10,
+                    help="How many characters stand on the deck (default 10).")
+    ap.add_argument("--i-know-this-publishes", action="store_true",
+                    help="Allow writing into site/, which CI publishes. "
+                         "Off by default: this is a preview renderer.")
     ap.add_argument("--manifest", default=None,
                     help="Path to a cast_manifest.json (defaults to the one "
                          "in the working directory).")
@@ -235,10 +272,38 @@ def main():
     board_state = _load_json("board_state.json", {})
     roster = (_load_json("roster_cache.json", {}) or {}).get("members") or []
 
-    manifest = (crew_mod.load_manifest(args.manifest)
-                if args.manifest else crew_mod.load_manifest())
+    # Reconcile every roster authority before rendering anything, and say
+    # out loud what disagrees. roster_cache.json alone is Warcraft-Logs
+    # derived and on 2026-07-22 was missing 15 real members, so a build
+    # that trusts it silently ships an incomplete guild.
+    try:
+        from guild_board import guild_roster as guild_roster_mod
+
+        _members, _recon = guild_roster_mod.resolve(cfg, wcl_roster=roster)
+        guild_roster_mod.warn_about_collisions(_members)
+        logger.info("Roster reconciliation: %s members across %s; %s disputed. "
+                    "Written to %s.", _recon["roster_total"],
+                    ", ".join(f"{k}={v}" for k, v in sorted(_recon["sources"].items())),
+                    len(_recon["disputed_members"]),
+                    guild_roster_mod.RECONCILIATION_PATH)
+    except Exception as exc:  # noqa: BLE001 - never block a render
+        logger.warning("Roster reconciliation skipped (%s); the roster below is "
+                       "roster_cache.json alone and may be incomplete.", exc)
+
+    if args.manifest:
+        manifest = crew_mod.load_manifest(args.manifest)
+    else:
+        # Prefer the roster generation's manifest in its own worktree;
+        # fall back to a local one.
+        roster_manifest = showcase_mod.roster_root(cfg) / "cast_manifest.json"
+        manifest = (crew_mod.load_manifest(str(roster_manifest))
+                    if roster_manifest.exists() else crew_mod.load_manifest())
+        logger.info("Manifest: %s (%d characters)",
+                    roster_manifest if roster_manifest.exists() else "local",
+                    len((manifest or {}).get("characters") or {}))
     ctx = build_context(cfg, theme, board_state, roster,
-                        manifest=manifest, style=args.style)
+                        manifest=manifest, style=args.style,
+                        crew_limit=args.crew_limit)
 
     env = jinja2.Environment(
         loader=jinja2.FileSystemLoader(str(TEMPLATE_DIR)),
@@ -247,8 +312,269 @@ def main():
     html = env.get_template("web/crew_deck.html.j2").render(**ctx)
 
     out = Path(args.out)
+    # CI publishes site/index.html to GitHub Pages and posts the board to
+    # Discord. This is a preview renderer; refuse to write into the
+    # published directory by accident.
+    parts = {part.lower() for part in out.parts}
+    if "site" in parts and not args.i_know_this_publishes:
+        raise SystemExit(
+            f"Refusing to write {out}: site/ is what CI publishes to GitHub "
+            f"Pages. This is a preview build. Pass --i-know-this-publishes "
+            f"only if you really intend to make this live.")
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding="utf-8")
+
+    # One permalink page per crew member. These are the real destination
+    # for a player's name — the durable fix for links that used to point
+    # at a guessed realm and open a blank page.
+    profile_ctxs = profiles_mod.build_all(
+        ctx["crew"] + ctx.get("parked_crew", []), board_state, cfg, roster)
+    for pctx in profile_ctxs:
+        pctx["art"] = pctx["member"].get("art") or showcase_mod.character_art(
+            pctx["slug"], cfg, manifest)
+    profile_dir = out.parent / profiles_mod.PROFILE_DIR
+    if profile_dir.exists():
+        # Clear stale pages from a previous, larger deck — otherwise an
+        # orphan keeps whatever paths it was written with.
+        for old in profile_dir.glob("*.html"):
+            old.unlink()
+    profile_dir.mkdir(parents=True, exist_ok=True)
+    for pctx in profile_ctxs:
+        page = env.get_template("web/pages/profile.html.j2").render(
+            p=pctx, **{k: v for k, v in ctx.items() if k != "p"})
+        (profile_dir / f"{pctx['slug']}.html").write_text(page, encoding="utf-8")
+    logger.info("Wrote %d profile pages to %s/", len(profile_ctxs), profile_dir)
+
+    # Retired page addresses stay alive as redirects, so every legacy
+    # link on the site — and in anyone's chat history — still lands
+    # somewhere real. Two ways an address retires:
+    #   * a name collision forced realm-suffixed slugs (two Berobens) —
+    #     the bare name redirects to the higher-scored holder;
+    #   * the slug policy accent-folded a name (enyò -> enyo) — the old
+    #     diacritic address redirects to the new one.
+    by_name = {}
+    for m in ctx["crew"]:
+        name_slug = crew_mod.slugify(m.get("name") or m["slug"])
+        by_name.setdefault(name_slug, []).append(m)
+    redirects = 0
+    for name_slug, members in by_name.items():
+        if (profile_dir / f"{name_slug}.html").exists():
+            continue
+        target = max(members, key=lambda m: (m.get("score") or 0))
+        if len(members) == 1 and name_slug == target["slug"]:
+            continue
+        note = ("Two crewmates share this name — taking you to "
+                if len(members) > 1 else "This page moved — taking you to ")
+        (profile_dir / f"{name_slug}.html").write_text(
+            "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+            f"<meta http-equiv=\"refresh\" content=\"0; url={target['slug']}.html\">"
+            f"<link rel=\"canonical\" href=\"{target['slug']}.html\">"
+            f"<title>{target.get('name', name_slug.title())}</title></head>"
+            f"<body><p>{note}"
+            f"<a href=\"{target['slug']}.html\">{target.get('name')}"
+            f" ({target.get('realm') or 'top ranked'})</a>.</p>"
+            "</body></html>", encoding="utf-8")
+        redirects += 1
+    if redirects:
+        logger.info("Wrote %d redirect page(s) for retired addresses.", redirects)
+
+    # ---- the private trial page (the "second draft" front door) --------
+    by_slug = {p["slug"]: p for p in profile_ctxs}
+    # Once the roster generation has delivered more than the original
+    # three, the showcase becomes the whole cast rather than a trial trio.
+    roster_cards = showcase_mod.build_roster_cards(ctx["crew"], by_slug, cfg, manifest)
+    trial_cards = showcase_mod.build_cards(ctx["crew"], by_slug, cfg, manifest)
+    cards = roster_cards if len(roster_cards) > len(trial_cards) else trial_cards
+    for card in cards:
+        card["profile_href"] = profiles_mod.profile_href(card["slug"])
+
+    # Real figures for the bug-fix note, computed rather than asserted.
+    index = links_mod.realm_index(roster)
+    realms = set(index.values())
+    guild_realm = ((cfg.get("guild") or {}).get("realm_slug") or "").lower()
+    off = [n for n, r in index.items() if r != guild_realm]
+
+    # the month's scene: character-baked hero, character-free backdrop
+    scene = scenery_mod.scene_for_month(cfg=cfg)
+    if scene:
+        staged = showcase_mod.stage_art(
+            {"src": scene["hero"], "cutout": scene["backdrop"]},
+            f"_scene_{scene['key']}",
+            repo_root=Path(__file__).resolve().parent.parent)
+        scene = dict(scene, hero=staged["src"], backdrop=staged["cutout"])
+        logger.info("Scene for %s: %s", scene["month_name"], scene["title"])
+
+    recap = recap_mod.generate(board_state, cfg)
+    if recap["sentences"]:
+        logger.info("Recap (%s): %d beats", recap["source"], len(recap["sentences"]))
+
+    # ANIM-08: the weekly two-panel manga strip, laid over scene stills we
+    # already have. Panel 1 is the current month's diorama; panel 2 a
+    # second ready scene, so the two panels differ.
+    repo_root = Path(__file__).resolve().parent.parent
+    manga_stills = []
+    if scene and scene.get("hero"):
+        manga_stills.append(scene["hero"])
+    for pt in scenery_mod.ports(cfg):
+        if (pt.get("ready") and pt.get("hero")
+                and pt["key"] != (scene or {}).get("key")):
+            second = showcase_mod.stage_art(
+                {"src": pt["hero"]}, f"_scene_{pt['key']}", repo_root=repo_root)
+            if second.get("src"):
+                manga_stills.append(second["src"])
+            break
+    manga = manga_mod.strip(board_state, cfg, stills=manga_stills)
+    if manga:
+        logger.info("Manga strip: %d panels", len(manga["panels"]))
+
+    # ARC-09: cameo debt. Read the accumulated featured feed if it has
+    # landed, degrade to this week's spotlight otherwise, and emit this
+    # week's spotlight for the weekly job to fold into the history.
+    cameo = featured_mod.cameo_debt(ctx["crew"], board_state, cfg)
+    featured_mod.emit_week(board_state, cfg)
+    logger.info("Cameo debt: feed=%s, %d never featured of %d",
+                cameo["have_feed"], cameo["never_count"], cameo["cast_size"])
+
+    # ---- S.S. Wipe Fest: the ship's rooms (HANGOUT_DESIGN Phase 0) ----
+    from datetime import datetime as _dt, timezone as _tz
+    week_index = _dt.now(_tz.utc).isocalendar()[1]
+    wanted_board = wanted_mod.board(ctx["crew"], board_state, cfg)
+    ship_ports = scenery_mod.ports(cfg)
+    for pt in ship_ports:
+        if pt.get("hero"):
+            st = showcase_mod.stage_art(
+                {"src": pt["hero"]}, f"_scene_{pt['key']}", repo_root=repo_root)
+            pt["hero"] = st.get("src")
+    island_layer = site_data_mod.layer("island_completion")
+    charted = None
+    if island_layer:
+        d = island_layer.get("dungeons") or {}
+        r = island_layer.get("raid") or {}
+        charted = {"cleared": (d.get("conquered") or 0) + (r.get("bosses_killed") or 0),
+                   "total": (d.get("total") or 0) + (r.get("total_bosses") or 0)}
+    # THE STANDINGS — the guild's competition data at/above Discord-board
+    # parity, from board_state + the real voyage_data + (when a refresh has
+    # produced it) web_stats.json for the WCL parse ladders.
+    voyage_data = _load_json("voyage_data.json", {})
+    web_stats = _load_json("web_stats.json", None)
+    standings_data = standings_mod.build(board_state, voyage_data, web_stats, cfg)
+
+    ship_data = {
+        "crows_nest": ship_mod.crows_nest(ctx.get("islands"), board_state, theme),
+        "popping_off": ship_mod.popping_off(wanted_board, board_state),
+        "galley": ship_mod.galley(theme, week_index),
+        "brig": ship_mod.brig(theme),
+        "hold": ship_mod.hold(theme, ctx.get("roast")),
+        "inside_jokes": ship_mod.INSIDE_JOKES,
+    }
+
+    from guild_board import admin_config
+    panel = admin_config.current_settings(cfg)
+
+    # ENG-10: the cast the pipeline has not drawn yet, as wanted posters.
+    # A card is "drawn" when it made it into `cards`; everyone else in the
+    # crew is still awaiting art. Names only — no invented portraits.
+    drawn_slugs = {c["slug"] for c in cards}
+    pending_cast = [{
+        "name": m.get("name"),
+        "role": m.get("role"),
+        "role_label": m.get("role_label"),
+        "spec": m.get("spec"),
+        "cls": m.get("cls"),
+    } for m in ctx["crew"] if m.get("slug") not in drawn_slugs]
+
+    trial_ctx = dict(ctx)
+    trial_ctx.update({
+        "scene": scene,
+        "manga": manga,
+        "cameo": cameo,
+        # THE WANTED BOARD: every crewmate's M+ score as a bounty. Pure
+        # function of board_state, so a daily data refresh just re-runs it.
+        "wanted": wanted_board,
+        # S.S. Wipe Fest ship rooms + the data each needs
+        "ship": ship_data,
+        "standings": standings_data,
+        "ports": ship_ports,
+        "charted": charted,
+        "records": (board_state or {}).get("records") or {},
+        "transmog": site_data_mod.layer("transmog_changes"),
+        # B-07: the trophy hall reads the backend's guild_achievements layer
+        # (committed sample until a credentialed refresh runs)
+        "trophies": site_data_mod.layer("guild_achievements"),
+        "cast_drawn": len(cards),
+        "cast_total": len(cards) + len(pending_cast),
+        "pending_cast": pending_cast,
+        "panel_scrim": panel["scrim"],
+        "panel_sections": panel["sections"],
+        "panel_hidden": panel["hidden"],
+        "recap": recap,
+        # a compact facet index for the filters + find-my-character
+        "facets": sorted({f for m in ctx["crew"] for f in (
+            m.get("cls"), m.get("spec"), m.get("role")) if f}),
+        "year_plan": scenery_mod.year_plan(cfg),
+        "cards": cards,
+        "trial_status": ("%d characters drawn so far · %d still in the queue"
+                         % (len(cards), max(len(ctx["crew"]) - len(cards), 0))),
+        "placeholder_count": max(len(ctx["crew"]) - len(cards), 0),
+        "board_href": out.name,
+        "roster_size": len(index),
+        "realm_count": len(realms),
+        "offrealm_pct": round(len(off) / len(index) * 100) if index else 0,
+        "rakdisc_realm": (index.get("rakdisc") or "another realm").replace("-", " ").title(),
+    })
+    trial_page = out.parent / "trial.html"
+    trial_page.write_text(
+        env.get_template("web/pages/trial.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+
+    # the grand hall (B-02): the whole drawn cast in one animated wall,
+    # reusing the same staged card art the showcase already resolved
+    hall_page = out.parent / "hall.html"
+    hall_page.write_text(
+        env.get_template("web/pages/hall.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the grand hall to %s (%d faces)", hall_page, len(cards))
+
+    # the trophy hall (B-07): guild achievements from the web-data contract
+    trophy_page = out.parent / "trophy.html"
+    trophy_page.write_text(
+        env.get_template("web/pages/trophy.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    _tr = trial_ctx["trophies"] or {}
+    logger.info("Wrote the trophy hall to %s (available=%s, %d trophies)",
+                trophy_page, _tr.get("available"), len(_tr.get("trophies") or []))
+
+    # the Wanted Board (the guild's founding competition, as bounty posters)
+    wanted_page = out.parent / "wanted.html"
+    wanted_page.write_text(
+        env.get_template("web/pages/wanted.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the wanted board to %s (%d ranked of %d)", wanted_page,
+                trial_ctx["wanted"]["ranked_count"], trial_ctx["wanted"]["total_count"])
+
+    # THE SHIP — S.S. Wipe Fest: the front door, all eleven rooms in one scroll
+    ship_page = out.parent / "ship.html"
+    ship_page.write_text(
+        env.get_template("web/pages/ship.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the ship (S.S. Wipe Fest) to %s", ship_page)
+
+    # the voyage map, rendered into the same site so the nav link resolves
+    try:
+        import subprocess
+        vout = out.parent / "voyage.html"
+        subprocess.run([sys.executable, "scripts/render_voyage_test.py",
+                        "--out", str(vout)], cwd=Path(__file__).resolve().parent.parent,
+                       check=True, capture_output=True, text=True)
+        logger.info("Wrote the voyage map to %s", vout)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Voyage render skipped (%s); the nav link will be inert.", exc)
+
+    logger.info("Wrote the trial showcase to %s (%s)",
+                trial_page, showcase_mod.trial_status(cards))
+    with_new = [m["name"] for m in ctx["crew"] if not m["art"]["pending"]]
+    logger.info("New-style art showing for %d of %d crew: %s",
+                len(with_new), len(ctx["crew"]), ", ".join(with_new) or "none")
     logger.info("Wrote %s (%d crew, %d islands, %d ladder rows, style=%s, "
                 "%d with real art)",
                 out, len(ctx["crew"]), len(ctx["islands"]), len(ctx["ladder"]),
@@ -256,6 +582,26 @@ def main():
                 sum(1 for m in ctx["crew"] if m["art_is_real"]))
     if ctx["stub_note"]:
         logger.info(ctx["stub_note"])
+
+    # ---- build gate: nothing credential-shaped may reach the shipped pages.
+    # This runs AFTER the render, against the real output, because the thing
+    # being guarded is what a guild member's browser can fetch — not what the
+    # templates say. Raises rather than warns: a page that leaks is not a
+    # page worth publishing, and this project has a documented habit of
+    # letting warnings scroll past.
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        from tests.test_no_credentials_in_output import find_violations, _format
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Credential guard could not be loaded (%s). The build "
+                       "is NOT verified clean — run "
+                       "tests/test_no_credentials_in_output.py by hand.", exc)
+    else:
+        violations = find_violations()
+        if violations:
+            raise SystemExit(_format(violations))
+        logger.info("Credential guard: clean (no credential names or "
+                    "credential-shaped values in shipped output).")
 
 
 if __name__ == "__main__":
