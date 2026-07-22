@@ -119,12 +119,41 @@ GUILD_ACHIEVEMENTS = {
 }
 
 
+# A realistic guild-pulse feed (already privacy-filtered by the fetch layer:
+# display names only, no user ids; opt-outs and blocklist applied upstream).
+PULSE_ITEMS = [
+    {"author": "Tommybravoo", "snippet": "we timed the +21 with 4 seconds left, "
+     "@Amrevenge literally soloed the last boss", "channel": "general", "kind": "chat",
+     "timestamp": "2026-07-20T02:14:00+00:00",
+     "reactions": [{"emoji": "🔥", "count": 12}, {"emoji": "😭", "count": 3}],
+     "media": [], "has_media": False},
+    {"author": "Rakdisc", "snippet": "healer pov of that pull", "channel": "clip-dump",
+     "kind": "memes", "timestamp": "2026-07-19T23:40:00+00:00",
+     "reactions": [{"emoji": "💀", "count": 8}],
+     "media": [{"url": "https://cdn.discordapp.com/attachments/…/clip.mp4",
+                "content_type": "video/mp4", "width": 1280, "height": 720,
+                "is_image": False, "filename": "clip.mp4"}], "has_media": True},
+    {"author": "Floofwall", "snippet": "lost 40k gold in the guild casino tonight, "
+     "no notes", "channel": "bully-corner", "kind": "gambling",
+     "timestamp": "2026-07-19T20:05:00+00:00",
+     "reactions": [{"emoji": "🎰", "count": 6}, {"emoji": "😂", "count": 9}],
+     "media": [], "has_media": False},
+    {"author": "Healyeah", "snippet": "made this for the raid team", "channel": "memes",
+     "kind": "memes", "timestamp": "2026-07-18T15:22:00+00:00",
+     "reactions": [{"emoji": "🤣", "count": 21}, {"emoji": ":kekw:", "count": 14}],
+     "media": [{"url": "https://cdn.discordapp.com/attachments/…/meme.png",
+                "content_type": "image/png", "width": 800, "height": 600,
+                "is_image": True, "filename": "meme.png"}], "has_media": True},
+]
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     site = web_data.build_site_data(
         board_state=BOARD_STATE, manifest=MANIFEST,
         dungeon_bests=DUNGEON_BESTS, raid_progression=RAID_PROGRESSION,
         guild_achievements=GUILD_ACHIEVEMENTS, transmog_snapshot=TRANSMOG_SNAPSHOT,
+        pulse_items=PULSE_ITEMS,
         guild={"name": "Skill Issues", "realm": "bleeding-hollow", "region": "us"},
         season=season_mod.CURRENT_SEASON)
     site["_sample"] = True
@@ -134,18 +163,19 @@ def main():
 
     _write(os.path.join(OUT, "site_data.sample.json"), site)
     for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes"):
+                  "island_completion", "transmog_changes", "guild_pulse"):
         payload = dict(site[layer])
         payload["_sample"] = True
         _write(os.path.join(OUT, f"{layer}.sample.json"), payload)
 
-    print(f"Wrote {OUT}/site_data.sample.json (+ 5 per-layer samples)")
+    print(f"Wrote {OUT}/site_data.sample.json (+ 6 per-layer samples)")
     print(f"  recap beats     : {site['recap_ribbon']['beat_count']}")
     print(f"  ladder rows     : {site['records_leaderboard']['ladder_size']}")
     print(f"  achievements    : {site['guild_achievements']['trophy_count']} trophies")
     print(f"  dungeon islands : {site['island_completion']['dungeons']['conquered']}/{site['island_completion']['dungeons']['total']} conquered")
     print(f"  raid bosses     : {site['island_completion']['raid']['bosses_killed']}/{site['island_completion']['raid']['total_bosses']}")
     print(f"  transmog changes: {site['transmog_changes']['changed_count']}")
+    print(f"  guild pulse     : {site['guild_pulse']['item_count']} items {site['guild_pulse']['by_kind']}")
     return 0
 
 

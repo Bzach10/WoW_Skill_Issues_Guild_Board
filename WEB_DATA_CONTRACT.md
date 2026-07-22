@@ -17,8 +17,8 @@ building against them.**
 
 Fetch strategy: `site_data.json` is the whole bundle; each layer is also a
 standalone file (`recap_ribbon.json`, `records_leaderboard.json`,
-`guild_achievements.json`, `island_completion.json`, `transmog_changes.json`)
-so a view can load just what it needs.
+`guild_achievements.json`, `island_completion.json`, `transmog_changes.json`,
+`guild_pulse.json`) so a view can load just what it needs.
 
 ### Build against the committed sample — no backend run needed
 
@@ -215,6 +215,75 @@ Before/after diff from the transmog fingerprint, baseline-snapshot pattern.
 - The manifest has no *image* diff yet (art regenerates async), so this
   reports that a look changed, not a before/after picture, until the art
   pipeline emits both versions.
+
+## 6. `guild_pulse` — the living Discord feed (hangout heartbeat)
+
+A rolling feed of guild-**public** Discord highlights: chat moments, memes,
+banter, notable reactions. Fed by the existing read-only bot; **no new bot,
+no new permissions.**
+
+```json
+{
+  "schema_version": 1,
+  "available": true,
+  "status": "ok",
+  "source": "read-only Discord bot, allowlisted guild-public channels",
+  "item_count": 24,
+  "by_kind": {"chat": 10, "memes": 9, "gambling": 3, "banter": 2},
+  "media_note": "Discord CDN urls may expire; refresh the feed rather than hotlinking indefinitely.",
+  "items": [
+    {
+      "author": "Tommybravoo",
+      "snippet": "we timed the +21 with 4 seconds left, @Amrevenge soloed the last boss",
+      "channel": "general",
+      "kind": "chat",
+      "timestamp": "2026-07-20T02:14:00+00:00",
+      "reactions": [{"emoji": "🔥", "count": 12}, {"emoji": "😭", "count": 3}],
+      "media": [],
+      "has_media": false
+    },
+    {
+      "author": "Healyeah", "snippet": "made this for the raid team",
+      "channel": "memes", "kind": "memes",
+      "timestamp": "2026-07-18T15:22:00+00:00",
+      "reactions": [{"emoji": "🤣", "count": 21}, {"emoji": ":kekw:", "count": 14}],
+      "media": [{"url": "https://cdn.discordapp.com/…/meme.png",
+                 "content_type": "image/png", "width": 800, "height": 600,
+                 "is_image": true, "filename": "meme.png"}],
+      "has_media": true
+    }
+  ]
+}
+```
+
+- `items` are newest-first, already privacy-filtered (see below). `kind` ∈
+  whatever the config assigns per channel (`chat`, `memes`, `banter`,
+  `gambling`, …) — group/tab by it.
+- `author` is a **display name only** — the feed never carries a numeric
+  user id or discriminator.
+- `reactions`: unicode emoji as the character, custom guild emoji as
+  `:name:`.
+- `media`: uploaded images/clips **and** embedded gifs/videos.
+  ⚠️ **Discord CDN urls can be signed/expiring — re-fetch the feed rather
+  than caching a url indefinitely.** A living feed does this anyway.
+- **Degraded state:** `available: false`, `status: "pending_discord_refresh"`,
+  `items: []` until the credentialed Discord refresh runs. Gate on
+  `available` and show an empty/"quiet in here" state — never fabricated.
+
+### Privacy model (four layers, all enforced backend-side)
+
+1. **Allowlist only.** Only channels in `config → discord_inputs.pulse_channels`
+   are ever read. DMs and private channels are never in that list, and the
+   bot physically cannot read a channel it lacks View + Read Message History
+   on. There is no "read the whole server" path.
+2. **Per-message opt-out.** React 🙈 (configurable) **or** put `[nofeed]`
+   (configurable) in a message → it never enters the feed. No mod action.
+3. **Content blocklist.** Configurable substrings drop any matching message.
+4. **Bot messages skipped; display names only.**
+
+The front-end does not need to enforce any of this — it arrives clean. But
+worth a line in the UI ("react 🙈 to hide a message from the site") so
+members know the opt-out exists.
 
 ---
 

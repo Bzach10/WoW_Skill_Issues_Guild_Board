@@ -535,13 +535,65 @@ def build_transmog_changes(manifest, snapshot=None):
 
 
 # ---------------------------------------------------------------------------
+# 6. Guild pulse — the living Discord feed
+# ---------------------------------------------------------------------------
+
+def build_guild_pulse(pulse_items=None, max_items=60):
+    """The hangout's heartbeat: a living feed of guild-public Discord
+    highlights (chat, memes, banter, notable reactions).
+
+    pulse_items: the flat list from discord_inputs.fetch_guild_pulse (already
+    privacy-filtered — allowlisted channels only, opt-outs and blocklist
+    applied, display names only, no user ids), or None. None degrades to a
+    stable empty shape with available:false so the feed component builds now
+    and fills when the credentialed Discord refresh runs.
+
+    Everything here is pass-through packaging: no NEW data is derived, so a
+    message can never appear in the feed unless the fetch layer let it
+    through its privacy filters.
+    """
+    if not pulse_items:
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "generated_at": _now_iso(),
+            "available": False,
+            "status": "pending_discord_refresh",
+            "source": "read-only Discord bot, allowlisted guild-public channels",
+            "items": [],
+            "item_count": 0,
+            "by_kind": {},
+        }
+
+    items = pulse_items[:max_items]
+    by_kind = {}
+    for it in items:
+        by_kind[it.get("kind", "chat")] = by_kind.get(it.get("kind", "chat"), 0) + 1
+
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at": _now_iso(),
+        "available": True,
+        "status": "ok",
+        "source": "read-only Discord bot, allowlisted guild-public channels",
+        "items": items,
+        "item_count": len(items),
+        "by_kind": by_kind,
+        # Discord CDN media urls can be signed/expiring, so the feed is meant
+        # to be re-fetched regularly rather than cached long-term client-side.
+        "media_note": "Discord CDN urls may expire; refresh the feed rather "
+                      "than hotlinking indefinitely.",
+    }
+
+
+# ---------------------------------------------------------------------------
 # Assembler
 # ---------------------------------------------------------------------------
 
 def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
                     raid_progression=None, guild_achievements=None,
-                    transmog_snapshot=None, guild=None, season=None):
-    """Assemble all five layers into one envelope for the front-end.
+                    transmog_snapshot=None, pulse_items=None,
+                    guild=None, season=None):
+    """Assemble all six layers into one envelope for the front-end.
 
     Any input may be omitted; the corresponding layer degrades to its
     documented empty/pending shape rather than raising, so a partial data
@@ -566,4 +618,5 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
             (board_state or {}).get("records"), season=season,
             confirmed_boss_kills=confirmed_boss_kills),
         "transmog_changes": transmog,
+        "guild_pulse": build_guild_pulse(pulse_items),
     }

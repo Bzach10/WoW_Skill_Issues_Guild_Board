@@ -128,6 +128,13 @@ def main(argv=None):
               "layer 4 inferred. Run scripts/refresh_guild_data.py in the "
               "credentialed Action to populate.")
 
+    # Guild pulse (layer 6) — the living Discord feed, written by
+    # scripts/refresh_guild_pulse.py (needs DISCORD_BOT_TOKEN). Absent until
+    # that refresh runs; the layer degrades to available:false.
+    pulse_path = (cfg.get("discord_inputs") or {}).get(
+        "pulse_cache_file", os.path.join(REPO_ROOT, "guild_pulse_cache.json"))
+    pulse_items = (_load_json(pulse_path, {}) or {}).get("items")
+
     dungeon_cache = os.path.join(args.out, "dungeon_bests.json")
     if args.live_dungeons:
         print("Fetching per-dungeon bests from Raider.io (full roster)…")
@@ -145,6 +152,7 @@ def main(argv=None):
         board_state=board_state, manifest=manifest,
         dungeon_bests=dungeon_bests, raid_progression=raid_progression,
         guild_achievements=guild_ach, transmog_snapshot=snapshot,
+        pulse_items=pulse_items,
         guild={"name": cfg["guild"]["name"], "realm": cfg["guild"]["realm_slug"],
                "region": cfg["guild"]["region"]},
         season=season)
@@ -156,7 +164,7 @@ def main(argv=None):
     # Combined envelope + one file per layer.
     _write(os.path.join(args.out, "site_data.json"), site)
     for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes"):
+                  "island_completion", "transmog_changes", "guild_pulse"):
         _write(os.path.join(args.out, f"{layer}.json"), site[layer])
 
     print(f"\nWrote {args.out}/site_data.json (+ 5 per-layer files)")
@@ -170,6 +178,9 @@ def main(argv=None):
           f"(source: {raid['detail_source']})")
     print(f"  transmog changes: {site['transmog_changes']['changed_count']}"
           f"{' (first run — baseline seeded)' if site['transmog_changes']['is_first_run'] else ''}")
+    pulse = site["guild_pulse"]
+    print(f"  guild pulse     : {pulse['item_count']} items"
+          f"{' (' + str(pulse['by_kind']) + ')' if pulse['available'] else ' (' + pulse['status'] + ')'}")
     return 0
 
 

@@ -18,7 +18,7 @@ from guild_board import web_data
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = REPO / "samples"
 LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
-          "island_completion", "transmog_changes")
+          "island_completion", "transmog_changes", "guild_pulse")
 
 
 def _load(name):
@@ -66,7 +66,7 @@ def test_sample_is_regenerable_from_current_producers():
         board_state=gen.BOARD_STATE, manifest=gen.MANIFEST,
         dungeon_bests=gen.DUNGEON_BESTS, raid_progression=gen.RAID_PROGRESSION,
         guild_achievements=gen.GUILD_ACHIEVEMENTS,
-        transmog_snapshot=gen.TRANSMOG_SNAPSHOT)
+        transmog_snapshot=gen.TRANSMOG_SNAPSHOT, pulse_items=gen.PULSE_ITEMS)
     committed = _load("site_data.sample.json")
 
     for layer in LAYERS:
@@ -88,3 +88,7 @@ def test_sample_exercises_populated_states():
     assert {"conquered", "attempted", "locked"} <= statuses  # all three shown
     assert site["transmog_changes"]["changed_count"] >= 1
     assert site["records_leaderboard"]["ladder"]
+    assert site["guild_pulse"]["available"] is True
+    assert site["guild_pulse"]["item_count"] >= 1
+    # The pulse sample must never leak a numeric user id.
+    assert "999" not in repr(site["guild_pulse"]["items"])
