@@ -346,9 +346,24 @@ def main():
     from guild_board import admin_config
     panel = admin_config.current_settings(cfg)
 
+    # ENG-10: the cast the pipeline has not drawn yet, as wanted posters.
+    # A card is "drawn" when it made it into `cards`; everyone else in the
+    # crew is still awaiting art. Names only — no invented portraits.
+    drawn_slugs = {c["slug"] for c in cards}
+    pending_cast = [{
+        "name": m.get("name"),
+        "role": m.get("role"),
+        "role_label": m.get("role_label"),
+        "spec": m.get("spec"),
+        "cls": m.get("cls"),
+    } for m in ctx["crew"] if m.get("slug") not in drawn_slugs]
+
     trial_ctx = dict(ctx)
     trial_ctx.update({
         "scene": scene,
+        "cast_drawn": len(cards),
+        "cast_total": len(cards) + len(pending_cast),
+        "pending_cast": pending_cast,
         "panel_scrim": panel["scrim"],
         "panel_sections": panel["sections"],
         "panel_hidden": panel["hidden"],
