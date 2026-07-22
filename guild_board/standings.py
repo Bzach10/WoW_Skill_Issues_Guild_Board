@@ -216,5 +216,11 @@ def build(board_state, voyage_data=None, web_stats=None, cfg=None, roster=None):
         "biggest_climb": biggest_climb,
         "iron_attendance": iron,
         "ladders": parallel_ladders(ladder),
-        "has_web_stats": bool(web_stats),
+        # True only when web_stats actually carries ladders. An absence
+        # record ({"available": false, "reason": ...}) is a real file and
+        # would otherwise flip this on, labelling season records as "this
+        # week" and appending a % to values that aren't percentages.
+        "has_web_stats": bool(web_stats) and web_stats.get("available") is not False
+                         and any(web_stats.get(k) for k in
+                                 ("top_dps", "top_hps", "top_tanks")),
     }

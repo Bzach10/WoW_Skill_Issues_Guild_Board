@@ -184,7 +184,14 @@ def wcl_roster_entries(roster_list):
 # Resolution
 # ---------------------------------------------------------------------------
 
-def merge_sources(sources):
+# Sources that only ever list *part* of the roster. They contribute members
+# but must not count towards agreement: the supplement exists precisely to
+# hold members the other sources lack, so including it would mark every
+# single member "disputed" and make the signal useless.
+PARTIAL_SOURCES = ("supplement",)
+
+
+def merge_sources(sources, partial=PARTIAL_SOURCES):
     """sources: {source_name: {key: info} | None}. None = unreachable.
 
     Returns (members, report). `members` is the UNION keyed by name-realm,
@@ -192,7 +199,8 @@ def merge_sources(sources):
     values seen. Nobody is ever dropped for appearing in only one source.
     """
     members = {}
-    reachable = [n for n, m in sources.items() if m is not None]
+    reachable = [n for n, m in sources.items()
+                 if m is not None and n not in partial]
 
     for source_name in sorted(sources):
         found = sources[source_name]
@@ -209,17 +217,22 @@ def merge_sources(sources):
 
     for row in members.values():
         row["sources"] = sorted(set(row["sources"]))
-        # Present in some reachable sources but not all -> needs a human.
-        row["disputed"] = len(row["sources"]) < len(reachable)
+        # Present in some full-roster sources but not all -> needs a human.
+        # A member vouched for ONLY by a partial source is disputed too:
+        # that is exactly the Phyrthepali case.
+        full_backing = [s for s in row["sources"] if s not in partial]
+        row["disputed"] = len(full_backing) < len(reachable)
 
-    report = build_report(sources, members)
+    report = build_report(sources, members, partial)
     return members, report
 
 
-def build_report(sources, members):
+def build_report(sources, members, partial=PARTIAL_SOURCES):
     """The disagreement, written down. This is the point of the module."""
-    reachable = {n: m for n, m in sources.items() if m is not None}
-    unreachable = sorted(n for n, m in sources.items() if m is None)
+    reachable = {n: m for n, m in sources.items()
+                 if m is not None and n not in partial}
+    unreachable = sorted(n for n, m in sources.items()
+                         if m is None and n not in partial)
 
     only_in = {}
     missing_from = {}
@@ -320,6 +333,39 @@ def resolve(cfg, wcl_roster=None, supplement=None, raiderio_fetch=None,
 
     write_report(report, report_path)
     return members, report
+
+
+def detect_name_collisions(members):
+    """Characters that share a bare name — where name-keying loses data.
+
+    This is not hypothetical and it is not only a display bug.
+    `board_state.json.season_scores` is keyed by bare character name, so
+    the two Berobens share one slot: it holds 1907.8 (the Quel'dorei
+    Protection Paladin) and the Emerald Dream Mage's 2307.3 is simply
+    **gone** — overwritten, not merged. Every bare-name key in this repo
+    silently destroys one of the two.
+
+    Returns {bare_name: [keys...]} for every name held by more than one
+    character. Callers should surface it, loudly.
+    """
+    by_name = {}
+    for key, row in (members or {}).items():
+        name = (row.get("name") or key.rsplit("-", 1)[0]).strip().lower()
+        by_name.setdefault(name, []).append(key)
+    return {n: sorted(k) for n, k in by_name.items() if len(k) > 1}
+
+
+def warn_about_collisions(members, logger_=None):
+    """Log every bare-name collision at WARNING. Returns the collisions."""
+    log = logger_ or logger
+    collisions = detect_name_collisions(members)
+    for name, keys in sorted(collisions.items()):
+        log.warning(
+            "Name collision: %s distinct characters are named %r (%s). Any "
+            "data keyed by bare name — season_scores, streaks, profile links "
+            "— holds only ONE of them and silently discards the rest.",
+            len(keys), name, ", ".join(keys))
+    return collisions
 
 
 def roster_keys(members):

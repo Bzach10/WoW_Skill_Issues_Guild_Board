@@ -113,6 +113,33 @@ def test_resolve_unions_supplement_and_survives_a_dead_network(tmp_path):
     assert out.exists(), "the reconciliation must land on disk to be read"
 
 
+def test_bare_name_collisions_are_detected_and_named():
+    """The two Berobens share one season_scores slot; one score is lost."""
+    from guild_board.guild_roster import detect_name_collisions
+
+    members, _ = merge_sources({"raiderio": _rio()})
+    collisions = detect_name_collisions(members)
+    assert collisions == {
+        "beroben": ["beroben-emerald-dream", "beroben-queldorei"]}
+    # a name held by exactly one character is not a collision
+    assert "amrevenge" not in collisions
+
+
+def test_the_two_violences_are_not_a_bare_name_collision():
+    """They differ in the raw name, so name-keying keeps them apart. It is
+    accent *folding* that collapses them, which member_key does not do."""
+    from guild_board.guild_roster import detect_name_collisions
+
+    members, _ = merge_sources({"raiderio": {
+        "viôlence-bleeding-hollow": {"name": "Viôlence",
+                                     "realm_slug": "bleeding-hollow"},
+        "violënce-bleeding-hollow": {"name": "Violënce",
+                                     "realm_slug": "bleeding-hollow"},
+    }})
+    assert len(members) == 2
+    assert detect_name_collisions(members) == {}
+
+
 def test_report_counts_are_internally_consistent():
     _, report = merge_sources({"raiderio": _rio(), "wcl_cache": _wcl()})
     assert (report["agreed_by_all_reachable_sources"]

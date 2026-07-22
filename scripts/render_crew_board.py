@@ -146,9 +146,15 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
     manifest = crew_mod.load_manifest() if manifest is None else manifest
     style = crew_mod.resolve_style(manifest, theme, override=style)
 
-    crew = crew_mod.build_crew(cfg, theme, season_scores=season_scores,
+    crew = crew_mod.build_crew(cfg, theme, competition=crew_mod.load_crew_roster(),
+                               season_scores=season_scores,
                                profiles=profiles, manifest=manifest,
                                style=style, limit=crew_limit)
+    # Parked members (evidenced locally, absent from the live pull —
+    # unresolved) keep a profile page but appear on NO crew surface:
+    # no deck, no wanted board, no hall, no ladders, no counts.
+    parked_crew = [m for m in crew if m.get("parked")]
+    crew = [m for m in crew if not m.get("parked")]
     for member in crew:
         # Stage roster-worktree art into this tree so every page uses a
         # repo-relative path and the whole build stays portable.
@@ -222,6 +228,7 @@ def build_context(cfg, theme, board_state, roster, profiles=None,
         "font_css_url": FONT_CSS_URL,
         "embers": _embers(),
         "crew": crew,
+        "parked_crew": parked_crew,
         "counts": counts,
         "profile_href": {m["slug"]: profiles_mod.profile_href(m["slug"]) for m in crew},
         "active_style": style,
@@ -265,6 +272,24 @@ def main():
     board_state = _load_json("board_state.json", {})
     roster = (_load_json("roster_cache.json", {}) or {}).get("members") or []
 
+    # Reconcile every roster authority before rendering anything, and say
+    # out loud what disagrees. roster_cache.json alone is Warcraft-Logs
+    # derived and on 2026-07-22 was missing 15 real members, so a build
+    # that trusts it silently ships an incomplete guild.
+    try:
+        from guild_board import guild_roster as guild_roster_mod
+
+        _members, _recon = guild_roster_mod.resolve(cfg, wcl_roster=roster)
+        guild_roster_mod.warn_about_collisions(_members)
+        logger.info("Roster reconciliation: %s members across %s; %s disputed. "
+                    "Written to %s.", _recon["roster_total"],
+                    ", ".join(f"{k}={v}" for k, v in sorted(_recon["sources"].items())),
+                    len(_recon["disputed_members"]),
+                    guild_roster_mod.RECONCILIATION_PATH)
+    except Exception as exc:  # noqa: BLE001 - never block a render
+        logger.warning("Roster reconciliation skipped (%s); the roster below is "
+                       "roster_cache.json alone and may be incomplete.", exc)
+
     if args.manifest:
         manifest = crew_mod.load_manifest(args.manifest)
     else:
@@ -302,7 +327,8 @@ def main():
     # One permalink page per crew member. These are the real destination
     # for a player's name — the durable fix for links that used to point
     # at a guessed realm and open a blank page.
-    profile_ctxs = profiles_mod.build_all(ctx["crew"], board_state, cfg, roster)
+    profile_ctxs = profiles_mod.build_all(
+        ctx["crew"] + ctx.get("parked_crew", []), board_state, cfg, roster)
     for pctx in profile_ctxs:
         pctx["art"] = pctx["member"].get("art") or showcase_mod.character_art(
             pctx["slug"], cfg, manifest)
@@ -318,6 +344,39 @@ def main():
             p=pctx, **{k: v for k, v in ctx.items() if k != "p"})
         (profile_dir / f"{pctx['slug']}.html").write_text(page, encoding="utf-8")
     logger.info("Wrote %d profile pages to %s/", len(profile_ctxs), profile_dir)
+
+    # Retired page addresses stay alive as redirects, so every legacy
+    # link on the site — and in anyone's chat history — still lands
+    # somewhere real. Two ways an address retires:
+    #   * a name collision forced realm-suffixed slugs (two Berobens) —
+    #     the bare name redirects to the higher-scored holder;
+    #   * the slug policy accent-folded a name (enyò -> enyo) — the old
+    #     diacritic address redirects to the new one.
+    by_name = {}
+    for m in ctx["crew"]:
+        name_slug = crew_mod.slugify(m.get("name") or m["slug"])
+        by_name.setdefault(name_slug, []).append(m)
+    redirects = 0
+    for name_slug, members in by_name.items():
+        if (profile_dir / f"{name_slug}.html").exists():
+            continue
+        target = max(members, key=lambda m: (m.get("score") or 0))
+        if len(members) == 1 and name_slug == target["slug"]:
+            continue
+        note = ("Two crewmates share this name — taking you to "
+                if len(members) > 1 else "This page moved — taking you to ")
+        (profile_dir / f"{name_slug}.html").write_text(
+            "<!DOCTYPE html><html lang=\"en\"><head><meta charset=\"utf-8\">"
+            f"<meta http-equiv=\"refresh\" content=\"0; url={target['slug']}.html\">"
+            f"<link rel=\"canonical\" href=\"{target['slug']}.html\">"
+            f"<title>{target.get('name', name_slug.title())}</title></head>"
+            f"<body><p>{note}"
+            f"<a href=\"{target['slug']}.html\">{target.get('name')}"
+            f" ({target.get('realm') or 'top ranked'})</a>.</p>"
+            "</body></html>", encoding="utf-8")
+        redirects += 1
+    if redirects:
+        logger.info("Wrote %d redirect page(s) for retired addresses.", redirects)
 
     # ---- the private trial page (the "second draft" front door) --------
     by_slug = {p["slug"]: p for p in profile_ctxs}
@@ -398,8 +457,7 @@ def main():
     # produced it) web_stats.json for the WCL parse ladders.
     voyage_data = _load_json("voyage_data.json", {})
     web_stats = _load_json("web_stats.json", None)
-    standings_data = standings_mod.build(board_state, voyage_data, web_stats, cfg,
-                                         roster=roster)
+    standings_data = standings_mod.build(board_state, voyage_data, web_stats, cfg)
 
     ship_data = {
         "crows_nest": ship_mod.crows_nest(ctx.get("islands"), board_state, theme),
