@@ -21,7 +21,9 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
+from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import seasons as seasons_mod  # noqa: E402
+from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
@@ -154,6 +156,17 @@ def main():
         logger.warning("No voyage_data.json — run scripts/fetch_voyage_data.py "
                        "for live guild data. Islands will show no records.")
 
+    # The ports ARE the 12 scene dioramas (VOY-07). Their hero art lives in
+    # the roster worktree as absolute paths; stage each into the local tree
+    # so the bundle can resolve it, exactly as the board's hero banner does.
+    repo_root = Path(__file__).resolve().parent.parent
+    ports = scenery_mod.ports(cfg)
+    for pt in ports:
+        if pt.get("hero"):
+            staged = showcase_mod.stage_art(
+                {"src": pt["hero"]}, f"_scene_{pt['key']}", repo_root=repo_root)
+            pt["hero"] = staged["src"]
+
     active = seasons_mod.active_id(cfg=cfg)
     views = []
     for season_id in seasons_mod.available():
@@ -175,6 +188,7 @@ def main():
         "season_list": views,
         "active_season": active,
         "season_notes": {v["id"]: v["note"] for v in views},
+        "ports": ports,
         "nav_root": "",
         "nav_here": "voyage",
         "fetched_note": (f"guild data fetched {live.get('fetched_at')}"

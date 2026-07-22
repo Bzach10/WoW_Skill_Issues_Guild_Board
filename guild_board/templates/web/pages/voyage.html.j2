@@ -157,6 +157,62 @@ a{color:var(--accent);}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 {% include "web/_nav_css.html.j2" %}
+
+/* ---------- VOY-07: scene ports ---------- */
+.ports{max-width:var(--measure); margin:0 auto 30px; padding:0 22px;}
+.portroute{position:relative; display:flex; gap:6px; overflow-x:auto;
+  padding:14px 6px 18px; scroll-snap-type:x proximity;}
+.portroute::before{content:""; position:absolute; left:14px; right:14px; top:52px;
+  border-top:3px dotted var(--line);}
+.portroute::-webkit-scrollbar{height:6px;}
+.portroute::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+.port{position:relative; flex:0 0 auto; width:96px; scroll-snap-align:center;
+  background:none; border:0; color:inherit; font:inherit; cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; text-align:center;
+  padding:4px; border-radius:12px; transition:transform .25s;}
+.port:hover,.port:focus-visible{transform:translateY(-5px);}
+.portdot{position:relative; z-index:1; width:70px; height:70px; border-radius:50%;
+  background-size:cover; background-position:center;
+  background-color:color-mix(in srgb,var(--accent) 20%, var(--panel));
+  border:2px solid var(--line); box-shadow:0 6px 16px -8px rgba(0,0,0,.6);
+  transition:border-color .25s, box-shadow .25s;}
+.port:hover .portdot{border-color:var(--accent);}
+.port.here .portdot{border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 40%, transparent), 0 8px 20px -6px rgba(0,0,0,.6);}
+.port.uncharted .portdot{filter:grayscale(1) brightness(.6); border-style:dashed;}
+.port.uncharted .portname{opacity:.5;}
+.ship{position:absolute; top:-16px; left:50%; transform:translateX(-50%);
+  font-size:20px; animation:bob 3s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-4px);}}
+.portmon{display:block; font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); margin-top:7px;}
+.portname{display:block; font-size:11px; line-height:1.2; color:var(--text); margin-top:1px;}
+
+/* the diorama viewer — docking opens the scene */
+.diorama{position:fixed; inset:0; z-index:80; display:grid; place-items:center;
+  background:color-mix(in srgb, var(--bg) 82%, transparent); backdrop-filter:blur(6px);
+  padding:22px; animation:fade .25s ease;}
+.diorama[hidden]{display:none;}
+@keyframes fade{from{opacity:0;}to{opacity:1;}}
+.diorama-in{position:relative; max-width:min(1000px,94vw); width:100%;
+  border-radius:18px; overflow:hidden; border:1px solid var(--line);
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.8); background:var(--panel);}
+.diorama-img{display:block; width:100%; height:auto; max-height:78vh; object-fit:cover;}
+.diorama-cap{position:absolute; left:0; right:0; bottom:0; padding:52px 22px 18px;
+  background:linear-gradient(transparent,
+    color-mix(in srgb,var(--bg) 60%, transparent) 42%,
+    color-mix(in srgb,var(--bg) 95%, transparent));
+  display:flex; flex-direction:column; gap:2px;}
+.diorama-title{font-family:var(--font-display); font-size:clamp(22px,4vw,34px); color:var(--heading);
+  text-shadow:0 2px 14px color-mix(in srgb,var(--bg) 85%, transparent);}
+.diorama-sub{color:var(--muted); font-size:13px; letter-spacing:.06em; text-transform:uppercase;
+  text-shadow:0 1px 8px color-mix(in srgb,var(--bg) 85%, transparent);}
+.diorama-close{position:absolute; top:12px; right:12px; z-index:2; cursor:pointer;
+  width:38px; height:38px; border-radius:50%; border:1px solid var(--line);
+  background:color-mix(in srgb,var(--bg) 70%, transparent); color:var(--text);
+  font-size:16px; backdrop-filter:blur(6px);}
+.diorama-close:hover{border-color:var(--accent); color:var(--accent);}
+@media (prefers-reduced-motion:reduce){.ship{animation:none;} .diorama{animation:none;}}
 </style>
 </head>
 <body>
@@ -169,12 +225,41 @@ a{color:var(--accent);}
   <h1>The Voyage Map</h1>
   <div class="rule"></div>
   <p class="lede">
-    Every dungeon and raid boss of the season laid out as islands on the
-    crew's route. Tap an island to see what the guild has actually done
-    there. The island set is data-driven — <strong>Season 2 is already
-    loaded</strong>, so switching at the grand opening is a one-line change.
+    The crew's year at sea. Twelve <strong>ports of call</strong> — the
+    guild's monthly scenes — with the ship docked at this month's port.
+    Dock at any port to step ashore, then scroll on for the season's
+    dungeons and raid laid out as islands.
   </p>
 </section>
+
+{%- if ports %}
+{# VOY-07: the 12 monthly scene dioramas AS the voyage's ports #}
+<section class="ports" aria-label="Ports of call">
+  <div class="portroute">
+    {%- for pt in ports %}
+    <button type="button" class="port{{ ' here' if pt.current }}{{ '' if pt.ready else ' uncharted' }}"
+            data-month="{{ pt.month }}" data-title="{{ pt.title }}"
+            data-monthname="{{ pt.month_name }}"
+            {% if pt.hero %}data-hero="{{ pt.hero }}"{% endif %}
+            aria-label="{{ pt.month_name }} — {{ pt.title }}">
+      <span class="portdot"{% if pt.hero %} style="background-image:url('{{ pt.hero }}');"{% endif %}>
+        {%- if pt.current %}<span class="ship" title="The ship is here">⛵</span>{% endif %}
+      </span>
+      <span class="portmon">{{ pt.month_abbr }}</span>
+      <span class="portname">{{ pt.title }}</span>
+    </button>
+    {%- endfor %}
+  </div>
+</section>
+
+<div class="diorama" id="diorama" hidden>
+  <div class="diorama-in">
+    <button type="button" class="diorama-close" aria-label="Cast off">✕</button>
+    <img class="diorama-img" alt="">
+    <div class="diorama-cap"><b class="diorama-title"></b><span class="diorama-sub"></span></div>
+  </div>
+</div>
+{%- endif %}
 
 <div class="seasons" role="group" aria-label="Season">
   {%- for s in season_list %}
@@ -281,6 +366,38 @@ a{color:var(--accent);}
     btn.addEventListener('focus', pick);
   });
 })();
+
+  /* ---------- VOY-07: dock at a port, step ashore ---------- */
+  (function(){
+    var dio = document.getElementById('diorama');
+    if (!dio) return;
+    var img = dio.querySelector('.diorama-img');
+    var title = dio.querySelector('.diorama-title');
+    var sub = dio.querySelector('.diorama-sub');
+    function open(btn){
+      if (!btn.dataset.hero) return;   // uncharted port, nothing ashore yet
+      img.src = btn.dataset.hero; img.alt = btn.dataset.title;
+      title.textContent = btn.dataset.title;
+      sub.textContent = btn.dataset.monthname;
+      dio.hidden = false; document.body.style.overflow = 'hidden';
+    }
+    function close(){ dio.hidden = true; document.body.style.overflow = ''; }
+    Array.prototype.forEach.call(document.querySelectorAll('.port'), function(btn){
+      btn.addEventListener('click', function(){ open(btn); });
+    });
+    dio.querySelector('.diorama-close').addEventListener('click', close);
+    dio.addEventListener('click', function(e){ if (e.target === dio) close(); });
+    document.addEventListener('keydown', function(e){ if (e.key === 'Escape' && !dio.hidden) close(); });
+
+    // Bring the ship's current port into view within the route, so "docked
+    // at this month" reads at a glance — but only scroll the route itself,
+    // never the page, so the map still opens at the top.
+    var route = document.querySelector('.portroute');
+    var here = document.querySelector('.port.here');
+    if (route && here) {
+      route.scrollLeft = here.offsetLeft - (route.clientWidth - here.offsetWidth) / 2;
+    }
+  })();
 </script>
 </body>
 </html>

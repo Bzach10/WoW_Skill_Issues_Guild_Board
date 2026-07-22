@@ -109,6 +109,39 @@ def scene_for_month(month=None, cfg=None, rotation=None):
     }
 
 
+def ports(cfg=None):
+    """The 12 monthly scenes as a voyage route of PORTS (VOY-07).
+
+    Each port carries its hero diorama and backdrop, whether it is the
+    port the ship is currently docked at, and its month. Docking at a
+    port opens that scene. A month with no art on disk still appears as
+    an undiscovered port rather than vanishing, so the route is always 12.
+    """
+    import calendar
+    from datetime import datetime as _dt
+    rotation = load_rotation(cfg=cfg)
+    now = (_dt.now().month)
+    out = []
+    for m in range(1, 13):
+        key = rotation.get(m)
+        directory = _scene_dir(key) if key else None
+        hero = directory / HERO_FILE if directory else None
+        backdrop = directory / BACKDROP_FILE if directory else None
+        ready = bool(backdrop and backdrop.exists())
+        out.append({
+            "month": m,
+            "month_name": calendar.month_name[m],
+            "month_abbr": calendar.month_abbr[m],
+            "key": key,
+            "title": (key or "").replace("_", " ").title() or "Uncharted",
+            "current": m == now,
+            "ready": ready,
+            "hero": str(hero).replace(os.sep, "/") if (hero and hero.exists()) else None,
+            "backdrop": str(backdrop).replace(os.sep, "/") if ready else None,
+        })
+    return out
+
+
 def year_plan(cfg=None):
     """The whole rotation, for showing what the year looks like."""
     rotation = load_rotation(cfg=cfg)
