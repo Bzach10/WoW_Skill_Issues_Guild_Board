@@ -128,7 +128,7 @@ def check_theme_assets(theme, messages):
     if not backgrounds:
         return
     defaults = DEFAULT_THEME["backgrounds"]
-    for key in ("header", "middle", "footer", "poster", "item"):
+    for key in ("header", "middle", "footer", "poster", "item", "crest"):
         path = backgrounds.get(key)
         if not path or os.path.exists(path):
             continue

@@ -1,0 +1,225 @@
+{#
+  Shared ORNAMENT + FRAME library — the anti-rectangle kit.
+
+  The board used to be boxes: same-size cards, hard 1px borders, square
+  corners, everything on a grid. This partial is what every layout uses
+  to stop looking like that.
+
+  THE CORE TRICK. A rough edge can't be drawn by filtering the element
+  itself — an SVG displacement filter would make the text wobble too.
+  So every frame paints its surface on an absolutely-positioned
+  ::before pseudo-element and filters THAT, leaving the content crisp
+  on top. The plate underneath gets torn, curled or arched; the words
+  stay perfectly legible.
+
+  USAGE — a module declares its frame in theme.yml (modules.<key>.style)
+  and the layout just does:
+
+      <div class="fr fr--torn">…content…</div>
+
+  Available: fr--torn (ragged deckle paper), fr--scroll (curled top and
+  bottom rails), fr--arch (gothic/tombstone arched head), fr--plate
+  (riveted metal), fr--none (no frame, content only).
+
+  Also provides .orn-rule (illustrated divider) and .fr-tilt-* (small
+  deterministic rotations for overlap), plus the SVG filter defs.
+
+  Everything is theme-driven: surfaces are built from --panel/--bg-rgb
+  and an optional per-module art URL, never a hardcoded color.
+#}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <!-- ragged, hand-torn paper edge -->
+    <filter id="gb-deckle" x="-12%" y="-12%" width="124%" height="124%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.013 0.019"
+                    numOctaves="4" seed="7" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="24"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- coarser, burnt/eaten edge for the heavier surfaces -->
+    <filter id="gb-singe" x="-18%" y="-18%" width="136%" height="136%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.007 0.014"
+                    numOctaves="5" seed="19" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="38"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+    <!-- subtle wobble: metal that was hammered, not milled -->
+    <filter id="gb-hammered" x="-8%" y="-8%" width="116%" height="116%"
+            filterUnits="objectBoundingBox">
+      <feTurbulence type="fractalNoise" baseFrequency="0.02 0.03"
+                    numOctaves="3" seed="3" result="n"/>
+      <feDisplacementMap in="SourceGraphic" in2="n" scale="7"
+                         xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+</svg>
+
+<style>
+  /* ===================== the frame kit ===================== */
+  .fr{position:relative; padding:26px 24px 24px; min-width:0;
+      --fr-surface:var(--panel);
+      --fr-edge:var(--hairline);}
+  /* content rides above the filtered plate */
+  .fr > *{position:relative; z-index:1;}
+  /* the plate itself — this is what gets torn/curled/arched */
+  .fr::before{content:""; position:absolute; inset:0; z-index:0;
+    background:var(--fr-surface);
+    box-shadow:inset 0 0 0 1px rgba(var(--bg-rgb),.35);}
+
+  /* per-module art, laid into the surface under a scrim so text holds */
+  .fr[data-art]::before{
+    background-image:var(--fr-art);
+    background-size:cover; background-position:center;
+    background-blend-mode:multiply;}
+
+  /* --- torn: ragged deckle edge, like a page pulled from a book --- */
+  .fr--torn{padding:30px 28px 28px;}
+  .fr--torn::before{
+    filter:url(#gb-deckle) drop-shadow(0 14px 26px rgba(0,0,0,.42));
+    inset:-4px;}
+
+  /* --- singed: heavier, burnt-eaten edge --- */
+  .fr--singe::before{
+    filter:url(#gb-singe) drop-shadow(0 16px 30px rgba(0,0,0,.5));
+    inset:-8px;}
+
+  /* --- scroll: curled rails top and bottom, body between them --- */
+  .fr--scroll{padding:38px 30px 38px;}
+  .fr--scroll::before{inset:14px 0; filter:drop-shadow(0 12px 22px rgba(0,0,0,.36));}
+  .fr--scroll::after{content:""; position:absolute; left:-6px; right:-6px; height:26px;
+    z-index:0; top:0; border-radius:13px;
+    background:linear-gradient(180deg,
+      rgba(255,255,255,.16), var(--fr-surface) 46%, rgba(0,0,0,.34));
+    box-shadow:0 3px 8px rgba(0,0,0,.4), inset 0 -2px 4px rgba(0,0,0,.35);}
+  .fr--scroll .fr-roll-b{position:absolute; left:-6px; right:-6px; bottom:0; height:26px;
+    z-index:0; border-radius:13px;
+    background:linear-gradient(0deg,
+      rgba(255,255,255,.12), var(--fr-surface) 46%, rgba(0,0,0,.34));
+    box-shadow:0 -3px 8px rgba(0,0,0,.4), inset 0 2px 4px rgba(0,0,0,.35);}
+
+  /* --- arch: gothic window / headstone --- */
+  .fr--arch{padding:46px 24px 22px;}
+  .fr--arch::before{
+    border-radius:48% 48% 6px 6px / 30% 30% 6px 6px;
+    filter:drop-shadow(0 14px 26px rgba(0,0,0,.44));
+    box-shadow:inset 0 0 0 1px var(--fr-edge),
+               inset 0 3px 0 rgba(255,255,255,.10);}
+
+  /* --- plate: riveted, hammered metal --- */
+  .fr--plate{padding:28px 26px 24px;}
+  .fr--plate::before{
+    border-radius:10px;
+    filter:url(#gb-hammered) drop-shadow(0 12px 24px rgba(0,0,0,.46));
+    box-shadow:inset 0 0 0 2px var(--fr-edge),
+               inset 0 2px 0 rgba(255,255,255,.13),
+               inset 0 -3px 8px rgba(0,0,0,.4);}
+  /* four rivets, drawn not imported */
+  .fr--plate::after{content:""; position:absolute; inset:11px; z-index:0;
+    pointer-events:none;
+    background-image:
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px),
+      radial-gradient(circle, rgba(255,255,255,.5) 0 1px, rgba(0,0,0,.5) 1.5px 3px, transparent 3.5px);
+    background-size:8px 8px; background-repeat:no-repeat;
+    background-position:left top, right top, left bottom, right bottom;}
+
+  .fr--none{padding:6px 0;}
+  .fr--none::before{display:none;}
+
+  /* --- overlap + tilt: the grid-breakers. Small, deterministic, and
+         switched off on phones where they'd just cause overflow. --- */
+  .fr-tilt-a{transform:rotate(-.7deg);}
+  .fr-tilt-b{transform:rotate(.55deg);}
+  .fr-tilt-c{transform:rotate(-.35deg);}
+  .fr-lift{margin-top:-26px;}
+  .fr-sink{margin-top:22px;}
+
+  /* ===================== illustrated dividers ===================== */
+  .orn-rule{display:flex; align-items:center; gap:14px; justify-content:center;
+    margin:clamp(22px,4vw,40px) 0; color:var(--accent);}
+  .orn-rule i{flex:1; height:1px; max-width:220px;
+    background:linear-gradient(90deg, transparent, currentColor);}
+  .orn-rule i+i{background:linear-gradient(90deg, currentColor, transparent);}
+  .orn-rule svg{flex:none; opacity:.9;}
+
+  /* Imported artwork (the item-of-the-month tooltip) is the one thing
+     that arrives as a hard rectangle and can't be edge-filtered — the
+     displacement would garble the text inside it. So it's treated as a
+     physical object instead: pinned on a slight angle with a real
+     shadow, so it reads as a card lying on the surface rather than a
+     block welded into the layout. */
+  .mod--item .mod-img{
+    /* capped so the tooltip reads as a pinned card, not a slab that
+       dominates the foot of the page */
+    max-width:min(100%, 400px); margin:0 auto;
+    transform:rotate(-1.1deg);
+    border-radius:3px;
+    filter:drop-shadow(0 12px 22px rgba(0,0,0,.5));
+    box-shadow:0 0 0 1px rgba(var(--bg-rgb),.5);}
+  .mod--item{overflow:visible;}
+
+  /* a soft vignette instead of a hard border — used where a panel would
+     otherwise read as a box */
+  .soft-edge{
+    -webkit-mask-image:radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%);
+    mask-image:radial-gradient(120% 120% at 50% 50%, #000 62%, transparent 100%);}
+
+  @media (max-width:760px){
+    .fr-tilt-a,.fr-tilt-b,.fr-tilt-c{transform:none;}
+    .fr-lift{margin-top:0;} .fr-sink{margin-top:0;}
+    .fr{padding:22px 18px 20px;}
+  }
+  /* Rough edges cost a repaint; honour the reduced-motion hint by
+     dropping the displacement filters, keeping the shape and depth. */
+  @media (prefers-reduced-motion:reduce){
+    .fr--torn::before,.fr--singe::before,.fr--plate::before{filter:none;}
+  }
+</style>
+
+{% macro flourish(kind='diamond') -%}
+  {%- if kind == 'diamond' -%}
+  <svg width="26" height="10" viewBox="0 0 26 10" fill="none" aria-hidden="true">
+    <path d="M13 0l4 5-4 5-4-5 4-5z" fill="currentColor"/>
+    <path d="M0 5h6M20 5h6" stroke="currentColor" stroke-width="1"/>
+  </svg>
+  {%- elif kind == 'skull' -%}
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+    <path d="M9 1C5 1 2.5 3.6 2.5 7c0 2 .9 3 1.8 3.8V13h9.4v-2.2C14.6 10 15.5 9 15.5 7 15.5 3.6 13 1 9 1z"
+          fill="currentColor"/>
+    <circle cx="6.4" cy="7" r="1.5" fill="var(--bg)"/><circle cx="11.6" cy="7" r="1.5" fill="var(--bg)"/>
+    <path d="M5 14.5h8M6 16.5h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/>
+  </svg>
+  {%- elif kind == 'flame' -%}
+  <svg width="14" height="18" viewBox="0 0 14 18" fill="none" aria-hidden="true">
+    <path d="M7 0C7 4 2 5 2 10a5 5 0 0010 0c0-2-1.5-3.5-2.5-5C8.8 6.5 8 7 7 7c1-2.5 0-5 0-7z"
+          fill="currentColor"/>
+  </svg>
+  {%- else -%}
+  <svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true">
+    <circle cx="5" cy="5" r="3" fill="currentColor"/>
+  </svg>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro rule(kind='diamond') -%}
+<div class="orn-rule"><i></i>{{ flourish(kind) }}<i></i></div>
+{%- endmacro %}
+
+{#
+  One cultural module, framed per the theme. Layouts call:
+      {{ orn.module_open(m) }} …body… {{ orn.module_close(m) }}
+  so each layout keeps control of the body markup while the frame,
+  art and tilt all come from theme.yml.
+#}
+{% macro module_open(m, tilt='') -%}
+<div class="fr fr--{{ m.style }}{{ ' ' ~ tilt if tilt }} mod mod--{{ m.key }}"
+     {%- if m.art %} data-art="1" style="--fr-art:url('{{ m.art }}');"{% endif %}>
+{%- endmacro %}
+
+{% macro module_close(m) -%}
+  {%- if m.style == 'scroll' %}<span class="fr-roll-b"></span>{% endif %}
+</div>
+{%- endmacro %}

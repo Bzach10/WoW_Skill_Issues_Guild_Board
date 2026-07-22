@@ -118,6 +118,7 @@ jobs:
           cp site/index.html "pages/archive/${week}.html"
           # State snapshot per week — raw material for future trend graphs
           [ -f board_state.json ] && cp board_state.json "pages/data/${week}-state.json"
+          [ -f web_stats.json ] && cp web_stats.json "pages/data/${week}-web-stats.json"
           # Manifest the archive dropdown reads (newest first)
           (cd pages/archive && ls -1 *.html 2>/dev/null | sed 's/\.html$//' | sort -r \
             | python -c "import json,sys; print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))" \
@@ -140,6 +141,7 @@ jobs:
           git config --local user.name "GitHub Action"
           git add roster_cache.json
           [ -f board_state.json ] && git add board_state.json
+          [ -f web_stats.json ] && git add web_stats.json
           if git diff --cached --quiet; then
             echo "No cache/state changes to commit."
           else
@@ -147,8 +149,9 @@ jobs:
             if git pull --rebase origin ${{ github.ref_name }}; then
               git push
             else
-              git checkout --ours roster_cache.json board_state.json
-              git add roster_cache.json board_state.json
+              for f in roster_cache.json board_state.json web_stats.json; do
+                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+              done
               git rebase --continue
               git push
             fi

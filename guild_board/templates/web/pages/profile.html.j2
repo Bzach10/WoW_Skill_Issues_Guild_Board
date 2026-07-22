@@ -1,0 +1,250 @@
+{#
+  Player profile — one permalink per crew member.
+
+  Reuses the board's theme tokens and the same character art the cards
+  and the deck use, so a profile always matches what you clicked from. Every panel is
+  optional: a member with no score, no records and no art still gets a
+  complete page.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ p.name }} — {{ guild_name }}</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--tank:{{ role_tint.tank }}; --healer:{{ role_tint.healer }};
+  --dps:{{ role_tint.dps }}; --unknown:{{ role_tint.unknown }};}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+.wrap{max-width:940px; margin:0 auto; padding:0 20px;}
+.back{display:inline-block; margin:22px 0 6px; font-size:13px; color:var(--muted);
+  text-decoration:none;}
+.back:hover{color:var(--accent);}
+
+.hero{display:grid; grid-template-columns:minmax(180px,300px) 1fr; gap:34px;
+  align-items:end; padding:14px 0 30px;}
+.stage{position:relative;}
+.stage .glow{position:absolute; inset:auto 0 -10px; height:80px;
+  background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
+  opacity:.4;}
+
+/* The scene art, framed. 3:4 art fills the frame edge to edge; anything
+   off-spec is contained over a blurred copy of itself so nothing is cut. */
+.portrait{position:relative; aspect-ratio:3/4; overflow:hidden;
+  border-radius:18px; border:1px solid var(--line);
+  box-shadow:0 18px 36px -22px rgba(0,0,0,.7);}
+.portrait::before{content:""; position:absolute; inset:-6%;
+  background-image:var(--fill); background-size:cover; background-position:center;
+  filter:blur(26px) saturate(.75) brightness(.7);}
+.portrait img{position:relative; width:100%; height:100%; object-fit:contain;
+  display:block;}
+.portrait.fills img{object-fit:cover;}
+.portrait.fills::before{display:none;}
+.portrait .setting{position:absolute; top:10px; left:10px; z-index:2;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  padding:5px 10px; border-radius:999px; color:var(--text);
+  background:color-mix(in srgb,var(--bg) 72%, transparent);
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);}
+.portrait.pending{display:grid; place-items:center; text-align:center;
+  color:var(--muted); font-size:13px; padding:22px; background:var(--panel);}
+.portrait.pending::before{display:none;}
+
+.ident .role{display:inline-block; font-size:11px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--bg); background:var(--pip);
+  padding:4px 10px; border-radius:999px; margin-bottom:12px;}
+.ident h1{font-family:var(--font-display); font-size:clamp(34px,7vw,62px);
+  line-height:1; color:var(--heading);}
+.ident .sub{color:var(--muted); margin-top:8px; font-size:15px;}
+.ident .phrase{margin-top:14px; font-style:italic; color:var(--muted);
+  border-left:2px solid var(--accent); padding-left:12px;}
+
+.stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:14px; padding:6px 0 30px;}
+.stat{background:var(--panel); border:1px solid var(--line); border-radius:14px;
+  padding:14px 16px;}
+.stat .k{font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted);}
+.stat .v{font-family:var(--font-body); font-weight:700; font-size:25px;
+  color:var(--heading); line-height:1.2; margin-top:4px;
+  /* Cinzel draws 1 as a serifed I, so "streak: 1" read as a roman
+     numeral. Numbers are data — the body font keeps them unambiguous. */
+  font-variant-numeric:lining-nums tabular-nums; letter-spacing:-.01em;}
+.stat .d{font-size:12px; color:var(--muted);}
+.stat .up{color:var(--accent); font-weight:700;}
+
+h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
+  margin:8px 0 12px;}
+.records{list-style:none; display:grid; gap:10px; padding-bottom:28px;}
+.records li{background:var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:14px 16px; display:flex; align-items:baseline;
+  gap:14px; flex-wrap:wrap;}
+.records .val{font-family:var(--font-display); font-size:26px; color:var(--accent);}
+.records .lbl{font-weight:700;}
+.records .det{color:var(--muted); font-size:14px;}
+.records .new{font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--bg); background:var(--accent); padding:3px 8px; border-radius:999px;}
+
+.links{display:flex; gap:10px; flex-wrap:wrap; padding-bottom:20px;}
+.links a{font-size:13px; padding:9px 16px; border-radius:999px;
+  border:1px solid var(--line); text-decoration:none; color:var(--text);}
+.links a:hover{border-color:var(--accent); color:var(--accent);}
+.note{background:var(--panel); border:1px dashed var(--line); border-radius:12px;
+  padding:12px 14px; color:var(--muted); font-size:13.5px; margin-bottom:22px;}
+
+.foot{border-top:1px solid var(--line); margin-top:20px; padding:20px 0 50px;
+  color:var(--muted); font-size:13px;}
+
+@media (max-width:720px){
+  .hero{grid-template-columns:1fr; gap:18px; align-items:start;}
+  .stage{max-width:230px;}
+}
+@media (prefers-reduced-motion:reduce){
+}
+{% include "web/_nav_css.html.j2" %}
+</style>
+</head>
+<body style="--pip:var(--{{ p.member.role }});">
+{% set nav_root = "../" %}{% set nav_here = "profile" %}
+{% include "web/_nav.html.j2" %}
+<div class="wrap">
+
+  <header class="hero">
+    <div class="stage">
+      <div class="glow" aria-hidden="true"></div>
+      {#
+        The character's scene art — the SAME image the trial cards and
+        the deck use, resolved once in guild_board.showcase. Before this
+        the profile rendered the old paper-doll layers, so opening a
+        character showed art in the previous style.
+      #}
+      {%- if p.art and p.art.src %}
+      <div class="portrait{{ ' fills' if p.art.fills }}"
+           style="--fill:url('../{{ p.art.src }}');">
+        <img src="../{{ p.art.src }}" alt="{{ p.name }}{% if p.art.setting %} — {{ p.art.setting }}{% endif %}">
+        {%- if p.art.setting %}<span class="setting">{{ p.art.setting }}</span>{% endif %}
+      </div>
+      {%- else %}
+      <div class="portrait pending">
+        <span>Art in progress for {{ p.name }}<br>
+        <small>everything else on this page is real</small></span>
+      </div>
+      {%- endif %}
+    </div>
+
+    <div class="ident">
+      <span class="role">{{ p.member.role_label }}</span>
+      <h1>{{ p.name }}</h1>
+      <p class="sub">
+        {%- set bits = [] %}
+        {%- if p.member.race %}{% set _ = bits.append(p.member.race) %}{% endif %}
+        {%- if p.member.spec %}{% set _ = bits.append(p.member.spec) %}{% endif %}
+        {%- if p.member.cls %}{% set _ = bits.append(p.member.cls) %}{% endif %}
+        {{ bits | join(' ') if bits else 'Class and spec not on record yet' }}
+        {%- if p.realm_label %} · {{ p.realm_label }}{% endif %}
+      </p>
+      {%- if p.member.catchphrase %}
+      <p class="phrase">“{{ p.member.catchphrase }}”</p>
+      {%- endif %}
+    </div>
+  </header>
+
+  <section class="stats">
+    <div class="stat">
+      <div class="k">Season M+ score</div>
+      <div class="v">{{ p.score if p.score is not none else '—' }}</div>
+      <div class="d">
+        {%- if p.rank %}#{{ p.rank }} of {{ p.field }} in the guild{% else %}No score on record{% endif %}
+      </div>
+    </div>
+    {%- if p.delta %}
+    <div class="stat">
+      <div class="k">Since baseline</div>
+      <div class="v up">{{ p.delta }}</div>
+      <div class="d">points this season</div>
+    </div>
+    {%- endif %}
+    {%- if p.streak %}
+    <div class="stat">
+      <div class="k">Attendance streak</div>
+      <div class="v">{{ p.streak }}</div>
+      <div class="d">consecutive weeks on the board</div>
+    </div>
+    {%- endif %}
+    <div class="stat">
+      <div class="k">Board art</div>
+      <div class="v">{{ 'Ready' if p.art and p.art.src else 'Pending' }}</div>
+      <div class="d">
+        {%- if p.art and p.art.src %}{{ p.art.setting or 'scene art' }}
+        {%- else %}awaiting the art pipeline{% endif %}
+      </div>
+    </div>
+  </section>
+
+  {%- if p.records %}
+  <h2 class="sec">Records held</h2>
+  <ul class="records">
+    {%- for r in p.records %}
+    <li>
+      <span class="val">{{ r.value }}</span>
+      <span class="lbl">{{ r.label }}</span>
+      {%- if r.detail %}<span class="det">{{ r.detail }}</span>{% endif %}
+      {%- if r.spec %}<span class="det">· {{ r.spec }}</span>{% endif %}
+      {%- if r.fresh %}<span class="new">New</span>{% endif %}
+    </li>
+    {%- endfor %}
+  </ul>
+  {%- endif %}
+
+  {%- if p.realm_unknown %}
+  <p class="note">
+    We don't have a realm on record for {{ p.name }} yet, so the external
+    profile links are unavailable — linking to a guessed realm is what
+    produced blank pages before. Everything above is real data from the
+    board.
+  </p>
+  {%- endif %}
+
+  {%- if p.wcl_url or p.rio_url %}
+  <h2 class="sec">Elsewhere</h2>
+  <div class="links">
+    {%- if p.wcl_url %}<a href="{{ p.wcl_url }}" target="_blank" rel="noopener">Warcraft Logs ↗</a>{% endif %}
+    {%- if p.rio_url %}<a href="{{ p.rio_url }}" target="_blank" rel="noopener">Raider.io ↗</a>{% endif %}
+  </div>
+  {%- endif %}
+
+  <footer class="foot">
+    <a href="../index.html">← Back to the board</a>
+    {%- if updated %} · Board data from {{ updated }}{% endif %}
+  </footer>
+</div>
+<script>
+(function(){
+  "use strict";
+  var doc=document.documentElement;
+  var btns=[].slice.call(document.querySelectorAll('.themeswitch button'));
+  function set(k){doc.setAttribute('data-crew-theme',k);
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.theme===k?'true':'false');});
+    try{localStorage.setItem('crewTheme',k);}catch(e){}}
+  btns.forEach(function(b){b.addEventListener('click',function(){set(b.dataset.theme);});});
+  try{var v=localStorage.getItem('crewTheme');
+    if(v&&document.querySelector('.themeswitch button[data-theme="'+v+'"]'))set(v);}catch(e){}
+})();
+</script>
+</body>
+</html>

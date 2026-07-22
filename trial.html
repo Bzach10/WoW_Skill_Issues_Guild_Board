@@ -1,0 +1,994 @@
+
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="codex">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Skill Issues — Trial Build</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&amp;family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+html[data-crew-theme="codex"]{
+  --bg:#e7d3ad; --text:#3a2c17; --heading:#4a2f12;
+  --accent:#9b5e1f; --panel:#f7eed8; --line:#c8ad7e;
+  --muted:#6b5637;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:light;
+}
+html[data-crew-theme="console"]{
+  --bg:#120c1e; --text:#e7dcf7; --heading:#e7dcf7;
+  --accent:#38e0c8; --panel:#191128; --line:#33264d;
+  --muted:#9d8fbb;
+  --font-display:'JetBrains Mono',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html[data-crew-theme="chronicle"]{
+  --bg:#180f28; --text:#efe7dd; --heading:#efe7dd;
+  --accent:#d8a24a; --panel:#20152c; --line:#3c2e4a;
+  --muted:#b0a08f;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{--tank:#6f9fd0; --healer:#4fc9a2;
+  --dps:#b07fe0; --unknown:#9b8f7a; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased; transition:background .5s ease;}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;
+  position:relative; z-index:1;}
+a{color:var(--accent);}
+
+/* ---------- THE MONTH'S SCENE ----------
+   Two jobs, two versions of the same painting:
+
+   .backdrop uses the CHARACTER-FREE raw plate — fixed behind everything,
+   heavily darkened and blurred. Atmosphere only. A busy character scene
+   behind text is unreadable, which is why the hero art never lands here.
+
+   .hero uses the character-baked version, full width across the top,
+   where it can be busy because nothing but the title sits on it — and
+   that title gets its own gradient scrim. */
+.backdrop{position:fixed; inset:0; z-index:0; pointer-events:none;
+  background-image:var(--backdrop); background-size:cover;
+  background-position:center; background-attachment:fixed;
+  filter:blur(22px) saturate(.6);
+  transform:scale(1.08);}
+/* Near-opaque on purpose. The scene is texture behind the page, not a
+   colour change — at 82% the light theme turned mid-grey and its dark
+   text became unreadable. */
+/* edge vignettes so the wide margins feel framed, not empty */
+.backdrop::before{content:""; position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--bg) 70%, transparent) 0%,
+      transparent 14%, transparent 86%,
+      color-mix(in srgb, var(--bg) 70%, transparent) 100%),
+    radial-gradient(120% 80% at 50% 0%, transparent 60%,
+      color-mix(in srgb, var(--accent) 8%, transparent) 100%);}
+.backdrop::after{content:""; position:absolute; inset:0;
+  background:color-mix(in srgb, var(--bg) 93%, transparent);}
+
+/* A FIXED aspect ratio sized from width — not a vw height clamp — so the
+   crop is predictable. Cinematic on desktop, progressively taller (less
+   horizontal crop, so edge characters survive) toward the phone. The crop
+   anchor moves per breakpoint to keep the spires up top. */
+.hero{position:relative; z-index:1; width:100%; overflow:hidden;
+  aspect-ratio:21 / 9; max-height:74vh; display:flex; align-items:flex-end;
+  border-bottom:1px solid var(--line);}
+.hero-art{position:absolute; inset:0; background-image:var(--hero);
+  background-size:cover; background-position:center 30%;}
+@media (max-width:900px){
+  .hero{aspect-ratio:2 / 1;}
+  .hero-art{background-position:center 28%;}
+}
+@media (max-width:560px){
+  .hero{aspect-ratio:3 / 2;}
+  .hero-art{background-position:center 30%;}
+}
+/* the legibility gradient: art stays bright at the top, text sits on a
+   dark base at the bottom */
+.hero-art::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg,
+    transparent 0%,
+    color-mix(in srgb, var(--bg) 30%, transparent) 55%,
+    color-mix(in srgb, var(--bg) 80%, transparent) 88%,
+    var(--bg) 100%);}
+.hero{align-items:flex-end;}
+.hero .wrap{padding-top:0; padding-bottom:22px; width:100%;}
+/* the title block rides its own scrim plate — a gradient alone cannot
+   guarantee contrast against art this busy. Kept compact and low so it
+   FRAMES the scene from the bottom third instead of blanketing it. */
+.hero .mast{text-align:center; padding:16px 22px 15px; border-radius:18px;
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  border:1px solid color-mix(in srgb, var(--line) 70%, transparent);
+  backdrop-filter:blur(10px) saturate(1.1);
+  max-width:560px; margin:0 auto;
+  box-shadow:0 22px 60px -30px rgba(0,0,0,.8);}
+.hero .mast h1{text-shadow:none; font-size:clamp(30px,5vw,54px);}
+.hero .mast .rule{margin:12px auto 10px;}
+.hero .lede{font-size:14px; max-width:52ch; line-height:1.5;}
+/* below desktop the scene is precious — drop the lede so the plate is a
+   compact title, framing the scene instead of blanketing it */
+@media (max-width:900px){
+  .hero .lede{display:none;}
+  .hero .mast{max-width:480px;}
+  .hero .mast .rule{margin:9px auto 0;}
+}
+@media (max-width:560px){
+  .hero .mast{padding:13px 16px 12px;}
+  .hero .mast .kicker{margin-bottom:8px;}
+}
+.scenetag{display:inline-block; font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; padding:5px 13px; border-radius:999px;
+  background:color-mix(in srgb, var(--bg) 72%, transparent);
+  border:1px solid color-mix(in srgb, var(--line) 80%, transparent);
+  color:var(--text); backdrop-filter:blur(6px); margin-bottom:14px;}
+.scenetag b{color:var(--accent);}
+
+/* private banner — unmistakable, never let this be confused for live */
+.private{
+  background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center;
+  padding:9px 16px; font-size:12px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--text);
+}
+.private b{color:var(--accent);}
+
+
+.sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom:1px solid var(--line);}
+.sitenav .wrap{display:flex; align-items:center; gap:18px;
+  padding-top:10px; padding-bottom:10px;}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none;
+  color:var(--heading); font-family:var(--font-display); font-weight:700;
+  letter-spacing:.04em; margin-right:auto;}
+.brand-mark{font-size:18px; filter:saturate(1.2);}
+.brand-name{font-size:15px;}
+.navlinks{display:flex; gap:6px;}
+.navlinks a{font-size:13px; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border-radius:999px; transition:all .2s;}
+.navlinks a:hover{color:var(--text); background:color-mix(in srgb, var(--line) 45%, transparent);}
+.navlinks a[aria-current="page"]{color:var(--bg); background:var(--accent);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 11px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .2s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* the return affordance — a full-width bar, impossible to miss */
+.backbar{position:sticky; top:var(--nav-h, 53px); z-index:45; display:block;
+  padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
+  text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, var(--accent) 16%, var(--bg));
+  border-bottom:1px solid var(--line);
+  max-width:var(--measure); margin:0 auto;}
+.backbar:hover{background:color-mix(in srgb, var(--accent) 26%, var(--bg));
+  color:var(--accent);}
+
+/* on small screens the brand name yields before the links do */
+@media (max-width:560px){
+  .sitenav .wrap{gap:10px; flex-wrap:wrap;}
+  .brand-name{display:none;}
+  .navlinks a{padding:7px 11px;}
+  .themeswitch button{font-size:0; padding:6px;}
+  .themeswitch button::before{content:attr(data-theme); font-size:11px;
+    text-transform:capitalize;}
+}
+
+/* masthead */
+.mast{text-align:center; padding:56px 0 26px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:16px;}
+/* push the accent toward the heading colour and embolden — lifts the
+   small kicker numbers above the codex gold's ~3.6:1 on parchment,
+   theme-awarely (always toward the readable text colour) */
+.kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading));
+  font-weight:800;}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(38px,8.5vw,80px); color:var(--heading);}
+.rule{width:min(420px,72%); height:3px; margin:22px auto 18px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.lede{max-width:64ch; margin:0 auto; color:var(--muted);
+  font-size:clamp(15px,2.2vw,18px);}
+.lede strong{color:var(--text);}
+
+/* section furniture */
+.sec{padding:44px 0 10px;}
+.sec h2{font-family:var(--font-display); font-size:clamp(24px,4vw,38px);
+  color:var(--heading); text-align:center;
+  text-shadow:0 2px 18px color-mix(in srgb, var(--bg) 85%, transparent);}
+.sec .sub{text-align:center; color:var(--muted); font-size:14px;
+  margin-top:8px; margin-bottom:28px;}
+
+/* ---------- the three scene cards ---------- */
+.cast{display:grid; gap:22px; padding-bottom:20px;
+  grid-template-columns:repeat(auto-fill, minmax(250px, 1fr));}
+.card{
+  --pip:var(--unknown);
+  position:relative; border:1px solid var(--line); border-radius:20px;
+  /* nearly opaque so the backdrop never fights the content */
+  background:color-mix(in srgb, var(--panel) 96%, transparent);
+  backdrop-filter:blur(3px);
+  display:flex; flex-direction:column;
+  box-shadow:0 24px 48px -30px rgba(0,0,0,.75);
+  transition:transform .4s cubic-bezier(.2,.8,.3,1), box-shadow .4s ease;
+}
+.card:hover{transform:translateY(-6px);
+  box-shadow:0 32px 60px -28px rgba(0,0,0,.8);}
+.card[data-role="tank"]{--pip:var(--tank);}
+.card[data-role="healer"]{--pip:var(--healer);}
+.card[data-role="dps"]{--pip:var(--dps);}
+.card::before{content:""; position:absolute; inset:0 0 auto; height:3px;
+  background:var(--pip); z-index:3;}
+
+/* The art arrives in whatever aspect the generator produced — the trial
+   set mixes a 0.68 portrait with two 1.33 landscapes. Cropping them all
+   to one portrait box severs Floofwall's outstretched arms, so instead
+   the full artwork is CONTAINED and the letterbox is filled with a
+   blurred, dimmed copy of itself. Nothing is ever cut, the cards stay a
+   uniform height, and any future aspect just works. */
+.scene{position:relative; aspect-ratio:1/1; overflow:hidden; cursor:pointer;
+  border-radius:20px 20px 0 0;
+  background:color-mix(in srgb,var(--pip) 12%, var(--panel));}
+.scene::before{content:""; position:absolute; inset:-6%;
+  background-image:var(--fill); background-size:cover;
+  background-position:center; filter:blur(26px) saturate(.75) brightness(.72);
+  transform:scale(1.06);}
+.scene img{position:relative; width:100%; height:100%; object-fit:cover;
+  object-position:center 22%;   /* keep faces; the square trims the feet */
+  display:block; transition:transform 6s ease;
+  /* feather the edges so the character melts into the card rather than
+     ending on a hard rectangle — Zach's "blend" ask */
+  -webkit-mask-image:radial-gradient(120% 108% at 50% 42%,
+    #000 58%, rgba(0,0,0,.55) 78%, transparent 100%);
+  mask-image:radial-gradient(120% 108% at 50% 42%,
+    #000 58%, rgba(0,0,0,.55) 78%, transparent 100%);}
+.card:hover .scene img{transform:scale(1.045);}
+/* the illustration meets the card body in a soft wash, not a hard cut */
+.scene::after{content:""; position:absolute; inset:auto 0 0; height:56%;
+  background:linear-gradient(180deg, transparent 0%,
+    color-mix(in srgb,var(--panel) 55%, transparent) 55%,
+    color-mix(in srgb,var(--panel) 92%, transparent) 84%, var(--panel) 100%);
+  pointer-events:none; z-index:1;}
+.scene .setting{position:absolute; top:12px; left:12px; z-index:2;
+  font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  padding:5px 10px; border-radius:999px; color:var(--text);
+  background:color-mix(in srgb,var(--bg) 72%, transparent);
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);
+  backdrop-filter:blur(4px);}
+.scene .pending{position:absolute; inset:0; display:grid; place-items:center;
+  text-align:center; color:var(--muted); font-size:13px; padding:24px;}
+
+.body{padding:0 20px 22px; margin-top:-42px; position:relative; z-index:2;
+  flex:1; display:flex; flex-direction:column;}
+.role{align-self:flex-start; display:inline-block; font-size:10px; letter-spacing:.16em;
+  text-transform:uppercase; color:var(--bg); background:var(--pip);
+  padding:4px 10px; border-radius:999px;}
+.body h3{font-family:var(--font-display); font-size:30px; color:var(--heading);
+  line-height:1.05; margin:10px 0 4px; position:relative;
+  text-shadow:0 1px 2px color-mix(in srgb, var(--panel) 88%, transparent),
+              0 2px 14px color-mix(in srgb, var(--panel) 70%, transparent);}
+.body h3 a{color:inherit; text-decoration:none;
+  border-bottom:1px solid transparent;}
+.body h3 a:hover{border-bottom-color:var(--accent);}
+.who{color:var(--muted); font-size:13.5px;}
+/* headings/paragraphs in the flex column keep their own width */
+.body h3, .who, .phrase{align-self:stretch;}
+.phrase{margin-top:12px; font-style:italic; color:var(--muted); font-size:14px;
+  border-left:2px solid var(--pip); padding-left:11px;}
+
+/* margin-top:auto pushes the numbers and button to the bottom, so the
+   three cards line up whether or not a character has a catchphrase */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:8px;
+  border-top:1px solid var(--line); padding-top:14px; margin-top:auto;
+  padding-top:14px;}
+.stat .k{font-size:9.5px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted);}
+.stat .v{font-family:var(--font-body); font-weight:700; font-size:19px;
+  color:var(--heading); font-variant-numeric:lining-nums tabular-nums;
+  line-height:1.25; letter-spacing:-.01em;}
+.more{align-self:flex-start; margin-top:16px; display:inline-block; font-size:13px;
+  text-decoration:none; padding:8px 15px; border-radius:999px;
+  border:1px solid var(--line); color:var(--text);}
+.more:hover{border-color:var(--accent); color:var(--accent);}
+
+/* ---------- how it works ---------- */
+.steps{display:grid; gap:16px; grid-template-columns:repeat(4,1fr);
+  padding-bottom:16px;}
+.step{background:color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line);
+  border-radius:16px; padding:20px;}
+.step .n{font-family:var(--font-display); font-size:13px; color:var(--accent);
+  letter-spacing:.12em;}
+.step h4{font-size:15px; margin:8px 0 8px; color:var(--heading);}
+.step p{font-size:13.5px; color:var(--muted); line-height:1.55;}
+
+.notes{background:color-mix(in srgb, var(--panel) 96%, transparent); border:1px solid var(--line);
+  border-radius:16px; padding:22px 24px; margin-top:8px;}
+.notes h4{font-family:var(--font-display); font-size:18px; color:var(--heading);
+  margin-bottom:10px;}
+.notes ul{list-style:none; display:grid; gap:11px;}
+.notes li{font-size:14px; color:var(--muted); padding-left:22px; position:relative;}
+.notes li::before{content:"✓"; position:absolute; left:0; color:var(--accent);
+  font-weight:700;}
+.notes li b{color:var(--text); font-weight:600;}
+.notes li.todo::before{content:"◷"; color:var(--muted);}
+
+.rotation{display:grid; gap:8px; grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  padding-bottom:10px;}
+.rotation .mon{background:color-mix(in srgb, var(--panel) 96%, transparent);
+  border:1px solid var(--line); border-radius:12px; padding:10px 12px;
+  font-size:12.5px; color:var(--muted);}
+.rotation .mon b{display:block; font-size:11px; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--text); margin-bottom:2px;}
+.rotation .mon.now{border-color:var(--accent);
+  background:color-mix(in srgb, var(--accent) 16%, var(--panel));
+  color:var(--text);}
+.rotation .mon.now b{color:var(--accent);}
+.rotation .mon.pending{opacity:.5;}
+
+.cta{text-align:center; padding:40px 0 20px;}
+.cta a{display:inline-block; font-size:15px; text-decoration:none;
+  padding:14px 26px; border-radius:999px; color:var(--bg);
+  background:var(--accent); font-weight:600;}
+.cta a:hover{filter:brightness(1.08);}
+.cta .hint{display:block; margin-top:12px; font-size:13px; color:var(--muted);}
+
+.foot{border-top:1px solid var(--line); margin-top:34px; padding:22px 0 60px;
+  color:var(--muted); font-size:13px; text-align:center;}
+
+@media (max-width:960px){
+  .cast{grid-template-columns:1fr; max-width:420px; margin:0 auto;}
+  .steps{grid-template-columns:repeat(2,1fr);}
+}
+@media (max-width:560px){
+  .steps{grid-template-columns:1fr;}
+  .mast{padding:34px 0 18px;}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important; transition:none !important;}
+  .card:hover{transform:none;}
+  .card:hover .scene img{transform:none;}
+}
+
+/* ---------- Weekly Recap Ribbon ---------- */
+.ribbon{padding:22px 22px 4px;}
+.ribbon-in{position:relative; display:flex; align-items:center; gap:16px;
+  background:color-mix(in srgb, var(--panel) 94%, transparent);
+  border:1px solid var(--line); border-radius:16px; padding:14px 18px;
+  overflow:hidden; box-shadow:0 14px 30px -22px rgba(0,0,0,.6);}
+.ribbon-tag{flex:0 0 auto; position:relative; z-index:2; font-size:11px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--bg);
+  background:var(--accent); padding:5px 11px; border-radius:999px;
+  box-shadow:0 0 0 8px color-mix(in srgb, var(--panel) 94%, transparent);}
+.ribbon-track{position:relative;}
+/* a soft fade where the marquee emerges past the tag, so no beat ever
+   collides with the "This week" chip */
+.ribbon-in::before{content:""; position:absolute; left:0; top:0; bottom:0;
+  width:150px; z-index:1; pointer-events:none;
+  background:linear-gradient(90deg, color-mix(in srgb,var(--panel) 94%, transparent) 60%, transparent);}
+.ribbon-track{display:flex; gap:34px; white-space:nowrap; will-change:transform;
+  animation:ribbon 60s linear infinite;}
+.ribbon-in:hover .ribbon-track{animation-play-state:paused;}
+.beat{font-size:14.5px; color:var(--text);}
+.beat::before{content:"◆"; color:var(--accent); margin-right:12px; font-size:9px;
+  vertical-align:middle;}
+@keyframes ribbon{from{transform:translateX(0);} to{transform:translateX(-50%);}}
+@media (prefers-reduced-motion:reduce){
+  .ribbon-track{animation:none; white-space:normal; flex-wrap:wrap; gap:6px 22px;}
+}
+
+/* ---------- ANIM-08: the weekly two-panel manga strip ---------- */
+.manga{padding:8px 22px 26px;}
+.manga-tag{display:inline-block; font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--bg); background:var(--accent);
+  padding:5px 12px; border-radius:6px 6px 0 0; font-weight:700; margin-left:2px;}
+.manga-strip{display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  padding:12px; background:var(--ink,#181410); border-radius:4px;
+  border:2px solid var(--ink,#181410);
+  box-shadow:0 20px 50px -26px rgba(0,0,0,.7);}
+.mpanel{position:relative; margin:0; aspect-ratio:16/10; overflow:hidden;
+  border-radius:2px; background:#0d0b09 var(--still) center/cover no-repeat;
+  border:3px solid var(--ink,#181410); display:flex; align-items:flex-end;}
+/* action-comic vignette so the bubble always reads over busy art */
+.mpanel::after{content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 0%, transparent 40%,
+    rgba(0,0,0,.5) 100%);}
+.mbubble{position:relative; z-index:2; margin:12px; padding:11px 14px;
+  font-size:14px; line-height:1.32; border-radius:14px; max-width:82%;
+  background:#fff; color:#181410; border:2px solid #181410;
+  box-shadow:3px 3px 0 rgba(0,0,0,.35);}
+.mbubble.narrate{border-radius:4px; background:#fbf7ea;
+  font-family:var(--font-display); font-size:15px;}
+.mbubble .mwho{font-weight:800; color:#7a1f12;}
+/* the speech bubble gets a little tail */
+.mbubble.speech::after{content:""; position:absolute; left:26px; bottom:-11px;
+  width:16px; height:16px; background:#fff; border:2px solid #181410;
+  border-top:0; border-right:0; transform:rotate(-45deg);}
+.mbubble.speech b{display:block; font-size:16px;}
+.mbubble .mto{display:block; font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:#7a1f12; font-weight:800; margin-bottom:3px;}
+.mbubble .mfrom{display:block; text-align:right; font-size:11px; color:#555;
+  margin-top:3px; font-style:italic;}
+@media (max-width:640px){
+  .manga-strip{grid-template-columns:1fr;}
+  .mpanel{aspect-ratio:16/9;}
+}
+
+/* ---------- Sticky roster nav (I-01) ---------- */
+/* top follows the real nav height (--nav-h, set by JS) so it never tucks
+   under a nav that has wrapped to two rows on a phone. */
+.roster-nav{position:sticky; top:var(--nav-h, 53px); z-index:30; margin:0 -22px 22px;
+  padding:12px 22px;
+  background:color-mix(in srgb, var(--bg) 92%, transparent);
+  backdrop-filter:blur(10px); border-bottom:1px solid var(--line);}
+.roster-nav-in{display:flex; gap:12px; align-items:center; flex-wrap:wrap;
+  max-width:var(--measure); margin:0 auto;}
+.rsearch{flex:1 1 240px; min-width:180px; font:inherit; font-size:14px;
+  padding:9px 15px; border-radius:999px; border:1px solid var(--line);
+  background:var(--panel); color:var(--text);}
+.rsearch:focus{outline:2px solid var(--accent); outline-offset:1px;}
+.rfilters{display:flex; gap:6px; flex-wrap:wrap;}
+.rfilters button{font:inherit; font-size:13px; cursor:pointer; padding:8px 14px;
+  border-radius:999px; border:1px solid var(--line); background:var(--panel);
+  color:var(--text); transition:all .2s;}
+.rfilters button.on{background:var(--accent); color:var(--bg); border-color:var(--accent);}
+.rfilters .fc{font-size:11px; opacity:.8;}
+.rcount{font-size:12.5px; color:var(--muted); margin-left:auto;}
+
+/* filtered-out + find-my-character highlight */
+.card[hidden]{display:none;}
+.card.dim{opacity:.28; filter:grayscale(.6);}
+.card.hit{outline:3px solid var(--accent); outline-offset:3px;
+  animation:findpulse 1.2s ease 2;}
+@keyframes findpulse{0%,100%{outline-color:var(--accent);}
+  50%{outline-color:transparent;}}
+
+/* ---------- hover tooltip (X-01) ---------- */
+.card{overflow:visible;}
+/* z-index sits ABOVE the sticky nav (z50) and roster bar (z30) so an
+   upward tooltip is never chopped by them. `.below` flips it under the
+   card when there isn't room above (set by JS, accounting for the bars). */
+.tip{position:absolute; left:50%; bottom:calc(100% + 8px); transform:translate(-50%,6px);
+  width:max(220px, 82%); background:color-mix(in srgb, var(--bg) 94%, transparent);
+  border:1px solid var(--accent); border-radius:14px; padding:12px 14px;
+  display:flex; flex-direction:column; gap:5px; z-index:60;
+  opacity:0; pointer-events:none; transition:opacity .2s, transform .2s;
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.7); backdrop-filter:blur(8px);}
+.tip.below{top:calc(100% + 8px); bottom:auto; transform:translate(-50%,-6px);}
+.tip b{color:var(--heading);}
+.tip>b{font-family:var(--font-display); font-size:16px;}
+.tip span{font-size:12.5px; color:var(--muted);}
+.tip-rec{color:var(--text) !important;}
+.card:hover .tip, .card:focus-within .tip{opacity:1; transform:translate(-50%,0);}
+@media (hover:none){.tip{display:none;}}
+
+/* ---------- click-to-emote (X-02) ---------- */
+.emote{position:absolute; top:10px; left:50%; transform:translate(-50%,8px) scale(.9);
+  background:var(--panel); border:1px solid var(--accent); color:var(--text);
+  font-size:12px; font-style:italic; padding:6px 12px; border-radius:14px;
+  max-width:88%; z-index:15; opacity:0; pointer-events:none;
+  box-shadow:0 10px 24px -12px rgba(0,0,0,.6);}
+.card.emoting .emote{animation:emote 2.4s ease;}
+.card.emoting .scene img{animation:bounce .5s ease;}
+@keyframes emote{0%{opacity:0; transform:translate(-50%,8px) scale(.9);}
+  12%,80%{opacity:1; transform:translate(-50%,0) scale(1);}
+  100%{opacity:0; transform:translate(-50%,-6px) scale(1);}}
+@keyframes bounce{0%,100%{transform:scale(1.045);} 40%{transform:scale(1.11) rotate(-1.5deg);}}
+</style>
+</head>
+<body>
+
+<div class="private">Private trial build · <b>not published</b> · local preview only</div>
+
+
+<header class="sitenav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">⚓</span>
+      <span class="brand-name">Skill Issues</span>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="index.html"
+         aria-current="page">Board</a>
+      <a href="voyage.html"
+         >Voyage</a>
+      <a href="wanted.html"
+         >Wanted</a>
+      <a href="hall.html"
+         >The Hall</a>
+      <a href="trophy.html"
+         >Trophies</a>
+    </nav>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      <button type="button" data-theme="codex"
+              aria-pressed="true"
+              title="Illuminated Codex">Illuminated Codex</button>
+      <button type="button" data-theme="console"
+              aria-pressed="false"
+              title="Arcane Console">Arcane Console</button>
+      <button type="button" data-theme="chronicle"
+              aria-pressed="false"
+              title="Chronicle">Chronicle</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="mast wrap">
+  <div class="kicker">
+    World <b>#6,855</b> ·
+    Realm <b>#49</b> · 3 characters drawn
+  </div>
+  <h1>The Guild Board</h1>
+  <div class="rule"></div>
+  <p class="lede">
+    A first look at the new board, built around <strong>the guild's own
+    characters drawn into their own scenes</strong>. Everything below is
+    real data pulled from Raider.io and Warcraft Logs.
+  </p>
+</section>
+
+<section class="ribbon wrap" data-section="recap" aria-label="This week">
+  <div class="ribbon-in">
+    <span class="ribbon-tag">This week</span>
+    <div class="ribbon-track"><span class="beat">Amrevenge drove the deepest key of the week — a timed +20 through Pit of Saron.</span><span class="beat">Amrevenge topped the damage charts with a 97 parse on Fallen-King Salhadaar as BeastMastery Hunter.</span><span class="beat">On heals, Phyrthepali answered with a 96 on Imperator Averzian — the crew lived to tell it.</span><span class="beat">Tommybravoo climbed hardest this week, up 18.6 points of Mythic+ score.</span><span class="beat">Buchalter keeps showing up — 6 weeks on the board and counting.</span><span class="beat">And the roast of the week, from Rakdaddy aimed at Healmates: “Healmates Sucks”.</span>
+    </div>
+  </div>
+</section>
+
+<section class="manga wrap" aria-label="This week, as a two-panel strip">
+  <div class="manga-tag">This week</div>
+  <div class="manga-strip">
+    <figure class="mpanel">
+      <div class="mbubble narrate">
+        <span class="mwho">Amrevenge</span> drove a +20 through Pit of Saron — the deepest key of the week.
+      </div>
+    </figure>
+    <figure class="mpanel">
+      <div class="mbubble speech"><span class="mto">Rakdaddy → Healmates</span>
+        <b>“Healmates Sucks”</b>
+      </div>
+    </figure>
+  </div>
+</section>
+
+<section class="sec wrap" data-section="cast">
+  <h2>The Cast</h2>
+  <p class="sub">3 characters drawn so far · 130 still in the queue</p>
+
+  
+  <div class="roster-nav" id="rosternav">
+    <div class="roster-nav-in">
+      <input type="search" id="rostersearch" class="rsearch"
+             placeholder="Find your character…" autocomplete="off"
+             aria-label="Search the roster">
+      <div class="rfilters" role="group" aria-label="Filter by role">
+        <button type="button" data-filter="all" class="on" aria-pressed="true">All <span class="fc">3</span></button>
+        <button type="button" data-filter="tank" aria-pressed="false">Tanks <span class="fc">1</span></button>
+        <button type="button" data-filter="healer" aria-pressed="false">Healers <span class="fc">2</span></button>
+        <button type="button" data-filter="dps" aria-pressed="false">DPS <span class="fc">0</span></button>
+      </div>
+      <span class="rcount" id="rcount" aria-live="polite"></span>
+    </div>
+  </div>
+
+  <div class="cast" id="cast">
+    <article class="card" data-role="tank"
+             data-name="floofwall"
+             data-class="monk"
+             data-spec="brewmaster"
+             data-realm="quel&#39;dorei"
+             data-search="floofwall pandaren brewmaster monk quel&#39;dorei"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/floofwall/floofwall_anime_final.png');">
+        <img src="cast/floofwall/floofwall_anime_final.png" alt="Floofwall — The tavern"
+             loading="lazy" decoding="async"><span class="setting">The tavern</span>
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/floofwall.html">Floofwall</a>
+        </h3>
+        <p class="who">
+          Pandaren Brewmaster Monk · Quel&#39;dorei
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3484.3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#8</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/floofwall.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Floofwall</b>
+        <span>Pandaren Brewmaster Monk</span><span>Guild rank <b>#8</b> · score 3484.3</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="rakdisc"
+             data-class="priest"
+             data-spec="discipline"
+             data-realm="proudmoore"
+             data-search="rakdisc nightborne discipline priest proudmoore"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/rakdisc/rakdisc_anime_final.png');"><span class="emote" aria-hidden="true">“I can fix him. (I cannot fix him.)”</span>
+        <img src="cast/rakdisc/rakdisc_anime_final.png" alt="Rakdisc — The stone temple"
+             loading="lazy" decoding="async"><span class="setting">The stone temple</span>
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/rakdisc.html">Rakdisc</a>
+        </h3>
+        <p class="who">
+          Nightborne Discipline Priest · Proudmoore
+        </p>
+        <p class="phrase">“I can fix him. (I cannot fix him.)”</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3529.2</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#6</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/rakdisc.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Rakdisc</b>
+        <span>Nightborne Discipline Priest</span><span>Guild rank <b>#6</b> · score 3529.2</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="healyeah"
+             data-class="evoker"
+             data-spec="preservation"
+             data-realm="quel&#39;dorei"
+             data-search="healyeah dracthyr preservation evoker quel&#39;dorei"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/healyeah/healyeah_anime_final.png');">
+        <img src="cast/healyeah/healyeah_anime_final.png" alt="Healyeah — The Dragon Isles"
+             loading="lazy" decoding="async"><span class="setting">The Dragon Isles</span>
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/healyeah.html">Healyeah</a>
+        </h3>
+        <p class="who">
+          Dracthyr Preservation Evoker · Quel&#39;dorei
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3277.9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#18</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">2</div>
+          </div>
+        </div>
+        <a class="more" href="p/healyeah.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Healyeah</b>
+        <span>Dracthyr Preservation Evoker</span><span>Guild rank <b>#18</b> · score 3277.9</span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="sec wrap" data-section="how">
+  <h2>How it works</h2>
+  <p class="sub">Nobody has to type anything in by hand</p>
+  <div class="steps">
+    <div class="step">
+      <div class="n">STEP 1</div>
+      <h4>The data comes in</h4>
+      <p>Every week the board pulls real numbers from Raider.io and
+         Warcraft Logs — Mythic+ scores, timed keys, parses, attendance.
+         The guild roster is fetched automatically.</p>
+    </div>
+    <div class="step">
+      <div class="n">STEP 2</div>
+      <h4>The cast is drawn</h4>
+      <p>Each member's real character — race, class, spec, transmog — is
+         turned into original art in the style you're looking at. New
+         art drops in and the board picks it up on the next build.</p>
+    </div>
+    <div class="step">
+      <div class="n">STEP 3</div>
+      <h4>The board assembles</h4>
+      <p>Art and data are combined into the page: the crew, the ladder,
+         the roast, the voyage map. Anything missing degrades quietly
+         instead of breaking the page.</p>
+    </div>
+    <div class="step">
+      <div class="n">STEP 4</div>
+      <h4>It posts itself</h4>
+      <p>Once you're happy, the weekly board posts to Discord and updates
+         the website automatically every Tuesday. <b>Not switched on for
+         this trial.</b></p>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" data-section="changed">
+  <h2>What changed in this draft</h2>
+  <p class="sub">Fixes and additions since the first look</p>
+  <div class="notes">
+    <h4>Fixed</h4>
+    <ul>
+      <li><b>Character links opened blank pages.</b> Every player link was
+        built from the guild's realm, but most of the roster plays on
+        other realms — 70% of 134 members, across
+        37 realms. Rakdisc is on <b>Proudmoore</b>, not the
+        guild realm. Links now use each player's real realm, and anyone
+        we can't confirm gets no link rather than a broken one.</li>
+      <li><b>The Raid / Mythic+ view didn't filter.</b> Those buttons were
+        scroll anchors that looked like tabs. They now actually filter
+        the board, and remember your choice.</li>
+      <li><b>Headgear was invisible.</b> The art layers put faces above
+        hats, so Rakdisc's mitre was hidden. Fixed in the layer spec —
+        you can see the mitre in her scene above.</li>
+    </ul>
+    <h4 style="margin-top:18px;">Added</h4>
+    <ul>
+      <li><b>A real page for every member</b>, with their art, score,
+        guild rank, streak and records.</li>
+      <li><b>An animated crew deck</b> where the cast stand together and
+        react when you hover a role.</li>
+      <li><b>Three themes</b>, switchable at the top right — try them.</li>
+    </ul>
+    <h4 style="margin-top:18px;">Still coming</h4>
+    <ul>
+      <li class="todo">Scene art for the rest of the guild — 3 drawn,
+        130 still in the queue.</li>
+      <li class="todo">The voyage map wired to the live season dungeon list.</li>
+      <li class="todo">Victory and defeat poses driven by weekly results.</li>
+    </ul>
+  </div>
+</section>
+<section class="sec wrap" data-section="rotation">
+  <h2>The scene rotates monthly</h2>
+  <p class="sub">One line in a config file decides the order</p>
+  <div class="rotation">
+    <span class="mon pending">
+      <b>Jan</b>Icecrown Citadel
+    </span>
+    <span class="mon pending">
+      <b>Feb</b>Dalaran
+    </span>
+    <span class="mon pending">
+      <b>Mar</b>Ungoro Crater
+    </span>
+    <span class="mon pending">
+      <b>Apr</b>Elwynn Forest
+    </span>
+    <span class="mon pending">
+      <b>May</b>Stormwind City
+    </span>
+    <span class="mon pending">
+      <b>Jun</b>Mount Hyjal
+    </span>
+    <span class="mon pending">
+      <b>Jul</b>Silvermoon City
+    </span>
+    <span class="mon pending">
+      <b>Aug</b>Orgrimmar
+    </span>
+    <span class="mon pending">
+      <b>Sep</b>Ironforge
+    </span>
+    <span class="mon pending">
+      <b>Oct</b>Dark Portal
+    </span>
+    <span class="mon pending">
+      <b>Nov</b>Undermine
+    </span>
+    <span class="mon pending">
+      <b>Dec</b>Caverns Of Time
+    </span>
+  </div>
+</section>
+
+<section class="cta wrap" data-section="cta">
+  <a href="crew_board.html">Open the animated crew board →</a>
+  <span class="hint">The cast standing together on deck, with the ladder,
+    the roast and the voyage map.</span>
+</section>
+</main>
+
+<footer class="foot wrap">
+  <p>“Git Gud.” — ancient guild proverb</p>
+  <p style="margin-top:8px;">Private trial build · board data from Jul 20, 2026
+     · not connected to Discord or the guild website</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+
+  // Publish the real nav height so the sticky roster bar offsets correctly
+  // even when the nav wraps to two rows on a phone.
+  var nav = document.querySelector('.sitenav');
+  if (nav){
+    var setNavH = function(){
+      doc.style.setProperty('--nav-h', Math.round(nav.getBoundingClientRect().height) + 'px');
+    };
+    setNavH();
+    window.addEventListener('resize', setNavH, {passive:true});
+    window.addEventListener('load', setNavH);
+    if ('ResizeObserver' in window) new ResizeObserver(setNavH).observe(nav);
+  }
+
+  /* ---------- Fast Wins: roster search + filters + find-my-character ---------- */
+  var cast = document.getElementById('cast');
+  if (cast) {
+    var cards = Array.prototype.slice.call(cast.querySelectorAll('.card'));
+    var search = document.getElementById('rostersearch');
+    var count = document.getElementById('rcount');
+    var fbtns = Array.prototype.slice.call(document.querySelectorAll('.rfilters button'));
+    var role = 'all', q = '';
+
+    function persist(){ try{
+      localStorage.setItem('rosterRole', role);
+      localStorage.setItem('rosterQuery', q);
+    }catch(e){} }
+
+    function apply(){
+      var shown = 0, firstHit = null;
+      cards.forEach(function(c){
+        var okRole = role === 'all' || c.dataset.role === role;
+        var okText = !q || (c.dataset.search || '').indexOf(q) !== -1;
+        c.hidden = !(okRole && okText);
+        c.classList.remove('hit');
+        if (!c.hidden){ shown++;
+          if (q && !firstHit && (c.dataset.name||'').indexOf(q) === 0) firstHit = c; }
+      });
+      if (count) count.textContent = shown + ' of ' + cards.length + ' shown';
+      // find-my-character: pan to and pulse the first name match
+      if (firstHit){ firstHit.classList.add('hit');
+        firstHit.scrollIntoView({behavior:'smooth', block:'center'}); }
+    }
+    if (search) search.addEventListener('input', function(){
+      q = search.value.trim().toLowerCase(); persist(); apply(); });
+    fbtns.forEach(function(b){ b.addEventListener('click', function(){
+      role = b.dataset.filter;
+      fbtns.forEach(function(x){ var on = x === b;
+        x.classList.toggle('on', on);
+        x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      persist(); apply(); }); });
+
+    // restore last visit's filter + query
+    try {
+      var sr = localStorage.getItem('rosterRole'), sq = localStorage.getItem('rosterQuery');
+      if (sr){ var btn = document.querySelector('.rfilters button[data-filter="'+sr+'"]');
+        if (btn) btn.click(); }
+      if (sq && search){ search.value = sq; q = sq.toLowerCase(); apply(); }
+    } catch(e){}
+    apply();
+
+    /* ---------- click-to-emote ---------- */
+    cards.forEach(function(c){
+      var art = c.querySelector('.scene');
+      if (!art) return;
+      art.addEventListener('click', function(ev){
+        // let the profile link and its own controls work normally
+        if (ev.target.closest('a')) return;
+        c.classList.remove('emoting'); void c.offsetWidth;
+        c.classList.add('emoting');
+        setTimeout(function(){ c.classList.remove('emoting'); }, 2500);
+      });
+    });
+
+    /* ---------- tooltip edge-collision: flip below when there's no room
+       above the card, accounting for the sticky nav + roster bars ---------- */
+    function stickyBottom(){
+      var b = 0;
+      ['.sitenav', '.roster-nav'].forEach(function(sel){
+        var el = document.querySelector(sel);
+        if (!el) return;
+        var pos = getComputedStyle(el).position;
+        if (pos === 'sticky' || pos === 'fixed'){
+          b = Math.max(b, el.getBoundingClientRect().bottom);
+        }
+      });
+      return b;
+    }
+    cards.forEach(function(c){
+      var tip = c.querySelector('.tip');
+      if (!tip) return;
+      function place(){
+        // room above = card top - where the sticky bars end
+        var room = c.getBoundingClientRect().top - stickyBottom();
+        tip.classList.toggle('below', room < tip.offsetHeight + 12);
+      }
+      c.addEventListener('mouseenter', place);
+      c.addEventListener('focusin', place);
+    });
+  }
+
+  /* ---------- section order + visibility (from the admin panel) ---------- */
+  (function(){
+    var order = ["recap", "cast", "how", "changed", "rotation", "cta"];
+    var hidden = [];
+    hidden.forEach(function(k){
+      var el = document.querySelector('[data-section="'+k+'"]');
+      if (el) el.style.display = 'none';
+    });
+    if (order && order.length){
+      var main = document.querySelector('main');
+      order.forEach(function(k){
+        var el = document.querySelector('[data-section="'+k+'"]');
+        if (el && main) main.appendChild(el);   // reflow into configured order
+      });
+    }
+  })();
+
+  /* ---------- lazy-load card images (I-02) ---------- */
+  if ('IntersectionObserver' in window) {
+    var lazy = new IntersectionObserver(function(entries, obs){
+      entries.forEach(function(en){
+        if (en.isIntersecting){
+          var img = en.target;
+          if (img.dataset.src){ img.src = img.dataset.src; delete img.dataset.src; }
+          obs.unobserve(img);
+        }
+      });
+    }, {rootMargin: '400px'});
+    Array.prototype.slice.call(document.querySelectorAll('.scene img[data-src]'))
+      .forEach(function(img){ lazy.observe(img); });
+  } else {
+    Array.prototype.slice.call(document.querySelectorAll('.scene img[data-src]'))
+      .forEach(function(img){ img.src = img.dataset.src; });
+  }
+})();
+</script>
+</body>
+</html>

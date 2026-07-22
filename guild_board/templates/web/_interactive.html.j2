@@ -1,0 +1,170 @@
+{#
+  Shared interactive layer for EVERY web layout.
+
+  Role filters, player search (both remembered across visits) and the
+  week-archive dropdown live here once, so a new layout gets all three
+  for free. Everything is progressive enhancement: with JS off, or if
+  any of it throws, the static page is still complete and readable.
+
+  THE DOM CONTRACT — a layout must provide these hooks to get the
+  features. Miss one and only that feature quietly switches off:
+
+    .row[data-name="<lowercased player>"][data-tags="<spec/section words>"]
+        one per player line; data-tags drives role classification
+    .sec                       a grouping that hides when it has no hits
+    #filters                   wrapper holding button[data-role=all|dps|healer|tank]
+    #search                    <input type="search">
+    #weeksel                   <select> for the archive
+    a[data-view="all"|"<id>"]  view tabs (e.g. RAID vs MYTHIC PLUS)
+    [data-viewid="<id>"]       the block each view tab shows
+
+  #filters, #search and #weeksel ship hidden and are revealed by this
+  script only when there is something to act on.
+#}
+<script>
+(function () {
+  "use strict";
+  /* Everything below is progressive enhancement: any failure leaves the
+     clean static page untouched. */
+  try {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.row[data-name]'));
+    var secs = Array.prototype.slice.call(document.querySelectorAll('.sec'));
+
+    /* --- role classification from spec/section keywords ---
+       WHOLE-WORD tokens only: substring matching classified every
+       Unholy DK as a healer, because "unholy" contains "holy". */
+    var HEAL = ['holy', 'discipline', 'restoration', 'resto', 'mistweaver', 'preservation', 'healing', 'hps', 'healer', 'healers'];
+    var TANK = ['protection', 'brewmaster', 'blood', 'vengeance', 'guardian', 'tank', 'tanks'];
+    function roleOf(row) {
+      var tokens = (row.getAttribute('data-tags') || '').split(/[^a-z0-9+]+/);
+      var hit = function (words) {
+        return words.some(function (w) { return tokens.indexOf(w) !== -1; });
+      };
+      if (hit(TANK)) return 'tank';
+      if (hit(HEAL)) return 'healer';
+      return 'dps';
+    }
+    rows.forEach(function (r) { r.setAttribute('data-role', roleOf(r)); });
+
+    /* --- search + role filter (remembered across visits) --- */
+    var activeRole = 'all', query = '';
+    function remember() {
+      try {
+        localStorage.setItem('gb.role', activeRole);
+        localStorage.setItem('gb.query', query);
+        localStorage.setItem('gb.view', activeView);
+      } catch (e) { /* private mode etc. — filters just reset next visit */ }
+    }
+    function apply() {
+      rows.forEach(function (r) {
+        var okRole = activeRole === 'all' || r.getAttribute('data-role') === activeRole;
+        var okName = !query || (r.getAttribute('data-name') || '').indexOf(query) !== -1;
+        r.classList.toggle('nohit', !(okRole && okName));
+      });
+      secs.forEach(function (s) {
+        var any = s.querySelector('.row[data-name]:not(.nohit)');
+        var filtering = activeRole !== 'all' || query;
+        s.classList.toggle('nohit', Boolean(filtering && !any));
+      });
+    }
+    /* --- view filter (e.g. RAID vs MYTHIC PLUS) ---
+       These tabs used to be plain #anchor jump links sitting in the same
+       bar as the role filters, so they read as a view switcher but only
+       scrolled — and on desktop, where every column is already on screen,
+       that looked like nothing happened at all. Now they actually filter.
+       The href is left intact, so with JS off they still jump. */
+    var activeView = 'all';
+    var viewTabs = Array.prototype.slice.call(document.querySelectorAll('a[data-view]'));
+    var viewBlocks = Array.prototype.slice.call(document.querySelectorAll('[data-viewid]'));
+    function applyView() {
+      viewBlocks.forEach(function (b) {
+        b.classList.toggle('nohit',
+          activeView !== 'all' && b.getAttribute('data-viewid') !== activeView);
+      });
+      viewTabs.forEach(function (t) {
+        t.classList.toggle('on', t.getAttribute('data-view') === activeView);
+      });
+    }
+    if (viewTabs.length && viewBlocks.length) {
+      viewTabs.forEach(function (t) {
+        t.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          activeView = t.getAttribute('data-view') || 'all';
+          remember();
+          applyView();
+          if (activeView !== 'all') {
+            var target = document.querySelector('[data-viewid="' + activeView + '"]');
+            if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
+        });
+      });
+    }
+
+    var filters = document.getElementById('filters');
+    var search = document.getElementById('search');
+    if (filters && rows.length) {
+      filters.hidden = false;
+      Array.prototype.forEach.call(filters.querySelectorAll('button'), function (b) {
+        b.addEventListener('click', function () {
+          Array.prototype.forEach.call(filters.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          activeRole = b.getAttribute('data-role');
+          remember();
+          apply();
+        });
+      });
+    }
+    if (search && rows.length) {
+      search.hidden = false;
+      search.addEventListener('input', function () {
+        query = search.value.trim().toLowerCase();
+        remember();
+        apply();
+      });
+    }
+    /* restore the last visit's view */
+    try {
+      var savedView = localStorage.getItem('gb.view');
+      if (savedView && document.querySelector('a[data-view="' + savedView + '"]')) {
+        activeView = savedView;
+        applyView();
+      }
+      var savedRole = localStorage.getItem('gb.role');
+      var savedQuery = localStorage.getItem('gb.query') || '';
+      if (filters && savedRole && savedRole !== 'all') {
+        var btn = filters.querySelector('button[data-role="' + savedRole + '"]');
+        if (btn) { btn.click(); }
+      }
+      if (search && savedQuery) {
+        search.value = savedQuery;
+        query = savedQuery.toLowerCase();
+        apply();
+      }
+    } catch (e) { /* fail-quiet */ }
+
+    /* --- week archive dropdown (manifest written by CI) --- */
+    var inArchive = location.pathname.indexOf('/archive/') !== -1;
+    var base = inArchive ? '../' : '';
+    var current = inArchive ? location.pathname.split('/').pop().replace('.html', '') : '';
+    fetch(base + 'archive/index.json', {cache: 'no-store'})
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (weeks) {
+        if (!Array.isArray(weeks) || !weeks.length) return;
+        var sel = document.getElementById('weeksel');
+        if (!sel) return;
+        weeks.forEach(function (w) {
+          var o = document.createElement('option');
+          o.value = w;
+          o.textContent = 'Week of ' + w;
+          if (w === current) o.selected = true;
+          sel.appendChild(o);
+        });
+        sel.hidden = false;
+        sel.addEventListener('change', function () {
+          location.href = sel.value ? base + 'archive/' + sel.value + '.html' : base + 'index.html';
+        });
+      })
+      .catch(function () {});
+  } catch (e) { /* static page remains fully usable */ }
+})();
+</script>

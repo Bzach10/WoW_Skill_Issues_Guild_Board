@@ -1,0 +1,149 @@
+{#
+  THE TROPHY HALL (B-07) — the guild's Midnight achievements as banners.
+
+  Reads the backend's `guild_achievements` layer. Gated on `available`:
+  when the credentialed refresh hasn't run, the hall is honestly empty
+  ("coming soon") rather than fabricating trophies.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{ guild_name }} — The Trophy Hall (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--gold:#d9a441; --mythic:#c8503a; --heroic:#9aa7b4; --mplus:#4fc9a2;
+  --measure:1080px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+
+.mast{text-align:center; padding:48px 0 10px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading));
+  font-weight:800;}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(34px,7vw,64px); color:var(--heading);}
+.points{margin-top:16px; display:inline-flex; align-items:baseline; gap:10px;
+  padding:10px 20px; border-radius:999px; border:1px solid var(--line);
+  background:var(--panel);}
+.points b{font-family:var(--font-display); font-size:26px; color:var(--gold);
+  font-variant-numeric:tabular-nums;}
+.points span{font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted);}
+.rule{width:min(360px,70%); height:3px; margin:22px auto 4px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+
+.hall{display:grid; gap:16px; padding:30px 0 60px;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}
+.trophy{position:relative; display:flex; gap:16px; align-items:center;
+  padding:18px 20px; border-radius:16px; background:var(--panel);
+  border:1px solid var(--line); overflow:hidden;
+  box-shadow:0 14px 34px -22px rgba(0,0,0,.7);}
+.trophy::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+  background:var(--tint,var(--gold));}
+.medal{flex:0 0 auto; width:58px; height:58px; border-radius:50%;
+  display:grid; place-items:center; font-size:26px;
+  background:radial-gradient(circle at 35% 30%,
+    color-mix(in srgb,var(--tint,var(--gold)) 55%, var(--panel)),
+    color-mix(in srgb,var(--tint,var(--gold)) 18%, var(--panel)));
+  border:2px solid color-mix(in srgb,var(--tint,var(--gold)) 60%, var(--line));
+  box-shadow:inset 0 0 12px -4px color-mix(in srgb,var(--tint,var(--gold)) 80%, transparent);}
+.tinfo{min-width:0;}
+.tcat{font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tint,var(--gold)); font-weight:700;}
+.tname{font-family:var(--font-display); font-size:17px; color:var(--heading);
+  line-height:1.15; margin:3px 0 5px;}
+.tdate{font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums;}
+.tcrit{font-size:11px; color:var(--muted);}
+
+.coming{text-align:center; max-width:52ch; margin:40px auto 70px;
+  padding:34px 26px; border-radius:18px; border:1px dashed var(--line);
+  background:var(--panel); color:var(--muted);}
+.coming .big{font-size:40px; margin-bottom:12px;}
+.coming b{color:var(--text);}
+
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+{% include "web/_nav_css.html.j2" %}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+{% set nav_here = "trophy" %}{% include "web/_nav.html.j2" %}
+
+<main class="wrap">
+<section class="mast">
+  <div class="kicker">{{ guild_name }} · <b>Midnight, in silver and gold</b></div>
+  <h1>The Trophy Hall</h1>
+  {%- if trophies and trophies.available and trophies.total_points %}
+  <div class="points"><b>{{ "{:,}".format(trophies.total_points) }}</b>
+    <span>achievement points</span></div>
+  {%- endif %}
+  <div class="rule"></div>
+</section>
+
+{%- if trophies and trophies.available and trophies.trophies %}
+<section class="hall" aria-label="Guild achievements">
+  {%- for t in trophies.trophies %}
+  {%- set nm = t.name or '' %}
+  {%- if 'Cutting Edge' in nm %}{% set cat = 'Mythic raid' %}{% set tint = 'var(--mythic)' %}{% set icon = '🔥' %}
+  {%- elif 'Ahead of the Curve' in nm %}{% set cat = 'Heroic raid' %}{% set tint = 'var(--heroic)' %}{% set icon = '⚔️' %}
+  {%- elif 'Keystone' in nm or 'Keystone Master' in nm %}{% set cat = 'Mythic+' %}{% set tint = 'var(--mplus)' %}{% set icon = '🗝️' %}
+  {%- else %}{% set cat = 'Guild' %}{% set tint = 'var(--gold)' %}{% set icon = '🏆' %}{% endif %}
+  <article class="trophy" style="--tint:{{ tint }};">
+    <div class="medal" aria-hidden="true">{{ icon }}</div>
+    <div class="tinfo">
+      <div class="tcat">{{ cat }}</div>
+      <h2 class="tname">{{ nm }}</h2>
+      {%- if t.completed_at %}<div class="tdate">Earned {{ t.completed_at[:10] }}</div>{% endif %}
+      {%- if t.criteria and t.criteria.child_count %}
+      <div class="tcrit">{{ t.criteria.child_count }} criteria met</div>
+      {%- endif %}
+    </div>
+  </article>
+  {%- endfor %}
+</section>
+{%- else %}
+<section class="coming">
+  <div class="big">🏆</div>
+  <p>The trophy hall lights up once a <b>credentialed achievements refresh</b>
+    runs. The guild's Midnight banners — Ahead of the Curve, Cutting Edge,
+    Keystone Master — will hang here, each with the date it was earned.
+    Nothing is invented in the meantime.</p>
+</section>
+{%- endif %}
+</main>
+
+<footer class="foot">
+  {{ guild_name }} · a private test run · achievements via the guild profile API
+</footer>
+{% include "web/_nav_script.html.j2" %}
+</body>
+</html>

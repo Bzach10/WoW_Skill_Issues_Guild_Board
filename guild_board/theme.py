@@ -15,6 +15,7 @@ filename. See CUSTOMIZING.md for the walkthrough.
 
 import copy
 import logging
+import os
 from pathlib import Path
 
 import yaml
@@ -46,6 +47,12 @@ DEFAULT_THEME = {
         # Wanted-poster column dressing (empty strings hide the lines)
         "poster_eyebrow": "★ WANTED ★",
         "poster_reward": "DEAD OR ALIVE · REWARD: GLORY",
+        # Which LAYOUT the public website uses — a file in templates/web/.
+        # Ships with: poster (the WANTED-poster grid), chronicle (editorial
+        # feature spread), ember_terminal (arcane console log), codex
+        # (illuminated single-column scroll). A guild can add its own in
+        # board_templates/web/. An unknown name falls back to poster.
+        "web_layout": "poster",
     },
     "colors": {
         "background": "#111217",
@@ -62,6 +69,7 @@ DEFAULT_THEME = {
         "display": "Cinzel",        # big carved titles (any Google Font name)
         "display_weights": "700;900",  # weights the display font actually ships
         "body": "Inter",            # all the data text
+        "mono": "JetBrains Mono",   # console/ledger numerals (ember_terminal)
     },
     "backgrounds": {
         "header": "assets/wall_header.png",
@@ -117,6 +125,32 @@ DEFAULT_THEME = {
         },
         "item_title": "GUILD ITEM OF THE MONTH",
         "item_empty": "New item arriving soon™",
+    },
+    # ------------------------------------------------------------------
+    #  MODULES — the guild's cultural blocks, rotatable per theme.
+    #  A theme picks WHICH appear, in WHAT ORDER, and how each is dressed
+    #  (its own art, frame style and accent). Anything omitted inherits
+    #  the shipped default, and where an older theme.yml already said
+    #  something (footer.debt.enabled, footer.graveyard.title, ...) that
+    #  value still wins — see resolve_modules.
+    #
+    #  style names a frame from templates/web/_ornaments.html.j2:
+    #  torn | scroll | arch | plate | none.
+    # ------------------------------------------------------------------
+    "modules": {
+        # panel order on the page; drop a key to retire that module
+        "order": ["roast", "debt", "graveyard", "item"],
+        "roast": {"enabled": True, "title": "ROAST OF THE WEEK",
+                  "art": None, "style": "torn", "accent": None},
+        "debt": {"enabled": True, "title": None,     # None -> footer.debt.title
+                 "art": None, "style": "plate", "accent": None},
+        "graveyard": {"enabled": True, "title": None,
+                      "art": None, "style": "arch", "accent": None},
+        "item": {"enabled": True, "title": None,
+                 "art": None, "style": "scroll", "accent": None},
+        "motd": {"enabled": True, "title": "MOTD",
+                 "art": None, "style": "none", "accent": None},
+        "awards": {"enabled": None},   # None -> fall back to awards.enabled
     },
     "motd_quips": [
         "MORE DOTS. MORE DOTS. … OK STOP DOTS.",
@@ -188,15 +222,113 @@ def resolve_templates(theme):
         "headers", board.get("header") or "stone_torchlight", "stone_torchlight")
     footer_rel, footer_name = _resolve_module(
         "footers", board.get("footer") or "graveyard", "graveyard")
+    web_rel, _ = _resolve_module(
+        "web", board.get("web_layout") or "poster", "poster")
     header_h = board.get("header_height") or HEADER_HEIGHTS.get(header_name, 300)
     footer_h = (board.get("footer_height") or FOOTER_HEIGHTS.get(footer_name, 430))
     return {
         "header_template": header_rel,
         "footer_template": footer_rel,
+        "web_layout_template": web_rel,
         "header_h": int(header_h),
         "footer_h": int(footer_h),
         "footer_total": int(footer_h) + FOOTER_EXTRA,
     }
+
+
+#: frame styles templates/web/_ornaments.html.j2 knows how to draw
+FRAME_STYLES = ("torn", "scroll", "arch", "plate", "none")
+
+#: every module the board can rotate in or out
+MODULE_KEYS = ("roast", "debt", "graveyard", "item", "motd", "awards")
+
+
+def _module_title(key, theme, declared):
+    """A module's heading: what the theme's modules block says, else the
+    older footer.* key it used to live under, else the shipped default."""
+    if declared:
+        return declared
+    footer = theme.get("footer") or {}
+    if key == "debt":
+        return (footer.get("debt") or {}).get("title") or "Gambling Debt"
+    if key == "graveyard":
+        return (footer.get("graveyard") or {}).get("title") or "GRAVEYARD"
+    if key == "item":
+        return footer.get("item_title") or "GUILD ITEM OF THE MONTH"
+    # not every module is a titled panel (awards has no heading of its own)
+    return DEFAULT_THEME["modules"].get(key, {}).get("title")
+
+
+def _module_enabled(key, theme, declared):
+    """Explicit modules.<key>.enabled wins; otherwise honour the older
+    switch the guild may already have set, then the default."""
+    if declared is not None:
+        return bool(declared)
+    if key == "debt":
+        return bool(((theme.get("footer") or {}).get("debt") or {}).get("enabled", True))
+    if key == "awards":
+        return bool((theme.get("awards") or {}).get("enabled", True))
+    return True
+
+
+def resolve_modules(theme):
+    """Which cultural modules this theme shows, in order, and how each is
+    dressed.
+
+    Returns {"order": [keys...], "by_key": {key: {...}}}. Fails open at
+    every step: an unknown key in `order` is dropped with a warning, an
+    unknown frame style falls back to "none", a module whose art file is
+    missing simply renders without art, and a theme with no modules block
+    at all gets the shipped set.
+    """
+    theme = theme or {}
+    declared = theme.get("modules")
+    if not isinstance(declared, dict):
+        declared = {}
+    defaults = DEFAULT_THEME["modules"]
+
+    by_key = {}
+    for key in MODULE_KEYS:
+        spec = declared.get(key)
+        if not isinstance(spec, dict):
+            spec = {}
+        base = defaults[key]
+        style = str(spec.get("style", base.get("style", "none")) or "none")
+        if style not in FRAME_STYLES:
+            logger.warning("Module '%s' asks for unknown frame style '%s'; "
+                           "drawing it unframed.", key, style)
+            style = "none"
+        art = spec.get("art", base.get("art"))
+        if art and not os.path.exists(art):
+            logger.warning("Module '%s' points at missing art '%s'; "
+                           "rendering without it.", key, art)
+            art = None
+        by_key[key] = {
+            "key": key,
+            # pass None when the theme didn't declare it — filling in the
+            # default here would shadow the older footer.* switches that
+            # _module_enabled falls back to
+            "enabled": _module_enabled(key, theme, spec.get("enabled")),
+            "title": _module_title(key, theme, spec.get("title")),
+            "art": art,
+            "style": style,
+            "accent": spec.get("accent") or base.get("accent"),
+        }
+
+    raw_order = declared.get("order", defaults["order"])
+    if not isinstance(raw_order, (list, tuple)):
+        raw_order = defaults["order"]
+    order = []
+    for key in raw_order:
+        if key in ("motd", "awards"):
+            continue            # not panels; they have their own slots
+        if key not in by_key:
+            logger.warning("Theme lists unknown module '%s' in modules.order; "
+                           "skipping it.", key)
+            continue
+        if by_key[key]["enabled"] and key not in order:
+            order.append(key)
+    return {"order": order, "by_key": by_key}
 
 
 def template_loader_paths():
@@ -218,9 +350,16 @@ def font_css_url(theme):
     weights = str(fonts.get("display_weights",
                             DEFAULT_THEME["fonts"]["display_weights"]) or "").strip()
     display_spec = f"{display}:wght@{weights}" if weights else display
+    # The mono family is only used by console-style layouts; an empty
+    # value simply drops it and those layouts fall back to the system
+    # monospace stack.
+    mono = (fonts.get("mono", DEFAULT_THEME["fonts"]["mono"]) or "").strip()
+    mono_spec = (f"&family={mono.replace(' ', '+')}:wght@400;700"
+                 if mono else "")
     return ("https://fonts.googleapis.com/css2?"
             f"family={display_spec}&"
-            f"family={body}:wght@400;500;600;700;800&display=swap")
+            f"family={body}:wght@400;500;600;700;800"
+            f"{mono_spec}&display=swap")
 
 
 def hex_to_rgb(value, fallback=(17, 18, 23)):

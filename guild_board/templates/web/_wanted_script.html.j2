@@ -1,0 +1,50 @@
+{# Sort + filter for the Wanted Board's full wall. Pure client-side so the
+   whole crew is one payload that sorts instantly. #}
+<script>
+(function(){
+  "use strict";
+  var board = document.getElementById('wantedboard');
+  if (!board) return;
+  var grid = document.getElementById('bountygrid');
+  var empty = document.getElementById('wallempty');
+  var posters = Array.prototype.slice.call(grid.querySelectorAll('.bounty, .bounty-baked'));
+  var sortBtns = board.querySelectorAll('.wanted-controls [data-sort]');
+  var roleBtns = board.querySelectorAll('.wanted-controls [data-role]');
+  var search = document.getElementById('wsearch');
+  var sortKey = 'score', role = 'all', q = '';
+
+  var num = function(el, k){ return parseFloat(el.dataset[k]) || 0; };
+
+  function render(){
+    // sort a copy, descending by the chosen numeric key; name breaks ties
+    posters.sort(function(a, b){
+      var d = num(b, sortKey) - num(a, sortKey);
+      return d !== 0 ? d : (a.dataset.name < b.dataset.name ? -1 : 1);
+    });
+    var shown = 0;
+    posters.forEach(function(p){
+      var okRole = role === 'all' || p.dataset.role === role;
+      var okText = !q || (p.dataset.search || '').indexOf(q) !== -1;
+      p.hidden = !(okRole && okText);
+      if (!p.hidden) shown++;
+      grid.appendChild(p);              // reflow into sorted order
+    });
+    empty.style.display = shown ? 'none' : 'block';
+  }
+
+  sortBtns.forEach(function(b){ b.addEventListener('click', function(){
+    sortKey = b.dataset.sort;
+    sortBtns.forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    render();
+  }); });
+  roleBtns.forEach(function(b){ b.addEventListener('click', function(){
+    role = b.dataset.role;
+    roleBtns.forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    render();
+  }); });
+  if (search) search.addEventListener('input', function(){
+    q = search.value.trim().toLowerCase(); render();
+  });
+  render();
+})();
+</script>

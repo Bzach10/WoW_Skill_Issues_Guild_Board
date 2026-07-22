@@ -1,0 +1,304 @@
+{#
+  THE GRAND HALL (B-02) — the full-cast hero wall.
+
+  Every drawn character in one edge-to-edge mosaic that rises into place
+  on load: the signature "whoa" shot. Each face is a door to that
+  member's profile. Characters still awaiting art are not invented here;
+  the unlock meter (ENG-10) is where the un-drawn cast will appear.
+#}
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="{{ default_theme }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>{{ guild_name }} — The Grand Hall (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+{%- for key, t in themes.items() %}
+html[data-crew-theme="{{ key }}"]{
+  --bg:{{ t.bg }}; --text:{{ t.text }}; --heading:{{ t.heading }};
+  --accent:{{ t.accent }}; --panel:{{ t.panel }}; --line:{{ t.line }};
+  --muted:{{ t.muted }};
+  --font-display:'{{ t.display }}',Georgia,serif;
+  --font-body:'{{ t.body }}',system-ui,sans-serif;
+  color-scheme:{{ t.scheme }};
+}
+{%- endfor %}
+:root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+
+/* the title card floats over the top of the wall, then lifts on scroll */
+.hallhead{position:relative; text-align:center; padding:52px 22px 26px;
+  z-index:2;}
+.hallhead .kicker{font-size:12px; letter-spacing:.26em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.hallhead .kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading));
+  font-weight:800;}
+.hallhead h1{font-family:var(--font-display); font-weight:900; line-height:.92;
+  font-size:clamp(38px,9vw,92px); color:var(--heading);
+  text-shadow:0 6px 40px color-mix(in srgb,var(--bg) 70%, transparent);}
+.hallhead .sub{max-width:56ch; margin:16px auto 0; color:var(--muted);}
+.hallhead .count{color:var(--accent); font-weight:700;}
+
+/* ENG-10: the unlock meter — how much of the cast is summoned */
+.unlock{max-width:440px; margin:22px auto 0;}
+.unlock-track{height:12px; border-radius:999px; overflow:hidden;
+  background:color-mix(in srgb,var(--line) 80%, var(--bg));
+  border:1px solid var(--line);
+  box-shadow:inset 0 1px 3px color-mix(in srgb,var(--bg) 60%, transparent);}
+.unlock-fill{display:block; height:100%; border-radius:999px;
+  background:linear-gradient(90deg,
+    color-mix(in srgb,var(--accent) 78%, var(--panel)), var(--accent));
+  box-shadow:0 0 12px -2px color-mix(in srgb,var(--accent) 70%, transparent);
+  transform-origin:left; animation:unlockgrow 1.1s cubic-bezier(.2,.7,.2,1) both;}
+@keyframes unlockgrow{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+.unlock-label{margin-top:9px; font-size:12px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted);}
+.unlock-label b{color:var(--heading); font-variant-numeric:tabular-nums;}
+.unlock-left{color:var(--accent);}
+
+/* ---------------- the wall ---------------- */
+.hall{--cols:8; --gap:6px;
+  display:grid; grid-template-columns:repeat(var(--cols),1fr); gap:var(--gap);
+  padding:8px 8px 40px;}
+@media (max-width:1100px){.hall{--cols:6;}}
+@media (max-width:760px){.hall{--cols:4;}}
+@media (max-width:460px){.hall{--cols:3;}}
+
+.face{position:relative; display:block; aspect-ratio:3/4; overflow:hidden;
+  border-radius:10px; background:color-mix(in srgb,var(--line) 60%, var(--bg));
+  border:1px solid color-mix(in srgb,var(--line) 80%, transparent);
+  /* each tile rises into place on load, staggered by its index */
+  opacity:0; transform:translateY(26px) scale(.96);
+  animation:rise .6s cubic-bezier(.2,.7,.2,1) both;
+  animation-delay:calc(var(--i,0) * 22ms);
+  transition:transform .3s, box-shadow .3s, z-index 0s, border-color .3s;}
+@keyframes rise{to{opacity:1; transform:none;}}
+.face img{position:absolute; inset:0; width:100%; height:100%; object-fit:cover;
+  object-position:center 20%; display:block;
+  transition:transform .5s cubic-bezier(.2,.7,.2,1);}
+.face::after{content:""; position:absolute; inset:0;
+  background:linear-gradient(transparent 52%,
+    color-mix(in srgb,var(--bg) 86%, transparent));
+  opacity:.85; transition:opacity .3s;}
+/* a role pip in the corner, always readable */
+.face .pip{position:absolute; top:7px; left:7px; z-index:3; width:9px; height:9px;
+  border-radius:50%; box-shadow:0 0 0 2px color-mix(in srgb,var(--bg) 70%, transparent);}
+.face[data-role="tank"] .pip{background:var(--tank);}
+.face[data-role="healer"] .pip{background:var(--healer);}
+.face[data-role="dps"] .pip{background:var(--dps);}
+/* A dim nameplate is shown AT REST — never hover-only, which is invisible
+   on touch — over the scrim, and brightens on hover / focus. */
+.face .who{position:absolute; left:0; right:0; bottom:0; z-index:3;
+  padding:22px 9px 8px; text-align:center; pointer-events:none;
+  opacity:.9; transition:opacity .3s;}
+.face .who b{display:block; font-size:12px; line-height:1.2; color:#fff;
+  text-shadow:0 1px 6px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.6);}
+.face .who span{font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:color-mix(in srgb,#fff 82%, var(--accent));
+  text-shadow:0 1px 6px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.6);}
+.face:hover,.face:focus-visible{transform:translateY(-4px) scale(1.04); z-index:5;
+  border-color:var(--accent);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.8),
+    0 0 0 2px color-mix(in srgb,var(--accent) 55%, transparent);
+  outline:none;}
+.face:hover img,.face:focus-visible img{transform:scale(1.08);}
+.face:hover::after,.face:focus-visible::after{opacity:.35;}
+.face:hover .who,.face:focus-visible .who{opacity:1;}
+/* on hover the scrim lightens to reveal art, so keep a soft nameplate wash
+   behind the text for contrast */
+.face:hover .who,.face:focus-visible .who{
+  background:linear-gradient(transparent, color-mix(in srgb,var(--bg) 30%, transparent));}
+
+/* a gentle wash of role colour across the whole wall, so it reads as a
+   composed hall rather than a contact sheet */
+.hall::selection{background:var(--accent);}
+
+/* ENG-10: a not-yet-drawn member is a wanted poster, not a hole */
+.face.wanted{cursor:default;
+  background:
+    repeating-linear-gradient(45deg,
+      color-mix(in srgb,var(--line) 26%, var(--bg)) 0 9px,
+      color-mix(in srgb,var(--line) 16%, var(--bg)) 9px 18px);
+  border-style:dashed; border-color:color-mix(in srgb,var(--line) 90%, transparent);}
+.face.wanted::after{background:linear-gradient(transparent 40%,
+    color-mix(in srgb,var(--bg) 92%, transparent)); opacity:1;}
+.face.wanted .poster{position:absolute; inset:0; display:grid; place-items:center;}
+.face.wanted .poster svg{width:52%; height:52%; opacity:.4;
+  fill:color-mix(in srgb,var(--muted) 70%, var(--line)); margin-top:-10%;}
+.face.wanted .who{transform:none; opacity:1; padding-bottom:9px;}
+.face.wanted .who b{color:color-mix(in srgb,var(--text) 80%, var(--muted));
+  text-shadow:none;}
+.face.wanted .who span{color:var(--muted); text-shadow:none;}
+/* the wanted posters do not lift or brighten — they are placeholders */
+.face.wanted:hover,.face.wanted:focus-visible{transform:none; z-index:1;
+  border-color:color-mix(in srgb,var(--accent) 45%, var(--line)); box-shadow:none;}
+
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+
+@media (prefers-reduced-motion:reduce){
+  .face{animation:none; opacity:1; transform:none;}
+  .face img{transition:none;}
+  .unlock-fill{animation:none;}
+}
+
+/* ---------- ARC-09: cameo debt ---------- */
+.cameo{max-width:var(--measure); margin:14px auto 0; padding:26px 22px 8px;}
+.cameo h2{font-family:var(--font-display); font-size:clamp(24px,4vw,34px);
+  color:var(--heading); text-align:center;}
+.cameo-lede{max-width:60ch; margin:10px auto 22px; text-align:center;
+  color:var(--muted); font-size:14px;}
+.cameo-cols{display:grid; grid-template-columns:1fr 1.4fr; gap:26px;
+  align-items:start;}
+@media (max-width:760px){.cameo-cols{grid-template-columns:1fr;}}
+.cameo-col h3{font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:8px;}
+.cbadge{font-family:var(--font-display); font-size:15px; color:var(--accent);
+  letter-spacing:0;}
+.cameo-list{list-style:none; display:flex; flex-direction:column; gap:7px;}
+.cameo-list li{display:flex; align-items:center; gap:9px; font-size:14px;
+  padding:8px 12px; border-radius:10px; border:1px solid var(--line);
+  background:var(--panel);}
+.cameo-list b{color:var(--text); font-weight:600;}
+.cameo-list .cn{margin-left:auto; font-variant-numeric:tabular-nums;
+  color:var(--accent); font-weight:700;}
+.cdot{width:9px; height:9px; border-radius:50%; flex:0 0 auto;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--bg) 70%, transparent);}
+.cdot[data-role="tank"],.cchip[data-role="tank"]::before{background:var(--tank);}
+.cdot[data-role="healer"],.cchip[data-role="healer"]::before{background:var(--healer);}
+.cdot[data-role="dps"],.cchip[data-role="dps"]::before{background:var(--dps);}
+.cameo-chips{display:flex; flex-wrap:wrap; gap:8px;}
+.cameo-chips.spot{justify-content:center;}
+.cchip{position:relative; display:inline-flex; align-items:center; gap:7px;
+  font-size:13px; padding:7px 12px 7px 11px; border-radius:999px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text);}
+.cchip::before{content:""; width:7px; height:7px; border-radius:50%;
+  background:var(--muted); flex:0 0 auto;}
+.cchip.more{color:var(--muted); font-style:italic;}
+.cchip.more::before{display:none;}
+.cchip.lit{border-color:color-mix(in srgb,var(--accent) 55%, var(--line));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 30%, transparent);
+  padding:9px 14px;}
+.cchip .crole{font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted);}
+{% include "web/_nav_css.html.j2" %}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+{% set nav_here = "hall" %}{% include "web/_nav.html.j2" %}
+
+<header class="hallhead">
+  <div class="kicker">{{ guild_name }} · <b>the whole crew, at once</b></div>
+  <h1>The Grand Hall</h1>
+  <p class="sub">Every character the guild has drawn so far —
+    <span class="count">{{ cast_drawn | default(cards|length) }} strong</span> — under one roof.
+    Any face is a door to that member.</p>
+
+  {%- if cast_total and cast_total > 0 %}
+  {# ENG-10: the rollout itself as content — how much of the cast is summoned #}
+  <div class="unlock" role="img"
+       aria-label="{{ cast_drawn }} of {{ cast_total }} characters summoned">
+    <div class="unlock-track">
+      <span class="unlock-fill" style="width:{{ (cast_drawn / cast_total * 100) | round(1) }}%;"></span>
+    </div>
+    <div class="unlock-label">
+      <b>{{ cast_drawn }}</b> of <b>{{ cast_total }}</b> summoned
+      {%- if pending_cast %} · <span class="unlock-left">{{ pending_cast|length }} still to be drawn</span>{% endif %}
+    </div>
+  </div>
+  {%- endif %}
+</header>
+
+<main class="hall" aria-label="The full cast">
+  {%- for c in cards %}
+  {%- if c.scene.src %}
+  <a class="face" style="--i:{{ loop.index0 }};" data-role="{{ c.member.role }}"
+     {% if c.profile_href %}href="{{ c.profile_href }}"{% endif %}
+     aria-label="{{ c.member.name }} — {{ c.member.role_label }}">
+    <img src="{{ c.scene.src }}" alt="{{ c.member.name }}" loading="lazy" decoding="async">
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>{{ c.member.name }}</b>
+      <span>{{ c.member.role_label }}</span></span>
+  </a>
+  {%- endif %}
+  {%- endfor %}
+
+  {#- ENG-10: everyone still awaiting art, as a wanted poster rather than a gap -#}
+  {%- for m in pending_cast %}
+  <div class="face wanted" data-role="{{ m.role }}"
+       aria-label="{{ m.name }} — awaiting art">
+    <span class="poster">
+      <svg viewBox="0 0 24 28" aria-hidden="true"><path d="M12 3a4.2 4.2 0 1 1 0 8.4A4.2 4.2 0 0 1 12 3Zm0 10.2c4.4 0 8 2.7 8 6v3.3H4v-3.3c0-3.3 3.6-6 8-6Z"/></svg>
+    </span>
+    <span class="pip" aria-hidden="true"></span>
+    <span class="who"><b>{{ m.name }}</b><span>awaiting summons</span></span>
+  </div>
+  {%- endfor %}
+</main>
+
+{%- if cameo %}
+{# ARC-09: cameo debt — who the site has put on camera, who is owed one #}
+<section class="cameo" aria-label="Cameo debt">
+  <h2>Cameo Debt</h2>
+  {%- if cameo.have_feed %}
+  <p class="cameo-lede">Who the board has put on camera over the season — and
+    who is due. Casting leans toward the names that haven't had their moment.</p>
+  <div class="cameo-cols">
+    <div class="cameo-col">
+      <h3>Most featured</h3>
+      <ul class="cameo-list">
+        {%- for x in cameo.featured[:6] %}
+        <li><span class="cdot" data-role="{{ x.role }}"></span>
+          <b>{{ x.name }}</b><span class="cn">{{ x.features }}×</span></li>
+        {%- endfor %}
+      </ul>
+    </div>
+    <div class="cameo-col">
+      <h3>Never had a cameo — up next <span class="cbadge">{{ cameo.never_count }}</span></h3>
+      <div class="cameo-chips">
+        {%- for x in cameo.never[:24] %}
+        <span class="cchip" data-role="{{ x.role }}">{{ x.name }}</span>
+        {%- endfor %}
+        {%- if cameo.never_count > 24 %}<span class="cchip more">+{{ cameo.never_count - 24 }} more</span>{% endif %}
+      </div>
+    </div>
+  </div>
+  {%- else %}
+  <p class="cameo-lede">This week's spotlight — the members the board put on
+    camera in the recap and the strip. Full cameo history activates once the
+    weekly feed starts accumulating, and never-featured members surface here
+    to bias future casting toward them.</p>
+  <div class="cameo-chips spot">
+    {%- for x in cameo.spotlight %}
+    <span class="cchip lit" data-role="{{ x.role }}">{{ x.name }}
+      <span class="crole">{{ x.role_label }}</span></span>
+    {%- endfor %}
+  </div>
+  {%- endif %}
+</section>
+{%- endif %}
+
+<footer class="foot">
+  {{ guild_name }} · a private test run · the hall grows as the cast is drawn
+</footer>
+{% include "web/_nav_script.html.j2" %}
+</body>
+</html>

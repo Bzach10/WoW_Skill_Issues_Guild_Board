@@ -1,0 +1,349 @@
+{#
+  LAYOUT: codex — "the illuminated record"
+
+  The board as a single bound manuscript page. No columns, no cards, no
+  dashboard: one narrow measure of text running top to bottom, the way a
+  chronicle is actually read. Each ranking column becomes a CHAPTER,
+  opened by an illuminated initial and a roman numeral, separated by
+  ornamental rules. The whole thing sits on the theme's real paper
+  texture (backgrounds.poster).
+
+  This is the layout that best suits an ink-on-light-paper theme —
+  pair it with gildedcodex — but it is theme-neutral: every scrim is
+  derived from the theme's own background color, so the dark themes
+  render it as a black-vellum grimoire instead.
+
+  Phone behaviour is the easy case here: the measure simply narrows.
+
+  The annexes at the foot are the theme's cultural modules, rendered
+  through the shared ornament frames — so which of them appear, in what
+  order, and whether each is torn / arched / riveted is a theme.yml
+  decision, not a layout one.
+#}
+{% import "web/_ornaments.html.j2" as orn with context %}
+{% import "web/_modules.html.j2" as mods with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Weekly Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --bg-rgb:{{ bg_rgb }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}',Georgia,serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text); font-family:var(--font-body); font-size:17px; line-height:1.6;
+    background:var(--bg); overflow-x:hidden;}
+
+  /* the page itself — real paper texture under everything */
+  .sheet{position:relative; min-height:100vh;}
+  {%- if theme.backgrounds.poster %}
+  /* The paper runs the FULL height of the document, not just the
+     viewport — absolute (not fixed) so the texture is really there all
+     the way down, in the browser and in a full-page screenshot alike.
+     It tiles vertically rather than stretching, which keeps the grain
+     at its natural scale however long the week's record runs. */
+  .sheet::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:url("{{ theme.backgrounds.poster }}") top center/100% auto repeat-y;
+    /* Held well below full strength on purpose: the texture has to tile
+       down a page of unknown length, and a softer sheet reads as grain
+       in the paper instead of as a repeating tile. The theme's own
+       background color does the rest of the work. */
+    opacity:.42;}
+  .sheet::after{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:
+      linear-gradient(90deg, rgba(var(--bg-rgb),.62), transparent 20%, transparent 80%, rgba(var(--bg-rgb),.62)),
+      linear-gradient(180deg, transparent, rgba(var(--bg-rgb),.28));}
+  {%- endif %}
+  .col{position:relative; z-index:1; max-width:860px; margin:0 auto;
+    padding:0 clamp(18px,5vw,34px);}
+
+  /* ---------------------- frontispiece (art plate) --------------------- */
+  .front{position:relative; z-index:1; overflow:hidden; text-align:center;
+    padding:clamp(30px,7vw,70px) 0 0;}
+  {%- if theme.backgrounds.header %}
+  .front .plate{position:relative; max-width:1180px; margin:0 auto clamp(24px,4vw,44px);
+    padding:0 clamp(18px,5vw,34px);}
+  .front .plate img{width:100%; height:clamp(150px,26vw,300px); object-fit:cover;
+    display:block; border:1px solid var(--hairline);
+    box-shadow:0 16px 44px rgba(0,0,0,.32);}
+  {%- endif %}
+  {%- if theme.backgrounds.crest %}
+  .front .crest{width:clamp(74px,13vw,124px); height:clamp(74px,13vw,124px);
+    margin:0 auto clamp(14px,2.5vw,22px); border-radius:50%;
+    background:url("{{ theme.backgrounds.crest }}") center/cover;
+    box-shadow:0 0 0 2px var(--accent), 0 10px 30px rgba(0,0,0,.35);}
+  {%- endif %}
+  .front h1{font-family:var(--font-display); font-weight:900; line-height:1.05;
+    font-size:clamp(30px,7.5vw,68px); letter-spacing:.05em;}
+  .front .realm{margin-top:10px; font-size:clamp(10px,2.2vw,13px); letter-spacing:.34em;
+    color:var(--accent); text-transform:uppercase;}
+  .front .dt{margin-top:14px; font-size:13.5px; color:var(--muted); font-style:italic;}
+
+  /* ornamental rule, used between every chapter */
+  .orn{display:flex; align-items:center; gap:16px; justify-content:center;
+    margin:clamp(26px,5vw,46px) 0; color:var(--accent);}
+  .orn i{flex:1; max-width:190px; height:1px; background:linear-gradient(90deg,transparent,var(--accent));}
+  .orn i+i{background:linear-gradient(90deg,var(--accent),transparent);}
+  .orn span{font-size:17px; line-height:1;}
+
+  /* --------------------------- the proclamation ------------------------ */
+  .procl{text-align:center; margin-bottom:clamp(20px,4vw,34px);}
+  .procl .lbl{font-size:10.5px; letter-spacing:.32em; color:var(--accent);
+    text-transform:uppercase;}
+  .procl h2{font-family:var(--font-display); font-weight:900; margin-top:14px;
+    font-size:clamp(21px,4.4vw,40px); line-height:1.18;}
+  .procl .sub{margin-top:12px; font-size:14px; color:var(--muted); font-style:italic;}
+
+  /* the census: stat numerals set as a manuscript table */
+  .census{display:grid; grid-template-columns:repeat(auto-fit,minmax(112px,1fr));
+    gap:1px; background:var(--hairline); border:1px solid var(--hairline);
+    margin:clamp(20px,4vw,34px) 0;}
+  .census .c{padding:13px 12px; text-align:center; background:rgba(var(--bg-rgb),.62);}
+  .census .k{font-size:9.5px; letter-spacing:.18em; color:var(--faint); text-transform:uppercase;}
+  .census .v{font-family:var(--font-display); font-weight:900; margin-top:5px;
+    font-size:clamp(19px,3.2vw,29px); line-height:1; font-variant-numeric:tabular-nums;}
+  .census .v small{font-size:.44em; margin-left:5px;}
+
+  /* ------------------------------ toolbar ------------------------------ */
+  .bar{position:sticky; top:0; z-index:9; display:flex; align-items:center; gap:6px;
+    flex-wrap:wrap; justify-content:center; padding:10px 0; margin-bottom:10px;
+    background:rgba(var(--bg-rgb),.94); backdrop-filter:blur(7px);
+    border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);}
+  .bar a,.bar button{font:inherit; font-family:var(--font-display); font-size:11.5px;
+    font-weight:700; letter-spacing:.15em; text-transform:uppercase; color:var(--muted);
+    background:none; cursor:pointer; text-decoration:none; padding:5px 11px;
+    border:1px solid transparent; transition:color .15s,border-color .15s;}
+  .bar a:hover,.bar button:hover{color:var(--accent); border-color:var(--hairline);}
+  .bar button.on{color:var(--bg); background:var(--accent); border-color:var(--accent);}
+  .bar input,.bar select{font:inherit; font-size:12.5px; color:var(--text);
+    background:rgba(var(--bg-rgb),.55); border:1px solid var(--hairline);
+    padding:5px 11px; outline:none;}
+  .bar input{width:150px;} .bar input:focus,.bar select:focus{border-color:var(--accent);}
+  .filters{display:contents;}
+
+  /* ----------------------------- chapters ------------------------------ */
+  .chap{margin-top:clamp(24px,4vw,38px);}
+  .chap-h{display:flex; align-items:flex-start; gap:16px; margin-bottom:20px;}
+  /* the illuminated initial */
+  .chap-h .init{flex:none; width:60px; height:60px; display:flex; align-items:center;
+    justify-content:center; font-family:var(--font-display); font-weight:900;
+    font-size:34px; line-height:1; color:var(--accent);
+    border:2px solid var(--accent); background:rgba(var(--bg-rgb),.45);
+    box-shadow:inset 0 0 0 3px rgba(var(--bg-rgb),.5);}
+  .chap-h .tt{padding-top:4px; min-width:0;}
+  .chap-h .no{font-size:10.5px; letter-spacing:.3em; color:var(--faint); text-transform:uppercase;}
+  .chap-h h3{font-family:var(--font-display); font-weight:900; margin-top:5px;
+    font-size:clamp(19px,3.4vw,29px); letter-spacing:.04em; line-height:1.15;}
+
+  .sec{margin-bottom:24px;} .sec:last-child{margin-bottom:0;}
+  .sec-h{font-family:var(--font-display); font-size:12px; font-weight:700;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--accent);
+    text-align:center; margin-bottom:10px;}
+  .sec-h::before{content:"— ";} .sec-h::after{content:" —";}
+
+  /* ---------------------------- entry lines ---------------------------- */
+  .row{display:flex; align-items:center; gap:10px; min-height:40px; min-width:0;
+    padding:3px 4px; transition:background .15s;}
+  .row:hover{background:rgba(var(--bg-rgb),.45);}
+  .row .rk{flex:none; width:30px; font-family:var(--font-display); font-size:13px;
+    color:var(--faint); text-align:right; letter-spacing:.04em;}
+  .row .rk.top{color:var(--accent); font-weight:900;}
+  .row .icon{width:24px; height:24px; flex:none; border:1px solid var(--hairline);}
+  .row .name{font-size:16.5px; font-weight:700; text-decoration:none; white-space:nowrap;
+    font-family:var(--font-display);}
+  .row a.name:hover{text-decoration:underline;}
+  .row .lead{flex:1; min-width:12px; height:0; border-bottom:1px dotted var(--hairline);
+    margin:0 2px; transform:translateY(4px);}
+  .row .detail{font-size:12.5px; color:var(--muted); white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; max-width:40%; font-style:italic;}
+  .row .value{font-family:var(--font-display); font-weight:900; font-size:17px;
+    white-space:nowrap; font-variant-numeric:tabular-nums;}
+  .row .value small{font-family:var(--font-body); font-size:11.5px; font-weight:400;
+    font-style:italic; color:var(--muted); margin-left:5px;}
+  .row.textrow{font-size:13.5px; color:var(--muted); font-style:italic; padding:6px 4px;}
+  .empty{font-size:13.5px; color:var(--faint); font-style:italic; text-align:center; padding:8px 0;}
+  .nohit{display:none !important;}
+
+  /* ------------- annexes: cultural modules, framed by the theme -------- */
+  .mod{margin-top:clamp(22px,4vw,34px); --fr-surface:rgba(var(--bg-rgb),.5);}
+  .mod-h{font-family:var(--font-display); font-weight:900; font-size:15.5px;
+    letter-spacing:.1em; text-transform:uppercase; text-align:center;
+    color:var(--accent); margin-bottom:16px;}
+  .mod-amt{font-family:var(--font-display); font-weight:900; color:var(--red);
+    font-size:clamp(28px,5.6vw,46px); line-height:1; text-align:center;
+    font-variant-numeric:tabular-nums;}
+  .mod-amt sup{font-size:.4em; margin-left:3px; color:var(--muted);}
+  .mod-sub{text-align:center; font-size:12px; color:var(--muted); margin-top:8px;
+    font-style:italic;}
+  .mod-lines{list-style:none; font-size:14px; line-height:1.8; margin-top:16px;
+    padding-top:14px; border-top:1px solid var(--hairline);}
+  .mod-lines li{display:flex; gap:12px;}
+  .mod-lines li .r{margin-left:auto; color:var(--faint); white-space:nowrap; font-style:italic;}
+  .mod-lines li.is-green{color:var(--green);}
+  .mod-flavor{font-style:italic; color:var(--muted); font-size:13px; margin-top:14px;
+    text-align:center;}
+  .mod-req{color:var(--red); font-size:12px; margin-top:5px; text-align:center;}
+  .mod-plots{display:flex; flex-wrap:wrap; gap:12px; justify-content:center;}
+  .plot{flex:0 1 158px; text-align:center; padding:16px 10px 11px;
+    border-radius:80px 80px 3px 3px; background:rgba(var(--bg-rgb),.5);
+    box-shadow:inset 0 0 0 1px var(--hairline), 0 8px 16px rgba(0,0,0,.2);}
+  .plot-n{font-family:var(--font-display); font-weight:900; font-size:13.5px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .plot-d{font-size:11px; color:var(--muted); margin-top:6px; font-style:italic;}
+  .mod-cap{text-align:center; font-size:12.5px; color:var(--faint);
+    margin-top:14px; font-style:italic;}
+  .mod-res{text-align:center; font-size:12px; color:var(--accent); margin-top:8px;}
+  .mod-quote{font-family:var(--font-display); font-weight:700; text-align:center;
+    font-size:clamp(18px,3.4vw,27px); line-height:1.35;}
+  .mod-attr{text-align:center; font-size:13px; color:var(--muted); margin-top:14px;
+    font-style:italic;}
+  .mod-img{width:100%; height:auto; display:block;}
+
+  /* ------------------------------ colophon ----------------------------- */
+  .motd{text-align:center; margin-top:clamp(26px,5vw,44px); padding:18px 0;
+    border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);}
+  .motd .chip{display:block; font-size:10px; letter-spacing:.3em; color:var(--accent);
+    text-transform:uppercase; margin-bottom:8px;}
+  .motd .q{font-family:var(--font-display); font-size:clamp(14px,2.6vw,19px);}
+  .credits{text-align:center; padding:20px 0 40px; font-size:12px; color:var(--faint);
+    font-style:italic; line-height:2;}
+
+  @media (max-width:520px){
+    .row .detail{display:none;}     /* name + number is the story on a phone */
+    .bar{position:static;}
+    .bar input{width:130px;}
+    .chap-h .init{width:48px; height:48px; font-size:27px;}
+  }
+</style>
+</head>
+<body>
+{# import above exposes the macros; this include emits the SVG filter
+   defs and the frame CSS the macros rely on #}
+{% include "web/_ornaments.html.j2" %}
+<div class="sheet">
+  <div class="front">
+    {%- if theme.backgrounds.header %}
+    <div class="plate"><img src="{{ theme.backgrounds.header }}" alt="" loading="lazy"></div>
+    {%- endif %}
+    <div class="col">
+      {%- if theme.backgrounds.crest %}<div class="crest"></div>{% endif %}
+      <h1>{{ guild_name.upper() }}</h1>
+      <div class="realm">{{ realm_label }}</div>
+      <div class="dt">{{ subtitle }} · {{ date_range }}</div>
+    </div>
+  </div>
+
+  <div class="col">
+    <div class="orn"><i></i><span>❧</span><i></i></div>
+
+    {%- if headline %}
+    <div class="procl">
+      <div class="lbl">Be it known · week of {{ week_label }}</div>
+      <h2>{{ headline }}</h2>
+      {%- if bar_label %}<div class="sub">{{ bar_label }}</div>{% endif %}
+    </div>
+    {%- endif %}
+
+    {%- if hero_tiles %}
+    <div class="census">
+      {%- for t in hero_tiles %}
+      <div class="c">
+        <div class="k">{{ t.label }}</div>
+        <div class="v">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+
+    <nav class="bar">
+      {%- for col in columns %}
+      <a href="#ch-{{ loop.index }}">{{ col.title }}</a>
+      {%- endfor %}
+      {%- if roast %}<a href="#roast">Roast</a>{% endif %}
+      <span class="filters" id="filters" hidden>
+        <button class="on" data-role="all">All</button>
+        <button data-role="dps">DPS</button>
+        <button data-role="healer">Healers</button>
+        <button data-role="tank">Tanks</button>
+      </span>
+      <input id="search" type="search" placeholder="Find a player…" hidden>
+      <select id="weeksel" hidden><option value="">This week</option></select>
+    </nav>
+
+    {%- set numerals = ['I','II','III','IV','V','VI','VII','VIII'] %}
+    {%- for col in columns %}
+    <section class="chap" id="ch-{{ loop.index }}" style="scroll-margin-top:64px;">
+      <div class="chap-h">
+        <div class="init">{{ col.title[0] }}</div>
+        <div class="tt">
+          <div class="no">Chapter {{ numerals[loop.index0] if loop.index0 < numerals|length else loop.index }}</div>
+          <h3>{{ col.title }}</h3>
+        </div>
+      </div>
+      {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
+      {%- for sec in col.sections %}
+      <div class="sec">
+        <div class="sec-h">{{ sec.title }}</div>
+        {%- for row in sec.rows %}
+        {%- if row.text is defined %}
+        <div class="row textrow">{{ row.text }}</div>
+        {%- else %}
+        <div class="row" data-name="{{ row.name | lower }}"
+             data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
+          <span class="rk{{ ' top' if row.medal }}">{{ row.rank }}.</span>
+          {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
+          {%- set purl = profile_urls.get(row.name | lower) %}
+            {%- if purl %}<a class="name" href="{{ purl }}"
+             target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
+             style="color:{{ row.ink if theme.backgrounds.poster else row.color }};">{{ row.name }}</a>
+            {%- else %}<span class="name" style="color:{{ row.ink if theme.backgrounds.poster else row.color }};">{{ row.name }}</span>{% endif %}
+          <span class="detail">{{ row.detail }}</span>
+          <span class="lead"></span>
+          <span class="value" style="color:{{ row.value_ink if theme.backgrounds.poster else row.value_color }};">{{ row.value }}{% if row.value_suffix %}<small>{{ row.value_suffix }}</small>{% endif %}</span>
+        </div>
+        {%- endif %}
+        {%- endfor %}
+      </div>
+      {%- endfor %}
+    </section>
+    {%- if not loop.last %}<div class="orn"><i></i><span>✦</span><i></i></div>{% endif %}
+    {%- endfor %}
+
+    <div class="orn"><i></i><span>❦</span><i></i></div>
+
+    {# --- the annexes: the guild's load-bearing traditions --- #}
+    {%- set tilts = ['','fr-tilt-c','fr-tilt-b','fr-tilt-a'] %}
+    {%- for m in culture_modules %}
+    <div id="{{ m.key }}" style="scroll-margin-top:64px;">
+      {{ orn.module_open(m, tilts[loop.index0 % 4]) }}
+        {{ mods.body(m) }}
+      {{ orn.module_close(m) }}
+    </div>
+    {%- if not loop.last %}{{ orn.rule('dot') }}{% endif %}
+    {%- endfor %}
+
+    {%- if motd %}
+    <div class="motd"><span class="chip">{{ motd_label }}</span><span class="q">{{ motd }}</span></div>
+    {%- endif %}
+    <div class="credits">
+      <div>{{ theme.credits }}</div>
+      <div>{{ watermark }}</div>
+    </div>
+  </div>
+</div>
+{% include "web/_interactive.html.j2" %}
+</body>
+</html>

@@ -1472,10 +1472,140 @@ def test_streaks_from_attendance_season_derivation():
 
 
 def test_web_role_filter_uses_whole_words():
-    """'Unholy' must never match the 'holy' healer keyword."""
-    tpl = open("guild_board/templates/web.html.j2", encoding="utf-8").read()
+    """'Unholy' must never match the 'holy' healer keyword.
+
+    The filter/search/archive JS lives in ONE shared partial that every
+    web layout includes, so the check belongs there."""
+    tpl = open("guild_board/templates/web/_interactive.html.j2", encoding="utf-8").read()
     assert "tokens.indexOf(w)" in tpl          # whole-word membership
     assert "tags.indexOf(w)" not in tpl        # the substring bug is gone
+
+
+def test_every_web_layout_includes_the_interactive_partial():
+    """A new layout must not silently ship without role filters, player
+    search and the week archive — they come from the shared partial."""
+    from pathlib import Path
+    # web/ holds board LAYOUTS; web/pages/ holds standalone pages (player
+    # profiles), which have no ranking columns and so no filters to carry.
+    layouts = [p for p in Path("guild_board/templates/web").glob("*.html.j2")
+               if not p.name.startswith("_")]
+    assert layouts, "no web layouts found"
+    for path in layouts:
+        body = path.read_text(encoding="utf-8")
+        assert "web/_interactive.html.j2" in body, f"{path.name} drops the interactive layer"
+        # the DOM contract the partial drives
+        assert 'id="filters"' in body and 'id="search"' in body, f"{path.name} misses filter hooks"
+        assert "data-name=" in body and "data-tags=" in body, f"{path.name} misses row hooks"
+
+
+def test_web_layout_resolution_fails_open():
+    """A typo'd board.web_layout must degrade to the shipped poster
+    layout, never to a blank or missing template."""
+    from guild_board import theme as theme_mod
+    assert theme_mod.resolve_templates(
+        {"board": {"web_layout": "ember_terminal"}}
+    )["web_layout_template"] == "web/ember_terminal.html.j2"
+    for bad in ("no_such_layout", "", None):
+        assert theme_mod.resolve_templates(
+            {"board": {"web_layout": bad}}
+        )["web_layout_template"] == "web/poster.html.j2"
+    # absent key entirely -> still the default
+    assert theme_mod.resolve_templates({})["web_layout_template"] == "web/poster.html.j2"
+
+
+def test_resolve_modules_fails_open():
+    """A theme can rotate modules in and out, and every bad value in the
+    modules block degrades instead of breaking the page."""
+    from guild_board import theme as theme_mod
+
+    # no modules block at all -> the shipped set, in the shipped order
+    default = theme_mod.resolve_modules({})
+    assert default["order"] == ["roast", "debt", "graveyard", "item"]
+
+    resolved = theme_mod.resolve_modules({"modules": {
+        "order": ["graveyard", "nonsense", "roast", "motd"],
+        "graveyard": {"style": "arch", "title": "THE PLOTS"},
+        "roast": {"style": "not_a_real_style"},
+        "debt": {"enabled": False},
+        "item": {"art": "assets/definitely_missing_art.png"},
+    }})
+    # unknown key dropped; motd is not a panel; declared order respected
+    assert resolved["order"] == ["graveyard", "roast"]
+    # a disabled module is gone from the order entirely
+    assert "debt" not in resolved["order"]
+    assert resolved["by_key"]["debt"]["enabled"] is False
+    # unknown frame style degrades to unframed rather than emitting junk
+    assert resolved["by_key"]["roast"]["style"] == "none"
+    assert resolved["by_key"]["graveyard"]["style"] == "arch"
+    assert resolved["by_key"]["graveyard"]["title"] == "THE PLOTS"
+    # missing art is cleared, not rendered as a broken background
+    assert resolved["by_key"]["item"]["art"] is None
+    # a non-list order falls back rather than raising
+    assert theme_mod.resolve_modules({"modules": {"order": "roast"}})["order"]
+
+
+def test_modules_honour_the_older_footer_switches():
+    """Guilds that already set footer.debt.enabled / titles keep their
+    settings without having to learn the new modules block."""
+    from guild_board import theme as theme_mod
+    resolved = theme_mod.resolve_modules({
+        "footer": {"debt": {"enabled": False, "title": "Old Debt Title"},
+                   "graveyard": {"title": "OLD GRAVEYARD"}},
+    })
+    assert resolved["by_key"]["debt"]["enabled"] is False
+    assert resolved["by_key"]["graveyard"]["title"] == "OLD GRAVEYARD"
+
+
+def test_retiring_a_module_removes_it_from_every_layout(tmp_path):
+    """Turning a module off in theme.yml must actually drop it from the
+    rendered page — on all four layouts."""
+    from guild_board import html_board
+    theme_file = tmp_path / "theme.yml"
+    theme_file.write_text(
+        "modules:\n"
+        "  order: [roast]\n"
+        "  debt: {enabled: false}\n"
+        "  graveyard: {enabled: false}\n"
+        "  motd: {enabled: false}\n",
+        encoding="utf-8")
+    cfg = _image_board_cfg()
+    cfg["display"] = dict(cfg.get("display") or {}, theme_file=str(theme_file))
+    now = datetime.now(timezone.utc)
+    base = html_board.build_context(
+        cfg, _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    assert base["motd"] == ""
+    for layout in ("poster", "chronicle", "ember_terminal", "codex"):
+        ctx = dict(base, web_layout_template=f"web/{layout}.html.j2")
+        page = html_board.render_html(ctx, template="web.html.j2").upper()
+        assert "GAMBLING DEBT" not in page, f"{layout} still shows the retired debt card"
+        # the graveyard MODULE's caption — "Graveyard Campers" alone also
+        # appears as a most-deaths section title in the ranking data
+        assert "PLOTS ASSIGNED BY" not in page, f"{layout} still shows the retired graveyard"
+        assert "ROAST OF THE WEEK" in page, f"{layout} lost the module that stayed enabled"
+
+
+def test_every_web_layout_renders_the_culture_slots():
+    """The gambling debt, the graveyard, the roast and the MOTD are
+    load-bearing guild culture — a layout may restyle them but must not
+    quietly drop them."""
+    from guild_board import html_board
+    now = datetime.now(timezone.utc)
+    base = html_board.build_context(
+        _image_board_cfg(), _image_board_stats(), {"realm": 49}, None, "Voidspire",
+        None, None, None, now - timedelta(days=7), now)
+    from markupsafe import escape
+    for layout in ("poster", "chronicle", "ember_terminal", "codex"):
+        ctx = dict(base, web_layout_template=f"web/{layout}.html.j2")
+        page = html_board.render_html(ctx, template="web.html.j2")
+        upper = page.upper()
+        # the quip rotates weekly, so compare the escaped form of whichever
+        # one this week's index landed on
+        assert str(escape(ctx["motd"])) in page, f"{layout} drops the MOTD"
+        assert "ROAST OF THE WEEK" in upper, f"{layout} drops the roast"
+        if layout != "poster":      # poster predates these two on the web
+            assert "GAMBLING DEBT" in upper, f"{layout} drops the debt card"
+            assert "GRAVEYARD" in upper, f"{layout} drops the graveyard"
 
 
 # --- webhook delivery: multi-file + rate-limit retry ------------------------------

@@ -27,13 +27,14 @@ from PIL import Image
 from guild_board import awards as awards_mod
 from guild_board import board_image
 from guild_board import integrity
+from guild_board import links
 from guild_board import theme as theme_mod
 from guild_board.board_image import (
     CLASS_ICONS, DIFFICULTY_NAMES, ICON_CDN, MEDAL_FILLS, SPEC_ICONS,
     _CLASS_KEY_DISPLAY, _build_columns, _build_seasonal, _hero_tiles,
     _plural, _rgb, _spec_class_keys,
 )
-from guild_board.config import get_class_color
+from guild_board.config import get_class_color, load_roster_cache
 
 logger = logging.getLogger(__name__)
 
@@ -389,6 +390,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     display_cfg = cfg.get("display") or {}
     theme = theme_mod.load_theme(display_cfg.get("theme_file", theme_mod.THEME_FILE))
     modules = theme_mod.resolve_templates(theme)
+    mods = theme_mod.resolve_modules(theme)
     width = int((theme.get("board") or {}).get("width") or WIDTH)
     week_index = start_dt.isocalendar()[1]
 
@@ -401,7 +403,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
 
     # Rotating mid-pack spotlights ride in the Seasonal Guild column
     awards_cfg = theme.get("awards") or {}
-    if awards_cfg.get("enabled", True):
+    if mods["by_key"]["awards"]["enabled"]:
         seasonal_guild = list(seasonal_guild) + awards_mod.weekly_awards(
             week_index, stats=stats, streaks=streaks,
             season_scores=mplus_season_scores, previous=previous,
@@ -443,6 +445,9 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
 
     guild = cfg.get("guild", {})
     realm = (guild.get("realm_slug") or "").replace("-", " ").upper()
+    # Per-player realms: the guild is cross-realm, so a link built from
+    # the guild realm alone 404s for most of the roster.
+    roster_members, _roster_updated = load_roster_cache(cfg)
     region = (guild.get("region") or "").upper()
 
     stones = _build_stones(stats, pulls, lookup)
@@ -454,6 +459,14 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
 
     debt_card = _debt_card(theme, week_index)
     quips = theme.get("motd_quips") or ["Git Gud."]
+    roast = _roast(cfg)
+
+    # Bind each rotated-in module to its data. A module the theme enabled
+    # but that has nothing to show this week drops out on its own.
+    payloads = {"roast": roast, "debt": debt_card,
+                "graveyard": stones, "item": item_src}
+    culture_modules = [dict(mods["by_key"][key], data=payloads.get(key))
+                       for key in mods["order"] if payloads.get(key)]
 
     global LAST_TLDR
     LAST_TLDR = _tldr_from_columns(columns, standing)
@@ -474,9 +487,17 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
     return {
         "guild_name": guild.get("name", "Guild"),
         "realm_label": f"{realm} · {region}" if realm else region,
+        # Kept for templates that still build a URL by hand; every shipped
+        # layout now prefers profile_urls, which uses each player's REAL
+        # realm. The guild realm is only correct for the ~30% of the
+        # roster actually on it.
         "profile_base": ("https://www.warcraftlogs.com/character/"
                          f"{(guild.get('region') or 'us').lower()}/"
                          f"{(guild.get('realm_slug') or '').lower()}/"),
+        "profile_urls": links.profile_urls(
+            roster_members,
+            region=guild.get("region") or "us",
+            guild_realm=guild.get("realm_slug") or ""),
         "tldr": LAST_TLDR,
         "subtitle": subtitle,
         "date_range": date_range,
@@ -491,7 +512,11 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "bar_label": bar_label,
         "columns": columns,
         "icons_on": bool(display_cfg.get("icons", True)),
-        "roast": _roast(cfg),
+        "roast": roast,
+        # the theme's rotated-in cultural modules, in order, each with its
+        # own title/art/frame/accent and its data attached
+        "culture_modules": culture_modules,
+        "module_cfg": mods["by_key"],
         "stones": stones,
         "debt": debt_card["amount"] if debt_card else 0,
         "debt_card": debt_card,
@@ -499,7 +524,11 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "item_title": (theme.get("footer") or {}).get("item_title",
                                                       display_cfg.get("item_art_title", "GUILD ITEM OF THE MONTH")),
         "item_src": item_src,
-        "motd": quips[week_index % len(quips)],
+        # "" (not None) when retired: the image-board templates print this
+        # unconditionally, and None would render the word "None"
+        "motd": (quips[week_index % len(quips)]
+                 if mods["by_key"]["motd"]["enabled"] else ""),
+        "motd_label": mods["by_key"]["motd"]["title"],
         "watermark": display_cfg.get(
             "watermark_text",
             "Powered by Guild Board · github.com/Bzach10/wow-guild-board")
@@ -511,6 +540,7 @@ def build_context(cfg, stats, standing, leaders, zone_name, mplus_results,
         "hdr_wipes_sub": wipes_sub,
         "header_template": modules["header_template"],
         "footer_template": modules["footer_template"],
+        "web_layout_template": modules["web_layout_template"],
         "header_h": modules["header_h"],
         "footer_total": modules["footer_total"],
         "header_embers": _embers(7, 26),
