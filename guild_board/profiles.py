@@ -69,7 +69,8 @@ def _records_for(slug, records):
     return held
 
 
-def build_profile(member, board_state, cfg, roster_members, theme=None):
+def build_profile(member, board_state, cfg, roster_members, theme=None,
+                  rank_field=None):
     """The full context for one member's page."""
     def _mapping(value):
         """board_state.json is written by another workstream; a section
@@ -85,32 +86,57 @@ def build_profile(member, board_state, cfg, roster_members, theme=None):
     region = (guild.get("region") or "us").lower()
 
     slug = member["slug"]
-    score = season_scores.get(slug)
-    rank, field = _rank_of(slug, season_scores)
+    # board_state's bare-name data may only be matched through an
+    # unambiguous name (crew.py sets legacy_slug exactly when it is).
+    state_key = member.get("legacy_slug", slug)
+
+    score = member.get("score")
+    if score is None and state_key:
+        score = season_scores.get(state_key)
+    if member.get("rank") is not None:
+        rank, field = member["rank"], (rank_field or len(season_scores))
+    else:
+        rank, field = _rank_of(state_key, season_scores) \
+            if state_key else (None, len(season_scores))
 
     delta = None
-    if score is not None and baseline.get(slug) is not None:
-        raw = round(score - baseline[slug], 1)
+    if score is not None and state_key and baseline.get(state_key) is not None:
+        raw = round(score - baseline[state_key], 1)
         if raw:
             delta = f"{'+' if raw > 0 else ''}{raw}"
 
+    # The member's own realm (live pull, keyed name-realm) outranks the
+    # name->realm guess from the roster cache — the guess is exactly what
+    # silently merged the two Berobens.
     index = links_mod.realm_index(roster_members)
-    realm = links_mod.realm_for(slug, index)
+    realm = member.get("realm_slug") or links_mod.realm_for(state_key or slug, index)
+
+    name_lower = (member.get("name") or slug).strip().lower()
+    if member.get("realm_slug"):
+        wcl_url = links_mod.WCL_CHARACTER.format(
+            region=region, realm=member["realm_slug"], name=name_lower)
+        rio_url = links_mod.RIO_CHARACTER.format(
+            region=region, realm=member["realm_slug"], name=name_lower)
+    else:
+        wcl_url = links_mod.character_url(state_key or slug, index,
+                                          region=region, site="wcl")
+        rio_url = links_mod.character_url(state_key or slug, index,
+                                          region=region, site="raiderio")
 
     return {
         "member": member,
         "slug": slug,
         "name": member["name"],
         "realm": realm,
-        "realm_label": (realm or "").replace("-", " ").title(),
+        "realm_label": member.get("realm") or (realm or "").replace("-", " ").title(),
         "score": score,
         "rank": rank,
         "field": field,
         "delta": delta,
-        "streak": streaks.get(slug),
-        "records": _records_for(slug, records),
-        "wcl_url": links_mod.character_url(slug, index, region=region, site="wcl"),
-        "rio_url": links_mod.character_url(slug, index, region=region, site="raiderio"),
+        "streak": streaks.get(state_key) if state_key else None,
+        "records": _records_for(state_key, records) if state_key else [],
+        "wcl_url": wcl_url,
+        "rio_url": rio_url,
         # An unresolved realm is stated on the page rather than hidden —
         # it is exactly the gap that produced the original blank links.
         "realm_unknown": not realm,
@@ -118,4 +144,10 @@ def build_profile(member, board_state, cfg, roster_members, theme=None):
 
 
 def build_all(crew, board_state, cfg, roster_members, theme=None):
-    return [build_profile(m, board_state, cfg, roster_members, theme) for m in crew]
+    # The ranked field size: how many crew actually carry a score. With
+    # the live pull this is the real ranked count (97), not the 96 the
+    # name-collapsed season_scores could see.
+    ranked = len([m for m in crew if m.get("score") is not None
+                  and not m.get("parked")])
+    return [build_profile(m, board_state, cfg, roster_members, theme,
+                          rank_field=ranked or None) for m in crew]

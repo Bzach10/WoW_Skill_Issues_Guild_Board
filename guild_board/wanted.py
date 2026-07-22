@@ -70,11 +70,18 @@ def board(crew, board_state, cfg=None):
 
     entries = []
     for m in crew or []:
+        if m.get("parked"):
+            # Unresolved members (page exists, membership unconfirmed) do
+            # not get a bounty and do not count toward the crew.
+            continue
         slug = m.get("slug")
+        # board_state data is keyed by bare name; only an unambiguous
+        # name may match it (two crewmates share a name — see crew.py).
+        state_key = m.get("legacy_slug", slug)
         score = m.get("score")
-        if score is None:
-            score = scores.get(slug)
-        prev = baseline.get(slug)
+        if score is None and state_key:
+            score = scores.get(state_key)
+        prev = baseline.get(state_key) if state_key else None
         delta = (round(score - prev, 1)
                  if (score is not None and prev is not None) else None)
         art = m.get("art") or {}
@@ -89,7 +96,7 @@ def board(crew, board_state, cfg=None):
             "score": score,
             "bounty": int(round(score * BERRY_PER_POINT)) if score is not None else None,
             "delta": delta,
-            "streak": streaks.get(slug),
+            "streak": streaks.get(state_key) if state_key else None,
             "art": src,
             "pending": not src,
             "titles": titles.get(slug, []),
