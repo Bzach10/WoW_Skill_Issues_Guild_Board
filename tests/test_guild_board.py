@@ -1,15 +1,13 @@
 import json
 import os
-import tempfile
 from datetime import datetime, timedelta, timezone
 
 import pytest
-
 import requests
 
-from guild_board import board_image
+from guild_board import board_image, dedup, discord_inputs, filters, formatters, main, wcl
 from guild_board import config as gb_config
-from guild_board import dedup, discord as gb_discord, discord_inputs, filters, formatters, main, wcl
+from guild_board import discord as gb_discord
 
 
 def test_deduper():
@@ -76,7 +74,7 @@ def test_get_class_color():
 
 def test_roster_cache(tmp_path):
     cfg = {"roster_cache": {"enabled": True, "file": str(tmp_path / "roster.json")}}
-    path = gb_config.save_roster_cache(cfg, ["Rakell-Area52", "Bud-BleedingHollow"])
+    gb_config.save_roster_cache(cfg, ["Rakell-Area52", "Bud-BleedingHollow"])
     members, _ = gb_config.load_roster_cache(cfg)
     assert members == ["Bud-BleedingHollow", "Rakell-Area52"]
 
@@ -982,7 +980,6 @@ def _image_board_stats():
 
 def test_generate_board_image(tmp_path):
     from PIL import Image
-    cfg = _image_board_cfg()
     standing = {"realm": 163, "region": 7924}
     leaders = [{"name": "Rakell", "spec": "Enhancement Shaman", "realm_rank": 1, "region_rank": 892, "best_avg": 91.3, "boss": "Some Boss"}]
     mplus = [(17, "Skyreach", "brewzleeh", "Brewmaster Monk", True)]
@@ -1367,7 +1364,9 @@ def test_integrity_heals_records_and_standing():
 
 
 def test_integrity_cli_on_state_file(tmp_path, monkeypatch):
-    import subprocess, sys, json as _json
+    import json as _json
+    import subprocess
+    import sys
     state = {"records": {"best_dps_parse": {"name": "A", "parse": 59}},
              "standing": {"realm": 49}}
     monkeypatch.chdir(tmp_path)
@@ -1395,7 +1394,7 @@ def test_raid_week_label_anchors_to_tuesday_reset():
 
 
 def test_baseline_survives_reposts(tmp_path, monkeypatch):
-    from guild_board.state import save_board_state, load_board_state, baselines_view
+    from guild_board.state import baselines_view, load_board_state, save_board_state
     monkeypatch.chdir(tmp_path)
     path = str(tmp_path / "board_state.json")
     # week 1 final post
@@ -1430,8 +1429,10 @@ def test_record_new_badge_survives_repost():
 
 
 def test_integrity_flags_streak_inflation():
+    from datetime import date
+    from datetime import timedelta as td
+
     from guild_board import integrity
-    from datetime import date, timedelta as td
     state = {"streaks": {"amrevenge": 15},
              "streaks_started": (date.today() - td(days=14)).isoformat()}
     msgs = []
@@ -1629,8 +1630,8 @@ def test_integrity_heals_missing_theme_assets():
 def test_custom_board_template_module(tmp_path, monkeypatch):
     """board_templates/ modules are found first and render end-to-end —
     the guild-facing 'make your own header' feature from CUSTOMIZING.md."""
-    from guild_board import theme as theme_mod
     from guild_board import html_board
+    from guild_board import theme as theme_mod
     guild_dir = tmp_path / "board_templates"
     (guild_dir / "headers").mkdir(parents=True)
     (guild_dir / "headers" / "mine.html.j2").write_text(
