@@ -67,7 +67,7 @@ a{color:var(--accent);}
     radial-gradient(120% 80% at 50% 0%, transparent 60%,
       color-mix(in srgb, var(--accent) 8%, transparent) 100%);}
 .backdrop::after{content:""; position:absolute; inset:0;
-  background:color-mix(in srgb, var(--bg) 93%, transparent);}
+  background:color-mix(in srgb, var(--bg) {{ panel_scrim | default(93) }}%, transparent);}
 
 .hero{position:relative; z-index:1; width:100%; overflow:hidden;
   min-height:clamp(380px, 48vw, 620px); display:flex; align-items:flex-end;
@@ -291,9 +291,16 @@ a{color:var(--accent);}
   background:color-mix(in srgb, var(--panel) 94%, transparent);
   border:1px solid var(--line); border-radius:16px; padding:14px 18px;
   overflow:hidden; box-shadow:0 14px 30px -22px rgba(0,0,0,.6);}
-.ribbon-tag{flex:0 0 auto; font-size:11px; letter-spacing:.16em;
-  text-transform:uppercase; color:var(--bg); background:var(--accent);
-  padding:5px 11px; border-radius:999px;}
+.ribbon-tag{flex:0 0 auto; position:relative; z-index:2; font-size:11px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--bg);
+  background:var(--accent); padding:5px 11px; border-radius:999px;
+  box-shadow:0 0 0 8px color-mix(in srgb, var(--panel) 94%, transparent);}
+.ribbon-track{position:relative;}
+/* a soft fade where the marquee emerges past the tag, so no beat ever
+   collides with the "This week" chip */
+.ribbon-in::before{content:""; position:absolute; left:0; top:0; bottom:0;
+  width:150px; z-index:1; pointer-events:none;
+  background:linear-gradient(90deg, color-mix(in srgb,var(--panel) 94%, transparent) 60%, transparent);}
 .ribbon-track{display:flex; gap:34px; white-space:nowrap; will-change:transform;
   animation:ribbon 60s linear infinite;}
 .ribbon-in:hover .ribbon-track{animation-play-state:paused;}
@@ -417,7 +424,7 @@ a{color:var(--accent);}
 
 {%- if recap and recap.sentences %}
 {# X: Weekly Recap Ribbon — the week as a story, from real records #}
-<section class="ribbon wrap" aria-label="This week">
+<section class="ribbon wrap" data-section="recap" aria-label="This week">
   <div class="ribbon-in">
     <span class="ribbon-tag">This week</span>
     <div class="ribbon-track">
@@ -427,7 +434,7 @@ a{color:var(--accent);}
 </section>
 {%- endif %}
 
-<section class="sec wrap">
+<section class="sec wrap" data-section="cast">
   <h2>The Cast</h2>
   <p class="sub">{{ trial_status }}</p>
 
@@ -512,7 +519,7 @@ a{color:var(--accent);}
   </div>
 </section>
 
-<section class="sec wrap">
+<section class="sec wrap" data-section="how">
   <h2>How it works</h2>
   <p class="sub">Nobody has to type anything in by hand</p>
   <div class="steps">
@@ -547,7 +554,7 @@ a{color:var(--accent);}
   </div>
 </section>
 
-<section class="sec wrap">
+<section class="sec wrap" data-section="changed">
   <h2>What changed in this draft</h2>
   <p class="sub">Fixes and additions since the first look</p>
   <div class="notes">
@@ -585,7 +592,7 @@ a{color:var(--accent);}
 </section>
 
 {%- if year_plan %}
-<section class="sec wrap">
+<section class="sec wrap" data-section="rotation">
   <h2>The scene rotates monthly</h2>
   <p class="sub">One line in a config file decides the order</p>
   <div class="rotation">
@@ -598,7 +605,7 @@ a{color:var(--accent);}
 </section>
 {%- endif %}
 
-<section class="cta wrap">
+<section class="cta wrap" data-section="cta">
   <a href="{{ board_href }}">Open the animated crew board →</a>
   <span class="hint">The cast standing together on deck, with the ladder,
     the roast and the voyage map.</span>
@@ -689,6 +696,23 @@ a{color:var(--accent);}
       });
     });
   }
+
+  /* ---------- section order + visibility (from the admin panel) ---------- */
+  (function(){
+    var order = {{ (panel_sections or []) | tojson }};
+    var hidden = {{ (panel_hidden or []) | tojson }};
+    hidden.forEach(function(k){
+      var el = document.querySelector('[data-section="'+k+'"]');
+      if (el) el.style.display = 'none';
+    });
+    if (order && order.length){
+      var main = document.querySelector('main');
+      order.forEach(function(k){
+        var el = document.querySelector('[data-section="'+k+'"]');
+        if (el && main) main.appendChild(el);   // reflow into configured order
+      });
+    }
+  })();
 
   /* ---------- lazy-load card images (I-02) ---------- */
   if ('IntersectionObserver' in window) {

@@ -343,9 +343,15 @@ def main():
     if recap["sentences"]:
         logger.info("Recap (%s): %d beats", recap["source"], len(recap["sentences"]))
 
+    from guild_board import admin_config
+    panel = admin_config.current_settings(cfg)
+
     trial_ctx = dict(ctx)
     trial_ctx.update({
         "scene": scene,
+        "panel_scrim": panel["scrim"],
+        "panel_sections": panel["sections"],
+        "panel_hidden": panel["hidden"],
         "recap": recap,
         # a compact facet index for the filters + find-my-character
         "facets": sorted({f for m in ctx["crew"] for f in (
