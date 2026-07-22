@@ -312,6 +312,43 @@ a{color:var(--accent);}
   .ribbon-track{animation:none; white-space:normal; flex-wrap:wrap; gap:6px 22px;}
 }
 
+/* ---------- ANIM-08: the weekly two-panel manga strip ---------- */
+.manga{padding:8px 22px 26px;}
+.manga-tag{display:inline-block; font-size:11px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--bg); background:var(--accent);
+  padding:5px 12px; border-radius:6px 6px 0 0; font-weight:700; margin-left:2px;}
+.manga-strip{display:grid; grid-template-columns:1fr 1fr; gap:10px;
+  padding:12px; background:var(--ink,#181410); border-radius:4px;
+  border:2px solid var(--ink,#181410);
+  box-shadow:0 20px 50px -26px rgba(0,0,0,.7);}
+.mpanel{position:relative; margin:0; aspect-ratio:16/10; overflow:hidden;
+  border-radius:2px; background:#0d0b09 var(--still) center/cover no-repeat;
+  border:3px solid var(--ink,#181410); display:flex; align-items:flex-end;}
+/* action-comic vignette so the bubble always reads over busy art */
+.mpanel::after{content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(120% 90% at 50% 0%, transparent 40%,
+    rgba(0,0,0,.5) 100%);}
+.mbubble{position:relative; z-index:2; margin:12px; padding:11px 14px;
+  font-size:14px; line-height:1.32; border-radius:14px; max-width:82%;
+  background:#fff; color:#181410; border:2px solid #181410;
+  box-shadow:3px 3px 0 rgba(0,0,0,.35);}
+.mbubble.narrate{border-radius:4px; background:#fbf7ea;
+  font-family:var(--font-display); font-size:15px;}
+.mbubble .mwho{font-weight:800; color:#7a1f12;}
+/* the speech bubble gets a little tail */
+.mbubble.speech::after{content:""; position:absolute; left:26px; bottom:-11px;
+  width:16px; height:16px; background:#fff; border:2px solid #181410;
+  border-top:0; border-right:0; transform:rotate(-45deg);}
+.mbubble.speech b{display:block; font-size:16px;}
+.mbubble .mto{display:block; font-size:10px; letter-spacing:.1em;
+  text-transform:uppercase; color:#7a1f12; font-weight:800; margin-bottom:3px;}
+.mbubble .mfrom{display:block; text-align:right; font-size:11px; color:#555;
+  margin-top:3px; font-style:italic;}
+@media (max-width:640px){
+  .manga-strip{grid-template-columns:1fr;}
+  .mpanel{aspect-ratio:16/9;}
+}
+
 /* ---------- Sticky roster nav (I-01) ---------- */
 .roster-nav{position:sticky; top:53px; z-index:30; margin:0 -22px 22px;
   padding:12px 22px;
@@ -430,6 +467,30 @@ a{color:var(--accent);}
     <div class="ribbon-track">
       {%- for beat in recap.sentences %}<span class="beat">{{ beat }}</span>{% endfor %}
     </div>
+  </div>
+</section>
+{%- endif %}
+
+{%- if manga and manga.panels %}
+{# ANIM-08: the week as a two-panel manga, over the scene dioramas #}
+<section class="manga wrap" aria-label="This week, as a two-panel strip">
+  <div class="manga-tag">This week</div>
+  <div class="manga-strip">
+    {%- for pn in manga.panels %}
+    <figure class="mpanel"{% if pn.still %} style="--still:url('{{ pn.still }}');"{% endif %}>
+      {%- if pn.kind == 'speech' %}
+      <div class="mbubble speech">
+        {%- if pn.target %}<span class="mto">{{ pn.who }} → {{ pn.target }}</span>{% endif %}
+        <b>“{{ pn.text }}”</b>
+        {%- if not pn.target %}<span class="mfrom">— {{ pn.who }}</span>{% endif %}
+      </div>
+      {%- else %}
+      <div class="mbubble narrate">
+        <span class="mwho">{{ pn.who }}</span> {{ pn.text }}
+      </div>
+      {%- endif %}
+    </figure>
+    {%- endfor %}
   </div>
 </section>
 {%- endif %}

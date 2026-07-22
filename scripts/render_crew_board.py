@@ -31,6 +31,7 @@ import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
+from guild_board import manga as manga_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
 from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
@@ -343,6 +344,25 @@ def main():
     if recap["sentences"]:
         logger.info("Recap (%s): %d beats", recap["source"], len(recap["sentences"]))
 
+    # ANIM-08: the weekly two-panel manga strip, laid over scene stills we
+    # already have. Panel 1 is the current month's diorama; panel 2 a
+    # second ready scene, so the two panels differ.
+    repo_root = Path(__file__).resolve().parent.parent
+    manga_stills = []
+    if scene and scene.get("hero"):
+        manga_stills.append(scene["hero"])
+    for pt in scenery_mod.ports(cfg):
+        if (pt.get("ready") and pt.get("hero")
+                and pt["key"] != (scene or {}).get("key")):
+            second = showcase_mod.stage_art(
+                {"src": pt["hero"]}, f"_scene_{pt['key']}", repo_root=repo_root)
+            if second.get("src"):
+                manga_stills.append(second["src"])
+            break
+    manga = manga_mod.strip(board_state, cfg, stills=manga_stills)
+    if manga:
+        logger.info("Manga strip: %d panels", len(manga["panels"]))
+
     from guild_board import admin_config
     panel = admin_config.current_settings(cfg)
 
@@ -361,6 +381,7 @@ def main():
     trial_ctx = dict(ctx)
     trial_ctx.update({
         "scene": scene,
+        "manga": manga,
         "cast_drawn": len(cards),
         "cast_total": len(cards) + len(pending_cast),
         "pending_cast": pending_cast,
