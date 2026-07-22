@@ -1,0 +1,77 @@
+{# The Wanted Board markup. Expects `wanted` = guild_board.wanted.board(...).
+   Renders the top-5 hero row and the full ranked, sortable wall. #}
+{%- macro poster(e) -%}
+<article class="bounty{{ ' wunranked' if e.rank is none }}"
+         data-role="{{ e.role or '' }}"
+         data-score="{{ e.score if e.score is not none else -1 }}"
+         data-delta="{{ e.delta if e.delta is not none else -9999 }}"
+         data-streak="{{ e.streak or 0 }}"
+         data-name="{{ (e.name or '')|lower }}"
+         data-search="{{ [e.name, e.cls, e.spec, e.role_label]|select|join(' ')|lower }}">
+  {%- if e.rank %}<span class="wrank" title="Rank {{ e.rank }}">{{ e.rank }}</span>{% endif %}
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    {%- if e.art %}
+    <img src="{{ e.art }}" alt="{{ e.name }}" loading="lazy" decoding="async">
+    {%- else %}
+    <span class="silo" aria-hidden="true"><svg viewBox="0 0 24 28"><path d="M12 3a4.2 4.2 0 1 1 0 8.4A4.2 4.2 0 0 1 12 3Zm0 10.2c4.4 0 8 2.7 8 6v3.3H4v-3.3c0-3.3 3.6-6 8-6Z"/></svg></span>
+    {%- endif %}
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">{{ e.name }}</div>
+  <div class="wmeta">{{ [e.spec, e.cls]|select|join(' ') }}</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">{% if e.bounty is not none %}{{ '{:,}'.format(e.bounty) }}{% else %}—— UNRANKED ——{% endif %}</span>
+  </div>
+  <div class="wscore">{% if e.score is not none %}Mythic+ Score {{ '%.1f'|format(e.score) }}{% else %}no score on file yet{% endif %}</div>
+  {%- if e.titles or (e.delta and e.delta > 0) or (e.streak and e.streak > 1) %}
+  <div class="wtags">
+    {%- for t in e.titles %}<span class="wtag title">{{ t }}</span>{% endfor %}
+    {%- if e.delta and e.delta > 0 %}<span class="wtag up" title="Climbed this week">▲ {{ '%.1f'|format(e.delta) }}</span>{% endif %}
+    {%- if e.streak and e.streak > 1 %}<span class="wtag streak">{{ e.streak }}w on deck</span>{% endif %}
+  </div>
+  {%- endif %}
+</article>
+{%- endmacro -%}
+
+<div class="wanted" id="wantedboard">
+  <p class="wanted-lede">The competition that started it all — every crewmate's
+    <b>Mythic+ score is their bounty</b>. {{ wanted.ranked_count }} ranked, top five
+    most wanted. This is the thing that brought us all together.</p>
+
+  <div class="wanted-controls">
+    <div class="grp" role="group" aria-label="Sort the board">
+      <button type="button" data-sort="score" aria-pressed="true">Bounty</button>
+      <button type="button" data-sort="delta" aria-pressed="false">Biggest Climb</button>
+      <button type="button" data-sort="streak" aria-pressed="false">On Deck</button>
+    </div>
+    <div class="grp" role="group" aria-label="Filter by role">
+      <button type="button" data-role="all" aria-pressed="true">All</button>
+      <button type="button" data-role="tank" aria-pressed="false">Tanks</button>
+      <button type="button" data-role="healer" aria-pressed="false">Healers</button>
+      <button type="button" data-role="dps" aria-pressed="false">DPS</button>
+    </div>
+    <input type="search" class="wsearch" id="wsearch" placeholder="Find a bounty…"
+           autocomplete="off" aria-label="Search bounties">
+  </div>
+
+  {%- if wanted.top5 %}
+  <section class="mostwanted" aria-label="Most wanted — top five">
+    <h3>★ <b>Most Wanted</b> ★ · the five biggest bounties aboard</h3>
+    <div class="mw-row">
+      {# order 2,4,1,3,5 so the #1 sits centre, flanked #}
+      {%- set order = [1, 3, 0, 2, 4] %}
+      {%- for i in order %}{% if wanted.top5[i] is defined %}{{ poster(wanted.top5[i]) }}{% endif %}{% endfor %}
+    </div>
+  </section>
+  {%- endif %}
+
+  <section class="bountywall" aria-label="The full crew, ranked">
+    <h3>The <b>whole crew</b>, by bounty — {{ wanted.total_count }} wanted</h3>
+    <div class="bounty-grid" id="bountygrid">
+      {%- for e in wanted.entries %}{{ poster(e) }}{% endfor %}
+    </div>
+    <p class="wall-empty" id="wallempty">No bounties match. They've slipped the net.</p>
+  </section>
+</div>

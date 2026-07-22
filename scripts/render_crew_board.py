@@ -38,6 +38,7 @@ from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import site_data as site_data_mod  # noqa: E402
+from guild_board import wanted as wanted_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
 
@@ -393,6 +394,9 @@ def main():
         "scene": scene,
         "manga": manga,
         "cameo": cameo,
+        # THE WANTED BOARD: every crewmate's M+ score as a bounty. Pure
+        # function of board_state, so a daily data refresh just re-runs it.
+        "wanted": wanted_mod.board(ctx["crew"], board_state, cfg),
         # B-07: the trophy hall reads the backend's guild_achievements layer
         # (committed sample until a credentialed refresh runs)
         "trophies": site_data_mod.layer("guild_achievements"),
@@ -438,6 +442,14 @@ def main():
     _tr = trial_ctx["trophies"] or {}
     logger.info("Wrote the trophy hall to %s (available=%s, %d trophies)",
                 trophy_page, _tr.get("available"), len(_tr.get("trophies") or []))
+
+    # the Wanted Board (the guild's founding competition, as bounty posters)
+    wanted_page = out.parent / "wanted.html"
+    wanted_page.write_text(
+        env.get_template("web/pages/wanted.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the wanted board to %s (%d ranked of %d)", wanted_page,
+                trial_ctx["wanted"]["ranked_count"], trial_ctx["wanted"]["total_count"])
 
     # the voyage map, rendered into the same site so the nav link resolves
     try:

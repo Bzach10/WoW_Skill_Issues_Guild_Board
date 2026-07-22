@@ -1,0 +1,136 @@
+{# The Wanted Board — One Piece bounty posters. Parchment is fixed (a
+   bounty bill is always aged paper) regardless of the site theme. #}
+.wanted{--paper:#e9d7ab; --paper-lo:#d8c08a; --paper-hi:#f3e7c4;
+  --ink:#3b2c17; --ink-soft:#6b5330; --stamp:#a8362a; --tape:#c9b784;
+  position:relative;}
+
+/* the controls: sort + role filter + search, styled to the room */
+.wanted-controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  justify-content:center; margin:0 auto 26px; max-width:var(--measure);}
+.wanted-controls .grp{display:flex; gap:6px; flex-wrap:wrap;}
+.wanted-controls button{font:inherit; font-size:13px; cursor:pointer;
+  padding:8px 14px; border-radius:999px; border:1px solid var(--line);
+  background:var(--panel); color:var(--text); transition:all .2s;}
+.wanted-controls button[aria-pressed="true"]{background:var(--accent);
+  color:var(--bg); border-color:var(--accent);}
+.wanted-controls .wsearch{flex:1 1 200px; min-width:160px; max-width:280px;
+  font:inherit; font-size:14px; padding:8px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text);}
+.wanted-lede{text-align:center; color:var(--muted); max-width:60ch;
+  margin:0 auto 8px; font-size:14px;}
+.wanted-lede b{color:var(--accent);}
+
+/* ---------- the poster ---------- */
+.bounty{position:relative; color:var(--ink); text-align:center;
+  font-family:'Special Elite','Courier New',monospace;
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--paper-hi), transparent 60%),
+    radial-gradient(100% 120% at 80% 110%, var(--paper-lo), transparent 55%),
+    var(--paper);
+  border:1px solid #b49a63;
+  box-shadow:0 14px 34px -18px rgba(0,0,0,.7),
+    inset 0 0 42px rgba(120,86,38,.34), inset 0 0 8px rgba(60,40,16,.3);
+  padding:12px 12px 14px; border-radius:3px;
+  transition:transform .25s, box-shadow .25s;}
+/* aged blotches + a paper-grain wash */
+.bounty::before{content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:3px; mix-blend-mode:multiply; opacity:.5;
+  background:
+    radial-gradient(circle at 12% 88%, rgba(94,64,26,.5), transparent 22%),
+    radial-gradient(circle at 88% 14%, rgba(94,64,26,.42), transparent 20%),
+    radial-gradient(circle at 70% 92%, rgba(94,64,26,.4), transparent 16%);}
+/* tape at the top corners */
+.bounty::after{content:""; position:absolute; top:-7px; left:50%;
+  transform:translateX(-50%) rotate(-1.5deg); width:44%; height:16px;
+  background:linear-gradient(180deg, rgba(224,208,158,.85), rgba(198,178,120,.7));
+  box-shadow:0 1px 3px rgba(0,0,0,.28); opacity:.75;}
+.bounty:hover{transform:translateY(-4px) rotate(-.4deg);
+  box-shadow:0 24px 48px -20px rgba(0,0,0,.8),
+    inset 0 0 42px rgba(120,86,38,.34);}
+
+.bounty .wtitle{font-family:'Cinzel Decorative',serif; font-weight:900;
+  letter-spacing:.06em; color:var(--ink); line-height:1;
+  font-size:clamp(22px,3.4vw,30px); margin:2px 0 8px;
+  -webkit-text-stroke:.5px rgba(59,44,23,.35);}
+.bounty .wphoto{position:relative; margin:0 2px 8px; aspect-ratio:1/1;
+  overflow:hidden; border:2px solid var(--ink);
+  box-shadow:inset 0 0 0 4px var(--paper), inset 0 0 0 5px #9c8149;
+  background:#cdb787;}
+.bounty .wphoto img{width:100%; height:100%; object-fit:cover;
+  object-position:center 22%; filter:sepia(.5) saturate(1.15) contrast(1.02);}
+.bounty .wphoto .silo{position:absolute; inset:0; display:grid; place-items:center;}
+.bounty .wphoto .silo svg{width:56%; height:56%; fill:#9c8149; opacity:.7;}
+/* corner rank stamp on the photo */
+.bounty .wrank{position:absolute; top:-9px; left:-9px; z-index:2; width:38px;
+  height:38px; border-radius:50%; display:grid; place-items:center;
+  color:#f4e7c8; background:var(--stamp); border:2px solid #7d271e;
+  font-family:'Cinzel Decorative',serif; font-weight:900; font-size:15px;
+  transform:rotate(-12deg); box-shadow:0 3px 8px rgba(0,0,0,.4);}
+.bounty .wdoa{font-size:11px; letter-spacing:.28em; margin:2px 0 3px;
+  color:var(--ink-soft);}
+.bounty .wname{font-family:'Cinzel Decorative',serif; font-weight:700;
+  color:var(--ink); line-height:1.02; letter-spacing:.01em;
+  font-size:clamp(17px,2.4vw,22px); text-transform:uppercase;}
+.bounty .wmeta{font-size:11px; color:var(--ink-soft); margin-top:2px;
+  letter-spacing:.02em;}
+.bounty .wberry{margin-top:8px; padding-top:8px;
+  border-top:2px solid rgba(59,44,23,.35);
+  display:flex; align-items:baseline; justify-content:center; gap:4px;}
+.bounty .wsym{font-family:'Cinzel Decorative',serif; font-weight:900;
+  font-size:clamp(18px,2.6vw,24px);}
+.bounty .wfig{font-family:'Cinzel Decorative',serif; font-weight:900;
+  font-size:clamp(20px,3vw,28px); letter-spacing:.01em;
+  font-variant-numeric:tabular-nums;}
+.bounty .wscore{font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-soft); margin-top:1px;}
+.bounty .wtags{display:flex; flex-wrap:wrap; gap:4px; justify-content:center;
+  margin-top:8px;}
+.bounty .wtag{font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; background:rgba(59,44,23,.1);
+  border:1px solid rgba(59,44,23,.3); color:var(--ink);}
+.bounty .wtag.up{color:#2f6d3a; border-color:rgba(47,109,58,.5);
+  background:rgba(47,109,58,.12);}
+.bounty .wtag.streak{color:#8a5a1e; border-color:rgba(138,90,30,.5);
+  background:rgba(138,90,30,.12);}
+.bounty .wtag.title{color:var(--stamp); border-color:rgba(168,54,42,.5);
+  background:rgba(168,54,42,.1); font-weight:700;}
+.bounty.wunranked{filter:saturate(.9);}
+.bounty.wunranked .wfig{font-size:16px; letter-spacing:.12em; color:var(--ink-soft);}
+
+/* ---------- MOST WANTED — the top 5 hero row ---------- */
+.mostwanted{margin:0 auto 34px; max-width:var(--measure);}
+.mostwanted h3, .bountywall h3{text-align:center; color:var(--muted);
+  font-family:var(--font-body); font-size:12px; letter-spacing:.24em;
+  text-transform:uppercase; margin:0 0 16px;}
+.mostwanted h3 b, .bountywall h3 b{color:var(--accent);}
+.mw-row{display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+  align-items:end;}
+/* the #1 poster is bigger and lifted, flanked 2 + 2 */
+.mw-row .bounty{transform-origin:bottom center;}
+.mw-row .bounty:nth-child(1){transform:scale(1.06) rotate(-1deg);}
+.mw-row .bounty:nth-child(2),.mw-row .bounty:nth-child(4){transform:rotate(.8deg);}
+.mw-row .bounty:nth-child(3),.mw-row .bounty:nth-child(5){transform:rotate(-.8deg);}
+.mw-row .bounty:nth-child(1):hover{transform:scale(1.09) translateY(-4px) rotate(-1deg);}
+
+/* ---------- the full ranked wall ---------- */
+.bountywall{max-width:var(--measure); margin:0 auto;}
+.bounty-grid{display:grid; gap:14px;
+  grid-template-columns:repeat(auto-fill,minmax(184px,1fr));}
+.bounty[hidden]{display:none;}
+.wall-empty{display:none; text-align:center; color:var(--muted);
+  font-style:italic; padding:30px;}
+
+@media (max-width:900px){
+  .mw-row{grid-template-columns:repeat(3,1fr);}
+  .mw-row .bounty:nth-child(4),.mw-row .bounty:nth-child(5){display:none;}
+  .mw-row .bounty:nth-child(1){transform:scale(1.03);}
+}
+@media (max-width:560px){
+  .mw-row{grid-template-columns:repeat(2,1fr);}
+  .mw-row .bounty:nth-child(3){display:none;}
+  .bounty-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
+  .bounty{padding:9px 8px 11px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .bounty,.bounty:hover,.mw-row .bounty{transition:none; transform:none;}
+}
