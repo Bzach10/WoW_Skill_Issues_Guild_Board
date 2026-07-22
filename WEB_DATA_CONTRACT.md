@@ -20,6 +20,20 @@ standalone file (`recap_ribbon.json`, `records_leaderboard.json`,
 `guild_achievements.json`, `island_completion.json`, `transmog_changes.json`)
 so a view can load just what it needs.
 
+### Build against the committed sample — no backend run needed
+
+`samples/site_data.sample.json` (+ one `*.sample.json` per layer) is a
+committed bundle you can develop against directly. It is generated through
+the **real producers** (`scripts/build_sample_site_data.py`), so the shapes
+are identical to production — only the values are illustrative, and every
+file carries `"_sample": true`.
+
+Crucially it shows every **populated** UI state that today's live data does
+not: a filled trophy hall (`available: true`, 3 trophies), dungeon islands
+in all three states (`conquered` / `attempted` / `locked`), confirmed vs
+inferred raid bosses, and a real transmog change. A guard test keeps it in
+lockstep with the producers, so it can't silently go stale.
+
 ---
 
 ## 1. `recap_ribbon` — story-of-the-week
