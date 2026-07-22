@@ -209,11 +209,17 @@ def main():
         shutil.copy2(src, tmp)
         os.replace(tmp, dest)
         written.add(rel)
-    # drop files from a previous, larger build
+    # drop files from a previous, larger build — but NEVER touch folders the
+    # art pipeline drops in alongside us (baked bounty posters, preview
+    # media). Deleting those once already cost us the baked posters.
+    keep_prefixes = ("_preview_media", "bounty", "cast/_bounty")
     removed = 0
     for existing in sorted(out.rglob("*"), key=lambda p: -len(p.parts)):
         rel = existing.relative_to(out)
-        if existing.is_file() and rel not in written and not str(rel).startswith("_preview_media"):
+        rel_posix = rel.as_posix()
+        if any(rel_posix == p or rel_posix.startswith(p + "/") for p in keep_prefixes):
+            continue
+        if existing.is_file() and rel not in written:
             existing.unlink()
             removed += 1
         elif existing.is_dir() and not any(existing.iterdir()):

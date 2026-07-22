@@ -280,6 +280,10 @@ a{color:var(--accent);}
 .hall-flame{max-width:640px; margin:18px auto 0; text-align:center; color:var(--muted);
   font-size:13px;}
 .hall-flame b{color:var(--accent);}
+/* sub-headers inside the merged Below Deck room */
+.belowsub{max-width:var(--measure); margin:40px auto 16px; text-align:center;
+  font-family:var(--font-display); font-size:clamp(18px,3vw,24px); color:var(--heading);
+  padding-bottom:10px; border-bottom:1px solid color-mix(in srgb,var(--line) 60%, transparent);}
 
 /* Bar life + pulse placeholder */
 .bar-cols{display:grid; gap:16px; grid-template-columns:1.3fr 1fr;
@@ -330,6 +334,50 @@ a{color:var(--accent);}
 
 .foot{padding:30px 0 70px; text-align:center; color:var(--muted); font-size:13px;}
 .foot b{color:var(--accent);}
+
+/* ---------------- The Standings (the data hub) ---------------- */
+.standings{max-width:var(--measure); margin:0 auto;}
+.stat-strip{display:grid; gap:12px; grid-template-columns:repeat(4,1fr); margin-bottom:26px;}
+@media (max-width:820px){.stat-strip{grid-template-columns:repeat(2,1fr);}}
+.stat-strip .st{background:var(--panel); border:1px solid var(--line);
+  border-radius:14px; padding:16px; text-align:center;}
+.stat-strip .st .k{font-size:10.5px; letter-spacing:.13em; text-transform:uppercase; color:var(--muted);}
+.stat-strip .st .v{font-family:var(--font-display); font-size:clamp(22px,3vw,30px);
+  color:var(--heading); margin-top:4px; line-height:1;}
+.stat-strip .st .d{font-size:12px; color:var(--muted); margin-top:3px;}
+.stat-strip .st .v.up{color:#57e08a;} .stat-strip .st .v.gold{color:var(--brass);}
+.stand-cols{display:grid; gap:18px; grid-template-columns:1fr 1fr; align-items:start;}
+@media (max-width:900px){.stand-cols{grid-template-columns:1fr;}}
+.panel{background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:18px 20px;}
+.panel h3{font-size:12px; letter-spacing:.16em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:12px; display:flex; justify-content:space-between; align-items:baseline;}
+.panel h3 .hint{color:var(--muted); font-size:10px; letter-spacing:.06em; text-transform:none;}
+/* a ladder row */
+.lad{display:grid; grid-template-columns:26px 1fr auto; gap:10px; align-items:center;
+  padding:7px 0; border-bottom:1px dashed color-mix(in srgb,var(--line) 70%, transparent);
+  font-size:14px;}
+.lad:last-child{border-bottom:0;}
+.lad .rk{color:var(--muted); font-variant-numeric:tabular-nums; font-size:12px; text-align:right;}
+.lad .nm{min-width:0;}
+.lad .nm b{color:var(--text);} .lad .nm span{color:var(--muted); font-size:12px;}
+.lad .vl{font-family:var(--font-display); color:var(--heading); font-variant-numeric:tabular-nums;
+  white-space:nowrap;}
+.lad .vl small{color:#57e08a; font-family:var(--font-body); font-size:11px; margin-left:6px;}
+.lad .realm{font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:.04em;}
+/* raid progression bars */
+.raidbars{display:grid; gap:9px; margin-top:4px;}
+.rbar{display:grid; grid-template-columns:64px 1fr 46px; gap:10px; align-items:center; font-size:13px;}
+.rbar .tk{display:block; height:11px; border-radius:999px; overflow:hidden;
+  background:color-mix(in srgb,var(--line) 85%, var(--bg)); border:1px solid var(--line);}
+.rbar .fl{display:block; height:100%; border-radius:999px; background:var(--dps); min-width:3px;}
+.rbar .fl.mythic{background:#c8503a;} .rbar .fl.heroic{background:#9aa7b4;} .rbar .fl.normal{background:#6ea8fe;}
+.rbar .nu{text-align:right; color:var(--muted); font-variant-numeric:tabular-nums;}
+.parse-cols{display:grid; gap:14px; grid-template-columns:repeat(3,1fr); margin-top:2px;}
+@media (max-width:720px){.parse-cols{grid-template-columns:1fr;}}
+.ladder-more{display:block; text-align:center; margin-top:12px; font-size:12.5px; color:var(--muted);}
+.ladder-more a{color:var(--accent);}
+.refresh-note{text-align:center; color:var(--muted); font-size:12px; margin-top:20px; font-style:italic;}
 
 
 .wanted{--paper:#e9d7ab; --paper-lo:#d8c08a; --paper-hi:#f3e7c4;
@@ -537,17 +585,15 @@ a{color:var(--accent);}
     <a class="brand" href="#top">⚓ S.S. Wipe Fest</a>
     <span class="deck-split">Above</span>
     <a class="deckchip" href="#crows-nest"><span class="dot">🔭</span>Crow's Nest</a>
-    <a class="deckchip" href="#main-deck"><span class="dot">⚓</span>Main Deck</a>
-    <a class="deckchip" href="#helm"><span class="dot">🧭</span>Helm</a>
-    <a class="deckchip" href="#quarters"><span class="dot">👑</span>Captain's Quarters</a>
+    <a class="deckchip" href="#main-deck"><span class="dot">⚓</span>Wanted Board</a>
+    <a class="deckchip" href="#standings"><span class="dot">📊</span>The Standings</a>
     <span class="deck-split">Below</span>
     <a class="deckchip" href="#the-bar"><span class="dot">🍺</span>The Bar</a>
-    <a class="deckchip" href="#galley"><span class="dot">🍳</span>Galley</a>
-    <a class="deckchip" href="#casino"><span class="dot">🎰</span>Casino</a>
-    <a class="deckchip" href="#engine"><span class="dot">⚙️</span>Engine Room</a>
-    <a class="deckchip" href="#slop-chest"><span class="dot">🧵</span>Slop Chest</a>
-    <a class="deckchip" href="#brig"><span class="dot">🔒</span>The Brig</a>
-    <a class="deckchip" href="#hold"><span class="dot">⚰️</span>The Hold</a>
+    <a class="deckchip" href="#below-deck"><span class="dot">🎰</span>Below Deck</a>
+    <span class="deck-split">Deeper</span>
+    <a class="deckchip" href="voyage.html"><span class="dot">🧭</span>Voyage</a>
+    <a class="deckchip" href="hall.html"><span class="dot">🖼️</span>The Hall</a>
+    <a class="deckchip" href="trophy.html"><span class="dot">🏆</span>Trophies</a>
   </div>
 </nav>
 
@@ -3234,108 +3280,141 @@ a{color:var(--accent);}
 </section>
 
 
-<section class="room" id="helm">
+<section class="room" id="standings">
   <div class="room-head">
-    <div class="porthole">🧭</div>
-    <h2>The Helm &amp; Chart Room</h2>
-    <p class="sub">Where we are in the tier. The season's course laid out as ports —
-      the ship's docked at <b>this month's</b>.</p>
+    <div class="porthole">📊</div>
+    <h2>The Standings</h2>
+    <p class="sub">The friendly competition, in full — <b>every number our weekly board
+      posts, and more</b>. Live Mythic+ scores, real raid progression, and the guild's
+      best keys of the season.</p>
   </div>
-  <div class="ports-strip">
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_icecrown_citadel/profile.jpg');"></span>
-      <span class="pm">Jan</span>
-      <span class="pn">Icecrown Citadel</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_dalaran/profile.jpg');"></span>
-      <span class="pm">Feb</span>
-      <span class="pn">Dalaran</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_ungoro_crater/profile.jpg');"></span>
-      <span class="pm">Mar</span>
-      <span class="pn">Ungoro Crater</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_elwynn_forest/profile.jpg');"></span>
-      <span class="pm">Apr</span>
-      <span class="pn">Elwynn Forest</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_stormwind_city/profile.jpg');"></span>
-      <span class="pm">May</span>
-      <span class="pn">Stormwind City</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_mount_hyjal/profile.jpg');"></span>
-      <span class="pm">Jun</span>
-      <span class="pn">Mount Hyjal</span>
-    </a>
-    <a class="pstop here" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_silvermoon_city/profile.jpg');"></span>
-      <span class="pm">Jul</span>
-      <span class="pn">Silvermoon City</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_orgrimmar/profile.jpg');"></span>
-      <span class="pm">Aug</span>
-      <span class="pn">Orgrimmar</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_ironforge/profile.jpg');"></span>
-      <span class="pm">Sep</span>
-      <span class="pn">Ironforge</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_dark_portal/profile.jpg');"></span>
-      <span class="pm">Oct</span>
-      <span class="pn">Dark Portal</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_undermine/profile.jpg');"></span>
-      <span class="pm">Nov</span>
-      <span class="pn">Undermine</span>
-    </a>
-    <a class="pstop" href="voyage.html">
-      <span class="pd" style="background-image:url('cast/_roster/_scene_caverns_of_time/profile.jpg');"></span>
-      <span class="pm">Dec</span>
-      <span class="pn">Caverns Of Time</span>
-    </a>
-  </div>
-  <p class="charted-line"><b>11</b> of 17 islands charted this season</p>
-  <div style="text-align:center;">
-    <a class="deeper" href="voyage.html">Take the wheel — the full Voyage Map →</a>
-  </div>
-</section>
+  <div class="standings">
+    <div class="stat-strip">
+      <div class="st"><div class="k">Guild Standing</div>
+        <div class="v">#6,855</div>
+        <div class="d">world · realm #49</div></div>
+      <div class="st"><div class="k">Biggest Climb</div>
+        <div class="v up">▲18.6</div>
+        <div class="d">Tommybravoo</div></div>
+      <div class="st"><div class="k">Iron Attendance</div>
+        <div class="v">6w</div>
+        <div class="d">Buchalter</div></div>
+      <div class="st"><div class="k">Top M+ Score</div>
+        <div class="v gold">3908</div>
+        <div class="d">Amrevenge</div></div>
+    </div>
 
+    <div class="stand-cols">
+      <div>
+        <div class="panel">
+          <h3>Raid Progression <span class="hint">3/9 M</span></h3>
+          <div class="raidbars">
+            <div class="rbar"><span>Mythic</span>
+              <span class="tk"><span class="fl mythic" style="width:33.0%;"></span></span>
+              <span class="nu">3/9</span></div>
+            <div class="rbar"><span>Heroic</span>
+              <span class="tk"><span class="fl heroic" style="width:56.0%;"></span></span>
+              <span class="nu">5/9</span></div>
+            <div class="rbar"><span>Normal</span>
+              <span class="tk"><span class="fl normal" style="width:0.0%;"></span></span>
+              <span class="nu">0/9</span></div>
+          </div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <h3>Season M+ Scores <span class="hint">top 12 of 96</span></h3>
+          <div class="lad"><span class="rk">1</span>
+            <span class="nm"><b>Amrevenge</b></span>
+            <span class="vl">3908.1</span></div>
+          <div class="lad"><span class="rk">2</span>
+            <span class="nm"><b>Shadoxii</b></span>
+            <span class="vl">3692.2</span></div>
+          <div class="lad"><span class="rk">3</span>
+            <span class="nm"><b>Tommybravoo</b></span>
+            <span class="vl">3686.3<small>▲18.6</small></span></div>
+          <div class="lad"><span class="rk">4</span>
+            <span class="nm"><b>Brewzleeh</b></span>
+            <span class="vl">3685.8</span></div>
+          <div class="lad"><span class="rk">5</span>
+            <span class="nm"><b>Rakdisc</b></span>
+            <span class="vl">3529.2</span></div>
+          <div class="lad"><span class="rk">6</span>
+            <span class="nm"><b>Rhansìk</b></span>
+            <span class="vl">3509.6</span></div>
+          <div class="lad"><span class="rk">7</span>
+            <span class="nm"><b>Floofwall</b></span>
+            <span class="vl">3484.3</span></div>
+          <div class="lad"><span class="rk">8</span>
+            <span class="nm"><b>Enyò</b></span>
+            <span class="vl">3472.9</span></div>
+          <div class="lad"><span class="rk">9</span>
+            <span class="nm"><b>Ellebasi</b></span>
+            <span class="vl">3436.6</span></div>
+          <div class="lad"><span class="rk">10</span>
+            <span class="nm"><b>Tommybravox</b></span>
+            <span class="vl">3434.5</span></div>
+          <div class="lad"><span class="rk">11</span>
+            <span class="nm"><b>Jovala</b></span>
+            <span class="vl">3428.0</span></div>
+          <div class="lad"><span class="rk">12</span>
+            <span class="nm"><b>Hellful</b></span>
+            <span class="vl">3418.7</span></div>
+          <span class="ladder-more"><a href="wanted.html">See all 96 on the Wanted Board →</a></span>
+        </div>
+      </div>
 
-<section class="room" id="quarters">
-  <div class="room-head">
-    <div class="porthole">👑</div>
-    <h2>The Captain's Quarters</h2>
-    <p class="sub">The trophy room — the guild's records and Midnight banners, under lock and key.</p>
-  </div>
-  <div class="grid g3 wrap">
-    <div class="card" style="text-align:center;">
-      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Deepest Key</div>
-      <div class="big" style="font-family:var(--font-display);font-size:34px;color:var(--heading);">+20</div>
-      <div class="d" style="color:var(--muted);font-size:13px;">Pit of Saron · Amrevenge</div>
+      <div>
+        <div class="panel">
+          <h3>Guild-Best Keys <span class="hint">timed this season</span></h3>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Pit of Saron</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">24:16</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Nexus-Point Xenas</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">25:52</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Magisters&#39; Terrace</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">29:32</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Seat of the Triumvirate</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">31:07</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Skyreach</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">25:50</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Windrunner Spire</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">30:46</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Algeth&#39;ar Academy</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">29:43</span></div>
+          <div class="lad"><span class="vl" style="text-align:left; min-width:40px;">+20</span>
+            <span class="nm"><b>Maisara Caverns</b><br><span>Amrevenge <span class="realm">Stormrage</span></span></span>
+            <span class="vl">32:29</span></div>
+        </div>
+        <div class="panel" style="margin-top:16px;">
+          <h3>Top Parses <span class="hint">season&#39;s best</span></h3>
+          <div class="parse-cols">
+            <div>
+              <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top DPS parses</div>
+              <div class="lad" style="grid-template-columns:1fr auto;"><span class="nm"><b>Amrevenge</b><br><span>Fallen-King Salhadaar · BeastMastery</span></span><span class="vl">97</span></div>
+            </div>
+            <div>
+              <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top healing parses</div>
+              <div class="lad" style="grid-template-columns:1fr auto;"><span class="nm"><b>Phyrthepali</b><br><span>Imperator Averzian · Holy</span></span><span class="vl">96</span></div>
+            </div>
+            <div>
+              <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top tank parses</div><div style="color:var(--muted);font-size:12px;">—</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="card" style="text-align:center;">
-      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Sharpest Parse</div>
-      <div class="big" style="font-family:var(--font-display);font-size:34px;color:var(--heading);">97</div>
-      <div class="d" style="color:var(--muted);font-size:13px;">Fallen-King Salhadaar · Amrevenge</div>
-    </div>
-    <div class="card" style="text-align:center;">
-      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Achievement Points</div>
-      <div class="big" style="font-family:var(--font-display);font-size:34px;color:var(--brass);">1,655</div>
-      <div class="d" style="color:var(--muted);font-size:13px;">3 banners in the hall</div>
-    </div>
+    <p class="refresh-note">Top parses show each role's season record. The full top-5 weekly
+      parse ladders + weekly M+ parses populate automatically from the daily data refresh.</p>
   </div>
   <div style="text-align:center;">
-    <a class="deeper" href="trophy.html">Open the trophy hall →</a>
-    <a class="deeper" href="wanted.html">The full leaderboard →</a>
+    <a class="deeper" href="voyage.html">Full Voyage Map + per-boss detail →</a>
+    <a class="deeper" href="trophy.html">Trophy Hall →</a>
+    <a class="deeper" href="wanted.html">Full Wanted Board →</a>
   </div>
 </section>
 
@@ -3388,17 +3467,9 @@ a{color:var(--accent);}
       <div class="jk"><b>The Great Healmates Wipe</b><p>Six straight weeks standing in the fire. A guild record nobody wanted and everybody remembers. The Brig has his name on the door.</p></div>
     </div>
   </div>
-</section>
 
-
-<section class="room" id="galley">
-  <div class="room-head">
-    <div class="porthole">🍳</div>
-    <h2>The Galley</h2>
-    <p class="sub">A nook off the Bar. This month's gag item, and the notice that's
-      always nailed to the door.</p>
-  </div>
-  <div class="galley-in">
+  
+  <div class="galley-in" style="margin-top:18px;">
     <div class="itemcard">
       <div class="lg">GUILD ITEM OF THE MONTH</div>
       <div class="lg-sub">Requires: Level 60 Degeneracy</div>
@@ -3413,13 +3484,25 @@ a{color:var(--accent);}
 </section>
 
 
-<section class="room" id="casino">
+<section class="room" id="below-deck">
   <div class="room-head">
     <div class="porthole">🎰</div>
-    <h2>The Casino</h2>
-    <p class="sub">Brewzleeh's domain. The house always wins, and the house is
-      <b>also in debt</b>. Spin at your own risk.</p>
+    <h2>Below Deck</h2>
+    <p class="sub">Where the ship keeps its sense of humour — the roast, Brewzleeh's
+      debt, and a hold full of tombstones. <b>Wiping is content.</b></p>
   </div>
+
+  
+  <div class="roast-card">
+    <div class="k">🔥 Roast of the Week</div>
+    <div class="q">“Healmates Sucks”</div>
+    <div class="by">— Rakdaddy, aimed at Healmates</div>
+  </div>
+  <p class="hall-flame">Filed in the <b>Hall of Flame</b> · all-time most-roasted crewmember:
+    <b>Healmates</b> (that's the joke)</p>
+
+  
+  <h3 class="belowsub">🎰 The Casino · Brewzleeh's domain</h3>
   <div class="plaque">
     <div class="pt">Brewzleeh&#39;s Gambling Debt</div>
     <div class="owed" id="debtcounter" data-owed="2384056">2,384,056</div>
@@ -3450,71 +3533,18 @@ a{color:var(--accent);}
       <div class="opt"><span style="width:88px;">The tank</span><span class="bar"><i style="width:15%;"></i></span><span class="pct">15%</span></div>
     </div>
   </div>
-</section>
 
-
-<section class="room" id="engine">
-  <div class="room-head">
-    <div class="porthole">⚙️</div>
-    <h2>The Engine Room</h2>
-    <p class="sub">The grind that moves the ship — keys pushed, scores climbed, the
-      hardest climber of the week.</p>
-  </div>
-  <div class="grid g3 wrap">
-    <div class="card" style="text-align:center;">
-      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Biggest Climb</div>
-      <div class="big" style="font-family:var(--font-display);font-size:32px;color:#57e08a;">▲ 18.6</div>
-      <div class="d" style="color:var(--muted);font-size:13px;">Tommybravoo · this week's grinder</div>
-    </div>
-    <div class="card" style="text-align:center;">
-      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Deepest Key Timed</div>
-      <div class="big" style="font-family:var(--font-display);font-size:32px;color:var(--heading);">+20</div>
-      <div class="d" style="color:var(--muted);font-size:13px;">Pit of Saron</div>
-    </div>
-    <div class="card" style="text-align:center;">
-      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Top M+ Score</div>
-      <div class="big" style="font-family:var(--font-display);font-size:32px;color:var(--brass);">3908.1</div>
-      <div class="d" style="color:var(--muted);font-size:13px;">Amrevenge · at the wheel</div>
-    </div>
-  </div>
-</section>
-
-
-<section class="room" id="slop-chest">
-  <div class="room-head">
-    <div class="porthole">🧵</div>
-    <h2>The Slop Chest</h2>
-    <p class="sub">The armory — who re-cut their look this week. New threads off the rack.</p>
-  </div>
-  <div class="slop">
-    <div class="thread"><span class="sw">🧵</span>
-      <div><b>Rakdisc</b><br><span>Discipline Priest · new transmog this week</span></div></div>
-  </div>
-</section>
-
-
-<section class="room" id="brig">
-  <div class="room-head">
-    <div class="porthole">🔒</div>
-    <h2>The Brig</h2>
-    <p class="sub">The bully corner. Affectionate dunking only — and the door's never
-      locked from the inside.</p>
-  </div>
+  
+  <h3 class="belowsub">🔒 The Brig · affectionate dunking only</h3>
   <div class="brig">
     <div class="bars" aria-hidden="true"></div>
     <div class="tag">🩹 Healer of Shame</div>
     <div class="shamed">Healmates</div><div class="note">6 consecutive weeks in the fire</div>
     <div class="optout">Anyone can leave the Brig for good — just say the word. No questions, honored everywhere.</div>
   </div>
-</section>
 
-
-<section class="room" id="hold">
-  <div class="room-head">
-    <div class="porthole">⚰️</div>
-    <h2>The Hold</h2>
-    <p class="sub">Plots assigned by deaths-per-pull. The campfire is load-bearing. The campfire is load-bearing.</p>
-  </div>
+  
+  <h3 class="belowsub">⚰️ The Hold · Plots assigned by deaths-per-pull. The campfire is load-bearing.</h3>
   <div class="tombs">
     <div class="tomb reserved">
       <div class="rip">Reserved Plot</div>
@@ -3553,13 +3583,6 @@ a{color:var(--accent);}
       <div class="ep">Died blaming the tank.</div>
     </div>
   </div>
-  <div class="roast-card">
-    <div class="k">🔥 Roast of the Week</div>
-    <div class="q">“Healmates Sucks”</div>
-    <div class="by">— Rakdaddy, aimed at Healmates</div>
-  </div>
-  <p class="hall-flame">Filed in the <b>Hall of Flame</b> · all-time most-roasted crewmember:
-    <b>Healmates</b> (that's the joke)</p>
 </section>
 
 </main>

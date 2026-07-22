@@ -37,6 +37,7 @@ from guild_board import profiles as profiles_mod  # noqa: E402
 from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import ship as ship_mod  # noqa: E402
+from guild_board import standings as standings_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import site_data as site_data_mod  # noqa: E402
 from guild_board import wanted as wanted_mod  # noqa: E402
@@ -392,6 +393,13 @@ def main():
         r = island_layer.get("raid") or {}
         charted = {"cleared": (d.get("conquered") or 0) + (r.get("bosses_killed") or 0),
                    "total": (d.get("total") or 0) + (r.get("total_bosses") or 0)}
+    # THE STANDINGS — the guild's competition data at/above Discord-board
+    # parity, from board_state + the real voyage_data + (when a refresh has
+    # produced it) web_stats.json for the WCL parse ladders.
+    voyage_data = _load_json("voyage_data.json", {})
+    web_stats = _load_json("web_stats.json", None)
+    standings_data = standings_mod.build(board_state, voyage_data, web_stats, cfg)
+
     ship_data = {
         "crows_nest": ship_mod.crows_nest(ctx.get("islands"), board_state, theme),
         "popping_off": ship_mod.popping_off(wanted_board, board_state),
@@ -426,6 +434,7 @@ def main():
         "wanted": wanted_board,
         # S.S. Wipe Fest ship rooms + the data each needs
         "ship": ship_data,
+        "standings": standings_data,
         "ports": ship_ports,
         "charted": charted,
         "records": (board_state or {}).get("records") or {},

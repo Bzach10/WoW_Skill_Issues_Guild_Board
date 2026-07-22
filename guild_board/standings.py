@@ -1,0 +1,132 @@
+"""The Standings — the guild's competition data, at or above board parity.
+
+The weekly Discord board posts: top DPS/HPS/all-role parses, weekly timed
+keys, season M+ scores, best season runs, most-improved, weekly boss
+ranks, records, awards (attendance / biggest climb) and the realm/region/
+world standing. This assembles the same fields for the website — from
+`board_state.json` (season scores, records, streaks, standing) and the
+real `voyage_data.json` (guild raid progression + guild-best dungeon keys,
+no-auth Raider.io) — and reads the pipeline's `web_stats.json` for the
+WCL-derived parse ladders when a data refresh has produced it.
+
+Nothing here is hand-kept; a daily refresh carries straight through.
+"""
+
+from .showcase import slugify
+
+
+def _title(name):
+    return (name or "").strip().replace("-", " ").title()
+
+
+def _season_ladder(board_state):
+    scores = (board_state or {}).get("season_scores") or {}
+    baseline = ((board_state or {}).get("baseline") or {}).get("season_scores") or {}
+    streaks = (board_state or {}).get("streaks") or {}
+    rows = []
+    for name, score in sorted(scores.items(), key=lambda kv: -kv[1]):
+        prev = baseline.get(name)
+        rows.append({
+            "name": _title(name), "slug": name, "score": score,
+            "delta": round(score - prev, 1) if prev is not None else None,
+            "streak": streaks.get(name),
+        })
+    for i, r in enumerate(rows):
+        r["rank"] = i + 1
+    return rows
+
+
+def _dungeon_keys(voyage_data):
+    """The guild's best timed key per dungeon — real, from Raider.io."""
+    dungeons = (voyage_data or {}).get("dungeons") or {}
+    out = []
+    for dungeon, run in dungeons.items():
+        if not run:
+            continue
+        out.append({
+            "dungeon": dungeon,
+            "level": run.get("level"),
+            "holder": run.get("name"),
+            "realm": _title(run.get("realm")),
+            "score": run.get("score"),
+            "time": _fmt_time(run.get("clear_time_ms")),
+        })
+    out.sort(key=lambda d: (-(d.get("level") or 0), -(d.get("score") or 0)))
+    return out
+
+
+def _fmt_time(ms):
+    if not ms:
+        return None
+    total = int(ms // 1000)
+    return f"{total // 60}:{total % 60:02d}"
+
+
+def _raid(voyage_data, cfg=None):
+    """Guild raid progression for the active tier — bosses by difficulty."""
+    rp = (voyage_data or {}).get("raid_progression") or {}
+    if not rp:
+        return None
+    # the tier with the most kills is the one we're actually on
+    def killed(v):
+        return (v or {}).get("mythic_bosses_killed", 0) * 100 + \
+               (v or {}).get("heroic_bosses_killed", 0)
+    slug, prog = max(rp.items(), key=lambda kv: killed(kv[1]))
+    total = prog.get("total_bosses") or 0
+    return {
+        "slug": slug,
+        "summary": prog.get("summary"),
+        "total": total,
+        "normal": prog.get("normal_bosses_killed", 0),
+        "heroic": prog.get("heroic_bosses_killed", 0),
+        "mythic": prog.get("mythic_bosses_killed", 0),
+        "bosses": (voyage_data or {}).get("bosses") or {},
+    }
+
+
+def _parses(board_state, web_stats):
+    """Top parse ladders. Full top-5 come from the pipeline's web_stats
+    (WCL) when present; otherwise the season's record holder anchors each,
+    so the field is never blank."""
+    records = (board_state or {}).get("records") or {}
+    ws = web_stats or {}
+
+    def ladder(key, record_key, label):
+        rows = ws.get(key) or []
+        if rows:
+            return {"rows": rows[:5], "source": "wcl", "label": label}
+        rec = records.get(record_key) or {}
+        if rec.get("parse"):
+            return {"rows": [{
+                "name": _title(rec.get("name")), "value": rec["parse"],
+                "detail": " · ".join(b for b in (rec.get("boss"), rec.get("spec")) if b),
+            }], "source": "record", "label": label}
+        return {"rows": [], "source": None, "label": label}
+
+    return {
+        "dps": ladder("top_dps", "best_dps_parse", "Top DPS parses"),
+        "hps": ladder("top_hps", "best_hps_parse", "Top healing parses"),
+        "tanks": ladder("top_tanks", None, "Top tank parses"),
+    }
+
+
+def build(board_state, voyage_data=None, web_stats=None, cfg=None):
+    bs = board_state or {}
+    ladder = _season_ladder(bs)
+    climbers = [r for r in ladder if r["delta"]]
+    biggest_climb = max(climbers, key=lambda r: r["delta"], default=None)
+    iron = max((r for r in ladder if r["streak"]),
+               key=lambda r: r["streak"], default=None)
+    records = bs.get("records") or {}
+    return {
+        "standing": bs.get("standing") or {},
+        "season_ladder": ladder,
+        "season_count": len(ladder),
+        "dungeon_keys": _dungeon_keys(voyage_data),
+        "raid": _raid(voyage_data, cfg),
+        "parses": _parses(bs, web_stats),
+        "records": records,
+        "biggest_climb": biggest_climb,
+        "iron_attendance": iron,
+        "has_web_stats": bool(web_stats),
+    }
