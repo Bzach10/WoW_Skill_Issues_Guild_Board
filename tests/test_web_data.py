@@ -277,3 +277,19 @@ def test_build_site_data_degrades_with_no_inputs():
     assert site["guild_achievements"]["available"] is False
     assert site["records_leaderboard"]["ladder"] == []
     assert site["island_completion"]["dungeons"]["conquered"] == 0
+
+
+def test_parity_map_covers_every_discord_field():
+    """The data parity floor: every weekly-board field has a website home."""
+    site = web_data.build_site_data(board_state=BOARD_STATE)
+    parity = site["parity"]
+    fields = {f["field"] for f in parity["fields"]}
+    # The Discord board's headline fields must all be mapped.
+    for required in ("guild_standing", "mplus_weekly_keys", "mplus_season_scores",
+                     "raid_progression", "top_dps_parses", "most_deaths",
+                     "roast_of_the_week", "guild_achievements"):
+        assert required in fields
+    assert parity["summary"]["total"] == len(parity["fields"])
+    # With a real board_state, standing + M+ keys are live, not pending.
+    by = {f["field"]: f["state"] for f in parity["fields"]}
+    assert by["guild_standing"] == "live"

@@ -144,6 +144,49 @@ def test_normalize_character_handles_missing_data():
     assert rec["score"] == 0 and rec["best_runs"] == []
 
 
+def test_cross_realm_urls_use_each_characters_own_realm():
+    """The launch blocker: a Proudmoore character must get Proudmoore links,
+    not the guild's bleeding-hollow realm."""
+    rec = _normalize_character("rakdisc-proudmoore", {
+        "name": "Rakdisc", "class": "Priest", "active_spec_role": "HEALING",
+        "mythic_plus_scores_by_season": [{"scores": {"all": 3529.2}}]})
+    assert rec["realm_slug"] == "proudmoore"
+    assert rec["raiderio_url"] == "https://raider.io/characters/us/proudmoore/rakdisc"
+    assert "proudmoore" in rec["warcraftlogs_url"]
+
+
+def test_key_records_are_highest_timed_per_dungeon():
+    runs = [{"dungeon": "Skyreach", "level": 18, "timed": True, "score": 1},
+            {"dungeon": "Pit of Saron", "level": 20, "timed": True, "score": 2}]
+    fetched = {"characters": [_char("A", "a-r", "Hunter", "BM", "DPS", 3000, runs=runs)]}
+    comp = build_competition(fetched, {})
+    kr = comp["key_records"]
+    assert kr["highest_overall"]["level"] == 20
+    assert kr["highest_overall"]["dungeon"] == "Pit of Saron"
+    # Every current-season dungeon has a row (None where nobody timed it).
+    assert len(kr["by_dungeon"]) == 8
+
+
+def test_depleted_keys_dont_count_as_cleared():
+    runs = [{"dungeon": "Skyreach", "level": 25, "timed": False, "score": 1}]
+    fetched = {"characters": [_char("A", "a-r", "Hunter", "BM", "DPS", 3000, runs=runs)]}
+    comp = build_competition(fetched, {})
+    assert comp["key_records"]["highest_overall"] is None  # nothing timed
+
+
+def test_unranked_bucket_is_a_deliberate_state():
+    fetched = {"characters": [
+        _char("Scorer", "s-r", "Mage", "Frost", "DPS", 2500),
+        _char("Nadaram", "n-r", "Rogue", "Sub", "DPS", 0),
+    ]}
+    comp = build_competition(fetched, {})
+    assert comp["ranked_count"] == 1
+    assert comp["unranked_count"] == 1
+    assert comp["unranked"][0]["name"] == "Nadaram"
+    # The unranked are NOT in the ranked ladder movement/top5.
+    assert all(r["score"] > 0 for r in comp["rankings"]["overall"] if r["top5"])
+
+
 def test_best_runs_sorted_by_score_desc():
     data = {"name": "A", "class": "Hunter", "active_spec_role": "DPS",
             "mythic_plus_best_runs": [

@@ -605,7 +605,7 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
     # Guild achievements feed BOTH layer 3 (trophy hall) and layer 4 (the
     # authoritative per-boss raid kills), so extract the boss kills once here.
     confirmed_boss_kills = extract_raid_boss_kills(guild_achievements, season=season)
-    return {
+    site = {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
         "guild": guild or {"name": "Skill Issues",
@@ -621,4 +621,74 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
         "transmog_changes": transmog,
         "guild_pulse": build_guild_pulse(pulse_items),
         "competition": build_competition(competition_fetched, board_state, season=season),
+    }
+    site["parity"] = build_parity_map(site)
+    return site
+
+
+# Every field the weekly Discord guild board posts, mapped to where the
+# website serves it. This is the data-backed DATA PARITY FLOOR: the site must
+# show all of it, plus more. `state` is one of:
+#   live      real data flowing now
+#   partial   some data now, fuller with credentials (parses)
+#   pending   structurally present but needs a credentialed refresh to fill
+# The front-end can iterate this to guarantee no section renders dead.
+_PARITY_SPEC = [
+    ("guild_announcement", "records_leaderboard/guild_pulse", "Discord announcement channel (needs DISCORD_BOT_TOKEN)"),
+    ("guild_standing", "records_leaderboard.standing", None),
+    ("overall_realm_rank", "records_leaderboard.standing", None),
+    ("mplus_weekly_keys", "competition.key_records", None),
+    ("mplus_season_scores", "competition.rankings", None),
+    ("mplus_season_parses", "competition.characters[].best_runs", None),
+    ("top_dps_parses", "competition.parses.leaders", "full weekly list needs WCL_CLIENT_ID/SECRET"),
+    ("top_healing_parses", "competition.parses.leaders", "full weekly list needs WCL creds"),
+    ("top_tank_parses", "competition.parses", "needs WCL creds"),
+    ("weekly_raid_boss_ranks", "island_completion.raid", "WCL realm/region ranks need WCL creds"),
+    ("raid_progression", "island_completion.raid", None),
+    ("most_deaths", "competition (pending)", "needs WCL creds"),
+    ("most_improved", "competition.movement", None),
+    ("roast_of_the_week", "guild_pulse (pending)", "needs DISCORD_BOT_TOKEN"),
+    ("guild_achievements", "guild_achievements", "needs BLIZZARD creds"),
+]
+
+
+def build_parity_map(site):
+    """Report, per Discord-board field, where the site serves it and whether
+    it's live/partial/pending — so nothing renders as a dead section."""
+    comp = site.get("competition") or {}
+    standing = (site.get("records_leaderboard") or {}).get("standing")
+    raid = (site.get("island_completion") or {}).get("raid") or {}
+    ach = site.get("guild_achievements") or {}
+    parses = comp.get("parses") or {}
+
+    def _state(field):
+        if field == "guild_standing" or field == "overall_realm_rank":
+            return "live" if standing else "pending"
+        if field in ("mplus_weekly_keys", "mplus_season_scores",
+                     "mplus_season_parses", "most_improved"):
+            return "live" if comp.get("available") else "pending"
+        if field == "raid_progression":
+            return "live" if raid.get("total_bosses") else "pending"
+        if field in ("top_dps_parses", "top_healing_parses", "top_tank_parses"):
+            return "partial" if parses.get("leaders") else "pending"
+        if field == "guild_achievements":
+            return "live" if ach.get("available") else "pending"
+        if field == "weekly_raid_boss_ranks" or field == "most_deaths":
+            return "pending"
+        if field in ("roast_of_the_week", "guild_announcement"):
+            return "pending"
+        return "pending"
+
+    fields = []
+    for field, where, note in _PARITY_SPEC:
+        fields.append({"field": field, "served_by": where,
+                       "state": _state(field), "note": note})
+    live = sum(1 for f in fields if f["state"] == "live")
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "summary": {"live": live,
+                    "partial": sum(1 for f in fields if f["state"] == "partial"),
+                    "pending": sum(1 for f in fields if f["state"] == "pending"),
+                    "total": len(fields)},
+        "fields": fields,
     }

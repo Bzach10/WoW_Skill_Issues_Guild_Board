@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T05:26:13.882653+00:00",
+  "generated_at": "2026-07-22T06:21:52.505622+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T05:26:13.882685+00:00",
+    "generated_at": "2026-07-22T06:21:52.505657+00:00",
     "week_of": "2026-07-14",
     "based_on": "2026-07-20T12:14:49+00:00",
     "beats": [
@@ -75,7 +75,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T05:26:13.882698+00:00",
+    "generated_at": "2026-07-22T06:21:52.505672+00:00",
     "based_on": "2026-07-20T12:14:49+00:00",
     "standing": {
       "realm": 49,
@@ -180,7 +180,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T05:26:13.882707+00:00",
+    "generated_at": "2026-07-22T06:21:52.505680+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -218,7 +218,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T05:26:13.882720+00:00",
+    "generated_at": "2026-07-22T06:21:52.505696+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -415,7 +415,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T05:26:13.882622+00:00",
+    "generated_at": "2026-07-22T06:21:52.505590+00:00",
     "is_first_run": false,
     "changed": [
       {
@@ -438,7 +438,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T05:26:13.882724+00:00",
+    "generated_at": "2026-07-22T06:21:52.505700+00:00",
     "available": true,
     "status": "ok",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -551,6 +551,8 @@
     },
     "based_on": "2026-07-20T12:14:49+00:00",
     "character_count": 7,
+    "ranked_count": 7,
+    "unranked_count": 0,
     "characters": [
       {
         "name": "Amrevenge",
@@ -612,7 +614,7 @@
         "delta_week": 85.7,
         "is_new": false,
         "parse": null,
-        "rank": 1,
+        "rank": 2,
         "top5": true
       },
       {
@@ -636,7 +638,7 @@
         "delta_week": 0.0,
         "is_new": false,
         "parse": null,
-        "rank": 1,
+        "rank": 3,
         "top5": true
       },
       {
@@ -660,7 +662,7 @@
         "delta_week": null,
         "is_new": true,
         "parse": null,
-        "rank": 2,
+        "rank": 4,
         "top5": true
       },
       {
@@ -684,7 +686,7 @@
         "delta_week": 0.0,
         "is_new": false,
         "parse": null,
-        "rank": 1,
+        "rank": 5,
         "top5": true
       },
       {
@@ -708,7 +710,7 @@
         "delta_week": 0.0,
         "is_new": false,
         "parse": null,
-        "rank": 3,
+        "rank": 6,
         "top5": false
       },
       {
@@ -732,10 +734,79 @@
         "delta_week": null,
         "is_new": true,
         "parse": null,
-        "rank": 1,
+        "rank": 7,
         "top5": false
       }
     ],
+    "unranked": [],
+    "key_records": {
+      "highest_overall": {
+        "dungeon": "Pit of Saron",
+        "level": 20,
+        "name": "Amrevenge",
+        "key": "amrevenge-stormrage"
+      },
+      "by_dungeon": [
+        {
+          "dungeon": "Algeth'ar Academy",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Magisters' Terrace",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Maisara Caverns",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Nexus-Point Xenas",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Pit of Saron",
+          "level": 20,
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "score": 492.2
+        },
+        {
+          "dungeon": "Seat of the Triumvirate",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Skyreach",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Windrunner Spire",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        }
+      ],
+      "dungeons_timed": 1,
+      "dungeon_total": 8
+    },
     "rankings": {
       "overall": [
         {
@@ -1120,6 +1191,107 @@
         }
       ]
     }
+  },
+  "parity": {
+    "schema_version": 1,
+    "summary": {
+      "live": 8,
+      "partial": 3,
+      "pending": 4,
+      "total": 15
+    },
+    "fields": [
+      {
+        "field": "guild_announcement",
+        "served_by": "records_leaderboard/guild_pulse",
+        "state": "pending",
+        "note": "Discord announcement channel (needs DISCORD_BOT_TOKEN)"
+      },
+      {
+        "field": "guild_standing",
+        "served_by": "records_leaderboard.standing",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "overall_realm_rank",
+        "served_by": "records_leaderboard.standing",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "mplus_weekly_keys",
+        "served_by": "competition.key_records",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "mplus_season_scores",
+        "served_by": "competition.rankings",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "mplus_season_parses",
+        "served_by": "competition.characters[].best_runs",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "top_dps_parses",
+        "served_by": "competition.parses.leaders",
+        "state": "partial",
+        "note": "full weekly list needs WCL_CLIENT_ID/SECRET"
+      },
+      {
+        "field": "top_healing_parses",
+        "served_by": "competition.parses.leaders",
+        "state": "partial",
+        "note": "full weekly list needs WCL creds"
+      },
+      {
+        "field": "top_tank_parses",
+        "served_by": "competition.parses",
+        "state": "partial",
+        "note": "needs WCL creds"
+      },
+      {
+        "field": "weekly_raid_boss_ranks",
+        "served_by": "island_completion.raid",
+        "state": "pending",
+        "note": "WCL realm/region ranks need WCL creds"
+      },
+      {
+        "field": "raid_progression",
+        "served_by": "island_completion.raid",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "most_deaths",
+        "served_by": "competition (pending)",
+        "state": "pending",
+        "note": "needs WCL creds"
+      },
+      {
+        "field": "most_improved",
+        "served_by": "competition.movement",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "roast_of_the_week",
+        "served_by": "guild_pulse (pending)",
+        "state": "pending",
+        "note": "needs DISCORD_BOT_TOKEN"
+      },
+      {
+        "field": "guild_achievements",
+        "served_by": "guild_achievements",
+        "state": "live",
+        "note": "needs BLIZZARD creds"
+      }
+    ]
   },
   "_sample": true,
   "_note": "Illustrative values, production shapes. Generated by scripts/build_sample_site_data.py through the real guild_board.web_data producers."

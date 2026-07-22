@@ -50,7 +50,7 @@ def canonical_role(role):
 # Live fetch
 # ---------------------------------------------------------------------------
 
-def _normalize_character(entry_key, data):
+def _normalize_character(entry_key, data, region="us"):
     """One Raider.io profile response -> the normalized per-character record
     the builder consumes. Returns None if the character didn't resolve."""
     if not data:
@@ -76,10 +76,21 @@ def _normalize_character(entry_key, data):
         })
     best_runs.sort(key=lambda r: r["score"], reverse=True)
 
+    # The roster slug is the authoritative per-character realm (e.g.
+    # "proudmoore"), which is what cross-realm links MUST use. Raider.io's
+    # `realm` is the display name ("Proudmoore"); keep both. Prebuilding the
+    # links here removes any chance the front-end reintroduces the
+    # guild-realm link bug for a cross-realm member like Rakdisc.
+    realm_slug = entry_key.split("-", 1)[1].lower() if "-" in entry_key else realm.lower()
+    name_slug = name.lower()
+
     return {
         "name": name,
         "realm": realm,
+        "realm_slug": realm_slug,
         "key": entry_key.lower(),
+        "raiderio_url": f"https://raider.io/characters/{(region or 'us')}/{realm_slug}/{name_slug}",
+        "warcraftlogs_url": f"https://www.warcraftlogs.com/character/{(region or 'us')}/{realm_slug}/{name_slug}",
         "class": data.get("class") or "",
         "spec": clean_spec_name(data.get("active_spec_name"), data.get("class", "")),
         "role": canonical_role(data.get("active_spec_role")),
@@ -126,7 +137,7 @@ def fetch_competition(cfg, roster=None):
         if resp.status_code != 200:
             missed += 1
             continue
-        record = _normalize_character(entry, resp.json())
+        record = _normalize_character(entry, resp.json(), region=region)
         if record:
             characters.append(record)
     if missed:
@@ -185,11 +196,21 @@ def build_competition(fetched=None, board_state=None, season=None,
             "parse": None,  # filled below from board records where available
         })
 
-    # Guild-internal rankings.
-    ranked = _rank_within(sorted(detail, key=lambda r: r["score"], reverse=True))
+    # Guild-internal rankings — ONLY scored characters get a competition
+    # rank/top5. Members with no score yet are a deliberate "unranked" bucket
+    # (below), never rank 1-of-2 or a top-5 poster. All members stay
+    # browsable in `characters`.
+    scored = [r for r in detail if r["score"]]
+    unscored = [r for r in detail if not r["score"]]
+    ranked = _rank_within(sorted(scored, key=lambda r: r["score"], reverse=True))
     top5_keys = {r["key"] for r in ranked[:top_n]}
     for r in ranked:
         r["top5"] = r["key"] in top5_keys
+    for r in unscored:
+        r["rank"] = None
+        r["top5"] = False
+    # Browsable detail keeps everyone: ranked first, then the unscored.
+    characters = ranked + unscored
 
     def _ladder_row(r):
         return {
@@ -201,31 +222,42 @@ def build_competition(fetched=None, board_state=None, season=None,
 
     overall = [_ladder_row(r) for r in ranked]
 
+    # by_role / by_class rank FRESH ladder-row copies, never the shared
+    # character dicts — otherwise re-ranking a subgroup would clobber each
+    # character's canonical overall `rank` (e.g. the #1 healer would show as
+    # rank 1 overall). This was a real bug caught on launch data.
     by_role = {}
     for role in ROLES:
-        # canonical_role() defends against a cache written before roles were
-        # normalized at fetch time (raw "HEALING" etc.).
-        rows = [r for r in ranked if canonical_role(r.get("role")) == role]
-        by_role[role] = [_ladder_row(r) for r in _rank_within(
-            sorted(rows, key=lambda r: r["score"], reverse=True))]
+        rows = [_ladder_row(r) for r in ranked if canonical_role(r.get("role")) == role]
+        by_role[role] = _rank_within(sorted(rows, key=lambda r: r["score"], reverse=True))
 
     by_class = {}
     for cls in sorted({r["class"] for r in ranked if r["class"]}):
-        rows = [r for r in ranked if r["class"] == cls]
-        by_class[cls] = [_ladder_row(r) for r in _rank_within(
-            sorted(rows, key=lambda r: r["score"], reverse=True))]
+        rows = [_ladder_row(r) for r in ranked if r["class"] == cls]
+        by_class[cls] = _rank_within(sorted(rows, key=lambda r: r["score"], reverse=True))
 
-    # Movement — the living-competition signal.
+    # Movement — the living-competition signal (scored members only).
     with_delta = [r for r in ranked if r.get("delta_week") is not None]
     climbers = sorted([r for r in with_delta if r["delta_week"] > 0],
                       key=lambda r: r["delta_week"], reverse=True)
     new_to_board = [r for r in ranked if r["is_new"]]
     biggest = climbers[0] if climbers else None
 
+    # Guild key levels cleared (parity with the Discord board's M+ keys +
+    # the highest-timed-key record) — derived live from everyone's best runs.
+    key_records = _build_key_records(chars, season)
+
+    # The 34-of-130 with no score are a DELIBERATE state, not missing data:
+    # roster members who haven't posted a season score yet. Surfaced as their
+    # own bucket so the UI renders "yet to set sail" rather than a blank row.
+    unranked = [{"name": r["name"], "key": r["key"], "class": r["class"],
+                 "spec": r["spec"], "role": r["role"]}
+                for r in unscored]
+
     # Parses — real records only; never invented.
     parses = _build_parse_block(board_state, ranked)
     parse_by_name = {p["name"].lower(): p for p in parses["leaders"]}
-    for r in ranked:
+    for r in characters:
         p = parse_by_name.get((r["name"] or "").lower())
         if p:
             r["parse"] = {"best": p["parse"], "boss": p["boss"], "source": "board_state"}
@@ -236,8 +268,12 @@ def build_competition(fetched=None, board_state=None, season=None,
         "season": {"slug": season["slug"], "name": season["name"]},
         "based_on": board_state.get("last_updated"),
         "character_count": len(detail),
+        "ranked_count": len(ranked),
+        "unranked_count": len(unranked),
         # Full browsable detail — one entry per character, every number.
-        "characters": ranked,
+        "characters": characters,
+        "unranked": unranked,
+        "key_records": key_records,
         "rankings": {
             "overall": overall,
             "by_role": by_role,
@@ -255,6 +291,41 @@ def build_competition(fetched=None, board_state=None, season=None,
         },
         "parses": parses,
     }
+
+
+def _build_key_records(chars, season):
+    """Guild key levels cleared: the highest TIMED key per current-season
+    dungeon across the whole roster, plus the single highest overall.
+
+    Parity with the Discord board's weekly M+ keys / highest-timed-key
+    record — derived live from every member's best runs, so it needs no
+    separate fetch.
+    """
+    wanted = {d["name"] for d in season["dungeons"]}
+    by_dungeon = {}
+    overall = None
+    for rec in chars:
+        for run in rec.get("best_runs") or []:
+            dungeon = run.get("dungeon")
+            if dungeon not in wanted or not run.get("timed"):
+                continue
+            level = run.get("level", 0)
+            cur = by_dungeon.get(dungeon)
+            if cur is None or level > cur["level"]:
+                by_dungeon[dungeon] = {"dungeon": dungeon, "level": level,
+                                       "name": rec["name"], "key": rec["key"],
+                                       "score": run.get("score")}
+            if overall is None or level > overall["level"]:
+                overall = {"dungeon": dungeon, "level": level,
+                           "name": rec["name"], "key": rec["key"]}
+    # Order by dungeon name for a stable, complete table (missing = not timed).
+    dungeons = []
+    for d in season["dungeons"]:
+        entry = by_dungeon.get(d["name"])
+        dungeons.append(entry or {"dungeon": d["name"], "level": None,
+                                  "name": None, "key": None, "score": None})
+    return {"highest_overall": overall, "by_dungeon": dungeons,
+            "dungeons_timed": len(by_dungeon), "dungeon_total": len(wanted)}
 
 
 def _build_parse_block(board_state, ranked):

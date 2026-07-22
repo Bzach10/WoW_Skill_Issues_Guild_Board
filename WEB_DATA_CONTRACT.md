@@ -43,9 +43,13 @@ Every number is **browsable** — full per-character detail, not just a summary.
   "based_on": "2026-07-20T12:14:49+00:00",
   "character_count": 132,
 
+  "ranked_count": 97, "unranked_count": 35,
   "characters": [                       // FULL browsable detail, one per member
     {
-      "name": "Amrevenge", "key": "amrevenge-stormrage", "realm": "stormrage",
+      "name": "Amrevenge", "key": "amrevenge-stormrage",
+      "realm": "Stormrage", "realm_slug": "stormrage",
+      "raiderio_url": "https://raider.io/characters/us/stormrage/amrevenge",
+      "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/stormrage/amrevenge",
       "class": "Hunter", "spec": "Beast Mastery Hunter", "role": "DPS",
       "score": 3908.1,
       "scores_by_role": {"dps": 3908.1, "healer": 0, "tank": 0},
@@ -78,9 +82,45 @@ Every number is **browsable** — full per-character detail, not just a summary.
     "available": "partial",     // "partial" | "none" | (future) "full"
     "source": "board_state records (WCL enrichment pending WCL creds; Raider.io has no parses)",
     "leaders": [ {name,parse,boss,role,spec}, … ]
+  },
+
+  "unranked": [ {name,key,class,spec,role}, … ],   // no season score YET
+  "key_records": {                                  // guild key levels cleared
+    "highest_overall": {dungeon,level,name,key},
+    "by_dungeon": [ {dungeon,level,name,key,score}, … ],  // null level = none timed
+    "dungeons_timed": 8, "dungeon_total": 8
   }
 }
 ```
+
+**⚠️ CROSS-REALM — use the prebuilt URLs.** The guild is on Bleeding Hollow
+but 70% of the roster (incl. the owner's Rakdisc/Rakell on **Proudmoore**)
+is cross-realm. Each character carries its own `realm_slug`, `raiderio_url`
+and `warcraftlogs_url`. **Build links from these, never from the guild
+realm** — doing so blanks every cross-realm member's link.
+
+**⚠️ `unranked` is deliberate.** 35 members have no season score yet.
+They're in `unranked` (and in `characters` with `rank: null`), NOT missing.
+Render as "yet to set sail" / dimmed — never a blank or broken row.
+
+### `parity` — the data parity floor (every Discord-board field)
+
+`site_data.parity` maps each weekly-Discord-board field to where the site
+serves it and its state, so you can guarantee no section renders dead:
+
+```json
+"parity": {
+  "summary": {"live": 7, "partial": 3, "pending": 5, "total": 15},
+  "fields": [ {"field": "mplus_weekly_keys", "served_by": "competition.key_records",
+               "state": "live", "note": null}, … ]
+}
+```
+
+`state` ∈ `live` (real now) · `partial` (some now, fuller with creds) ·
+`pending` (structurally present, needs a credentialed refresh). All 5
+`pending` are credential-blocked (WCL parses, most-deaths, roast, MOTD,
+guild achievements) — the same creds the Discord board itself needs — and
+each degrades to a documented empty shape you can render as "coming soon".
 
 **Notes for the WANTED BOARD (bounty = M+ score):**
 - `characters[]` is the browsable detail — render a bounty poster per member,
