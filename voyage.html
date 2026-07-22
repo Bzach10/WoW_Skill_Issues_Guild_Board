@@ -1,0 +1,701 @@
+
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="codex">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Skill Issues — Voyage Map (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗺️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&amp;family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+html[data-crew-theme="codex"]{
+  --bg:#e7d3ad; --text:#3a2c17; --heading:#4a2f12;
+  --accent:#9b5e1f; --panel:#f7eed8; --line:#c8ad7e;
+  --muted:#6b5637;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:light;
+}
+html[data-crew-theme="console"]{
+  --bg:#120c1e; --text:#e7dcf7; --heading:#e7dcf7;
+  --accent:#38e0c8; --panel:#191128; --line:#33264d;
+  --muted:#9d8fbb;
+  --font-display:'JetBrains Mono',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html[data-crew-theme="chronicle"]{
+  --bg:#180f28; --text:#efe7dd; --heading:#efe7dd;
+  --accent:#d8a24a; --panel:#20152c; --line:#3c2e4a;
+  --muted:#b0a08f;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{--dungeon:#4fc9a2; --raid:#d06a8a; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+
+.mast{text-align:center; padding:44px 0 18px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.kicker b{color:var(--accent);}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(34px,7vw,68px); color:var(--heading);}
+.rule{width:min(400px,72%); height:3px; margin:20px auto 16px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+.lede{max-width:62ch; margin:0 auto; color:var(--muted); font-size:16px;}
+
+/* season switch — the point of the review */
+.seasons{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  padding:18px 0 6px;}
+.seasons button{font:inherit; font-size:13px; cursor:pointer; padding:10px 18px;
+  border-radius:999px; border:1px solid var(--line); background:var(--panel);
+  color:var(--text); transition:all .25s;}
+.seasons button[aria-pressed="true"]{background:var(--accent); color:var(--bg);
+  border-color:var(--accent);}
+.seasonnote{text-align:center; color:var(--muted); font-size:13px;
+  padding-bottom:22px;}
+
+/* ---------------- the map ---------------- */
+.map{position:relative; border:1px solid var(--line); border-radius:22px;
+  background:var(--panel); padding:26px 18px 20px; margin-bottom:26px;
+  overflow:hidden;}
+.leg{display:flex; gap:16px; justify-content:center; flex-wrap:wrap;
+  font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--muted); padding-bottom:16px;}
+.leg i{display:inline-block; width:9px; height:9px; border-radius:50%;
+  margin-right:5px; vertical-align:middle;}
+
+.route{position:relative; display:flex; flex-wrap:wrap; gap:10px 4px;
+  justify-content:center; padding:8px 4px 20px;}
+/* the dashed route threads behind each row of islands */
+.island::before{content:""; position:absolute; top:27px; left:-2px; right:-2px;
+  border-top:2px dashed var(--line); z-index:0;}
+.island:first-child::before{left:50%;}
+.island:last-child::before{right:50%;}
+.blob{position:relative; z-index:1;}
+
+.island{position:relative; flex:0 0 auto; width:120px; scroll-snap-align:center;
+  background:none; border:0; color:inherit; font:inherit; cursor:pointer;
+  padding:6px 4px; border-radius:14px; display:flex; flex-direction:column;
+  align-items:center; text-align:center; transition:transform .3s, background .3s;}
+.island:hover,.island:focus-visible{transform:translateY(-5px);
+  background:color-mix(in srgb,var(--accent) 12%, transparent);}
+.island[aria-selected="true"]{background:color-mix(in srgb,var(--accent) 18%, transparent);}
+.blob{display:block; width:58px; height:42px; margin:0 auto 8px; position:relative;
+  border-radius:50% 50% 46% 54%/60% 62% 40% 38%; border:1px solid var(--line);
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--dungeon) 55%, var(--panel)),
+    color-mix(in srgb,var(--line) 70%, var(--panel)));}
+.island[data-kind="raid_boss"] .blob{
+  border-radius:44% 56% 40% 60%/54% 40% 60% 46%;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--raid) 55%, var(--panel)),
+    color-mix(in srgb,var(--line) 70%, var(--panel)));}
+/* a cleared island is filled in; an untouched one stays hollow */
+.island[data-state="none"] .blob{opacity:.42; border-style:dashed;}
+.island[data-state="cleared"] .blob::after{content:"✦"; position:absolute;
+  inset:0; display:grid; place-items:center; font-size:15px; color:var(--bg);}
+.iname{display:block; font-size:11px; line-height:1.25; min-height:2.5em;}
+.imeta{display:block; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); margin-top:3px;}
+.ship{position:absolute; top:-6px; left:50%; transform:translateX(-50%);
+  font-size:19px;}
+
+/* ---------------- detail ---------------- */
+.detail{border-top:1px solid var(--line); margin-top:4px; padding-top:18px;
+  min-height:150px;}
+.detail h3{font-family:var(--font-display); font-size:23px; color:var(--heading);}
+.detail .tag{display:inline-block; font-size:10px; letter-spacing:.14em;
+  text-transform:uppercase; padding:3px 9px; border-radius:999px;
+  color:var(--bg); background:var(--dungeon); margin-bottom:8px;}
+.detail .tag.raid{background:var(--raid);}
+.stats{display:grid; gap:12px; margin-top:14px;
+  grid-template-columns:repeat(auto-fit,minmax(150px,1fr));}
+.stat{background:color-mix(in srgb,var(--bg) 45%, var(--panel));
+  border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+.stat .k{font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted);}
+.stat .v{font-weight:700; font-size:20px; color:var(--heading); margin-top:3px;
+  font-variant-numeric:lining-nums tabular-nums;}
+.stat .d{font-size:12px; color:var(--muted);}
+.norec{color:var(--muted); font-style:italic;}
+
+.progress{background:var(--panel); border:1px solid var(--line);
+  border-radius:16px; padding:20px 22px; margin-bottom:26px;}
+.progress h2{font-family:var(--font-display); font-size:20px; color:var(--heading);
+  margin-bottom:12px;}
+.bars{display:grid; gap:10px;}
+.bar{display:grid; grid-template-columns:70px 1fr 60px; gap:12px;
+  align-items:center; font-size:13px;}
+/* both are <span>s — without display:block the width is ignored and
+   every bar renders full, which is exactly what it did. */
+.bar .track{display:block; height:11px; border-radius:999px; overflow:hidden;
+  background:color-mix(in srgb,var(--line) 85%, var(--bg));
+  border:1px solid var(--line);}
+.bar .fill{display:block; height:100%; border-radius:999px; background:var(--accent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 60%, transparent);
+  min-width:3px;}
+.bar .num{text-align:right; color:var(--muted); font-variant-numeric:tabular-nums;}
+
+.note{background:var(--panel); border:1px dashed var(--line); border-radius:14px;
+  padding:16px 18px; color:var(--muted); font-size:13.5px; margin-bottom:30px;}
+.note b{color:var(--text);}
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+
+@media (max-width:640px){
+  .island{width:96px;}
+  .bar{grid-template-columns:60px 1fr 52px;}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+
+.sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom:1px solid var(--line);}
+.sitenav .wrap{display:flex; align-items:center; gap:18px;
+  padding-top:10px; padding-bottom:10px;}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none;
+  color:var(--heading); font-family:var(--font-display); font-weight:700;
+  letter-spacing:.04em; margin-right:auto;}
+.brand-mark{font-size:18px; filter:saturate(1.2);}
+.brand-name{font-size:15px;}
+.navlinks{display:flex; gap:6px;}
+.navlinks a{font-size:13px; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border-radius:999px; transition:all .2s;}
+.navlinks a:hover{color:var(--text); background:color-mix(in srgb, var(--line) 45%, transparent);}
+.navlinks a[aria-current="page"]{color:var(--bg); background:var(--accent);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 11px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .2s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* the return affordance — a full-width bar, impossible to miss */
+.backbar{position:sticky; top:53px; z-index:45; display:block;
+  padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
+  text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, var(--accent) 16%, var(--bg));
+  border-bottom:1px solid var(--line);
+  max-width:var(--measure); margin:0 auto;}
+.backbar:hover{background:color-mix(in srgb, var(--accent) 26%, var(--bg));
+  color:var(--accent);}
+
+/* on small screens the brand name yields before the links do */
+@media (max-width:560px){
+  .sitenav .wrap{gap:10px; flex-wrap:wrap;}
+  .brand-name{display:none;}
+  .navlinks a{padding:7px 11px;}
+  .themeswitch button{font-size:0; padding:6px;}
+  .themeswitch button::before{content:attr(data-theme); font-size:11px;
+    text-transform:capitalize;}
+}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+
+<header class="sitenav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">⚓</span>
+      <span class="brand-name">Skill Issues</span>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="index.html"
+         >Board</a>
+      <a href="voyage.html"
+         aria-current="page">Voyage</a>
+    </nav>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      <button type="button" data-theme="codex"
+              aria-pressed="true"
+              title="Illuminated Codex">Illuminated Codex</button>
+      <button type="button" data-theme="console"
+              aria-pressed="false"
+              title="Arcane Console">Arcane Console</button>
+      <button type="button" data-theme="chronicle"
+              aria-pressed="false"
+              title="Chronicle">Chronicle</button>
+    </div>
+  </div>
+</header>
+
+<a class="backbar" href="index.html">← Back to the board</a>
+<main class="wrap">
+<section class="mast">
+  <div class="kicker">Skill Issues · the season as a voyage</div>
+  <h1>The Voyage Map</h1>
+  <div class="rule"></div>
+  <p class="lede">
+    Every dungeon and raid boss of the season laid out as islands on the
+    crew's route. Tap an island to see what the guild has actually done
+    there. The island set is data-driven — <strong>Season 2 is already
+    loaded</strong>, so switching at the grand opening is a one-line change.
+  </p>
+</section>
+
+<div class="seasons" role="group" aria-label="Season">
+  <button type="button" data-season="season-mn-1-break-the-meta"
+          aria-pressed="true">Midnight — Season 1</button>
+  <button type="button" data-season="season-mn-2"
+          aria-pressed="false">Midnight — Season 2</button>
+</div>
+<p class="seasonnote" id="seasonnote"></p>
+<div class="season-pane" data-season-pane="season-mn-1-break-the-meta"
+     >
+  <section class="progress">
+    <h2>Raid progress — MN Tier 1 (VS / DR / MQD)</h2>
+    <div class="bars">
+      <div class="bar">
+        <span>Mythic</span>
+        <span class="track"><span class="fill" style="width:33%;"></span></span>
+        <span class="num">3/9</span>
+      </div>
+      <div class="bar">
+        <span>Heroic</span>
+        <span class="track"><span class="fill" style="width:56%;"></span></span>
+        <span class="num">5/9</span>
+      </div>
+      <div class="bar">
+        <span>Normal</span>
+        <span class="track"><span class="fill" style="width:0%;"></span></span>
+        <span class="num">0/9</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="map">
+    <div class="leg">
+      <span><i style="background:var(--dungeon);"></i>Dungeon</span>
+      <span><i style="background:var(--raid);"></i>Raid boss</span>
+      <span><i style="background:var(--line);"></i>No record yet</span>
+    </div>
+
+    <div class="route" role="tablist">
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Algeth&#39;ar Academy"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Algeth&amp;#x27;ar Academy&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;486.6&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;29:43&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="true">
+        <span class="blob"><span class="ship">⛵</span></span>
+        <span class="iname">Algeth&#39;ar Academy</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Magisters&#39; Terrace"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Magisters&amp;#x27; Terrace&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;489.9&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;29:32&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Magisters&#39; Terrace</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Maisara Caverns"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Maisara Caverns&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;485.6&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;32:29&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Maisara Caverns</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Nexus-Point Xenas"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Nexus-Point Xenas&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;490.2&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;25:52&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Nexus-Point Xenas</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Pit of Saron"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Pit of Saron&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;492.2&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;24:16&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Pit of Saron</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Seat of the Triumvirate"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Seat of the Triumvirate&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;488.2&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;31:07&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Seat of the Triumvirate</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Skyreach"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Skyreach&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;487.9&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;25:50&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Skyreach</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Windrunner Spire"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Windrunner Spire&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Guild best&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;+20&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;timed&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Held by&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:16px;&#34;&gt;Amrevenge&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Stormrage&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Run score&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;487.5&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;points&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Clear time&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;30:46&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;best run&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Windrunner Spire</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Imperator Averzian"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Imperator Averzian&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Mythic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 1 of 9&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Best HPS parse&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;96&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Phyrthepali · Holy Paladin&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Imperator Averzian</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Vorasius"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vorasius&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Mythic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 2 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Vorasius</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Fallen-King Salhadaar"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Fallen-King Salhadaar&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Mythic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 3 of 9&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Best DPS parse&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;97&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Amrevenge · BeastMastery Hunter&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Fallen-King Salhadaar</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Vaelgor &amp; Ezzorak"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vaelgor &amp;amp; Ezzorak&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Heroic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 4 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Vaelgor &amp; Ezzorak</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="cleared"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Lightblinded Vanguard"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Lightblinded Vanguard&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Heroic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 5 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Lightblinded Vanguard</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Crown of the Cosmos"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Crown of the Cosmos&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 6 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Crown of the Cosmos</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Chimaerus the Undreamt God"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Chimaerus the Undreamt God&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 7 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Chimaerus the Undreamt God</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Belo&#39;ren, Child of Al&#39;ar"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Belo&amp;#x27;ren, Child of Al&amp;#x27;ar&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 8 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Belo&#39;ren, Child of Al&#39;ar</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-1-break-the-meta"
+              data-name="Midnight Falls"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Midnight Falls&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 9 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Midnight Falls</span>
+        <span class="imeta">Boss</span>
+      </button>
+    </div>
+
+    <div class="detail" data-detail-for="season-mn-1-break-the-meta" aria-live="polite">
+      <span class="tag">Dungeon</span><h3>Algeth&#x27;ar Academy</h3><div class="stats"><div class="stat"><div class="k">Guild best</div><div class="v">+20</div><div class="d">timed</div></div><div class="stat"><div class="k">Held by</div><div class="v" style="font-size:16px;">Amrevenge</div><div class="d">Stormrage</div></div><div class="stat"><div class="k">Run score</div><div class="v">486.6</div><div class="d">points</div></div><div class="stat"><div class="k">Clear time</div><div class="v">29:43</div><div class="d">best run</div></div></div>
+    </div>
+  </section>
+</div>
+<div class="season-pane" data-season-pane="season-mn-2"
+     hidden>
+
+  <section class="map">
+    <div class="leg">
+      <span><i style="background:var(--dungeon);"></i>Dungeon</span>
+      <span><i style="background:var(--raid);"></i>Raid boss</span>
+      <span><i style="background:var(--line);"></i>No record yet</span>
+    </div>
+
+    <div class="route" role="tablist">
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Altar of Fangs"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Altar of Fangs&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="true">
+        <span class="blob"></span>
+        <span class="iname">Altar of Fangs</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Den of Nalorakk"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Den of Nalorakk&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Den of Nalorakk</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Kings&#39; Rest"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Kings&amp;#x27; Rest&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Kings&#39; Rest</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Murder Row"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Murder Row&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Murder Row</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Ruby Life Pools"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Ruby Life Pools&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Ruby Life Pools</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Temple of Sethraliss"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Temple of Sethraliss&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Temple of Sethraliss</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="The Blinding Vale"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;The Blinding Vale&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">The Blinding Vale</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="dungeon" data-state="none"
+              data-season="season-mn-2"
+              data-name="Voidscar Arena"
+              data-detail="&lt;span class=&#34;tag&#34;&gt;Dungeon&lt;/span&gt;&lt;h3&gt;Voidscar Arena&lt;/h3&gt;&lt;p class=&#34;norec&#34;&gt;No timed key recorded here yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Voidscar Arena</span>
+        <span class="imeta">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="Nek&#39;zali, the Soulcoiler"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Nek&amp;#x27;zali, the Soulcoiler&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 1 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Nek&#39;zali, the Soulcoiler</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="Entombed Sentinels"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Entombed Sentinels&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 2 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Entombed Sentinels</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="Vashnik the Malignant"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vashnik the Malignant&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 3 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Vashnik the Malignant</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="The Lost Explorers"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;The Lost Explorers&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 4 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">The Lost Explorers</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="Sszorak"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Sszorak&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 5 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Sszorak</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="The Twin Fangs"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;The Twin Fangs&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 6 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">The Twin Fangs</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="Zul&#39;jan"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Zul&amp;#x27;jan&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 7 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Zul&#39;jan</span>
+        <span class="imeta">Boss</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-kind="raid_boss" data-state="none"
+              data-season="season-mn-2"
+              data-name="Ula&#39;tek"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Ula&amp;#x27;tek&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Not yet defeated&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 8 of 8&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              aria-selected="false">
+        <span class="blob"></span>
+        <span class="iname">Ula&#39;tek</span>
+        <span class="imeta">Boss</span>
+      </button>
+    </div>
+
+    <div class="detail" data-detail-for="season-mn-2" aria-live="polite">
+      <span class="tag">Dungeon</span><h3>Altar of Fangs</h3><p class="norec">No timed key recorded here yet.</p>
+    </div>
+  </section>
+</div>
+
+<p class="note">
+  <b>What's real here:</b> the dungeon and raid lists come straight from
+  Raider.io's season data, and every key, score and kill count is the
+  guild's own live data. <b>What isn't:</b> the islands are coloured
+  shapes, not art — that's the next step if you like the layout. Per-boss
+  kill detail isn't published by the API, so a boss is marked cleared
+  from the guild's progression counts and encounter order.
+</p>
+
+<footer class="foot">
+  <p>Test run · guild data fetched 2026-07-21T20:19:19Z</p>
+  <p style="margin-top:6px;">Not connected to Discord or the guild website.</p>
+</footer>
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var notes = {"season-mn-1-break-the-meta": "Midnight \u2014 Season 1 \u00b7 8 dungeons + 9 bosses in MN Tier 1 (VS / DR / MQD) \u00b7 starts 2026-07-14", "season-mn-2": "Midnight \u2014 Season 2 \u00b7 8 dungeons + 8 bosses in The Venomous Abyss \u00b7 starts 2026-12-16"};
+  var buttons = [].slice.call(document.querySelectorAll('.seasons button'));
+  var panes = [].slice.call(document.querySelectorAll('[data-season-pane]'));
+  var note = document.getElementById('seasonnote');
+
+  function show(id){
+    panes.forEach(function(p){ p.hidden = p.dataset.seasonPane !== id; });
+    buttons.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.season === id ? 'true' : 'false');
+    });
+    note.textContent = notes[id] || '';
+  }
+  buttons.forEach(function(b){
+    b.addEventListener('click', function(){ show(b.dataset.season); });
+  });
+  show(document.querySelector('.seasons button[aria-pressed="true"]').dataset.season);
+
+  [].slice.call(document.querySelectorAll('.island')).forEach(function(btn){
+    function pick(){
+      var pane = btn.closest('[data-season-pane]');
+      var target = pane.querySelector('.detail');
+      if (target) target.innerHTML = btn.dataset.detail || '';
+      pane.querySelectorAll('.island').forEach(function(o){
+        o.setAttribute('aria-selected', o === btn ? 'true' : 'false');
+      });
+    }
+    btn.addEventListener('click', pick);
+    btn.addEventListener('mouseenter', pick);
+    btn.addEventListener('focus', pick);
+  });
+})();
+</script>
+</body>
+</html>

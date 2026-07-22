@@ -1,0 +1,44 @@
+{# Shared nav styling — included inside each page's <style>. #}
+.sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom:1px solid var(--line);}
+.sitenav .wrap{display:flex; align-items:center; gap:18px;
+  padding-top:10px; padding-bottom:10px;}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none;
+  color:var(--heading); font-family:var(--font-display); font-weight:700;
+  letter-spacing:.04em; margin-right:auto;}
+.brand-mark{font-size:18px; filter:saturate(1.2);}
+.brand-name{font-size:15px;}
+.navlinks{display:flex; gap:6px;}
+.navlinks a{font-size:13px; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border-radius:999px; transition:all .2s;}
+.navlinks a:hover{color:var(--text); background:color-mix(in srgb, var(--line) 45%, transparent);}
+.navlinks a[aria-current="page"]{color:var(--bg); background:var(--accent);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 11px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .2s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* the return affordance — a full-width bar, impossible to miss */
+.backbar{position:sticky; top:53px; z-index:45; display:block;
+  padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
+  text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, var(--accent) 16%, var(--bg));
+  border-bottom:1px solid var(--line);
+  max-width:var(--measure); margin:0 auto;}
+.backbar:hover{background:color-mix(in srgb, var(--accent) 26%, var(--bg));
+  color:var(--accent);}
+
+/* on small screens the brand name yields before the links do */
+@media (max-width:560px){
+  .sitenav .wrap{gap:10px; flex-wrap:wrap;}
+  .brand-name{display:none;}
+  .navlinks a{padding:7px 11px;}
+  .themeswitch button{font-size:0; padding:6px;}
+  .themeswitch button::before{content:attr(data-theme); font-size:11px;
+    text-transform:capitalize;}
+}

@@ -58,6 +58,14 @@ a{color:var(--accent);}
 /* Near-opaque on purpose. The scene is texture behind the page, not a
    colour change — at 82% the light theme turned mid-grey and its dark
    text became unreadable. */
+/* edge vignettes so the wide margins feel framed, not empty */
+.backdrop::before{content:""; position:absolute; inset:0; z-index:1;
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--bg) 70%, transparent) 0%,
+      transparent 14%, transparent 86%,
+      color-mix(in srgb, var(--bg) 70%, transparent) 100%),
+    radial-gradient(120% 80% at 50% 0%, transparent 60%,
+      color-mix(in srgb, var(--accent) 8%, transparent) 100%);}
 .backdrop::after{content:""; position:absolute; inset:0;
   background:color-mix(in srgb, var(--bg) 93%, transparent);}
 
@@ -104,21 +112,7 @@ a{color:var(--accent);}
 }
 .private b{color:var(--accent);}
 
-.topbar{position:sticky; top:0; z-index:40; backdrop-filter:blur(8px);
-  background:color-mix(in srgb,var(--bg) 88%, transparent);
-  border-bottom:1px solid var(--line);}
-.topbar .wrap{display:flex; align-items:center; justify-content:space-between;
-  gap:12px; padding-top:10px; padding-bottom:10px; flex-wrap:wrap;}
-.brandmark{font-family:var(--font-display); letter-spacing:.14em;
-  text-transform:uppercase; font-size:12px; color:var(--muted);}
-.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
-.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
-  padding:6px 12px; border-radius:999px; color:var(--muted);
-  background:transparent; border:1px solid var(--line); transition:all .25s;}
-.themeswitch button[aria-pressed="true"]{color:var(--bg);
-  background:var(--accent); border-color:var(--accent);}
-.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
-.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+{% include "web/_nav_css.html.j2" %}
 
 /* masthead */
 .mast{text-align:center; padding:56px 0 26px;}
@@ -174,14 +168,22 @@ a{color:var(--accent);}
   background-image:var(--fill); background-size:cover;
   background-position:center; filter:blur(26px) saturate(.75) brightness(.72);
   transform:scale(1.06);}
-.scene img{position:relative; width:100%; height:100%; object-fit:contain;
-  display:block; transition:transform 6s ease;}
+.scene img{position:relative; width:100%; height:100%; object-fit:cover;
+  object-position:center 22%;   /* keep faces; the square trims the feet */
+  display:block; transition:transform 6s ease;
+  /* feather the edges so the character melts into the card rather than
+     ending on a hard rectangle — Zach's "blend" ask */
+  -webkit-mask-image:radial-gradient(120% 108% at 50% 42%,
+    #000 58%, rgba(0,0,0,.55) 78%, transparent 100%);
+  mask-image:radial-gradient(120% 108% at 50% 42%,
+    #000 58%, rgba(0,0,0,.55) 78%, transparent 100%);}
 .card:hover .scene img{transform:scale(1.045);}
 /* the illustration meets the card body in a soft wash, not a hard cut */
-.scene::after{content:""; position:absolute; inset:auto 0 0; height:44%;
-  background:linear-gradient(180deg, transparent,
-    color-mix(in srgb,var(--panel) 92%, transparent) 78%, var(--panel));
-  pointer-events:none;}
+.scene::after{content:""; position:absolute; inset:auto 0 0; height:56%;
+  background:linear-gradient(180deg, transparent 0%,
+    color-mix(in srgb,var(--panel) 55%, transparent) 55%,
+    color-mix(in srgb,var(--panel) 92%, transparent) 84%, var(--panel) 100%);
+  pointer-events:none; z-index:1;}
 .scene .setting{position:absolute; top:12px; left:12px; z-index:2;
   font-size:10px; letter-spacing:.14em; text-transform:uppercase;
   padding:5px 10px; border-radius:999px; color:var(--text);
@@ -197,7 +199,9 @@ a{color:var(--accent);}
   text-transform:uppercase; color:var(--bg); background:var(--pip);
   padding:4px 10px; border-radius:999px;}
 .body h3{font-family:var(--font-display); font-size:30px; color:var(--heading);
-  line-height:1.05; margin:10px 0 4px;}
+  line-height:1.05; margin:10px 0 4px; position:relative;
+  text-shadow:0 1px 2px color-mix(in srgb, var(--panel) 88%, transparent),
+              0 2px 14px color-mix(in srgb, var(--panel) 70%, transparent);}
 .body h3 a{color:inherit; text-decoration:none;
   border-bottom:1px solid transparent;}
 .body h3 a:hover{border-bottom-color:var(--accent);}
@@ -285,17 +289,7 @@ a{color:var(--accent);}
 
 <div class="private">Private trial build · <b>not published</b> · local preview only</div>
 
-<header class="topbar">
-  <div class="wrap">
-    <div class="brandmark">{{ guild_name }} — second draft</div>
-    <div class="themeswitch" role="group" aria-label="Theme">
-      {%- for key, t in themes.items() %}
-      <button type="button" data-theme="{{ key }}"
-              aria-pressed="{{ 'true' if key == default_theme else 'false' }}">{{ t.label }}</button>
-      {%- endfor %}
-    </div>
-  </div>
-</header>
+{% set nav_here = "board" %}{% include "web/_nav.html.j2" %}
 
 <main>
 {%- if scene %}

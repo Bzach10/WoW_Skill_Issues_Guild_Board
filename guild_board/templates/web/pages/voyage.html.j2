@@ -156,11 +156,13 @@ a{color:var(--accent);}
   .bar{grid-template-columns:60px 1fr 52px;}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
+{% include "web/_nav_css.html.j2" %}
 </style>
 </head>
 <body>
 <div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
 
+{% set nav_here = "voyage" %}{% include "web/_nav.html.j2" %}
 <main class="wrap">
 <section class="mast">
   <div class="kicker">{{ guild_name }} · the season as a voyage</div>

@@ -116,11 +116,13 @@ h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
 }
 @media (prefers-reduced-motion:reduce){
 }
+{% include "web/_nav_css.html.j2" %}
 </style>
 </head>
 <body style="--pip:var(--{{ p.member.role }});">
+{% set nav_root = "../" %}{% set nav_here = "profile" %}
+{% include "web/_nav.html.j2" %}
 <div class="wrap">
-  <a class="back" href="../index.html">← The Guild Board</a>
 
   <header class="hero">
     <div class="stage">
@@ -231,5 +233,18 @@ h2.sec{font-family:var(--font-display); font-size:22px; color:var(--heading);
     {%- if updated %} · Board data from {{ updated }}{% endif %}
   </footer>
 </div>
+<script>
+(function(){
+  "use strict";
+  var doc=document.documentElement;
+  var btns=[].slice.call(document.querySelectorAll('.themeswitch button'));
+  function set(k){doc.setAttribute('data-crew-theme',k);
+    btns.forEach(function(b){b.setAttribute('aria-pressed',b.dataset.theme===k?'true':'false');});
+    try{localStorage.setItem('crewTheme',k);}catch(e){}}
+  btns.forEach(function(b){b.addEventListener('click',function(){set(b.dataset.theme);});});
+  try{var v=localStorage.getItem('crewTheme');
+    if(v&&document.querySelector('.themeswitch button[data-theme="'+v+'"]'))set(v);}catch(e){}
+})();
+</script>
 </body>
 </html>

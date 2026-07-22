@@ -27,6 +27,12 @@ DEFAULT_OUT = ROOT.parent / "GuildBoardTrial"
 ASSET_ROOTS = ["cast"]
 
 SRC_RE = re.compile(r'(?:src|href)="((?!https?:|mailto:|data:|#)[^"]+)"')
+URL_RE = re.compile(r"""url\(\s*['"]?(?!https?:|data:)([^'")]+?)['"]?\s*\)""")
+
+
+def _refs(text):
+    """Every local reference in a page: src/href AND CSS url()."""
+    return SRC_RE.findall(text) + URL_RE.findall(text)
 
 
 def run(cmd):
@@ -44,7 +50,7 @@ def referenced_assets(html_paths):
     wanted = set()
     for path in html_paths:
         text = path.read_text(encoding="utf-8", errors="ignore")
-        for ref in SRC_RE.findall(text):
+        for ref in _refs(text):
             ref = ref.split("?")[0].split("#")[0]
             if not ref or ref.endswith(".html"):
                 continue
@@ -80,11 +86,13 @@ def main():
 
     board = ROOT / "crew_board.html"
     trial = ROOT / "trial.html"
+    voyage = ROOT / "voyage.html"
     profiles = sorted((ROOT / "p").glob("*.html"))
     if not board.exists():
         raise SystemExit("crew_board.html was not produced")
 
-    pages = [board] + profiles + ([trial] if trial.exists() else [])
+    pages = ([board] + profiles + ([trial] if trial.exists() else [])
+             + ([voyage] if voyage.exists() else []))
     print(f"2/4  collecting assets for {len(pages)} pages")
     assets = referenced_assets(pages)
     print(f"     {len(assets)} asset files referenced")
@@ -107,6 +115,8 @@ def main():
         shutil.copy2(board, out / "crew_board.html")
     else:
         shutil.copy2(board, out / "index.html")
+    if voyage.exists():
+        shutil.copy2(voyage, out / "voyage.html")   # the nav's Voyage link
     (out / "p").mkdir()
     for page in profiles:
         # profiles link back to ../index.html, which now exists
@@ -144,7 +154,7 @@ def main():
         checkable.append(out / "crew_board.html")
     for page in checkable:
         text = page.read_text(encoding="utf-8", errors="ignore")
-        for ref in SRC_RE.findall(text):
+        for ref in _refs(text):
             ref = ref.split("?")[0].split("#")[0]
             if not ref:
                 continue

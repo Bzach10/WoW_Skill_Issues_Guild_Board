@@ -356,6 +356,17 @@ def main():
     trial_page.write_text(
         env.get_template("web/pages/trial.html.j2").render(**trial_ctx),
         encoding="utf-8")
+    # the voyage map, rendered into the same site so the nav link resolves
+    try:
+        import subprocess
+        vout = out.parent / "voyage.html"
+        subprocess.run([sys.executable, "scripts/render_voyage_test.py",
+                        "--out", str(vout)], cwd=Path(__file__).resolve().parent.parent,
+                       check=True, capture_output=True, text=True)
+        logger.info("Wrote the voyage map to %s", vout)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Voyage render skipped (%s); the nav link will be inert.", exc)
+
     logger.info("Wrote the trial showcase to %s (%s)",
                 trial_page, showcase_mod.trial_status(cards))
     with_new = [m["name"] for m in ctx["crew"] if not m["art"]["pending"]]

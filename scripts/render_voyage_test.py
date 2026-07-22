@@ -175,6 +175,8 @@ def main():
         "season_list": views,
         "active_season": active,
         "season_notes": {v["id"]: v["note"] for v in views},
+        "nav_root": "",
+        "nav_here": "voyage",
         "fetched_note": (f"guild data fetched {live.get('fetched_at')}"
                          if live.get("fetched_at") else "no live guild data loaded"),
     }
