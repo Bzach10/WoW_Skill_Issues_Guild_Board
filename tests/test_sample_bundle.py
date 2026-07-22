@@ -18,7 +18,7 @@ from guild_board import web_data
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = REPO / "samples"
 LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
-          "island_completion", "transmog_changes", "guild_pulse")
+          "island_completion", "transmog_changes", "guild_pulse", "competition")
 
 
 def _load(name):
@@ -66,7 +66,8 @@ def test_sample_is_regenerable_from_current_producers():
         board_state=gen.BOARD_STATE, manifest=gen.MANIFEST,
         dungeon_bests=gen.DUNGEON_BESTS, raid_progression=gen.RAID_PROGRESSION,
         guild_achievements=gen.GUILD_ACHIEVEMENTS,
-        transmog_snapshot=gen.TRANSMOG_SNAPSHOT, pulse_items=gen.PULSE_ITEMS)
+        transmog_snapshot=gen.TRANSMOG_SNAPSHOT, pulse_items=gen.PULSE_ITEMS,
+        competition_fetched=gen.COMPETITION_FETCHED)
     committed = _load("site_data.sample.json")
 
     for layer in LAYERS:
@@ -92,3 +93,9 @@ def test_sample_exercises_populated_states():
     assert site["guild_pulse"]["item_count"] >= 1
     # The pulse sample must never leak a numeric user id.
     assert "999" not in repr(site["guild_pulse"]["items"])
+    comp = site["competition"]
+    assert comp["available"] is True
+    assert comp["character_count"] >= 5
+    assert comp["rankings"]["top5"][0]["rank"] == 1
+    # All three role buckets present and healers actually bucketed.
+    assert comp["rankings"]["by_role"]["Healer"]

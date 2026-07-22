@@ -226,6 +226,13 @@ sections:
 #  Right-click a channel -> "Copy Channel ID" (needs Developer
 #  Mode under Discord Settings -> Advanced).
 # ------------------------------------------------------------
+competition:
+  # The WANTED BOARD — daily M+ standings. Data always refreshes; this flag
+  # only gates the optional daily Discord post (off by default so the daily
+  # Action never surprise-posts). Set true to post the board like the old
+  # guild board.
+  daily_post: false
+
 discord_inputs:
   enabled: true
   # Roast sources — channels AND their threads/forum posts are scanned.

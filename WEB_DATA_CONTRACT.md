@@ -1,10 +1,15 @@
 # Web Data Contract — for the website UI build
 
-The backend emits five JSON data layers the front-end reads for the Voyage
-Map, islands, leaderboard, achievements and weekly recap. This is the
-coordination surface between the backend-data-qa branch and the website UI
-build session — **please raise field-name/shape disagreements here before
-building against them.**
+The backend emits JSON data layers the front-end reads for the WANTED BOARD
+(competition), Voyage Map, islands, leaderboard, achievements, weekly recap
+and the live Discord feed. This is the coordination surface between the
+backend-data-qa branch and the website UI build session — **please raise
+field-name/shape disagreements here before building against them.**
+
+> **⭐ NEW — the `competition` layer is the headline (the WANTED BOARD).**
+> It is real, live M+ data for 132 of 135 members TODAY (Raider.io public,
+> no credentials), refreshed daily. See its section immediately below.
+> This is the "root of the guild" data Zach wants front and center.
 
 - Producer: `guild_board/web_data.py` (pure functions, unit-tested in
   `tests/test_web_data.py`).
@@ -16,9 +21,87 @@ building against them.**
   A breaking shape change bumps it; check it before parsing.
 
 Fetch strategy: `site_data.json` is the whole bundle; each layer is also a
-standalone file (`recap_ribbon.json`, `records_leaderboard.json`,
-`guild_achievements.json`, `island_completion.json`, `transmog_changes.json`,
-`guild_pulse.json`) so a view can load just what it needs.
+standalone file (`competition.json`, `recap_ribbon.json`,
+`records_leaderboard.json`, `guild_achievements.json`,
+`island_completion.json`, `transmog_changes.json`, `guild_pulse.json`) so a
+view can load just what it needs.
+
+---
+
+## ⭐ `competition` — the WANTED BOARD (M+ standings, live, daily)
+
+The heart of the site. **Real data today**, no credentials: Raider.io public
+API, 132/135 members resolved. Refreshed daily by
+`scripts/refresh_competition.py` → `.github/workflows/daily-competition-refresh.yml`.
+Every number is **browsable** — full per-character detail, not just a summary.
+
+```json
+{
+  "schema_version": 1,
+  "available": true,
+  "season": {"slug": "season-mn-1", "name": "Midnight Season 1"},
+  "based_on": "2026-07-20T12:14:49+00:00",
+  "character_count": 132,
+
+  "characters": [                       // FULL browsable detail, one per member
+    {
+      "name": "Amrevenge", "key": "amrevenge-stormrage", "realm": "stormrage",
+      "class": "Hunter", "spec": "Beast Mastery Hunter", "role": "DPS",
+      "score": 3908.1,
+      "scores_by_role": {"dps": 3908.1, "healer": 0, "tank": 0},
+      "delta_week": 13.3, "is_new": false,
+      "rank": 1, "top5": true,
+      "best_runs": [
+        {"dungeon": "Pit of Saron", "short": "POS", "level": 20,
+         "timed": true, "upgrades": 1, "score": 492.2,
+         "clear_ms": 1456281, "par_ms": 1800999}
+      ],
+      "ranks": {"realm_overall": 841, "realm_class": 27, "region_overall": 9122},
+      "parse": {"best": 97, "boss": "Fallen-King Salhadaar", "source": "board_state"}
+    }
+  ],
+
+  "rankings": {
+    "overall":  [ {rank,name,key,score,class,spec,role,top5,delta_week,is_new}, … ],
+    "by_role":  {"Tank": [...], "Healer": [...], "DPS": [...]},   // ranked within role
+    "by_class": {"Hunter": [...], "Priest": [...], … },           // ranked within class
+    "top5":     [ first 5 of overall ]                            // special treatment
+  },
+
+  "movement": {
+    "climbers":     [ {name,key,delta_week}, … ],   // gained score this week, desc
+    "new_to_board": [ {name,key,score}, … ],        // on the board, weren't last week
+    "biggest_gain":  {name,key,delta_week}          // or null
+  },
+
+  "parses": {
+    "available": "partial",     // "partial" | "none" | (future) "full"
+    "source": "board_state records (WCL enrichment pending WCL creds; Raider.io has no parses)",
+    "leaders": [ {name,parse,boss,role,spec}, … ]
+  }
+}
+```
+
+**Notes for the WANTED BOARD (bounty = M+ score):**
+- `characters[]` is the browsable detail — render a bounty poster per member,
+  drill in for `best_runs`, `scores_by_role`, `ranks`. `rank` is the
+  guild-internal overall rank; `top5` flags the poster boys.
+- `by_role`/`by_class` are separately ranked so you can show "top healer",
+  "top mage", etc. **Roles are `Tank`/`Healer`/`DPS`** — normalized (Raider.io
+  actually returns `HEALING`, handled backend-side).
+- `movement` is the living-competition signal (climbers / new / biggest gain).
+- `best_runs[].timed` = keystone upgraded (true) vs depleted (false).
+- **`delta_week` can be `null`** for a member with no baseline yet — treat as
+  "no movement data", not zero.
+- **Parses are partial.** Raider.io exposes no parse percentiles, so `parse`
+  is only present for the handful in `board_state` records (real WCL numbers
+  from the weekly board). Full per-boss/average parses need WCL creds — the
+  block says so via `parses.available`. Don't render a parse column as if
+  every member has one; gate on `character.parse != null`.
+
+**Discord:** the daily board also posts to Discord via the existing webhook
+(top 5 embed + a "📱 Web Board" button to the site). Gated behind
+`config competition.daily_post` (off by default). See §Discord below.
 
 ### Build against the committed sample — no backend run needed
 
@@ -286,6 +369,28 @@ worth a line in the UI ("react 🙈 to hide a message from the site") so
 members know the opt-out exists.
 
 ---
+
+## Discord publishing (verified working)
+
+The existing webhook path (`guild_board.discord.post_to_discord`) posts the
+daily board **and** a site link — confirmed by a dry-run against the real
+data:
+
+- **(a) Daily board summary**: a bounty-style embed of the top 5 with medals,
+  scores, specs, and a movement footer (biggest climb / new to board).
+- **(b) Site link**: a "📱 Web Board" button → `display.web_board.url`
+  (already set to `https://bzach10.github.io/wow-guild-board/`), alongside a
+  "Guild Logs" button.
+
+Handles Discord 429 rate-limits and retries without buttons if a channel
+webhook rejects components. Needs `DISCORD_WEBHOOK_URL` (already a repo
+secret, used by the weekly board).
+
+**What it can't do:** it's a fire-and-forget webhook — no slash commands, no
+editing prior messages, no reading responses. For posting a daily board +
+link that's all that's needed. It is **gated off** (`competition.daily_post:
+false`) so the daily Action refreshes data without auto-posting until Zach
+flips it on.
 
 ## Open coordination questions for the UI session
 

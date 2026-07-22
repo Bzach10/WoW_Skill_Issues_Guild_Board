@@ -592,13 +592,14 @@ def build_guild_pulse(pulse_items=None, max_items=60):
 def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
                     raid_progression=None, guild_achievements=None,
                     transmog_snapshot=None, pulse_items=None,
-                    guild=None, season=None):
-    """Assemble all six layers into one envelope for the front-end.
+                    competition_fetched=None, guild=None, season=None):
+    """Assemble every layer into one envelope for the front-end.
 
     Any input may be omitted; the corresponding layer degrades to its
     documented empty/pending shape rather than raising, so a partial data
     refresh still produces a valid site_data.json.
     """
+    from guild_board.competition import build_competition
     season = season or season_mod.CURRENT_SEASON
     transmog = build_transmog_changes(manifest, snapshot=transmog_snapshot)
     # Guild achievements feed BOTH layer 3 (trophy hall) and layer 4 (the
@@ -619,4 +620,5 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
             confirmed_boss_kills=confirmed_boss_kills),
         "transmog_changes": transmog,
         "guild_pulse": build_guild_pulse(pulse_items),
+        "competition": build_competition(competition_fetched, board_state, season=season),
     }

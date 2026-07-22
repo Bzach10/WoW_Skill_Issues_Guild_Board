@@ -135,6 +135,12 @@ def main(argv=None):
         "pulse_cache_file", os.path.join(REPO_ROOT, "guild_pulse_cache.json"))
     pulse_items = (_load_json(pulse_path, {}) or {}).get("items")
 
+    # Competition (the WANTED BOARD) — M+ scores/runs/ranks, refreshed daily
+    # by scripts/refresh_competition.py from Raider.io's public API. Real data
+    # with no credentials; degrades to empty if the cache is absent.
+    competition_fetched = _load_json(
+        os.path.join(REPO_ROOT, "competition_cache.json"), None)
+
     dungeon_cache = os.path.join(args.out, "dungeon_bests.json")
     if args.live_dungeons:
         print("Fetching per-dungeon bests from Raider.io (full roster)…")
@@ -152,7 +158,7 @@ def main(argv=None):
         board_state=board_state, manifest=manifest,
         dungeon_bests=dungeon_bests, raid_progression=raid_progression,
         guild_achievements=guild_ach, transmog_snapshot=snapshot,
-        pulse_items=pulse_items,
+        pulse_items=pulse_items, competition_fetched=competition_fetched,
         guild={"name": cfg["guild"]["name"], "realm": cfg["guild"]["realm_slug"],
                "region": cfg["guild"]["region"]},
         season=season)
@@ -164,7 +170,8 @@ def main(argv=None):
     # Combined envelope + one file per layer.
     _write(os.path.join(args.out, "site_data.json"), site)
     for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes", "guild_pulse"):
+                  "island_completion", "transmog_changes", "guild_pulse",
+                  "competition"):
         _write(os.path.join(args.out, f"{layer}.json"), site[layer])
 
     print(f"\nWrote {args.out}/site_data.json (+ 5 per-layer files)")
@@ -181,6 +188,9 @@ def main(argv=None):
     pulse = site["guild_pulse"]
     print(f"  guild pulse     : {pulse['item_count']} items"
           f"{' (' + str(pulse['by_kind']) + ')' if pulse['available'] else ' (' + pulse['status'] + ')'}")
+    comp = site["competition"]
+    print(f"  competition     : {comp['character_count']} characters ranked"
+          f"{'' if comp['available'] else ' (empty — run refresh_competition.py)'}")
     return 0
 
 

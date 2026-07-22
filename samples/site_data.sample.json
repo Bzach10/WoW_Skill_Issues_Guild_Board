@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T03:35:27.080580+00:00",
+  "generated_at": "2026-07-22T05:26:13.882653+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T03:35:27.080617+00:00",
+    "generated_at": "2026-07-22T05:26:13.882685+00:00",
     "week_of": "2026-07-14",
     "based_on": "2026-07-20T12:14:49+00:00",
     "beats": [
@@ -75,7 +75,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T03:35:27.080632+00:00",
+    "generated_at": "2026-07-22T05:26:13.882698+00:00",
     "based_on": "2026-07-20T12:14:49+00:00",
     "standing": {
       "realm": 49,
@@ -180,7 +180,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T03:35:27.080640+00:00",
+    "generated_at": "2026-07-22T05:26:13.882707+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -218,7 +218,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T03:35:27.080653+00:00",
+    "generated_at": "2026-07-22T05:26:13.882720+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -415,7 +415,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T03:35:27.080546+00:00",
+    "generated_at": "2026-07-22T05:26:13.882622+00:00",
     "is_first_run": false,
     "changed": [
       {
@@ -438,7 +438,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T03:35:27.080657+00:00",
+    "generated_at": "2026-07-22T05:26:13.882724+00:00",
     "available": true,
     "status": "ok",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -541,6 +541,585 @@
       "gambling": 1
     },
     "media_note": "Discord CDN urls may expire; refresh the feed rather than hotlinking indefinitely."
+  },
+  "competition": {
+    "schema_version": 1,
+    "available": true,
+    "season": {
+      "slug": "season-mn-1",
+      "name": "Midnight Season 1"
+    },
+    "based_on": "2026-07-20T12:14:49+00:00",
+    "character_count": 7,
+    "characters": [
+      {
+        "name": "Amrevenge",
+        "realm": "stormrage",
+        "key": "amrevenge-stormrage",
+        "class": "Hunter",
+        "spec": "Beast Mastery Hunter",
+        "role": "DPS",
+        "score": 3908.1,
+        "scores_by_role": {
+          "dps": 3908.1,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 20,
+            "timed": true,
+            "upgrades": 1,
+            "score": 492.2,
+            "clear_ms": 1456281,
+            "par_ms": 1800999
+          }
+        ],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "is_new": false,
+        "parse": {
+          "best": 99,
+          "boss": "Chimaerus the Undreamt God",
+          "source": "board_state"
+        },
+        "rank": 1,
+        "top5": true
+      },
+      {
+        "name": "Tommybravoo",
+        "realm": "bleeding-hollow",
+        "key": "tommybravoo-bleeding-hollow",
+        "class": "DK",
+        "spec": "Unholy DK",
+        "role": "DPS",
+        "score": 3753.4,
+        "scores_by_role": {
+          "dps": 3753.4,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 85.7,
+        "is_new": false,
+        "parse": null,
+        "rank": 1,
+        "top5": true
+      },
+      {
+        "name": "Shadoxii",
+        "realm": "illidan",
+        "key": "shadoxii-illidan",
+        "class": "Monk",
+        "spec": "Mistweaver Monk",
+        "role": "Healer",
+        "score": 3692.2,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 3692.2,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "is_new": false,
+        "parse": null,
+        "rank": 1,
+        "top5": true
+      },
+      {
+        "name": "Brewzleeh",
+        "realm": "tichondrius",
+        "key": "brewzleeh-tichondrius",
+        "class": "Monk",
+        "spec": "Brewmaster Monk",
+        "role": "Tank",
+        "score": 3685.8,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 3685.8
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": null,
+        "is_new": true,
+        "parse": null,
+        "rank": 2,
+        "top5": true
+      },
+      {
+        "name": "Rakdisc",
+        "realm": "proudmoore",
+        "key": "rakdisc-proudmoore",
+        "class": "Priest",
+        "spec": "Discipline Priest",
+        "role": "Healer",
+        "score": 3529.2,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 3529.2,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "is_new": false,
+        "parse": null,
+        "rank": 1,
+        "top5": true
+      },
+      {
+        "name": "Floofwall",
+        "realm": "queldorei",
+        "key": "floofwall-queldorei",
+        "class": "Monk",
+        "spec": "Brewmaster Monk",
+        "role": "Tank",
+        "score": 3484.3,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 3484.3
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "is_new": false,
+        "parse": null,
+        "rank": 3,
+        "top5": false
+      },
+      {
+        "name": "Newrecruit",
+        "realm": "area-52",
+        "key": "newrecruit-area-52",
+        "class": "Mage",
+        "spec": "Frost Mage",
+        "role": "DPS",
+        "score": 1802.0,
+        "scores_by_role": {
+          "dps": 1802.0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": null,
+        "is_new": true,
+        "parse": null,
+        "rank": 1,
+        "top5": false
+      }
+    ],
+    "rankings": {
+      "overall": [
+        {
+          "rank": 1,
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "score": 3908.1,
+          "class": "Hunter",
+          "spec": "Beast Mastery Hunter",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 0.0,
+          "is_new": false
+        },
+        {
+          "rank": 2,
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "score": 3753.4,
+          "class": "DK",
+          "spec": "Unholy DK",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 85.7,
+          "is_new": false
+        },
+        {
+          "rank": 3,
+          "name": "Shadoxii",
+          "key": "shadoxii-illidan",
+          "score": 3692.2,
+          "class": "Monk",
+          "spec": "Mistweaver Monk",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "is_new": false
+        },
+        {
+          "rank": 4,
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "score": 3685.8,
+          "class": "Monk",
+          "spec": "Brewmaster Monk",
+          "role": "Tank",
+          "top5": true,
+          "delta_week": null,
+          "is_new": true
+        },
+        {
+          "rank": 5,
+          "name": "Rakdisc",
+          "key": "rakdisc-proudmoore",
+          "score": 3529.2,
+          "class": "Priest",
+          "spec": "Discipline Priest",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "is_new": false
+        },
+        {
+          "rank": 6,
+          "name": "Floofwall",
+          "key": "floofwall-queldorei",
+          "score": 3484.3,
+          "class": "Monk",
+          "spec": "Brewmaster Monk",
+          "role": "Tank",
+          "top5": false,
+          "delta_week": 0.0,
+          "is_new": false
+        },
+        {
+          "rank": 7,
+          "name": "Newrecruit",
+          "key": "newrecruit-area-52",
+          "score": 1802.0,
+          "class": "Mage",
+          "spec": "Frost Mage",
+          "role": "DPS",
+          "top5": false,
+          "delta_week": null,
+          "is_new": true
+        }
+      ],
+      "by_role": {
+        "Tank": [
+          {
+            "rank": 1,
+            "name": "Brewzleeh",
+            "key": "brewzleeh-tichondrius",
+            "score": 3685.8,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": true,
+            "delta_week": null,
+            "is_new": true
+          },
+          {
+            "rank": 2,
+            "name": "Floofwall",
+            "key": "floofwall-queldorei",
+            "score": 3484.3,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": false,
+            "delta_week": 0.0,
+            "is_new": false
+          }
+        ],
+        "Healer": [
+          {
+            "rank": 1,
+            "name": "Shadoxii",
+            "key": "shadoxii-illidan",
+            "score": 3692.2,
+            "class": "Monk",
+            "spec": "Mistweaver Monk",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "is_new": false
+          },
+          {
+            "rank": 2,
+            "name": "Rakdisc",
+            "key": "rakdisc-proudmoore",
+            "score": 3529.2,
+            "class": "Priest",
+            "spec": "Discipline Priest",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "is_new": false
+          }
+        ],
+        "DPS": [
+          {
+            "rank": 1,
+            "name": "Amrevenge",
+            "key": "amrevenge-stormrage",
+            "score": 3908.1,
+            "class": "Hunter",
+            "spec": "Beast Mastery Hunter",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 0.0,
+            "is_new": false
+          },
+          {
+            "rank": 2,
+            "name": "Tommybravoo",
+            "key": "tommybravoo-bleeding-hollow",
+            "score": 3753.4,
+            "class": "DK",
+            "spec": "Unholy DK",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 85.7,
+            "is_new": false
+          },
+          {
+            "rank": 3,
+            "name": "Newrecruit",
+            "key": "newrecruit-area-52",
+            "score": 1802.0,
+            "class": "Mage",
+            "spec": "Frost Mage",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": null,
+            "is_new": true
+          }
+        ]
+      },
+      "by_class": {
+        "DK": [
+          {
+            "rank": 1,
+            "name": "Tommybravoo",
+            "key": "tommybravoo-bleeding-hollow",
+            "score": 3753.4,
+            "class": "DK",
+            "spec": "Unholy DK",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 85.7,
+            "is_new": false
+          }
+        ],
+        "Hunter": [
+          {
+            "rank": 1,
+            "name": "Amrevenge",
+            "key": "amrevenge-stormrage",
+            "score": 3908.1,
+            "class": "Hunter",
+            "spec": "Beast Mastery Hunter",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 0.0,
+            "is_new": false
+          }
+        ],
+        "Mage": [
+          {
+            "rank": 1,
+            "name": "Newrecruit",
+            "key": "newrecruit-area-52",
+            "score": 1802.0,
+            "class": "Mage",
+            "spec": "Frost Mage",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": null,
+            "is_new": true
+          }
+        ],
+        "Monk": [
+          {
+            "rank": 1,
+            "name": "Shadoxii",
+            "key": "shadoxii-illidan",
+            "score": 3692.2,
+            "class": "Monk",
+            "spec": "Mistweaver Monk",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "is_new": false
+          },
+          {
+            "rank": 2,
+            "name": "Brewzleeh",
+            "key": "brewzleeh-tichondrius",
+            "score": 3685.8,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": true,
+            "delta_week": null,
+            "is_new": true
+          },
+          {
+            "rank": 3,
+            "name": "Floofwall",
+            "key": "floofwall-queldorei",
+            "score": 3484.3,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": false,
+            "delta_week": 0.0,
+            "is_new": false
+          }
+        ],
+        "Priest": [
+          {
+            "rank": 1,
+            "name": "Rakdisc",
+            "key": "rakdisc-proudmoore",
+            "score": 3529.2,
+            "class": "Priest",
+            "spec": "Discipline Priest",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "is_new": false
+          }
+        ]
+      },
+      "top5": [
+        {
+          "rank": 1,
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "score": 3908.1,
+          "class": "Hunter",
+          "spec": "Beast Mastery Hunter",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 0.0,
+          "is_new": false
+        },
+        {
+          "rank": 2,
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "score": 3753.4,
+          "class": "DK",
+          "spec": "Unholy DK",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 85.7,
+          "is_new": false
+        },
+        {
+          "rank": 3,
+          "name": "Shadoxii",
+          "key": "shadoxii-illidan",
+          "score": 3692.2,
+          "class": "Monk",
+          "spec": "Mistweaver Monk",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "is_new": false
+        },
+        {
+          "rank": 4,
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "score": 3685.8,
+          "class": "Monk",
+          "spec": "Brewmaster Monk",
+          "role": "Tank",
+          "top5": true,
+          "delta_week": null,
+          "is_new": true
+        },
+        {
+          "rank": 5,
+          "name": "Rakdisc",
+          "key": "rakdisc-proudmoore",
+          "score": 3529.2,
+          "class": "Priest",
+          "spec": "Discipline Priest",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "is_new": false
+        }
+      ]
+    },
+    "movement": {
+      "climbers": [
+        {
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "delta_week": 85.7
+        }
+      ],
+      "new_to_board": [
+        {
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "score": 3685.8
+        },
+        {
+          "name": "Newrecruit",
+          "key": "newrecruit-area-52",
+          "score": 1802.0
+        }
+      ],
+      "biggest_gain": {
+        "name": "Tommybravoo",
+        "key": "tommybravoo-bleeding-hollow",
+        "delta_week": 85.7
+      }
+    },
+    "parses": {
+      "available": "partial",
+      "source": "board_state records (Warcraft Logs enrichment pending WCL_CLIENT_ID/SECRET; Raider.io does not expose parses)",
+      "leaders": [
+        {
+          "name": "Amrevenge",
+          "parse": 99,
+          "boss": "Chimaerus the Undreamt God",
+          "role": "DPS",
+          "spec": "BeastMastery Hunter"
+        },
+        {
+          "name": "Phyrthepali",
+          "parse": 96,
+          "boss": "Imperator Averzian",
+          "role": "Healer",
+          "spec": "Holy Paladin"
+        }
+      ]
+    }
   },
   "_sample": true,
   "_note": "Illustrative values, production shapes. Generated by scripts/build_sample_site_data.py through the real guild_board.web_data producers."

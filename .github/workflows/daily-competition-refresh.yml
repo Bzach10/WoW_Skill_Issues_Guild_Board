@@ -1,0 +1,65 @@
+name: Daily Competition Refresh
+
+# The WANTED BOARD's daily heartbeat. Pulls fresh M+ scores / best runs /
+# ranks for the whole roster from Raider.io's PUBLIC API (no credentials),
+# rebuilds the site data bundle, and commits it. Optionally posts the daily
+# board to Discord (gated — see the post step).
+#
+# Idempotent + FAIL-OPEN: refresh_competition.py keeps yesterday's cache if a
+# bad Raider.io day resolves too few characters, so the board never blanks.
+
+on:
+  schedule:
+    # Daily at 14:00 UTC (after reset settles). Tune freely.
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh-competition:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Refresh competition data (Raider.io, public — no creds)
+        run: python scripts/refresh_competition.py
+
+      - name: Rebuild the site data bundle
+        # Reuses committed dungeon/guild caches; competition is the point here.
+        run: python scripts/build_site_data.py --out web_data_public
+
+      - name: Post the daily board to Discord (gated; no-op unless enabled)
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python scripts/post_competition_board.py
+
+      - name: Commit refreshed competition data + bundle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add competition_cache.json web_data_public
+          if git diff --cached --quiet; then
+            echo "No competition changes to commit."
+          else
+            git commit -m "Refresh competition board [skip ci]"
+            if git pull --rebase origin ${{ github.ref_name }}; then
+              git push
+            else
+              git checkout --ours competition_cache.json web_data_public
+              git add competition_cache.json web_data_public
+              git rebase --continue
+              git push
+            fi
+          fi

@@ -147,13 +147,37 @@ PULSE_ITEMS = [
 ]
 
 
+# A small but complete competition fetch (real Raider.io shape) so the
+# WANTED BOARD renders with rankings, roles, movement and browsable detail.
+def _cchar(name, key, cls, spec, role, score, runs=None):
+    return {"name": name, "realm": key.split("-", 1)[1], "key": key,
+            "class": cls, "spec": spec, "role": role, "score": score,
+            "scores_by_role": {"dps": score if role == "DPS" else 0,
+                               "healer": score if role == "Healer" else 0,
+                               "tank": score if role == "Tank" else 0},
+            "best_runs": runs or [], "ranks": {"realm_overall": 800, "realm_class": 20}}
+
+
+COMPETITION_FETCHED = {"characters": [
+    _cchar("Amrevenge", "amrevenge-stormrage", "Hunter", "Beast Mastery Hunter", "DPS", 3908.1,
+           runs=[{"dungeon": "Pit of Saron", "short": "POS", "level": 20, "timed": True,
+                  "upgrades": 1, "score": 492.2, "clear_ms": 1456281, "par_ms": 1800999}]),
+    _cchar("Tommybravoo", "tommybravoo-bleeding-hollow", "DK", "Unholy DK", "DPS", 3753.4),
+    _cchar("Shadoxii", "shadoxii-illidan", "Monk", "Mistweaver Monk", "Healer", 3692.2),
+    _cchar("Brewzleeh", "brewzleeh-tichondrius", "Monk", "Brewmaster Monk", "Tank", 3685.8),
+    _cchar("Rakdisc", "rakdisc-proudmoore", "Priest", "Discipline Priest", "Healer", 3529.2),
+    _cchar("Floofwall", "floofwall-queldorei", "Monk", "Brewmaster Monk", "Tank", 3484.3),
+    _cchar("Newrecruit", "newrecruit-area-52", "Mage", "Frost Mage", "DPS", 1802.0),
+]}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     site = web_data.build_site_data(
         board_state=BOARD_STATE, manifest=MANIFEST,
         dungeon_bests=DUNGEON_BESTS, raid_progression=RAID_PROGRESSION,
         guild_achievements=GUILD_ACHIEVEMENTS, transmog_snapshot=TRANSMOG_SNAPSHOT,
-        pulse_items=PULSE_ITEMS,
+        pulse_items=PULSE_ITEMS, competition_fetched=COMPETITION_FETCHED,
         guild={"name": "Skill Issues", "realm": "bleeding-hollow", "region": "us"},
         season=season_mod.CURRENT_SEASON)
     site["_sample"] = True
@@ -163,7 +187,8 @@ def main():
 
     _write(os.path.join(OUT, "site_data.sample.json"), site)
     for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes", "guild_pulse"):
+                  "island_completion", "transmog_changes", "guild_pulse",
+                  "competition"):
         payload = dict(site[layer])
         payload["_sample"] = True
         _write(os.path.join(OUT, f"{layer}.sample.json"), payload)
@@ -176,6 +201,8 @@ def main():
     print(f"  raid bosses     : {site['island_completion']['raid']['bosses_killed']}/{site['island_completion']['raid']['total_bosses']}")
     print(f"  transmog changes: {site['transmog_changes']['changed_count']}")
     print(f"  guild pulse     : {site['guild_pulse']['item_count']} items {site['guild_pulse']['by_kind']}")
+    print(f"  competition     : {site['competition']['character_count']} ranked, "
+          f"top: {site['competition']['rankings']['top5'][0]['name'] if site['competition']['rankings']['top5'] else '-'}")
     return 0
 
 
