@@ -1,0 +1,3723 @@
+
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="codex">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>S.S. Wipe Fest — the guild's ship</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚢</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&amp;family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Special+Elite&display=swap" rel="stylesheet">
+<style>
+html[data-crew-theme="codex"]{
+  --bg:#e7d3ad; --text:#3a2c17; --heading:#4a2f12;
+  --accent:#9b5e1f; --panel:#f7eed8; --line:#c8ad7e;
+  --muted:#6b5637;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:light;
+}
+html[data-crew-theme="console"]{
+  --bg:#120c1e; --text:#e7dcf7; --heading:#e7dcf7;
+  --accent:#38e0c8; --panel:#191128; --line:#33264d;
+  --muted:#9d8fbb;
+  --font-display:'JetBrains Mono',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html[data-crew-theme="chronicle"]{
+  --bg:#180f28; --text:#efe7dd; --heading:#efe7dd;
+  --accent:#d8a24a; --panel:#20152c; --line:#3c2e4a;
+  --muted:#b0a08f;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b;
+  --brass:#c9974a; --rope:#b98b52; --measure:1180px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden; scroll-behavior:smooth;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+
+/* ---------------- the figurehead (masthead) ---------------- */
+.figurehead{position:relative; overflow:hidden; border-bottom:1px solid var(--line);
+  aspect-ratio:21/9; max-height:76vh; display:flex; align-items:flex-end;}
+@media (max-width:900px){.figurehead{aspect-ratio:2/1;}}
+@media (max-width:560px){.figurehead{aspect-ratio:4/5;}}
+.figurehead .art{position:absolute; inset:0; background-size:cover;
+  background-position:center 28%;}
+.figurehead .art::after{content:""; position:absolute; inset:0;
+  background:
+    radial-gradient(120% 70% at 50% 100%, color-mix(in srgb,var(--bg) 62%, transparent), transparent 70%),
+    linear-gradient(180deg, color-mix(in srgb,var(--bg) 24%, transparent) 0%,
+      transparent 20%, color-mix(in srgb,var(--bg) 42%, transparent) 50%,
+      color-mix(in srgb,var(--bg) 74%, transparent) 74%, var(--bg) 100%);}
+.figurehead .plate{position:relative; z-index:1; width:100%; text-align:center;
+  padding:0 22px 34px;}
+.figurehead .ensign{display:inline-block; font-size:12px; letter-spacing:.28em;
+  text-transform:uppercase; color:#fff; margin-bottom:14px;
+  padding:5px 16px; border-radius:999px;
+  background:color-mix(in srgb,var(--bg) 42%, transparent); backdrop-filter:blur(4px);
+  text-shadow:0 1px 3px rgba(0,0,0,.9);}
+.figurehead h1{font-family:var(--font-display); font-weight:900; line-height:.9;
+  font-size:clamp(44px,10vw,120px); color:#fff;
+  text-shadow:0 4px 30px rgba(0,0,0,.75), 0 1px 3px rgba(0,0,0,.6);}
+.figurehead .tag{margin:14px auto 0; max-width:54ch; color:#f7f0e6;
+  font-size:clamp(14px,2vw,17px);
+  text-shadow:0 2px 6px rgba(0,0,0,.9), 0 0 16px rgba(0,0,0,.7);}
+.figurehead .tag b{color:#ffcf7a; text-shadow:0 2px 6px rgba(0,0,0,.95);}
+.aboard{display:inline-flex; gap:10px; margin-top:20px; flex-wrap:wrap; justify-content:center;}
+.aboard a{font-size:13px; text-decoration:none; padding:10px 18px; border-radius:999px;
+  background:color-mix(in srgb,var(--bg) 30%, transparent); color:#fff;
+  border:1px solid rgba(255,255,255,.35); backdrop-filter:blur(6px);
+  text-shadow:0 1px 4px rgba(0,0,0,.6); transition:all .2s;}
+.aboard a.primary{background:var(--accent); color:var(--bg); border-color:var(--accent);
+  font-weight:700; text-shadow:none;}
+.aboard a:hover{transform:translateY(-2px);}
+
+/* ---------------- the deck manifest (sticky nav) ---------------- */
+.manifest{position:sticky; top:0; z-index:50; background:color-mix(in srgb,var(--bg) 92%, transparent);
+  backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
+  box-shadow:0 6px 20px -14px rgba(0,0,0,.7);}
+.manifest-in{display:flex; align-items:center; gap:6px; overflow-x:auto;
+  max-width:1320px; margin:0 auto; padding:9px 16px; scrollbar-width:thin;}
+.manifest-in::-webkit-scrollbar{height:5px;}
+.manifest-in::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+.manifest .brand{flex:0 0 auto; display:flex; align-items:center; gap:8px;
+  font-family:var(--font-display); font-weight:700; color:var(--heading);
+  text-decoration:none; padding-right:8px; margin-right:4px;
+  border-right:1px solid var(--line); font-size:14px; white-space:nowrap;}
+.deckchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px;
+  font-size:12.5px; text-decoration:none; color:var(--muted); white-space:nowrap;
+  padding:7px 12px; border-radius:999px; transition:all .2s;}
+.deckchip:hover{color:var(--text); background:color-mix(in srgb,var(--line) 45%, transparent);}
+.deckchip.active{color:var(--bg); background:var(--accent);}
+.deckchip .dot{font-size:14px;}
+.deck-split{flex:0 0 auto; font-size:9px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--faint,var(--muted)); opacity:.7; padding:0 4px; white-space:nowrap;}
+
+/* ---------------- a room ---------------- */
+.room{position:relative; padding:56px 0 44px; border-bottom:1px solid
+  color-mix(in srgb,var(--line) 60%, transparent); scroll-margin-top:58px;}
+.room:nth-child(even of .room){background:color-mix(in srgb,var(--panel) 22%, var(--bg));}
+.room-head{text-align:center; margin-bottom:30px;}
+.porthole{width:64px; height:64px; margin:0 auto 14px; border-radius:50%;
+  display:grid; place-items:center; font-size:30px;
+  background:radial-gradient(circle at 35% 30%,
+    color-mix(in srgb,var(--accent) 26%, var(--panel)),
+    color-mix(in srgb,var(--panel) 90%, var(--bg)));
+  border:2px solid color-mix(in srgb,var(--accent) 45%, var(--line));
+  box-shadow:0 0 0 6px color-mix(in srgb,var(--panel) 60%, transparent),
+    inset 0 2px 10px rgba(0,0,0,.4);}
+.room h2{font-family:var(--font-display); font-weight:900; color:var(--heading);
+  font-size:clamp(28px,5vw,46px); line-height:1;}
+.room .sub{color:var(--muted); margin-top:10px; max-width:60ch; margin-inline:auto;
+  font-size:14.5px;}
+.room .sub b{color:var(--accent);}
+.deeper{display:inline-block; margin-top:18px; font-size:13px; font-weight:600;
+  text-decoration:none; padding:9px 18px; border-radius:999px;
+  border:1px solid var(--line); color:var(--text); transition:all .2s;}
+.deeper:hover{border-color:var(--accent); color:var(--accent);}
+
+.card{background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:20px 22px;}
+.grid{display:grid; gap:16px;}
+.g3{grid-template-columns:repeat(3,1fr);}
+.g2{grid-template-columns:repeat(2,1fr);}
+@media (max-width:820px){.g3{grid-template-columns:1fr;} .g2{grid-template-columns:1fr;}}
+
+/* Crow's Nest lookout tiles */
+.lookout{display:grid; gap:16px; grid-template-columns:repeat(4,1fr);
+  max-width:var(--measure); margin:0 auto;}
+@media (max-width:820px){.lookout{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:460px){.lookout{grid-template-columns:1fr;}}
+.look{background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:20px; text-align:center;}
+.look .k{font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted);}
+.look .big{font-family:var(--font-display); font-size:clamp(22px,3vw,30px);
+  color:var(--heading); margin:8px 0 4px; line-height:1.05;}
+.look .d{font-size:12.5px; color:var(--muted);}
+.look .accent{color:var(--accent);}
+.countdown{font-variant-numeric:tabular-nums;}
+
+/* Captain's Log + Who's Popping Off */
+.log{max-width:820px; margin:0 auto;}
+.log .beat{display:flex; gap:12px; padding:11px 0; border-bottom:1px dashed
+  color-mix(in srgb,var(--line) 70%, transparent); font-size:15px;}
+.log .beat:last-child{border-bottom:0;}
+.log .beat .n{flex:0 0 auto; color:var(--accent); font-family:var(--font-display);
+  font-weight:700;}
+.popoff{display:grid; gap:12px; grid-template-columns:repeat(2,1fr);
+  max-width:var(--measure); margin:22px auto 0;}
+@media (max-width:760px){.popoff{grid-template-columns:1fr;}}
+.shout{display:flex; gap:13px; align-items:flex-start; background:var(--panel);
+  border:1px solid var(--line); border-left:3px solid var(--accent);
+  border-radius:12px; padding:13px 16px;}
+.shout .ic{font-size:22px; flex:0 0 auto;}
+.shout b{color:var(--heading);}
+.shout span{color:var(--muted); font-size:14px;}
+
+/* generic pill list / legendary lines */
+.legend-lines{list-style:none; display:grid; gap:5px; margin-top:12px;}
+.legend-lines li{display:flex; justify-content:space-between; gap:14px;
+  font-size:13px; color:#e8b45e;}
+.legend-lines li span:last-child{color:var(--muted);}
+
+/* Casino debt plaque */
+.plaque{max-width:560px; margin:0 auto; text-align:center;
+  background:linear-gradient(180deg, #241a12, #17100b);
+  border:1px solid #5a4023; border-radius:18px; padding:26px 24px;
+  box-shadow:0 22px 60px -30px #000, inset 0 0 40px rgba(201,151,74,.12);}
+.plaque .pt{font-family:var(--font-display); color:#e8b45e; font-size:19px;
+  letter-spacing:.04em;}
+.plaque .owed{font-family:'Special Elite',monospace; color:#ffb733;
+  font-size:clamp(34px,7vw,58px); font-weight:400; margin:6px 0 2px;
+  text-shadow:0 0 22px rgba(255,150,40,.55); font-variant-numeric:tabular-nums;}
+.plaque .owed::before{content:"g"; font-size:.5em; vertical-align:super;
+  margin-right:4px; opacity:.7;}
+.plaque .note{color:#c79a5c; font-size:12px; letter-spacing:.06em;}
+.plaque .flavor{color:#a98a63; font-style:italic; font-size:13px; margin-top:14px;}
+.plaque .req{color:#e5484d; font-size:11px; letter-spacing:.1em;
+  text-transform:uppercase; margin-top:6px;}
+.casino-extra{display:grid; gap:16px; grid-template-columns:repeat(2,1fr);
+  max-width:var(--measure); margin:24px auto 0;}
+@media (max-width:760px){.casino-extra{grid-template-columns:1fr;}}
+.wheel{text-align:center;}
+.wheel .disc{width:120px; height:120px; margin:6px auto 14px; border-radius:50%;
+  background:conic-gradient(#c9974a 0 45deg,#7a1f12 45deg 90deg,#20152c 90deg 135deg,
+    #57e08a 135deg 180deg,#c9974a 180deg 225deg,#7a1f12 225deg 270deg,
+    #20152c 270deg 315deg,#57e08a 315deg 360deg);
+  border:4px solid var(--brass); box-shadow:0 10px 30px -12px #000;
+  position:relative; transition:transform 2.6s cubic-bezier(.15,.9,.2,1);}
+.wheel .disc::after{content:"▲"; position:absolute; top:-16px; left:50%;
+  transform:translateX(-50%); color:var(--brass);}
+.wheel button, .poll button{font:inherit; font-size:13px; cursor:pointer;
+  padding:9px 18px; border-radius:999px; border:1px solid var(--brass);
+  background:transparent; color:var(--accent); transition:all .2s;}
+.wheel button:hover, .poll button:hover{background:var(--accent); color:var(--bg);}
+.wheel .verdict{margin-top:12px; min-height:1.4em; font-style:italic; color:var(--muted);}
+.poll .opt{display:flex; align-items:center; gap:10px; margin:8px 0; font-size:14px;}
+.poll .bar{flex:1; height:8px; border-radius:999px; overflow:hidden;
+  background:color-mix(in srgb,var(--line) 80%, var(--bg));}
+.poll .bar i{display:block; height:100%; background:var(--accent);}
+.poll .pct{color:var(--muted); font-size:12px; width:34px; text-align:right;}
+
+/* Item of the Month + MOTD (Galley) */
+.galley-in{display:grid; gap:20px; grid-template-columns:1.1fr 1fr; align-items:center;
+  max-width:960px; margin:0 auto;}
+@media (max-width:760px){.galley-in{grid-template-columns:1fr;}}
+.itemcard{text-align:center; background:linear-gradient(180deg,#1c1526,#140e1c);
+  border:1px solid #4a3a2a; border-radius:16px; padding:22px;}
+.itemcard .lg{color:#ff8000; font-family:var(--font-display); font-size:20px;}
+.itemcard .lg-sub{color:#e8b45e; font-size:12px; margin-top:2px;}
+.itemcard .glyph{font-size:56px; margin:10px 0;}
+.motd{background:var(--panel); border:1px solid var(--line); border-radius:16px;
+  padding:22px 24px;}
+.motd .q{font-family:var(--font-display); font-size:clamp(18px,2.6vw,24px);
+  color:var(--heading); line-height:1.25;}
+.motd .src{color:var(--muted); font-size:12px; margin-top:12px; letter-spacing:.1em;
+  text-transform:uppercase;}
+
+/* Brig */
+.brig{max-width:620px; margin:0 auto; text-align:center; background:
+  repeating-linear-gradient(90deg, var(--panel) 0 34px,
+    color-mix(in srgb,var(--bg) 60%, var(--panel)) 34px 40px);
+  border:1px solid var(--line); border-radius:16px; padding:28px 24px;
+  position:relative;}
+.brig .bars{position:absolute; inset:0; border-radius:16px; pointer-events:none;
+  background:repeating-linear-gradient(90deg, transparent 0 30px,
+    color-mix(in srgb,#000 30%, transparent) 30px 34px);}
+.brig .shamed{font-family:var(--font-display); font-size:clamp(26px,4vw,38px);
+  color:var(--heading);}
+.brig .tag{display:inline-block; margin-bottom:10px; font-size:11px;
+  letter-spacing:.16em; text-transform:uppercase; color:var(--dps);}
+.brig .note{color:var(--muted); margin-top:6px;}
+.brig .optout{margin-top:16px; font-size:12.5px; color:var(--muted);
+  border-top:1px dashed var(--line); padding-top:14px;}
+
+/* The Hold — graveyard */
+.hold-head{text-align:center; margin-bottom:22px;}
+.tombs{display:grid; gap:14px; grid-template-columns:repeat(3,1fr);
+  max-width:var(--measure); margin:0 auto;}
+@media (max-width:820px){.tombs{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:460px){.tombs{grid-template-columns:1fr;}}
+.tomb{background:linear-gradient(180deg,#2a2434,#1c1726);
+  border:1px solid #3c2e4a; border-radius:14px 14px 6px 6px; padding:22px 16px 16px;
+  text-align:center; position:relative;
+  box-shadow:inset 0 30px 40px -30px rgba(0,0,0,.6);}
+.tomb::before{content:"✝"; display:block; color:#7c6d8c; font-size:16px; margin-bottom:6px;}
+.tomb.reserved{border-color:var(--accent);
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 40%, transparent),
+    inset 0 30px 40px -30px rgba(0,0,0,.6);}
+/* the tomb is always dark stone, so its text is fixed-light, not theme-tinted */
+.tomb .rip{font-size:10px; letter-spacing:.2em; color:#9c8db0;}
+.tomb .who{font-family:var(--font-display); color:#ece3f2; font-size:17px;
+  margin:5px 0 6px; line-height:1.1;}
+.tomb .ep{font-size:12.5px; color:#b9abc9; font-style:italic;}
+.tomb.reserved .who{color:var(--brass);}
+.tomb.reserved .ep{color:#d8c8a0;}
+.tomb .fire{font-size:20px; margin-top:8px;}
+
+.roast-card{max-width:640px; margin:26px auto 0; text-align:center; background:
+  linear-gradient(180deg, color-mix(in srgb,var(--accent) 12%, var(--panel)), var(--panel));
+  border:1px solid var(--accent); border-radius:16px; padding:24px;}
+.roast-card .k{font-size:11px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--accent);}
+.roast-card .q{font-family:var(--font-display); font-size:clamp(22px,3.5vw,30px);
+  color:var(--heading); margin:10px 0 8px;}
+.roast-card .by{color:var(--muted); font-size:14px;}
+.hall-flame{max-width:640px; margin:18px auto 0; text-align:center; color:var(--muted);
+  font-size:13px;}
+.hall-flame b{color:var(--accent);}
+
+/* Bar life + pulse placeholder */
+.bar-cols{display:grid; gap:16px; grid-template-columns:1.3fr 1fr;
+  max-width:var(--measure); margin:0 auto; align-items:start;}
+@media (max-width:880px){.bar-cols{grid-template-columns:1fr;}}
+.pulse .row{display:flex; gap:10px; padding:10px 0; border-bottom:1px dashed
+  color-mix(in srgb,var(--line) 70%, transparent); font-size:14px;}
+.pulse .row:last-child{border-bottom:0;}
+.pulse .ch{flex:0 0 auto; font-size:11px; color:var(--accent); font-weight:700;
+  min-width:104px;}
+.soon{display:inline-block; font-size:10px; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--muted); border:1px solid var(--line); border-radius:999px;
+  padding:2px 9px; margin-left:8px;}
+.shrine .jk{padding:12px 0; border-bottom:1px dashed color-mix(in srgb,var(--line) 70%, transparent);}
+.shrine .jk:last-child{border-bottom:0;}
+.shrine .jk b{color:var(--heading); font-family:var(--font-display);}
+.shrine .jk p{color:var(--muted); font-size:13.5px; margin-top:3px;}
+.guestbook{margin-top:16px; text-align:center;}
+.guestbook button{font:inherit; font-size:13px; cursor:pointer; padding:9px 18px;
+  border-radius:999px; border:1px solid var(--accent); background:transparent;
+  color:var(--accent);}
+
+/* Helm preview — reuse a compact ports strip */
+.ports-strip{display:flex; gap:8px; overflow-x:auto; padding:10px 4px 16px;
+  max-width:var(--measure); margin:0 auto; scroll-snap-type:x proximity;}
+.pstop{flex:0 0 auto; width:88px; text-align:center; scroll-snap-align:center;
+  text-decoration:none; color:inherit;}
+.pstop .pd{width:64px; height:64px; border-radius:50%; margin:0 auto 6px;
+  background-size:cover; background-position:center; border:2px solid var(--line);
+  background-color:color-mix(in srgb,var(--accent) 20%, var(--panel));}
+.pstop.here .pd{border-color:var(--accent);
+  box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 35%, transparent);}
+.pstop .pm{font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--muted);}
+.pstop .pn{font-size:11px; color:var(--text);}
+.charted-line{text-align:center; color:var(--muted); font-size:13px; margin-top:6px;}
+.charted-line b{color:var(--accent); font-family:var(--font-display); font-size:16px;}
+
+/* Slop chest transmog */
+.slop{display:grid; gap:14px; grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  max-width:var(--measure); margin:0 auto;}
+.thread{display:flex; gap:12px; align-items:center; background:var(--panel);
+  border:1px solid var(--line); border-radius:12px; padding:12px 14px;}
+.thread .sw{width:44px; height:44px; border-radius:8px; flex:0 0 auto;
+  background:color-mix(in srgb,var(--accent) 22%, var(--panel));
+  display:grid; place-items:center; font-size:20px;}
+.thread b{color:var(--heading);}
+.thread span{color:var(--muted); font-size:12.5px;}
+
+.foot{padding:30px 0 70px; text-align:center; color:var(--muted); font-size:13px;}
+.foot b{color:var(--accent);}
+
+
+.wanted{--paper:#e9d7ab; --paper-lo:#d8c08a; --paper-hi:#f3e7c4;
+  --ink:#3b2c17; --ink-soft:#6b5330; --stamp:#a8362a; --tape:#c9b784;
+  position:relative;}
+
+/* the controls: sort + role filter + search, styled to the room */
+.wanted-controls{display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+  justify-content:center; margin:0 auto 26px; max-width:var(--measure);}
+.wanted-controls .grp{display:flex; gap:6px; flex-wrap:wrap;}
+.wanted-controls button{font:inherit; font-size:13px; cursor:pointer;
+  padding:8px 14px; border-radius:999px; border:1px solid var(--line);
+  background:var(--panel); color:var(--text); transition:all .2s;}
+.wanted-controls button[aria-pressed="true"]{background:var(--accent);
+  color:var(--bg); border-color:var(--accent);}
+.wanted-controls .wsearch{flex:1 1 200px; min-width:160px; max-width:280px;
+  font:inherit; font-size:14px; padding:8px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text);}
+.wanted-lede{text-align:center; color:var(--muted); max-width:60ch;
+  margin:0 auto 8px; font-size:14px;}
+.wanted-lede b{color:var(--accent);}
+
+/* ---------- the poster ---------- */
+.bounty{position:relative; color:var(--ink); text-align:center;
+  font-family:'Special Elite','Courier New',monospace;
+  background:
+    radial-gradient(120% 80% at 50% -10%, var(--paper-hi), transparent 60%),
+    radial-gradient(100% 120% at 80% 110%, var(--paper-lo), transparent 55%),
+    var(--paper);
+  border:1px solid #b49a63;
+  box-shadow:0 14px 34px -18px rgba(0,0,0,.7),
+    inset 0 0 42px rgba(120,86,38,.34), inset 0 0 8px rgba(60,40,16,.3);
+  padding:12px 12px 14px; border-radius:3px;
+  transition:transform .25s, box-shadow .25s;}
+/* aged blotches + a paper-grain wash */
+.bounty::before{content:""; position:absolute; inset:0; pointer-events:none;
+  border-radius:3px; mix-blend-mode:multiply; opacity:.5;
+  background:
+    radial-gradient(circle at 12% 88%, rgba(94,64,26,.5), transparent 22%),
+    radial-gradient(circle at 88% 14%, rgba(94,64,26,.42), transparent 20%),
+    radial-gradient(circle at 70% 92%, rgba(94,64,26,.4), transparent 16%);}
+/* tape at the top corners */
+.bounty::after{content:""; position:absolute; top:-7px; left:50%;
+  transform:translateX(-50%) rotate(-1.5deg); width:44%; height:16px;
+  background:linear-gradient(180deg, rgba(224,208,158,.85), rgba(198,178,120,.7));
+  box-shadow:0 1px 3px rgba(0,0,0,.28); opacity:.75;}
+.bounty:hover{transform:translateY(-4px) rotate(-.4deg);
+  box-shadow:0 24px 48px -20px rgba(0,0,0,.8),
+    inset 0 0 42px rgba(120,86,38,.34);}
+
+.bounty .wtitle{font-family:'Cinzel Decorative',serif; font-weight:900;
+  letter-spacing:.06em; color:var(--ink); line-height:1;
+  font-size:clamp(22px,3.4vw,30px); margin:2px 0 8px;
+  -webkit-text-stroke:.5px rgba(59,44,23,.35);}
+.bounty .wphoto{position:relative; margin:0 2px 8px; aspect-ratio:1/1;
+  overflow:hidden; border:2px solid var(--ink);
+  box-shadow:inset 0 0 0 4px var(--paper), inset 0 0 0 5px #9c8149;
+  background:#cdb787;}
+.bounty .wphoto img{width:100%; height:100%; object-fit:cover;
+  object-position:center 22%; filter:sepia(.5) saturate(1.15) contrast(1.02);}
+.bounty .wphoto .silo{position:absolute; inset:0; display:grid; place-items:center;}
+.bounty .wphoto .silo svg{width:56%; height:56%; fill:#9c8149; opacity:.7;}
+/* corner rank stamp on the photo */
+.bounty .wrank{position:absolute; top:-9px; left:-9px; z-index:2; width:38px;
+  height:38px; border-radius:50%; display:grid; place-items:center;
+  color:#f4e7c8; background:var(--stamp); border:2px solid #7d271e;
+  font-family:'Cinzel Decorative',serif; font-weight:900; font-size:15px;
+  transform:rotate(-12deg); box-shadow:0 3px 8px rgba(0,0,0,.4);}
+.bounty .wdoa{font-size:11px; letter-spacing:.28em; margin:2px 0 3px;
+  color:var(--ink-soft);}
+.bounty .wname{font-family:'Cinzel Decorative',serif; font-weight:700;
+  color:var(--ink); line-height:1.02; letter-spacing:.01em;
+  font-size:clamp(17px,2.4vw,22px); text-transform:uppercase;}
+.bounty .wmeta{font-size:11px; color:var(--ink-soft); margin-top:2px;
+  letter-spacing:.02em;}
+.bounty .wberry{margin-top:8px; padding-top:8px;
+  border-top:2px solid rgba(59,44,23,.35);
+  display:flex; align-items:baseline; justify-content:center; gap:4px;}
+.bounty .wsym{font-family:'Cinzel Decorative',serif; font-weight:900;
+  font-size:clamp(18px,2.6vw,24px);}
+.bounty .wfig{font-family:'Cinzel Decorative',serif; font-weight:900;
+  font-size:clamp(20px,3vw,28px); letter-spacing:.01em;
+  font-variant-numeric:tabular-nums;}
+.bounty .wscore{font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+  color:var(--ink-soft); margin-top:1px;}
+.bounty .wtags{display:flex; flex-wrap:wrap; gap:4px; justify-content:center;
+  margin-top:8px;}
+.bounty .wtag{font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+  padding:2px 7px; border-radius:2px; background:rgba(59,44,23,.1);
+  border:1px solid rgba(59,44,23,.3); color:var(--ink);}
+.bounty .wtag.up{color:#2f6d3a; border-color:rgba(47,109,58,.5);
+  background:rgba(47,109,58,.12);}
+.bounty .wtag.streak{color:#8a5a1e; border-color:rgba(138,90,30,.5);
+  background:rgba(138,90,30,.12);}
+.bounty .wtag.title{color:var(--stamp); border-color:rgba(168,54,42,.5);
+  background:rgba(168,54,42,.1); font-weight:700;}
+.bounty.wunranked{filter:saturate(.9);}
+.bounty.wunranked .wfig{font-size:16px; letter-spacing:.12em; color:var(--ink-soft);}
+
+/* ---------- MOST WANTED — the top 5 hero row ---------- */
+.mostwanted{margin:0 auto 34px; max-width:var(--measure);}
+.mostwanted h3, .bountywall h3{text-align:center; color:var(--muted);
+  font-family:var(--font-body); font-size:12px; letter-spacing:.24em;
+  text-transform:uppercase; margin:0 0 16px;}
+.mostwanted h3 b, .bountywall h3 b{color:var(--accent);}
+.mw-row{display:grid; grid-template-columns:repeat(5,1fr); gap:14px;
+  align-items:end;}
+/* the #1 poster is bigger and lifted, flanked 2 + 2 */
+.mw-row .bounty{transform-origin:bottom center;}
+.mw-row .bounty:nth-child(1){transform:scale(1.06) rotate(-1deg);}
+.mw-row .bounty:nth-child(2),.mw-row .bounty:nth-child(4){transform:rotate(.8deg);}
+.mw-row .bounty:nth-child(3),.mw-row .bounty:nth-child(5){transform:rotate(-.8deg);}
+.mw-row .bounty:nth-child(1):hover{transform:scale(1.09) translateY(-4px) rotate(-1deg);}
+
+/* ---------- the full ranked wall ---------- */
+.bountywall{max-width:var(--measure); margin:0 auto;}
+.bounty-grid{display:grid; gap:14px;
+  grid-template-columns:repeat(auto-fill,minmax(184px,1fr));}
+.bounty[hidden]{display:none;}
+.wall-empty{display:none; text-align:center; color:var(--muted);
+  font-style:italic; padding:30px;}
+
+@media (max-width:900px){
+  .mw-row{grid-template-columns:repeat(3,1fr);}
+  .mw-row .bounty:nth-child(4),.mw-row .bounty:nth-child(5){display:none;}
+  .mw-row .bounty:nth-child(1){transform:scale(1.03);}
+}
+@media (max-width:560px){
+  .mw-row{grid-template-columns:repeat(2,1fr);}
+  .mw-row .bounty:nth-child(3){display:none;}
+  .bounty-grid{grid-template-columns:repeat(2,1fr); gap:10px;}
+  .bounty{padding:9px 8px 11px;}
+}
+@media (prefers-reduced-motion:reduce){
+  .bounty,.bounty:hover,.mw-row .bounty{transition:none; transform:none;}
+}
+
+.sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom:1px solid var(--line);}
+.sitenav .wrap{display:flex; align-items:center; gap:18px;
+  padding-top:10px; padding-bottom:10px;}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none;
+  color:var(--heading); font-family:var(--font-display); font-weight:700;
+  letter-spacing:.04em; margin-right:auto;}
+.brand-mark{font-size:18px; filter:saturate(1.2);}
+.brand-name{font-size:15px;}
+.navlinks{display:flex; gap:6px;}
+.navlinks a{font-size:13px; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border-radius:999px; transition:all .2s;}
+.navlinks a:hover{color:var(--text); background:color-mix(in srgb, var(--line) 45%, transparent);}
+.navlinks a[aria-current="page"]{color:var(--bg); background:var(--accent);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 11px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .2s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* the return affordance — a full-width bar, impossible to miss */
+.backbar{position:sticky; top:var(--nav-h, 53px); z-index:45; display:block;
+  padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
+  text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, var(--accent) 16%, var(--bg));
+  border-bottom:1px solid var(--line);
+  max-width:var(--measure); margin:0 auto;}
+.backbar:hover{background:color-mix(in srgb, var(--accent) 26%, var(--bg));
+  color:var(--accent);}
+
+/* on small screens the brand name yields before the links do */
+@media (max-width:560px){
+  .sitenav .wrap{gap:10px; flex-wrap:wrap;}
+  .brand-name{display:none;}
+  .navlinks a{padding:7px 11px;}
+  .themeswitch button{font-size:0; padding:6px;}
+  .themeswitch button::before{content:attr(data-theme); font-size:11px;
+    text-transform:capitalize;}
+}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · welcome aboard before we make it real</div>
+
+
+<header class="figurehead">
+  <div class="art" style="background-image:url('cast/_roster/_scene_silvermoon_city/profile.jpg');"></div>
+  <div class="plate">
+    <div class="ensign">⚓ Skill Issues · Bleeding Hollow · she sails the Voyage Map ⚓</div>
+    <h1>S.S. Wipe Fest</h1>
+    <p class="tag">Welcome aboard. The whole guild lives on this ship — a
+      <b>bar</b>, a <b>casino</b>, a <b>brig</b> and a <b>hold</b> full of tombstones.
+      Below decks is where we actually hang out. Mind the fire.</p>
+    <div class="aboard">
+      <a class="primary" href="#main-deck">Board the ship ↓</a>
+      <a href="#the-bar">Straight to the Bar 🍺</a>
+    </div>
+  </div>
+</header>
+
+
+<nav class="manifest" aria-label="The decks">
+  <div class="manifest-in">
+    <a class="brand" href="#top">⚓ S.S. Wipe Fest</a>
+    <span class="deck-split">Above</span>
+    <a class="deckchip" href="#crows-nest"><span class="dot">🔭</span>Crow's Nest</a>
+    <a class="deckchip" href="#main-deck"><span class="dot">⚓</span>Main Deck</a>
+    <a class="deckchip" href="#helm"><span class="dot">🧭</span>Helm</a>
+    <a class="deckchip" href="#quarters"><span class="dot">👑</span>Captain's Quarters</a>
+    <span class="deck-split">Below</span>
+    <a class="deckchip" href="#the-bar"><span class="dot">🍺</span>The Bar</a>
+    <a class="deckchip" href="#galley"><span class="dot">🍳</span>Galley</a>
+    <a class="deckchip" href="#casino"><span class="dot">🎰</span>Casino</a>
+    <a class="deckchip" href="#engine"><span class="dot">⚙️</span>Engine Room</a>
+    <a class="deckchip" href="#slop-chest"><span class="dot">🧵</span>Slop Chest</a>
+    <a class="deckchip" href="#brig"><span class="dot">🔒</span>The Brig</a>
+    <a class="deckchip" href="#hold"><span class="dot">⚰️</span>The Hold</a>
+  </div>
+</nav>
+
+<main id="top">
+
+
+<section class="room" id="crows-nest">
+  <div class="room-head">
+    <div class="porthole">🔭</div>
+    <h2>The Crow's Nest</h2>
+    <p class="sub">On watch. What's ahead on the course, and when we sail next.</p>
+  </div>
+  <div class="lookout">
+    <div class="look">
+      <div class="k">Next port on the course</div>
+      <div class="big accent">Ara-Kara, City of Echoes</div>
+      <div class="d">the next island to take</div>
+    </div>
+    <div class="look">
+      <div class="k">Next boss in our sights</div>
+      <div class="big">Imperator Averzian</div>
+      <div class="d">not yet on the floor</div>
+    </div>
+    <div class="look">
+      <div class="k">Next raid muster</div>
+      <div class="big countdown" id="raidcount">Tomorrow</div>
+      <div class="d">Thursday · 8 PM · all hands</div>
+    </div>
+    <div class="look">
+      <div class="k">Guild standing</div>
+      <div class="big">#6,855</div>
+      <div class="d">world · realm #49 · <span class="accent">recruiting deckhands</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="room" id="main-deck">
+  <div class="room-head">
+    <div class="porthole">⚓</div>
+    <h2>Main Deck — The Wanted Board</h2>
+    <p class="sub">The whole crew's on deck. The bounty board pinned to the mast is
+      <b>the competition that started this guild</b> — every bounty is a live Mythic+ score.
+      96 ranked, top five most wanted.</p>
+  </div>
+  <div class="wanted" id="wantedboard">
+
+  <div class="wanted-controls">
+    <div class="grp" role="group" aria-label="Sort the board">
+      <button type="button" data-sort="score" aria-pressed="true">Bounty</button>
+      <button type="button" data-sort="delta" aria-pressed="false">Biggest Climb</button>
+      <button type="button" data-sort="streak" aria-pressed="false">On Deck</button>
+    </div>
+    <div class="grp" role="group" aria-label="Filter by role">
+      <button type="button" data-role="all" aria-pressed="true">All</button>
+      <button type="button" data-role="tank" aria-pressed="false">Tanks</button>
+      <button type="button" data-role="healer" aria-pressed="false">Healers</button>
+      <button type="button" data-role="dps" aria-pressed="false">DPS</button>
+    </div>
+    <input type="search" class="wsearch" id="wsearch" placeholder="Find a bounty…"
+           autocomplete="off" aria-label="Search bounties">
+  </div>
+  <section class="mostwanted" aria-label="Most wanted — top five">
+    <h3>★ <b>Most Wanted</b> ★ · the five biggest bounties aboard</h3>
+    <div class="mw-row">
+      <article class="bounty"
+         data-role="healer"
+         data-score="3692.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="shadoxii"
+         data-search="shadoxii monk mistweaver healer"><span class="wrank" title="Rank 2">2</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shadoxii/profile.jpg" alt="Shadoxii" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shadoxii</div>
+  <div class="wmeta">Mistweaver Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">369,220,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3692.2</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3685.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="brewzleeh"
+         data-search="brewzleeh monk brewmaster tank"><span class="wrank" title="Rank 4">4</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/brewzleeh/profile.jpg" alt="Brewzleeh" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Brewzleeh</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">368,580,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3685.8</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3908.1"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="amrevenge"
+         data-search="amrevenge hunter beast mastery dps"><span class="wrank" title="Rank 1">1</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/amrevenge/profile.jpg" alt="Amrevenge" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Amrevenge</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">390,810,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3908.1</div>
+  <div class="wtags"><span class="wtag title">Deepest Key +20</span><span class="wtag title">Sharpest Parse · 97</span>
+  </div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3686.3"
+         data-delta="18.6"
+         data-streak="2"
+         data-name="tommybravoo"
+         data-search="tommybravoo death knight unholy dps"><span class="wrank" title="Rank 3">3</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tommybravoo/profile.jpg" alt="Tommybravoo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tommybravoo</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">368,630,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3686.3</div>
+  <div class="wtags"><span class="wtag up" title="Climbed this week">▲ 18.6</span><span class="wtag streak">2w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3529.2"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="rakdisc"
+         data-search="rakdisc priest discipline healer"><span class="wrank" title="Rank 5">5</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rakdisc/profile.jpg" alt="Rakdisc" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rakdisc</div>
+  <div class="wmeta">Discipline Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">352,920,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3529.2</div>
+</article>
+    </div>
+  </section>
+
+  <section class="bountywall" aria-label="The full crew, ranked">
+    <h3>The <b>whole crew</b>, by bounty — 131 wanted</h3>
+    <div class="bounty-grid" id="bountygrid"><article class="bounty"
+         data-role="dps"
+         data-score="3908.1"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="amrevenge"
+         data-search="amrevenge hunter beast mastery dps"><span class="wrank" title="Rank 1">1</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/amrevenge/profile.jpg" alt="Amrevenge" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Amrevenge</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">390,810,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3908.1</div>
+  <div class="wtags"><span class="wtag title">Deepest Key +20</span><span class="wtag title">Sharpest Parse · 97</span>
+  </div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3692.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="shadoxii"
+         data-search="shadoxii monk mistweaver healer"><span class="wrank" title="Rank 2">2</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shadoxii/profile.jpg" alt="Shadoxii" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shadoxii</div>
+  <div class="wmeta">Mistweaver Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">369,220,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3692.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3686.3"
+         data-delta="18.6"
+         data-streak="2"
+         data-name="tommybravoo"
+         data-search="tommybravoo death knight unholy dps"><span class="wrank" title="Rank 3">3</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tommybravoo/profile.jpg" alt="Tommybravoo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tommybravoo</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">368,630,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3686.3</div>
+  <div class="wtags"><span class="wtag up" title="Climbed this week">▲ 18.6</span><span class="wtag streak">2w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3685.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="brewzleeh"
+         data-search="brewzleeh monk brewmaster tank"><span class="wrank" title="Rank 4">4</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/brewzleeh/profile.jpg" alt="Brewzleeh" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Brewzleeh</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">368,580,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3685.8</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3529.2"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="rakdisc"
+         data-search="rakdisc priest discipline healer"><span class="wrank" title="Rank 5">5</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rakdisc/profile.jpg" alt="Rakdisc" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rakdisc</div>
+  <div class="wmeta">Discipline Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">352,920,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3529.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3509.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="rhansìk"
+         data-search="rhansìk hunter beast mastery dps"><span class="wrank" title="Rank 6">6</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rhansìk/profile.jpg" alt="Rhansìk" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rhansìk</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">350,960,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3509.6</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3484.3"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="floofwall"
+         data-search="floofwall monk brewmaster tank"><span class="wrank" title="Rank 7">7</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/floofwall/profile.jpg" alt="Floofwall" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Floofwall</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">348,430,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3484.3</div>
+</article><article class="bounty"
+         data-role="unknown"
+         data-score="3472.9"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="enyò"
+         data-search="enyò demon hunter devourer deckhand"><span class="wrank" title="Rank 8">8</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/enyò/profile.jpg" alt="Enyò" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Enyò</div>
+  <div class="wmeta">Devourer Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">347,290,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3472.9</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3436.6"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="ellebasi"
+         data-search="ellebasi druid guardian tank"><span class="wrank" title="Rank 9">9</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/ellebasi/profile.jpg" alt="Ellebasi" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Ellebasi</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">343,660,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3436.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3434.5"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="tommybravox"
+         data-search="tommybravox demon hunter havoc dps"><span class="wrank" title="Rank 10">10</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tommybravox/profile.jpg" alt="Tommybravox" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tommybravox</div>
+  <div class="wmeta">Havoc Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">343,450,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3434.5</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3428"
+         data-delta="0"
+         data-streak="0"
+         data-name="jovala"
+         data-search="jovala druid guardian tank"><span class="wrank" title="Rank 11">11</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/jovala/profile.jpg" alt="Jovala" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Jovala</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">342,800,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3428.0</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3418.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="hellful"
+         data-search="hellful shaman elemental dps"><span class="wrank" title="Rank 12">12</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/hellful/profile.jpg" alt="Hellful" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Hellful</div>
+  <div class="wmeta">Elemental Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">341,870,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3418.7</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3414.3"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="kegsmashroll"
+         data-search="kegsmashroll monk brewmaster tank"><span class="wrank" title="Rank 13">13</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kegsmashroll/profile.jpg" alt="Kegsmashroll" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kegsmashroll</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">341,430,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3414.3</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3414.3"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="onessarain"
+         data-search="onessarain shaman restoration healer"><span class="wrank" title="Rank 14">14</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/onessarain/profile.jpg" alt="Onessarain" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Onessarain</div>
+  <div class="wmeta">Restoration Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">341,430,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3414.3</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3362"
+         data-delta="0"
+         data-streak="3"
+         data-name="healmates"
+         data-search="healmates priest holy healer"><span class="wrank" title="Rank 15">15</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/healmates/profile.jpg" alt="Healmates" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Healmates</div>
+  <div class="wmeta">Holy Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">336,200,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3362.0</div>
+  <div class="wtags"><span class="wtag streak">3w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3355.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="flogeron"
+         data-search="flogeron warrior fury dps"><span class="wrank" title="Rank 16">16</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/flogeron/profile.jpg" alt="Flogeron" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Flogeron</div>
+  <div class="wmeta">Fury Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">335,560,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3355.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3333.5"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="shadoxi"
+         data-search="shadoxi druid balance dps"><span class="wrank" title="Rank 17">17</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shadoxi/profile.jpg" alt="Shadoxi" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shadoxi</div>
+  <div class="wmeta">Balance Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">333,350,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3333.5</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3277.9"
+         data-delta="0.0"
+         data-streak="2"
+         data-name="healyeah"
+         data-search="healyeah evoker preservation healer"><span class="wrank" title="Rank 18">18</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/healyeah/profile.jpg" alt="Healyeah" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Healyeah</div>
+  <div class="wmeta">Preservation Evoker</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">327,790,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3277.9</div>
+  <div class="wtags"><span class="wtag streak">2w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3268.3"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="impkiller"
+         data-search="impkiller warlock demonology dps"><span class="wrank" title="Rank 19">19</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/impkiller/profile.jpg" alt="Impkiller" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Impkiller</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">326,830,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3268.3</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3245.1"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="yur"
+         data-search="yur demon hunter vengeance tank"><span class="wrank" title="Rank 20">20</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/yur/profile.jpg" alt="Yur" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Yur</div>
+  <div class="wmeta">Vengeance Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">324,510,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3245.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3224.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="rexxhavocc"
+         data-search="rexxhavocc hunter beast mastery dps"><span class="wrank" title="Rank 21">21</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rexxhavocc/profile.jpg" alt="Rexxhavocc" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rexxhavocc</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">322,490,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3224.9</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3207.9"
+         data-delta="0.0"
+         data-streak="6"
+         data-name="buchalter"
+         data-search="buchalter mage frost dps"><span class="wrank" title="Rank 22">22</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/buchalter/profile.jpg" alt="Buchalter" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Buchalter</div>
+  <div class="wmeta">Frost Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">320,790,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3207.9</div>
+  <div class="wtags"><span class="wtag streak">6w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3142.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="kelova"
+         data-search="kelova monk brewmaster tank"><span class="wrank" title="Rank 23">23</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kelova/profile.jpg" alt="Kelova" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kelova</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">314,290,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3142.9</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3125.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="ohnomyais"
+         data-search="ohnomyais warrior arms dps"><span class="wrank" title="Rank 24">24</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/ohnomyais/profile.jpg" alt="Ohnomyais" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Ohnomyais</div>
+  <div class="wmeta">Arms Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">312,570,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3125.7</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3106"
+         data-delta="0"
+         data-streak="0"
+         data-name="aiime"
+         data-search="aiime shaman restoration healer"><span class="wrank" title="Rank 25">25</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/aiime/profile.jpg" alt="Aiime" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Aiime</div>
+  <div class="wmeta">Restoration Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">310,600,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3106.0</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3103.9"
+         data-delta="0.0"
+         data-streak="2"
+         data-name="boondocka"
+         data-search="boondocka hunter beast mastery dps"><span class="wrank" title="Rank 26">26</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/boondocka/profile.jpg" alt="Boondocka" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Boondocka</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">310,390,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3103.9</div>
+  <div class="wtags"><span class="wtag streak">2w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3088.5"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="kirrá"
+         data-search="kirrá warlock demonology dps"><span class="wrank" title="Rank 27">27</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kirrá/profile.jpg" alt="Kirrá" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kirrá</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">308,850,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3088.5</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3086.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="martylol"
+         data-search="martylol mage frost dps"><span class="wrank" title="Rank 28">28</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/martylol/profile.jpg" alt="Martylol" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Martylol</div>
+  <div class="wmeta">Frost Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">308,670,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3086.7</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3076.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="arfas"
+         data-search="arfas death knight unholy dps"><span class="wrank" title="Rank 29">29</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/arfas/profile.jpg" alt="Arfas" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Arfas</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">307,690,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3076.9</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="3058.3"
+         data-delta="0.0"
+         data-streak="2"
+         data-name="tinyx"
+         data-search="tinyx druid guardian tank"><span class="wrank" title="Rank 30">30</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tinyx/profile.jpg" alt="Tinyx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tinyx</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">305,830,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3058.3</div>
+  <div class="wtags"><span class="wtag streak">2w on deck</span>
+  </div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3051.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="beastfriend"
+         data-search="beastfriend hunter beast mastery dps"><span class="wrank" title="Rank 31">31</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/beastfriend/profile.jpg" alt="Beastfriend" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Beastfriend</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">305,180,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3051.8</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3049.5"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="marvinah"
+         data-search="marvinah hunter beast mastery dps"><span class="wrank" title="Rank 32">32</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/marvinah/profile.jpg" alt="Marvinah" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Marvinah</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">304,950,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3049.5</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3042.7"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="nokori"
+         data-search="nokori shaman elemental dps"><span class="wrank" title="Rank 33">33</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/nokori/profile.jpg" alt="Nokori" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Nokori</div>
+  <div class="wmeta">Elemental Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">304,270,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3042.7</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="3026.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="delusionz"
+         data-search="delusionz priest discipline healer"><span class="wrank" title="Rank 34">34</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/delusionz/profile.jpg" alt="Delusionz" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Delusionz</div>
+  <div class="wmeta">Discipline Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">302,680,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3026.8</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3023.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="scounddrel"
+         data-search="scounddrel hunter survival dps"><span class="wrank" title="Rank 35">35</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/scounddrel/profile.jpg" alt="Scounddrel" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Scounddrel</div>
+  <div class="wmeta">Survival Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">302,360,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3023.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3021.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="gandamar"
+         data-search="gandamar warlock demonology dps"><span class="wrank" title="Rank 36">36</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/gandamar/profile.jpg" alt="Gandamar" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Gandamar</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">302,160,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3021.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="3010.2"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="maillo"
+         data-search="maillo hunter beast mastery dps"><span class="wrank" title="Rank 37">37</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/maillo/profile.jpg" alt="Maillo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Maillo</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">301,020,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 3010.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2994.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="rakell"
+         data-search="rakell death knight frost dps"><span class="wrank" title="Rank 38">38</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rakell/profile.jpg" alt="Rakell" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rakell</div>
+  <div class="wmeta">Frost Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">299,460,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2994.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2976.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="wabisukee"
+         data-search="wabisukee warrior arms dps"><span class="wrank" title="Rank 39">39</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/wabisukee/profile.jpg" alt="Wabisukee" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Wabisukee</div>
+  <div class="wmeta">Arms Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">297,680,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2976.8</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2953.1"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="slicerdicer"
+         data-search="slicerdicer demon hunter havoc dps"><span class="wrank" title="Rank 40">40</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/slicerdicer/profile.jpg" alt="Slicerdicer" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Slicerdicer</div>
+  <div class="wmeta">Havoc Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">295,310,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2953.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2881.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="tommybravo"
+         data-search="tommybravo priest shadow dps"><span class="wrank" title="Rank 41">41</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tommybravo/profile.jpg" alt="Tommybravo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tommybravo</div>
+  <div class="wmeta">Shadow Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">288,190,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2881.9</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="2879.3"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="widowx"
+         data-search="widowx monk mistweaver healer"><span class="wrank" title="Rank 42">42</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/widowx/profile.jpg" alt="Widowx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Widowx</div>
+  <div class="wmeta">Mistweaver Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">287,930,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2879.3</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2873.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="autable"
+         data-search="autable demon hunter havoc dps"><span class="wrank" title="Rank 43">43</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/autable/profile.jpg" alt="Autable" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Autable</div>
+  <div class="wmeta">Havoc Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">287,380,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2873.8</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2837"
+         data-delta="0"
+         data-streak="0"
+         data-name="duskwolf"
+         data-search="duskwolf evoker augmentation dps"><span class="wrank" title="Rank 44">44</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/duskwolf/profile.jpg" alt="Duskwolf" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Duskwolf</div>
+  <div class="wmeta">Augmentation Evoker</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">283,700,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2837.0</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2836.1"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="flemel"
+         data-search="flemel warlock destruction dps"><span class="wrank" title="Rank 45">45</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/flemel/profile.jpg" alt="Flemel" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Flemel</div>
+  <div class="wmeta">Destruction Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">283,610,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2836.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2818.1"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="glinkz"
+         data-search="glinkz mage fire dps"><span class="wrank" title="Rank 46">46</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/glinkz/profile.jpg" alt="Glinkz" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Glinkz</div>
+  <div class="wmeta">Fire Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">281,810,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2818.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2810.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="paleghost"
+         data-search="paleghost death knight unholy dps"><span class="wrank" title="Rank 47">47</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/paleghost/profile.jpg" alt="Paleghost" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Paleghost</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">281,070,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2810.7</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2793.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="dragoonx"
+         data-search="dragoonx evoker augmentation dps"><span class="wrank" title="Rank 48">48</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/dragoonx/profile.jpg" alt="Dragoonx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Dragoonx</div>
+  <div class="wmeta">Augmentation Evoker</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">279,360,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2793.6</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="2786.5"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="rakbear"
+         data-search="rakbear druid guardian tank"><span class="wrank" title="Rank 49">49</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rakbear/profile.jpg" alt="Rakbear" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rakbear</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">278,650,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2786.5</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2765.8"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="chokalock"
+         data-search="chokalock warlock demonology dps"><span class="wrank" title="Rank 50">50</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/chokalock/profile.jpg" alt="Chokalock" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Chokalock</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">276,580,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2765.8</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="2751.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="chohno"
+         data-search="chohno warrior protection tank"><span class="wrank" title="Rank 51">51</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/chohno/profile.jpg" alt="Chohno" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Chohno</div>
+  <div class="wmeta">Protection Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">275,140,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2751.4</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2750.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="skoala"
+         data-search="skoala death knight frost dps"><span class="wrank" title="Rank 52">52</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/skoala/profile.jpg" alt="Skoala" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Skoala</div>
+  <div class="wmeta">Frost Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">275,020,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2750.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2710.1"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="heximal"
+         data-search="heximal druid feral dps"><span class="wrank" title="Rank 53">53</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/heximal/profile.jpg" alt="Heximal" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Heximal</div>
+  <div class="wmeta">Feral Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">271,010,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2710.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2657.7"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="onetruemorty"
+         data-search="onetruemorty warrior arms dps"><span class="wrank" title="Rank 54">54</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/onetruemorty/profile.jpg" alt="Onetruemorty" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Onetruemorty</div>
+  <div class="wmeta">Arms Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">265,770,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2657.7</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="2632.1"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="sidarien"
+         data-search="sidarien paladin protection tank"><span class="wrank" title="Rank 55">55</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/sidarien/profile.jpg" alt="Sidarien" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Sidarien</div>
+  <div class="wmeta">Protection Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">263,210,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2632.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2624.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="icyx"
+         data-search="icyx mage frost dps"><span class="wrank" title="Rank 56">56</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/icyx/profile.jpg" alt="Icyx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Icyx</div>
+  <div class="wmeta">Frost Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">262,460,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2624.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2556.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="coned"
+         data-search="coned warrior fury dps"><span class="wrank" title="Rank 57">57</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/coned/profile.jpg" alt="Coned" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Coned</div>
+  <div class="wmeta">Fury Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">255,660,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2556.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2483.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="valkyrïe"
+         data-search="valkyrïe warlock demonology dps"><span class="wrank" title="Rank 58">58</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/valkyrïe/profile.jpg" alt="Valkyrïe" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Valkyrïe</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">248,360,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2483.6</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="2477.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="cptbenimaru"
+         data-search="cptbenimaru druid restoration healer"><span class="wrank" title="Rank 59">59</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/cptbenimaru/profile.jpg" alt="Cptbenimaru" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Cptbenimaru</div>
+  <div class="wmeta">Restoration Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">247,760,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2477.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2395.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="jilk"
+         data-search="jilk shaman elemental dps"><span class="wrank" title="Rank 60">60</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/jilk/profile.jpg" alt="Jilk" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Jilk</div>
+  <div class="wmeta">Elemental Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">239,580,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2395.8</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="2345.5"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="azell"
+         data-search="azell monk brewmaster tank"><span class="wrank" title="Rank 61">61</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/azell/profile.jpg" alt="Azell" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Azell</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">234,550,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2345.5</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="2316.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="viôlence"
+         data-search="viôlence druid restoration healer"><span class="wrank" title="Rank 62">62</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/viôlence/profile.jpg" alt="Viôlence" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Viôlence</div>
+  <div class="wmeta">Restoration Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">231,640,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2316.4</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2244.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="gener"
+         data-search="gener death knight unholy dps"><span class="wrank" title="Rank 63">63</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/gener/profile.jpg" alt="Gener" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Gener</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">224,460,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2244.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2222.1"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="eponax"
+         data-search="eponax demon hunter havoc dps"><span class="wrank" title="Rank 64">64</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/eponax/profile.jpg" alt="Eponax" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Eponax</div>
+  <div class="wmeta">Havoc Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">222,210,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2222.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2204"
+         data-delta="0"
+         data-streak="0"
+         data-name="huntlowx"
+         data-search="huntlowx hunter survival dps"><span class="wrank" title="Rank 65">65</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/huntlowx/profile.jpg" alt="Huntlowx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Huntlowx</div>
+  <div class="wmeta">Survival Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">220,400,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2204.0</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2192.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="violënce"
+         data-search="violënce priest shadow dps"><span class="wrank" title="Rank 66">66</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/violënce/profile.jpg" alt="Violënce" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Violënce</div>
+  <div class="wmeta">Shadow Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">219,290,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2192.9</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="2177.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="thiccat"
+         data-search="thiccat druid guardian tank"><span class="wrank" title="Rank 67">67</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/thiccat/profile.jpg" alt="Thiccat" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Thiccat</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">217,760,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2177.6</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2175.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="aime"
+         data-search="aime druid feral dps"><span class="wrank" title="Rank 68">68</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/aime/profile.jpg" alt="Aime" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Aime</div>
+  <div class="wmeta">Feral Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">217,540,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2175.4</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="2172.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="kathrobbin"
+         data-search="kathrobbin paladin holy healer"><span class="wrank" title="Rank 69">69</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kathrobbin/profile.jpg" alt="Kathrobbin" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kathrobbin</div>
+  <div class="wmeta">Holy Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">217,220,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2172.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2154.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="nivella"
+         data-search="nivella warlock demonology dps"><span class="wrank" title="Rank 70">70</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/nivella/profile.jpg" alt="Nivella" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Nivella</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">215,490,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2154.9</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="2134.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="milkbreath"
+         data-search="milkbreath druid guardian tank"><span class="wrank" title="Rank 71">71</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/milkbreath/profile.jpg" alt="Milkbreath" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Milkbreath</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">213,420,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2134.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="2051.2"
+         data-delta="0.0"
+         data-streak="1"
+         data-name="holyx"
+         data-search="holyx paladin retribution dps"><span class="wrank" title="Rank 72">72</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/holyx/profile.jpg" alt="Holyx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Holyx</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">205,120,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 2051.2</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="1907.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="beroben"
+         data-search="beroben paladin protection tank"><span class="wrank" title="Rank 73">73</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/beroben/profile.jpg" alt="Beroben" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Beroben</div>
+  <div class="wmeta">Protection Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">190,780,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1907.8</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="1902.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="fugaku"
+         data-search="fugaku evoker preservation healer"><span class="wrank" title="Rank 74">74</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/fugaku/profile.jpg" alt="Fugaku" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Fugaku</div>
+  <div class="wmeta">Preservation Evoker</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">190,270,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1902.7</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1833.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="anbux"
+         data-search="anbux warlock demonology dps"><span class="wrank" title="Rank 75">75</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/anbux/profile.jpg" alt="Anbux" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Anbux</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">183,390,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1833.9</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1593.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="junzolo"
+         data-search="junzolo warrior fury dps"><span class="wrank" title="Rank 76">76</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/junzolo/profile.jpg" alt="Junzolo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Junzolo</div>
+  <div class="wmeta">Fury Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">159,390,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1593.9</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1522.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="kitez"
+         data-search="kitez mage arcane dps"><span class="wrank" title="Rank 77">77</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kitez/profile.jpg" alt="Kitez" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kitez</div>
+  <div class="wmeta">Arcane Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">152,240,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1522.4</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="1221.3"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="wirmati"
+         data-search="wirmati monk mistweaver healer"><span class="wrank" title="Rank 78">78</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/wirmati/profile.jpg" alt="Wirmati" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Wirmati</div>
+  <div class="wmeta">Mistweaver Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">122,130,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1221.3</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="1175.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="sinistrad"
+         data-search="sinistrad paladin protection tank"><span class="wrank" title="Rank 79">79</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/sinistrad/profile.jpg" alt="Sinistrad" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Sinistrad</div>
+  <div class="wmeta">Protection Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">117,520,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1175.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1137.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="critorical"
+         data-search="critorical druid balance dps"><span class="wrank" title="Rank 80">80</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/critorical/profile.jpg" alt="Critorical" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Critorical</div>
+  <div class="wmeta">Balance Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">113,770,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1137.7</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1107.3"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="grëywolf"
+         data-search="grëywolf hunter marksmanship dps"><span class="wrank" title="Rank 81">81</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/grëywolf/profile.jpg" alt="Grëywolf" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Grëywolf</div>
+  <div class="wmeta">Marksmanship Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">110,730,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1107.3</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1053.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="danethegreat"
+         data-search="danethegreat warrior arms dps"><span class="wrank" title="Rank 82">82</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/danethegreat/profile.jpg" alt="Danethegreat" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Danethegreat</div>
+  <div class="wmeta">Arms Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">105,340,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1053.4</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="1036"
+         data-delta="0"
+         data-streak="0"
+         data-name="mushabi"
+         data-search="mushabi rogue assassination dps"><span class="wrank" title="Rank 83">83</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/mushabi/profile.jpg" alt="Mushabi" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Mushabi</div>
+  <div class="wmeta">Assassination Rogue</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">103,600,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1036.0</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="1022.2"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="breakdruid"
+         data-search="breakdruid druid guardian tank"><span class="wrank" title="Rank 84">84</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/breakdruid/profile.jpg" alt="Breakdruid" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Breakdruid</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">102,220,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 1022.2</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="977.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="uddershock"
+         data-search="uddershock shaman elemental dps"><span class="wrank" title="Rank 85">85</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/uddershock/profile.jpg" alt="Uddershock" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Uddershock</div>
+  <div class="wmeta">Elemental Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">97,790,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 977.9</div>
+</article><article class="bounty"
+         data-role="tank"
+         data-score="953.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="ravokoflight"
+         data-search="ravokoflight paladin protection tank"><span class="wrank" title="Rank 86">86</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/ravokoflight/profile.jpg" alt="Ravokoflight" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Ravokoflight</div>
+  <div class="wmeta">Protection Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">95,340,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 953.4</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="866.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="ranaria"
+         data-search="ranaria death knight unholy dps"><span class="wrank" title="Rank 87">87</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/ranaria/profile.jpg" alt="Ranaria" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Ranaria</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">86,670,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 866.7</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="740.1"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="dathar"
+         data-search="dathar warrior fury dps"><span class="wrank" title="Rank 88">88</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/dathar/profile.jpg" alt="Dathar" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Dathar</div>
+  <div class="wmeta">Fury Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">74,010,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 740.1</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="671.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="zackoh"
+         data-search="zackoh hunter beast mastery dps"><span class="wrank" title="Rank 89">89</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/zackoh/profile.jpg" alt="Zackoh" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Zackoh</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">67,160,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 671.6</div>
+</article><article class="bounty"
+         data-role="unknown"
+         data-score="581.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="nythrael"
+         data-search="nythrael demon hunter devourer deckhand"><span class="wrank" title="Rank 90">90</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/nythrael/profile.jpg" alt="Nythrael" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Nythrael</div>
+  <div class="wmeta">Devourer Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">58,140,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 581.4</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="422.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="ricodandolo"
+         data-search="ricodandolo paladin retribution dps"><span class="wrank" title="Rank 91">91</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/ricodandolo/profile.jpg" alt="Ricodandolo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Ricodandolo</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">42,270,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 422.7</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="348.6"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="fluffy"
+         data-search="fluffy monk mistweaver healer"><span class="wrank" title="Rank 92">92</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/fluffy/profile.jpg" alt="Fluffy" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Fluffy</div>
+  <div class="wmeta">Mistweaver Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">34,860,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 348.6</div>
+</article><article class="bounty"
+         data-role="healer"
+         data-score="224.7"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="padremort"
+         data-search="padremort priest holy healer"><span class="wrank" title="Rank 93">93</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/padremort/profile.jpg" alt="Padremort" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Padremort</div>
+  <div class="wmeta">Holy Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">22,470,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 224.7</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="168.4"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="unholyx"
+         data-search="unholyx death knight unholy dps"><span class="wrank" title="Rank 94">94</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/unholyx/profile.jpg" alt="Unholyx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Unholyx</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">16,840,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 168.4</div>
+</article><article class="bounty"
+         data-role="unknown"
+         data-score="166.8"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="sandgs"
+         data-search="sandgs demon hunter devourer deckhand"><span class="wrank" title="Rank 95">95</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/sandgs/profile.jpg" alt="Sandgs" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Sandgs</div>
+  <div class="wmeta">Devourer Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">16,680,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 166.8</div>
+</article><article class="bounty"
+         data-role="dps"
+         data-score="158.9"
+         data-delta="0.0"
+         data-streak="0"
+         data-name="xavira"
+         data-search="xavira warlock affliction dps"><span class="wrank" title="Rank 96">96</span>
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/xavira/profile.jpg" alt="Xavira" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Xavira</div>
+  <div class="wmeta">Affliction Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">15,890,000</span>
+  </div>
+  <div class="wscore">Mythic+ Score 158.9</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="aimme"
+         data-search="aimme evoker devastation dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/aimme/profile.jpg" alt="Aimme" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Aimme</div>
+  <div class="wmeta">Devastation Evoker</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="balcmeg"
+         data-search="balcmeg warrior arms dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/balcmeg/profile.jpg" alt="Balcmeg" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Balcmeg</div>
+  <div class="wmeta">Arms Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="tank"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="botso"
+         data-search="botso monk brewmaster tank">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/botso/profile.jpg" alt="Botso" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Botso</div>
+  <div class="wmeta">Brewmaster Monk</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="healer"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="bwonsombro"
+         data-search="bwonsombro priest holy healer">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/bwonsombro/profile.jpg" alt="Bwonsombro" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Bwonsombro</div>
+  <div class="wmeta">Holy Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="deckler"
+         data-search="deckler paladin retribution dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/deckler/profile.jpg" alt="Deckler" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Deckler</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="unknown"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="fleshripper"
+         data-search="fleshripper demon hunter devourer deckhand">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/fleshripper/profile.jpg" alt="Fleshripper" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Fleshripper</div>
+  <div class="wmeta">Devourer Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="gnomelyfans"
+         data-search="gnomelyfans mage frost dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/gnomelyfans/profile.jpg" alt="Gnomelyfans" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Gnomelyfans</div>
+  <div class="wmeta">Frost Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="gregus"
+         data-search="gregus paladin retribution dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/gregus/profile.jpg" alt="Gregus" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Gregus</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="iamdapopemon"
+         data-search="iamdapopemon priest shadow dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/iamdapopemon/profile.jpg" alt="Iamdapopemon" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Iamdapopemon</div>
+  <div class="wmeta">Shadow Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="imshaman"
+         data-search="imshaman shaman elemental dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/imshaman/profile.jpg" alt="Imshaman" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Imshaman</div>
+  <div class="wmeta">Elemental Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="kibli"
+         data-search="kibli death knight unholy dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kibli/profile.jpg" alt="Kibli" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kibli</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="kreleran"
+         data-search="kreleran death knight unholy dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/kreleran/profile.jpg" alt="Kreleran" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Kreleran</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="lebock"
+         data-search="lebock mage frost dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/lebock/profile.jpg" alt="Lebock" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Lebock</div>
+  <div class="wmeta">Frost Mage</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="obstorm"
+         data-search="obstorm paladin retribution dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/obstorm/profile.jpg" alt="Obstorm" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Obstorm</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="tank"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="omikogo"
+         data-search="omikogo death knight blood tank">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/omikogo/profile.jpg" alt="Omikogo" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Omikogo</div>
+  <div class="wmeta">Blood Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="onesubstance"
+         data-search="onesubstance shaman enhancement dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/onesubstance/profile.jpg" alt="Onesubstance" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Onesubstance</div>
+  <div class="wmeta">Enhancement Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="tank"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="orx"
+         data-search="orx warrior protection tank">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/orx/profile.jpg" alt="Orx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Orx</div>
+  <div class="wmeta">Protection Warrior</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="healer"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="oynax"
+         data-search="oynax priest holy healer">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/oynax/profile.jpg" alt="Oynax" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Oynax</div>
+  <div class="wmeta">Holy Priest</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="healer"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="1"
+         data-name="phyrthepali"
+         data-search="phyrthepali paladin holy healer">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <span class="silo" aria-hidden="true"><svg viewBox="0 0 24 28"><path d="M12 3a4.2 4.2 0 1 1 0 8.4A4.2 4.2 0 0 1 12 3Zm0 10.2c4.4 0 8 2.7 8 6v3.3H4v-3.3c0-3.3 3.6-6 8-6Z"/></svg></span>
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Phyrthepali</div>
+  <div class="wmeta">Holy Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+  <div class="wtags"><span class="wtag title">Kept Us Alive · 96</span>
+  </div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="ragedx"
+         data-search="ragedx hunter beast mastery dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/ragedx/profile.jpg" alt="Ragedx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Ragedx</div>
+  <div class="wmeta">Beast Mastery Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="rougex"
+         data-search="rougex rogue outlaw dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/rougex/profile.jpg" alt="Rougex" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Rougex</div>
+  <div class="wmeta">Outlaw Rogue</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="unknown"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="shadowbelle"
+         data-search="shadowbelle demon hunter devourer deckhand">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shadowbelle/profile.jpg" alt="Shadowbelle" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shadowbelle</div>
+  <div class="wmeta">Devourer Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="healer"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="shamanmates"
+         data-search="shamanmates shaman restoration healer">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shamanmates/profile.jpg" alt="Shamanmates" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shamanmates</div>
+  <div class="wmeta">Restoration Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="shamnos"
+         data-search="shamnos shaman elemental dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shamnos/profile.jpg" alt="Shamnos" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shamnos</div>
+  <div class="wmeta">Elemental Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="shaollynn"
+         data-search="shaollynn paladin retribution dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/shaollynn/profile.jpg" alt="Shaollynn" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Shaollynn</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="sômbrá"
+         data-search="sômbrá rogue subtlety dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/sômbrá/profile.jpg" alt="Sômbrá" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Sômbrá</div>
+  <div class="wmeta">Subtlety Rogue</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="tank"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="tankmates"
+         data-search="tankmates druid guardian tank">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tankmates/profile.jpg" alt="Tankmates" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tankmates</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="tarvos"
+         data-search="tarvos death knight unholy dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tarvos/profile.jpg" alt="Tarvos" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tarvos</div>
+  <div class="wmeta">Unholy Death Knight</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="thunderbloom"
+         data-search="thunderbloom hunter marksmanship dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/thunderbloom/profile.jpg" alt="Thunderbloom" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Thunderbloom</div>
+  <div class="wmeta">Marksmanship Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="tommybravoox"
+         data-search="tommybravoox warlock demonology dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tommybravoox/profile.jpg" alt="Tommybravoox" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tommybravoox</div>
+  <div class="wmeta">Demonology Warlock</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="tommybravoxx"
+         data-search="tommybravoxx rogue subtlety dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/tommybravoxx/profile.jpg" alt="Tommybravoxx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Tommybravoxx</div>
+  <div class="wmeta">Subtlety Rogue</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="tank"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="trollimon"
+         data-search="trollimon druid guardian tank">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/trollimon/profile.jpg" alt="Trollimon" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Trollimon</div>
+  <div class="wmeta">Guardian Druid</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="dps"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="târheel"
+         data-search="târheel paladin retribution dps">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/târheel/profile.jpg" alt="Târheel" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Târheel</div>
+  <div class="wmeta">Retribution Paladin</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="unknown"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="waifumllkers"
+         data-search="waifumllkers demon hunter devourer deckhand">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/waifumllkers/profile.jpg" alt="Waifumllkers" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Waifumllkers</div>
+  <div class="wmeta">Devourer Demon Hunter</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article><article class="bounty wunranked"
+         data-role="healer"
+         data-score="-1"
+         data-delta="-9999"
+         data-streak="0"
+         data-name="wolfx"
+         data-search="wolfx shaman restoration healer">
+  <div class="wtitle">WANTED</div>
+  <div class="wphoto">
+    <img src="cast/_roster/wolfx/profile.jpg" alt="Wolfx" loading="lazy" decoding="async">
+  </div>
+  <div class="wdoa">DEAD OR ALIVE</div>
+  <div class="wname">Wolfx</div>
+  <div class="wmeta">Restoration Shaman</div>
+  <div class="wberry">
+    <span class="wsym">Ƀ</span>
+    <span class="wfig">—— UNRANKED ——</span>
+  </div>
+  <div class="wscore">no score on file yet</div>
+</article>
+    </div>
+    <p class="wall-empty" id="wallempty">No bounties match. They've slipped the net.</p>
+  </section>
+</div>
+  <div style="text-align:center;">
+    <a class="deeper" href="hall.html">Walk the full deck — all 131 crew →</a>
+  </div>
+</section>
+
+
+<section class="room" id="helm">
+  <div class="room-head">
+    <div class="porthole">🧭</div>
+    <h2>The Helm &amp; Chart Room</h2>
+    <p class="sub">Where we are in the tier. The season's course laid out as ports —
+      the ship's docked at <b>this month's</b>.</p>
+  </div>
+  <div class="ports-strip">
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_icecrown_citadel/profile.jpg');"></span>
+      <span class="pm">Jan</span>
+      <span class="pn">Icecrown Citadel</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_dalaran/profile.jpg');"></span>
+      <span class="pm">Feb</span>
+      <span class="pn">Dalaran</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_ungoro_crater/profile.jpg');"></span>
+      <span class="pm">Mar</span>
+      <span class="pn">Ungoro Crater</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_elwynn_forest/profile.jpg');"></span>
+      <span class="pm">Apr</span>
+      <span class="pn">Elwynn Forest</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_stormwind_city/profile.jpg');"></span>
+      <span class="pm">May</span>
+      <span class="pn">Stormwind City</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_mount_hyjal/profile.jpg');"></span>
+      <span class="pm">Jun</span>
+      <span class="pn">Mount Hyjal</span>
+    </a>
+    <a class="pstop here" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_silvermoon_city/profile.jpg');"></span>
+      <span class="pm">Jul</span>
+      <span class="pn">Silvermoon City</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_orgrimmar/profile.jpg');"></span>
+      <span class="pm">Aug</span>
+      <span class="pn">Orgrimmar</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_ironforge/profile.jpg');"></span>
+      <span class="pm">Sep</span>
+      <span class="pn">Ironforge</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_dark_portal/profile.jpg');"></span>
+      <span class="pm">Oct</span>
+      <span class="pn">Dark Portal</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_undermine/profile.jpg');"></span>
+      <span class="pm">Nov</span>
+      <span class="pn">Undermine</span>
+    </a>
+    <a class="pstop" href="voyage.html">
+      <span class="pd" style="background-image:url('cast/_roster/_scene_caverns_of_time/profile.jpg');"></span>
+      <span class="pm">Dec</span>
+      <span class="pn">Caverns Of Time</span>
+    </a>
+  </div>
+  <p class="charted-line"><b>11</b> of 17 islands charted this season</p>
+  <div style="text-align:center;">
+    <a class="deeper" href="voyage.html">Take the wheel — the full Voyage Map →</a>
+  </div>
+</section>
+
+
+<section class="room" id="quarters">
+  <div class="room-head">
+    <div class="porthole">👑</div>
+    <h2>The Captain's Quarters</h2>
+    <p class="sub">The trophy room — the guild's records and Midnight banners, under lock and key.</p>
+  </div>
+  <div class="grid g3 wrap">
+    <div class="card" style="text-align:center;">
+      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Deepest Key</div>
+      <div class="big" style="font-family:var(--font-display);font-size:34px;color:var(--heading);">+20</div>
+      <div class="d" style="color:var(--muted);font-size:13px;">Pit of Saron · Amrevenge</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Sharpest Parse</div>
+      <div class="big" style="font-family:var(--font-display);font-size:34px;color:var(--heading);">97</div>
+      <div class="d" style="color:var(--muted);font-size:13px;">Fallen-King Salhadaar · Amrevenge</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Achievement Points</div>
+      <div class="big" style="font-family:var(--font-display);font-size:34px;color:var(--brass);">1,655</div>
+      <div class="d" style="color:var(--muted);font-size:13px;">3 banners in the hall</div>
+    </div>
+  </div>
+  <div style="text-align:center;">
+    <a class="deeper" href="trophy.html">Open the trophy hall →</a>
+    <a class="deeper" href="wanted.html">The full leaderboard →</a>
+  </div>
+</section>
+
+
+<section class="room" id="the-bar">
+  <div class="room-head">
+    <div class="porthole">🍺</div>
+    <h2>The Bar</h2>
+    <p class="sub">The hangout heart. Pull up a stool — <b>Brewzleeh's brews on tap</b>,
+      the week's story on the wall, and whoever's popping off getting a round.</p>
+  </div>
+  <div class="card log">
+    <div class="k" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">📖 The Captain's Log · this week aboard</div>
+    <div class="beat"><span class="n">1.</span><span>Amrevenge drove the deepest key of the week — a timed +20 through Pit of Saron.</span></div>
+    <div class="beat"><span class="n">2.</span><span>Amrevenge topped the damage charts with a 97 parse on Fallen-King Salhadaar as BeastMastery Hunter.</span></div>
+    <div class="beat"><span class="n">3.</span><span>On heals, Phyrthepali answered with a 96 on Imperator Averzian — the crew lived to tell it.</span></div>
+    <div class="beat"><span class="n">4.</span><span>Tommybravoo climbed hardest this week, up 18.6 points of Mythic+ score.</span></div>
+    <div class="beat"><span class="n">5.</span><span>Buchalter keeps showing up — 6 weeks on the board and counting.</span></div>
+    <div class="beat"><span class="n">6.</span><span>And the roast of the week, from Rakdaddy aimed at Healmates: “Healmates Sucks”.</span></div>
+  </div>
+  <h3 style="text-align:center;color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase;margin:30px 0 0;">📣 Who's Popping Off</h3>
+  <div class="popoff">
+    <div class="shout"><span class="ic">🗝️</span>
+      <span><b>Amrevenge</b> drove the deepest key of the week — a +20 through Pit of Saron.</span></div>
+    <div class="shout"><span class="ic">📈</span>
+      <span><b>Tommybravoo</b> climbed hardest — up 18.6 points of Mythic+ score.</span></div>
+    <div class="shout"><span class="ic">🔥</span>
+      <span><b>Amrevenge</b> topped the charts with a 97 on Fallen-King Salhadaar.</span></div>
+    <div class="shout"><span class="ic">⚓</span>
+      <span><b>Buchalter</b> keeps showing up — 6 weeks on deck and counting.</span></div>
+    <div class="shout"><span class="ic">✨</span>
+      <span><b>Phyrthepali</b> kept the crew breathing — a 96 on Imperator Averzian.</span></div>
+  </div>
+
+  <div class="bar-cols" style="margin-top:30px;">
+    <div class="card pulse">
+      <div class="k" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">🔥 The Guild Pulse <span class="soon">Discord feed · soon</span></div>
+      <div class="row"><span class="ch">#guild-chat</span><span>The week's best lines land here — pulled live once we bridge Discord.</span></div>
+      <div class="row"><span class="ch">#memes</span><span>Top meme of the week gets pinned above the bar.</span></div>
+      <div class="row"><span class="ch">#gambling</span><span>Whatever Brewzleeh just lost, you'll hear about it here.</span></div>
+      <div class="row"><span class="ch">#healmates-bully-corner</span><span>Affectionate. Mostly.</span></div>
+      <div class="guestbook">
+        <button type="button" onclick="alert('Sign the wall — bridged through Discord soon. Carve your name in the timber.')">✍️ Sign the Wall</button>
+      </div>
+    </div>
+    <div class="card shrine">
+      <div class="k" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;">📌 Inside-jokes shrine</div>
+      <div class="jk"><b>Why “Skill Issues”</b><p>Every wipe, every depleted key, every death to the same fire — the diagnosis was always the same. So we made it the name. Own the bit.</p></div>
+      <div class="jk"><b>Brewzleeh&#39;s Debt</b><p>It started with one !roll. It has never stopped. The counter only goes up, the collateral is his monk, and he has never once been ahead.</p></div>
+      <div class="jk"><b>The Great Healmates Wipe</b><p>Six straight weeks standing in the fire. A guild record nobody wanted and everybody remembers. The Brig has his name on the door.</p></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="room" id="galley">
+  <div class="room-head">
+    <div class="porthole">🍳</div>
+    <h2>The Galley</h2>
+    <p class="sub">A nook off the Bar. This month's gag item, and the notice that's
+      always nailed to the door.</p>
+  </div>
+  <div class="galley-in">
+    <div class="itemcard">
+      <div class="lg">GUILD ITEM OF THE MONTH</div>
+      <div class="lg-sub">Requires: Level 60 Degeneracy</div>
+      <div class="glyph">🍖</div>
+      <div style="color:var(--muted);font-size:13px;">Swaps monthly. Binds on !roll. Do not eat.</div>
+    </div>
+    <div class="motd">
+      <div class="q">“Healmates has now stood in the fire for 6 consecutive weeks — a new guild record.”</div>
+      <div class="src">— Message of the Day</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="room" id="casino">
+  <div class="room-head">
+    <div class="porthole">🎰</div>
+    <h2>The Casino</h2>
+    <p class="sub">Brewzleeh's domain. The house always wins, and the house is
+      <b>also in debt</b>. Spin at your own risk.</p>
+  </div>
+  <div class="plaque">
+    <div class="pt">Brewzleeh&#39;s Gambling Debt</div>
+    <div class="owed" id="debtcounter" data-owed="2384056">2,384,056</div>
+    <div class="note">interest: 9.99% weekly · collateral: his monk</div>
+    <ul class="legend-lines">
+      <li style=""><span>Binds on !roll</span></li>
+      <li style=""><span>Deathroll Ledger</span><span>Unique</span></li>
+      <li style=""><span>+15 Gambling Addiction</span></li>
+      <li style=""><span>-100% Gold Retention Aura</span></li>
+      <li style="color:#57e08a;"><span>Equip: Doubles down on a 2% win chance.</span></li>
+      <li style="color:#57e08a;"><span>Equip: Cannot leave while ahead. Has never been ahead.</span></li>
+      <li style="color:#57e08a;"><span>Use: Borrows from GBank tab 3. Again. (No Cooldown)</span></li>
+    </ul><div class="flavor">“Just one more roll.” — Brewzleeh, at 4 AM</div>
+    <div class="req">Requires: An intervention</div>
+  </div>
+  <div class="casino-extra">
+    <div class="card wheel">
+      <div class="k" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);">🎡 The Wheel of Debt</div>
+      <div class="disc" id="wheeldisc"></div>
+      <button type="button" id="spinwheel">Spin the Wheel</button>
+      <div class="verdict" id="wheelverdict">No stakes. No mercy. Endlessly re-spinnable.</div>
+    </div>
+    <div class="card poll">
+      <div class="k" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;">🗳️ Bets &amp; Polls <span class="soon">vote bridges to Discord</span></div>
+      <div style="font-weight:600;margin-bottom:8px;">Who's carrying this week?</div>
+      <div class="opt"><span style="width:88px;">Amrevenge</span><span class="bar"><i style="width:62%;"></i></span><span class="pct">62%</span></div>
+      <div class="opt"><span style="width:88px;">Shadoxii</span><span class="bar"><i style="width:23%;"></i></span><span class="pct">23%</span></div>
+      <div class="opt"><span style="width:88px;">The tank</span><span class="bar"><i style="width:15%;"></i></span><span class="pct">15%</span></div>
+    </div>
+  </div>
+</section>
+
+
+<section class="room" id="engine">
+  <div class="room-head">
+    <div class="porthole">⚙️</div>
+    <h2>The Engine Room</h2>
+    <p class="sub">The grind that moves the ship — keys pushed, scores climbed, the
+      hardest climber of the week.</p>
+  </div>
+  <div class="grid g3 wrap">
+    <div class="card" style="text-align:center;">
+      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Biggest Climb</div>
+      <div class="big" style="font-family:var(--font-display);font-size:32px;color:#57e08a;">▲ 18.6</div>
+      <div class="d" style="color:var(--muted);font-size:13px;">Tommybravoo · this week's grinder</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Deepest Key Timed</div>
+      <div class="big" style="font-family:var(--font-display);font-size:32px;color:var(--heading);">+20</div>
+      <div class="d" style="color:var(--muted);font-size:13px;">Pit of Saron</div>
+    </div>
+    <div class="card" style="text-align:center;">
+      <div class="k" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);">Top M+ Score</div>
+      <div class="big" style="font-family:var(--font-display);font-size:32px;color:var(--brass);">3908.1</div>
+      <div class="d" style="color:var(--muted);font-size:13px;">Amrevenge · at the wheel</div>
+    </div>
+  </div>
+</section>
+
+
+<section class="room" id="slop-chest">
+  <div class="room-head">
+    <div class="porthole">🧵</div>
+    <h2>The Slop Chest</h2>
+    <p class="sub">The armory — who re-cut their look this week. New threads off the rack.</p>
+  </div>
+  <div class="slop">
+    <div class="thread"><span class="sw">🧵</span>
+      <div><b>Rakdisc</b><br><span>Discipline Priest · new transmog this week</span></div></div>
+  </div>
+</section>
+
+
+<section class="room" id="brig">
+  <div class="room-head">
+    <div class="porthole">🔒</div>
+    <h2>The Brig</h2>
+    <p class="sub">The bully corner. Affectionate dunking only — and the door's never
+      locked from the inside.</p>
+  </div>
+  <div class="brig">
+    <div class="bars" aria-hidden="true"></div>
+    <div class="tag">🩹 Healer of Shame</div>
+    <div class="shamed">Healmates</div><div class="note">6 consecutive weeks in the fire</div>
+    <div class="optout">Anyone can leave the Brig for good — just say the word. No questions, honored everywhere.</div>
+  </div>
+</section>
+
+
+<section class="room" id="hold">
+  <div class="room-head">
+    <div class="porthole">⚰️</div>
+    <h2>The Hold</h2>
+    <p class="sub">Plots assigned by deaths-per-pull. The campfire is load-bearing. The campfire is load-bearing.</p>
+  </div>
+  <div class="tombs">
+    <div class="tomb reserved">
+      <div class="rip">Reserved Plot</div>
+      <div class="who">Healmates</div>
+      <div class="ep">6 consecutive weeks in the fire</div>
+      <div class="fire">🔥</div>
+    </div>
+    <div class="tomb">
+      <div class="rip">R.I.P.</div>
+      <div class="who">The +21 Key</div>
+      <div class="ep">Depleted on the last boss. 4 seconds over.</div>
+    </div>
+    <div class="tomb">
+      <div class="rip">R.I.P.</div>
+      <div class="who">“I Got It”</div>
+      <div class="ep">He did not, in fact, got it.</div>
+    </div>
+    <div class="tomb">
+      <div class="rip">R.I.P.</div>
+      <div class="who">The Pull Timer</div>
+      <div class="ep">Ignored. As always.</div>
+    </div>
+    <div class="tomb">
+      <div class="rip">R.I.P.</div>
+      <div class="who">One More Pull</div>
+      <div class="ep">It was never one more pull.</div>
+    </div>
+    <div class="tomb">
+      <div class="rip">R.I.P.</div>
+      <div class="who">The Repair Bill</div>
+      <div class="ep">Self-inflicted. Not reimbursable.</div>
+    </div>
+    <div class="tomb">
+      <div class="rip">R.I.P.</div>
+      <div class="who">Rakdisc&#39;s Patience</div>
+      <div class="ep">Died blaming the tank.</div>
+    </div>
+  </div>
+  <div class="roast-card">
+    <div class="k">🔥 Roast of the Week</div>
+    <div class="q">“Healmates Sucks”</div>
+    <div class="by">— Rakdaddy, aimed at Healmates</div>
+  </div>
+  <p class="hall-flame">Filed in the <b>Hall of Flame</b> · all-time most-roasted crewmember:
+    <b>Healmates</b> (that's the joke)</p>
+</section>
+
+</main>
+
+<footer class="foot">
+  <b>S.S. Wipe Fest</b> · a private test run · “Git Gud.” — ancient guild proverb<br>
+  Not connected to Discord or the guild website. Nothing here goes anywhere unless you send it.
+</footer>
+
+
+<script>
+(function(){
+  "use strict";
+  var board = document.getElementById('wantedboard');
+  if (!board) return;
+  var grid = document.getElementById('bountygrid');
+  var empty = document.getElementById('wallempty');
+  var posters = Array.prototype.slice.call(grid.querySelectorAll('.bounty'));
+  var sortBtns = board.querySelectorAll('.wanted-controls [data-sort]');
+  var roleBtns = board.querySelectorAll('.wanted-controls [data-role]');
+  var search = document.getElementById('wsearch');
+  var sortKey = 'score', role = 'all', q = '';
+
+  var num = function(el, k){ return parseFloat(el.dataset[k]) || 0; };
+
+  function render(){
+    // sort a copy, descending by the chosen numeric key; name breaks ties
+    posters.sort(function(a, b){
+      var d = num(b, sortKey) - num(a, sortKey);
+      return d !== 0 ? d : (a.dataset.name < b.dataset.name ? -1 : 1);
+    });
+    var shown = 0;
+    posters.forEach(function(p){
+      var okRole = role === 'all' || p.dataset.role === role;
+      var okText = !q || (p.dataset.search || '').indexOf(q) !== -1;
+      p.hidden = !(okRole && okText);
+      if (!p.hidden) shown++;
+      grid.appendChild(p);              // reflow into sorted order
+    });
+    empty.style.display = shown ? 'none' : 'block';
+  }
+
+  sortBtns.forEach(function(b){ b.addEventListener('click', function(){
+    sortKey = b.dataset.sort;
+    sortBtns.forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    render();
+  }); });
+  roleBtns.forEach(function(b){ b.addEventListener('click', function(){
+    role = b.dataset.role;
+    roleBtns.forEach(function(x){ x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+    render();
+  }); });
+  if (search) search.addEventListener('input', function(){
+    q = search.value.trim().toLowerCase(); render();
+  });
+  render();
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  // deck manifest: highlight the room you're in
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.deckchip'));
+  var mani = document.querySelector('.manifest-in');
+  var map = {};
+  chips.forEach(function(c){ map[c.getAttribute('href').slice(1)] = c; });
+  var rooms = Array.prototype.slice.call(document.querySelectorAll('.room'));
+  if ('IntersectionObserver' in window){
+    var io = new IntersectionObserver(function(ents){
+      ents.forEach(function(e){
+        if (e.isIntersecting){
+          chips.forEach(function(c){ c.classList.remove('active'); });
+          var c = map[e.target.id];
+          if (c){
+            c.classList.add('active');
+            // centre the chip WITHIN the manifest only — never call
+            // scrollIntoView on a sticky element, it yanks the page to top
+            if (mani){ mani.scrollLeft = c.offsetLeft - (mani.clientWidth - c.offsetWidth) / 2; }
+          }
+        }
+      });
+    }, {rootMargin:'-45% 0px -50% 0px'});
+    rooms.forEach(function(r){ io.observe(r); });
+  }
+
+  // Casino: the debt only ever climbs
+  var dc = document.getElementById('debtcounter');
+  if (dc){
+    var owed = parseInt(dc.dataset.owed, 10) || 0;
+    setInterval(function(){
+      owed += 1337;
+      dc.firstChild ? dc.textContent = owed.toLocaleString() : null;
+    }, 1500);
+  }
+
+  // Casino: the Wheel of Debt
+  var disc = document.getElementById('wheeldisc');
+  var spin = document.getElementById('spinwheel');
+  var verdict = document.getElementById('wheelverdict');
+  var VERDICTS = [
+    "You owe Brewzleeh 1,337g. No idea why. Pay up.",
+    "Healmates stood in the fire. Again. −50 DKP.",
+    "The tank pulled early. It was, somehow, your fault.",
+    "New title unlocked: “Serial Wiper.” Wear it with pride.",
+    "You have been volunteered to heal. Condolences.",
+    "The key depleted. That is a you problem.",
+    "Brewzleeh doubled down on a 2% chance. It did not hit.",
+    "Congratulations — you are now on watch in the Crow's Nest."
+  ];
+  var turns = 0;
+  if (spin && disc){
+    spin.addEventListener('click', function(){
+      turns += 5 + Math.floor(Math.random()*5);
+      disc.style.transform = 'rotate(' + (turns*360 + Math.random()*360) + 'deg)';
+      verdict.textContent = '…';
+      setTimeout(function(){
+        verdict.textContent = VERDICTS[Math.floor(Math.random()*VERDICTS.length)];
+      }, 2500);
+    });
+  }
+})();
+</script>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  if (!btns.length) return;
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+
+  // Publish the real nav height so sticky bars below it (roster nav,
+  // backbar) offset correctly even when the nav wraps to two rows on a
+  // phone — a fixed 53px assumption tucked them under it.
+  var nav = document.querySelector('.sitenav');
+  if (nav){
+    var setNavH = function(){
+      doc.style.setProperty('--nav-h', Math.round(nav.getBoundingClientRect().height) + 'px');
+    };
+    setNavH();
+    window.addEventListener('resize', setNavH, {passive:true});
+    window.addEventListener('load', setNavH);
+    if ('ResizeObserver' in window) new ResizeObserver(setNavH).observe(nav);
+  }
+})();
+</script>
+</body>
+</html>

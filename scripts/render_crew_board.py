@@ -36,6 +36,7 @@ from guild_board import manga as manga_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
 from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
+from guild_board import ship as ship_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import site_data as site_data_mod  # noqa: E402
 from guild_board import wanted as wanted_mod  # noqa: E402
@@ -374,6 +375,32 @@ def main():
     logger.info("Cameo debt: feed=%s, %d never featured of %d",
                 cameo["have_feed"], cameo["never_count"], cameo["cast_size"])
 
+    # ---- S.S. Wipe Fest: the ship's rooms (HANGOUT_DESIGN Phase 0) ----
+    from datetime import datetime as _dt, timezone as _tz
+    week_index = _dt.now(_tz.utc).isocalendar()[1]
+    wanted_board = wanted_mod.board(ctx["crew"], board_state, cfg)
+    ship_ports = scenery_mod.ports(cfg)
+    for pt in ship_ports:
+        if pt.get("hero"):
+            st = showcase_mod.stage_art(
+                {"src": pt["hero"]}, f"_scene_{pt['key']}", repo_root=repo_root)
+            pt["hero"] = st.get("src")
+    island_layer = site_data_mod.layer("island_completion")
+    charted = None
+    if island_layer:
+        d = island_layer.get("dungeons") or {}
+        r = island_layer.get("raid") or {}
+        charted = {"cleared": (d.get("conquered") or 0) + (r.get("bosses_killed") or 0),
+                   "total": (d.get("total") or 0) + (r.get("total_bosses") or 0)}
+    ship_data = {
+        "crows_nest": ship_mod.crows_nest(ctx.get("islands"), board_state, theme),
+        "popping_off": ship_mod.popping_off(wanted_board, board_state),
+        "galley": ship_mod.galley(theme, week_index),
+        "brig": ship_mod.brig(theme),
+        "hold": ship_mod.hold(theme, ctx.get("roast")),
+        "inside_jokes": ship_mod.INSIDE_JOKES,
+    }
+
     from guild_board import admin_config
     panel = admin_config.current_settings(cfg)
 
@@ -396,7 +423,13 @@ def main():
         "cameo": cameo,
         # THE WANTED BOARD: every crewmate's M+ score as a bounty. Pure
         # function of board_state, so a daily data refresh just re-runs it.
-        "wanted": wanted_mod.board(ctx["crew"], board_state, cfg),
+        "wanted": wanted_board,
+        # S.S. Wipe Fest ship rooms + the data each needs
+        "ship": ship_data,
+        "ports": ship_ports,
+        "charted": charted,
+        "records": (board_state or {}).get("records") or {},
+        "transmog": site_data_mod.layer("transmog_changes"),
         # B-07: the trophy hall reads the backend's guild_achievements layer
         # (committed sample until a credentialed refresh runs)
         "trophies": site_data_mod.layer("guild_achievements"),
@@ -450,6 +483,13 @@ def main():
         encoding="utf-8")
     logger.info("Wrote the wanted board to %s (%d ranked of %d)", wanted_page,
                 trial_ctx["wanted"]["ranked_count"], trial_ctx["wanted"]["total_count"])
+
+    # THE SHIP — S.S. Wipe Fest: the front door, all eleven rooms in one scroll
+    ship_page = out.parent / "ship.html"
+    ship_page.write_text(
+        env.get_template("web/pages/ship.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    logger.info("Wrote the ship (S.S. Wipe Fest) to %s", ship_page)
 
     # the voyage map, rendered into the same site so the nav link resolves
     try:

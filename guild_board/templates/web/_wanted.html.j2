@@ -36,9 +36,11 @@
 {%- endmacro -%}
 
 <div class="wanted" id="wantedboard">
+  {%- if not wanted_embedded %}
   <p class="wanted-lede">The competition that started it all — every crewmate's
     <b>Mythic+ score is their bounty</b>. {{ wanted.ranked_count }} ranked, top five
     most wanted. This is the thing that brought us all together.</p>
+  {%- endif %}
 
   <div class="wanted-controls">
     <div class="grp" role="group" aria-label="Sort the board">

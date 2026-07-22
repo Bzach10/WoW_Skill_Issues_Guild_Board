@@ -89,6 +89,8 @@ def main():
     voyage = ROOT / "voyage.html"
     hall = ROOT / "hall.html"
     trophy = ROOT / "trophy.html"
+    wanted = ROOT / "wanted.html"
+    ship = ROOT / "ship.html"
     profiles = sorted((ROOT / "p").glob("*.html"))
     if not board.exists():
         raise SystemExit("crew_board.html was not produced")
@@ -96,7 +98,9 @@ def main():
     pages = ([board] + profiles + ([trial] if trial.exists() else [])
              + ([voyage] if voyage.exists() else [])
              + ([hall] if hall.exists() else [])
-             + ([trophy] if trophy.exists() else []))
+             + ([trophy] if trophy.exists() else [])
+             + ([wanted] if wanted.exists() else [])
+             + ([ship] if ship.exists() else []))
     print(f"2/4  collecting assets for {len(pages)} pages")
     assets = referenced_assets(pages)
     print(f"     {len(assets)} asset files referenced")
@@ -112,13 +116,20 @@ def main():
     staging.mkdir(parents=True)
     build_target, out = out, staging
 
-    # The trial showcase is the front door; the animated board sits
-    # behind it, linked from the call to action.
-    if trial.exists():
+    # The SHIP (S.S. Wipe Fest) is the front door now; the older showcase
+    # board and the animated board sit behind it as deep-dive pages.
+    if ship.exists():
+        shutil.copy2(ship, out / "index.html")
+        if trial.exists():
+            shutil.copy2(trial, out / "board.html")
+        shutil.copy2(board, out / "crew_board.html")
+    elif trial.exists():
         shutil.copy2(trial, out / "index.html")
         shutil.copy2(board, out / "crew_board.html")
     else:
         shutil.copy2(board, out / "index.html")
+    if wanted.exists():
+        shutil.copy2(wanted, out / "wanted.html")   # the nav's Wanted link
     if voyage.exists():
         shutil.copy2(voyage, out / "voyage.html")   # the nav's Voyage link
     if hall.exists():
@@ -160,7 +171,8 @@ def main():
     checkable = [out / "index.html"] + sorted((out / "p").glob("*.html"))
     if (out / "crew_board.html").exists():
         checkable.append(out / "crew_board.html")
-    for extra in ("voyage.html", "hall.html", "trophy.html"):
+    for extra in ("voyage.html", "hall.html", "trophy.html", "wanted.html",
+                  "board.html"):
         if (out / extra).exists():
             checkable.append(out / extra)
     for page in checkable:
