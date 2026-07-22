@@ -1,15 +1,15 @@
 # Integration status
 
 Owner: integration/build manager. Branch `integration`, worktree `C:/wt/int`.
-Updated 2026-07-20.
+Updated 2026-07-22 (second pass: drift re-merge + blocker fix).
 
 ## Build health
 
 | gate | result |
 |------|--------|
-| pytest (full suite) | **331 passed, 1 failed** |
-| module import smoke | 10/10 OK |
-| `scripts/security_check.py` | **FAIL** — `actions`, `static`, `secrets` |
+| pytest (full suite) | **544 passed, 0 failed** |
+| `security_check.py` `actions` | **PASS** — former blocker cleared |
+| `security_check.py` `static`/`secrets` | FAIL — both known + owned (items 2 and 3 below) |
 
 Baseline before integration: 127 tracked tests on `2.0`.
 
@@ -17,10 +17,35 @@ Baseline before integration: 127 tracked tests on `2.0`.
 
 | team | branch | at | notes |
 |------|--------|----|-------|
-| Security | `security-hardening` | 3954f2f | clean |
-| Backend/Data-QA | `backend-data-qa` | 6626e31 | clean |
-| Front-end | `frontend-crew-ui` | 1172d07 | 2 conflicts, resolved |
-| (prod line) | `main` | 8ed452f | 1 conflict, resolved |
+| Security | `security-hardening` | 3954f2f | clean; no drift since |
+| Backend/Data-QA | `backend-data-qa` | 6626e31, re-merged 7a0d35b | 2nd pass: 2 conflicts, resolved |
+| Front-end | `frontend-crew-ui` | 1172d07, re-merged b795528 | 2nd pass: 1 conflict, resolved |
+| (prod line) | `main` | 8ed452f, re-merged 72184f0 | 2nd pass: 5 conflicts, resolved |
+
+### Second-pass conflict resolutions (2026-07-22)
+
+1. **`.gitignore`** (×2) — unioned again both times. Dropped frontend's
+   `samples/` + `WEB_DATA_CONTRACT.md` ignore lines: untracked handoff
+   copies on the frontend branch, but tracked backend deliverables here.
+2. **`blizzard-profile-refresh.yml`** (add/add, backend × prod) — took
+   backend's superset (guild cache + site-data rebuild) and applied the
+   env-binding injection fix to it; backend's copy predated the gate.
+   Backend's two new workflows (daily-competition-refresh, guild-pulse-
+   refresh) carried the same `ref_name` splice in their token steps —
+   bound to `env:` in the merge resolution.
+3. **`pyproject.toml`** — kept the 2.0 line's ruff/mypy config over
+   main's new laxer one (main's Claude-automations commit); the
+   integrated code was written and linted against the stricter one.
+4. **`guild_board/main.py` / `html_board.py`** — import unions (kept
+   frontend's `dump_web_stats`, the 2.0 line's `links`).
+5. **`board_state.json`** — took main's; it is the live cache the weekly
+   cron updates.
+6. **`tests/test_crew.py`** — the one post-merge test failure: the crew
+   isolation test passed on the frontend branch only because no
+   `blizzard_profile_cache.json` existed there; main's Blizzard
+   integration committed a real one, so `build_crew`'s deliberate
+   `load_profiles()` fallback promoted the fixture character to
+   `source: "real"`. Test now passes `profiles={}` explicitly.
 
 ### Conflict resolutions
 
@@ -39,22 +64,18 @@ Baseline before integration: 127 tracked tests on `2.0`.
 
 ## Open — needs a decision
 
-### 1. BLOCKER: `main`'s workflow trips security's injection gate
-`.github/workflows/blizzard-profile-refresh.yml:49,65` splices
-`${{ github.event.inputs.force }}` and `${{ github.ref_name }}` into `run:`.
-Line 65 is the step holding `GITHUB_TOKEN`.
+### 1. ~~BLOCKER: `main`'s workflow trips security's injection gate~~ RESOLVED
+Fixed 2026-07-22 via PR #2 (`fix/workflow-injection`, merged to `main` by
+Zach) and re-applied to backend's extended copy of the workflow in the
+second-pass merge. `security_check.py --only actions` now passes on
+`integration`; the standing workflow test is green.
 
-Neither team could see this: Security hardened every workflow on the `2.0`
-line and added a standing test that *all* workflows stay clean; `main` added
-this workflow in parallel. They only meet here. This is the one failing test.
-
-Fix is mechanical — security's own pattern from `weekly-board.yml`: bind to
-`env:`, read as `"$VAR"`. **Awaiting sign-off on who applies it.**
-
-### 2. Security's bandit gate now flags backend's `render_pipeline.py`
-B310 (`urllib.request.urlopen`, medium) at lines 52 and 157. Backend never
-ran bandit; the gate only existed on security's branch. Needs either a
-scheme check or a reviewed `# nosec`. Backend's call.
+### 2. Security's bandit gate flags backend/art `urlopen` calls — grew with drift
+B310 (`urllib.request.urlopen`, medium), now **5 locations**:
+`render_pipeline.py:52,157,162` and `scripts/generate_cast.py:65,72`.
+Backend never ran bandit; the gate only existed on security's branch.
+Needs either a scheme check or a reviewed `# nosec` per call. Backend's
+call (generate_cast.py may be art's).
 
 ### 3. Pre-existing: `secrets` check fails on its own branch
 Fake credentials in security's own `tests/test_security_check.py` fixtures.
