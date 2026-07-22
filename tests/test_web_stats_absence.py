@@ -22,13 +22,19 @@ def test_absence_is_written_to_disk_not_silently_skipped(tmp_path):
     assert out.exists(), "the absence itself is a fact worth recording"
     data = json.loads(out.read_text(encoding="utf-8"))
     assert data["available"] is False
-    assert "WCL_CLIENT_ID" in data["reason"]
+    # Credential names are operator-facing only: reason ships to the site,
+    # operator_detail stays in logs/CI. tests/test_no_credentials_in_output.py
+    # enforces that reason never leaks one. operator_detail names the client
+    # id/secret in prose (and points to RUNBOOK.md) rather than the literal
+    # env var token.
+    assert "client id and secret" in data["operator_detail"]
+    assert "WCL_CLIENT_ID" not in data["reason"]
     assert data["top_dps"] == [] and data["top_tanks"] == []
 
 
 def test_absence_reason_distinguishes_no_run_from_no_parses():
     assert "not queried" in absence_payload(None)["reason"]
-    assert "no parse pools" in absence_payload({"best_dps": {}})["reason"]
+    assert "no parse pools" in absence_payload({"best_dps": {}})["operator_detail"]
 
 
 def test_empty_ladder_carries_the_reason_through_to_the_template():
@@ -47,7 +53,10 @@ def test_empty_ladder_carries_the_reason_through_to_the_template():
     assert parses["hps"]["rows"][0]["name"] == "Phyrthepali"
     # the role with nothing explains itself instead of showing a dash
     assert parses["tanks"]["rows"] == []
-    assert "WCL_CLIENT_ID" in parses["tanks"]["unavailable_reason"]
+    # unavailable_reason is member-facing (it renders on the ship page), so
+    # it carries the same credential-free reason, not the operator detail.
+    assert "WCL_CLIENT_ID" not in parses["tanks"]["unavailable_reason"]
+    assert "Warcraft Logs" in parses["tanks"]["unavailable_reason"]
 
 
 def test_reason_falls_back_when_there_is_no_web_stats_file_at_all():

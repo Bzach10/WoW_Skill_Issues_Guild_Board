@@ -13,6 +13,7 @@ that half.
 """
 
 import os, sys, types, json
+import requests
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ['BLIZZARD_CLIENT_ID']='test-id'
 os.environ['BLIZZARD_CLIENT_SECRET']='test-secret'
@@ -84,6 +85,12 @@ print()
 print("=== no-credentials path ===")
 del os.environ['BLIZZARD_CLIENT_ID']; del os.environ['BLIZZARD_CLIENT_SECRET']
 check("returns None, does not raise", gr.fetch_blizzard_guild_roster(cfg) is None)
+
+# Restore the real module: this stub is process-wide (gr.requests, not a
+# monkeypatch), and pytest imports every test file into the same process.
+# Left as the stub, any later test touching guild_roster's requests.* would
+# break on a module that only has post/get.
+gr.requests = requests
 
 
 
