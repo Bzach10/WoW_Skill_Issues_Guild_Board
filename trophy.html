@@ -1,0 +1,243 @@
+
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="codex">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Skill Issues — The Trophy Hall (test run)</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏆</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&amp;family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+html[data-crew-theme="codex"]{
+  --bg:#e7d3ad; --text:#3a2c17; --heading:#4a2f12;
+  --accent:#9b5e1f; --panel:#f7eed8; --line:#c8ad7e;
+  --muted:#6b5637;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:light;
+}
+html[data-crew-theme="console"]{
+  --bg:#120c1e; --text:#e7dcf7; --heading:#e7dcf7;
+  --accent:#38e0c8; --panel:#191128; --line:#33264d;
+  --muted:#9d8fbb;
+  --font-display:'JetBrains Mono',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html[data-crew-theme="chronicle"]{
+  --bg:#180f28; --text:#efe7dd; --heading:#efe7dd;
+  --accent:#d8a24a; --panel:#20152c; --line:#3c2e4a;
+  --muted:#b0a08f;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{--gold:#d9a441; --mythic:#c8503a; --heroic:#9aa7b4; --mplus:#4fc9a2;
+  --measure:1080px;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg); color:var(--text); font-family:var(--font-body);
+  font-size:16px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased;}
+a{color:var(--accent);}
+
+.private{background:repeating-linear-gradient(45deg,
+    color-mix(in srgb,var(--accent) 22%, var(--bg)) 0 14px,
+    color-mix(in srgb,var(--accent) 12%, var(--bg)) 14px 28px);
+  border-bottom:1px solid var(--line); text-align:center; padding:9px 16px;
+  font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+.private b{color:var(--accent);}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 22px;}
+
+.mast{text-align:center; padding:48px 0 10px;}
+.kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:14px;}
+.kicker b{color:var(--accent);}
+.mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(34px,7vw,64px); color:var(--heading);}
+.points{margin-top:16px; display:inline-flex; align-items:baseline; gap:10px;
+  padding:10px 20px; border-radius:999px; border:1px solid var(--line);
+  background:var(--panel);}
+.points b{font-family:var(--font-display); font-size:26px; color:var(--gold);
+  font-variant-numeric:tabular-nums;}
+.points span{font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted);}
+.rule{width:min(360px,70%); height:3px; margin:22px auto 4px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);}
+
+.hall{display:grid; gap:16px; padding:30px 0 60px;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));}
+.trophy{position:relative; display:flex; gap:16px; align-items:center;
+  padding:18px 20px; border-radius:16px; background:var(--panel);
+  border:1px solid var(--line); overflow:hidden;
+  box-shadow:0 14px 34px -22px rgba(0,0,0,.7);}
+.trophy::before{content:""; position:absolute; left:0; top:0; bottom:0; width:5px;
+  background:var(--tint,var(--gold));}
+.medal{flex:0 0 auto; width:58px; height:58px; border-radius:50%;
+  display:grid; place-items:center; font-size:26px;
+  background:radial-gradient(circle at 35% 30%,
+    color-mix(in srgb,var(--tint,var(--gold)) 55%, var(--panel)),
+    color-mix(in srgb,var(--tint,var(--gold)) 18%, var(--panel)));
+  border:2px solid color-mix(in srgb,var(--tint,var(--gold)) 60%, var(--line));
+  box-shadow:inset 0 0 12px -4px color-mix(in srgb,var(--tint,var(--gold)) 80%, transparent);}
+.tinfo{min-width:0;}
+.tcat{font-size:10px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--tint,var(--gold)); font-weight:700;}
+.tname{font-family:var(--font-display); font-size:17px; color:var(--heading);
+  line-height:1.15; margin:3px 0 5px;}
+.tdate{font-size:12px; color:var(--muted); font-variant-numeric:tabular-nums;}
+.tcrit{font-size:11px; color:var(--muted);}
+
+.coming{text-align:center; max-width:52ch; margin:40px auto 70px;
+  padding:34px 26px; border-radius:18px; border:1px dashed var(--line);
+  background:var(--panel); color:var(--muted);}
+.coming .big{font-size:40px; margin-bottom:12px;}
+.coming b{color:var(--text);}
+
+.foot{border-top:1px solid var(--line); padding:20px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px;}
+
+.sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  border-bottom:1px solid var(--line);}
+.sitenav .wrap{display:flex; align-items:center; gap:18px;
+  padding-top:10px; padding-bottom:10px;}
+.brand{display:flex; align-items:center; gap:9px; text-decoration:none;
+  color:var(--heading); font-family:var(--font-display); font-weight:700;
+  letter-spacing:.04em; margin-right:auto;}
+.brand-mark{font-size:18px; filter:saturate(1.2);}
+.brand-name{font-size:15px;}
+.navlinks{display:flex; gap:6px;}
+.navlinks a{font-size:13px; text-decoration:none; color:var(--muted);
+  padding:7px 13px; border-radius:999px; transition:all .2s;}
+.navlinks a:hover{color:var(--text); background:color-mix(in srgb, var(--line) 45%, transparent);}
+.navlinks a[aria-current="page"]{color:var(--bg); background:var(--accent);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{font:inherit; font-size:12px; cursor:pointer;
+  padding:6px 11px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line); transition:all .2s;}
+.themeswitch button[aria-pressed="true"]{color:var(--bg);
+  background:var(--accent); border-color:var(--accent);}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* the return affordance — a full-width bar, impossible to miss */
+.backbar{position:sticky; top:53px; z-index:45; display:block;
+  padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
+  text-decoration:none; color:var(--text);
+  background:color-mix(in srgb, var(--accent) 16%, var(--bg));
+  border-bottom:1px solid var(--line);
+  max-width:var(--measure); margin:0 auto;}
+.backbar:hover{background:color-mix(in srgb, var(--accent) 26%, var(--bg));
+  color:var(--accent);}
+
+/* on small screens the brand name yields before the links do */
+@media (max-width:560px){
+  .sitenav .wrap{gap:10px; flex-wrap:wrap;}
+  .brand-name{display:none;}
+  .navlinks a{padding:7px 11px;}
+  .themeswitch button{font-size:0; padding:6px;}
+  .themeswitch button::before{content:attr(data-theme); font-size:11px;
+    text-transform:capitalize;}
+}
+</style>
+</head>
+<body>
+<div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
+
+
+<header class="sitenav">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">⚓</span>
+      <span class="brand-name">Skill Issues</span>
+    </a>
+    <nav class="navlinks" aria-label="Primary">
+      <a href="index.html"
+         >Board</a>
+      <a href="voyage.html"
+         >Voyage</a>
+      <a href="hall.html"
+         >The Hall</a>
+      <a href="trophy.html"
+         aria-current="page">Trophies</a>
+    </nav>
+    <div class="themeswitch" role="group" aria-label="Theme">
+      <button type="button" data-theme="codex"
+              aria-pressed="true"
+              title="Illuminated Codex">Illuminated Codex</button>
+      <button type="button" data-theme="console"
+              aria-pressed="false"
+              title="Arcane Console">Arcane Console</button>
+      <button type="button" data-theme="chronicle"
+              aria-pressed="false"
+              title="Chronicle">Chronicle</button>
+    </div>
+  </div>
+</header>
+
+<a class="backbar" href="index.html">← Back to the board</a>
+
+<main class="wrap">
+<section class="mast">
+  <div class="kicker">Skill Issues · <b>Midnight, in silver and gold</b></div>
+  <h1>The Trophy Hall</h1>
+  <div class="points"><b>1,655</b>
+    <span>achievement points</span></div>
+  <div class="rule"></div>
+</section>
+<section class="hall" aria-label="Guild achievements">
+  <article class="trophy" style="--tint:var(--heroic);">
+    <div class="medal" aria-hidden="true">⚔️</div>
+    <div class="tinfo">
+      <div class="tcat">Heroic raid</div>
+      <h2 class="tname">Ahead of the Curve: Imperator Averzian</h2><div class="tdate">Earned 2026-03-03</div>
+      <div class="tcrit">2 criteria met</div>
+    </div>
+  </article>
+  <article class="trophy" style="--tint:var(--mythic);">
+    <div class="medal" aria-hidden="true">🔥</div>
+    <div class="tinfo">
+      <div class="tcat">Mythic raid</div>
+      <h2 class="tname">Cutting Edge: Fallen-King Salhadaar</h2><div class="tdate">Earned 2026-03-22</div>
+    </div>
+  </article>
+  <article class="trophy" style="--tint:var(--mplus);">
+    <div class="medal" aria-hidden="true">🗝️</div>
+    <div class="tinfo">
+      <div class="tcat">Mythic+</div>
+      <h2 class="tname">Midnight Keystone Master: Season One</h2><div class="tdate">Earned 2026-03-31</div>
+      <div class="tcrit">8 criteria met</div>
+    </div>
+  </article>
+</section>
+</main>
+
+<footer class="foot">
+  Skill Issues · a private test run · achievements via the guild profile API
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+  var btns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  if (!btns.length) return;
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    btns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  btns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+})();
+</script>
+</body>
+</html>

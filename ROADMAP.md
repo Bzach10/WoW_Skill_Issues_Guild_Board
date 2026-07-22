@@ -19,7 +19,18 @@ below at their sensible points, not appended.
 | 5 | **Unlock-the-Cast meter (ENG-10)** — generated-vs-remaining progress; un-generated members as wanted-poster silhouettes. Makes the rollout itself content. Sits well beside the hero wall / roster. | ✅ shipped (in The Hall) |
 | 6 | **Weekly 2-panel manga strip (ANIM-08)** — scene stills + speech bubbles + real recap events. Reuses existing scene stills; consumes the backend recap feed (same source as the ribbon). | ✅ shipped (board top) |
 | 7 | **Cameo-Debt Tracker (ARC-09)** — track which characters have/haven't been featured; bias future casting toward never-featured members. | ✅ frontend half shipped — emits `featured_this_week.json`, reads `featured_history.json` when it lands, degrades to the week's spotlight until then. Backend must accumulate the weekly emits into the history feed; casting session consumes it. |
-| 8+ | **The rest** — real profile pages polish, living-diorama backdrops, transmog "what changed", achievements trophy hall, records leaderboard hub, result-driven poses, trading-card export, remaining polish (WebP/AVIF, skeleton states, grid rhythm, reduced-motion, persisted state, week archive) + remaining interactions (parallax, drag-to-arrange, boss-kill burst, emote reactions, ambient FX, spin-the-wheel) | ⏳ |
+| 8 | **Trophy Hall (B-07)** — guild achievements as banners, read from the backend's `guild_achievements` layer; gated on `available`, "coming soon" until a credentialed refresh runs. **First view on the web-data contract.** | ✅ shipped (against the committed sample) |
+| 8+ | **The rest** — records leaderboard hub (B-08), transmog "what changed" (B-06), real profile pages polish, living-diorama backdrops, result-driven poses, trading-card export, remaining polish (WebP/AVIF, skeleton states, grid rhythm, reduced-motion, persisted state, week archive) + remaining interactions (parallax, drag-to-arrange, boss-kill burst, emote reactions, ambient FX, spin-the-wheel) | ⏳ |
+
+## Web-data contract adoption
+
+`guild_board/site_data.py` consumes the backend's layers (`web_data/<layer>.json`,
+falling back to the committed `samples/<layer>.sample.json`), gated on
+`schema_version`. Answers to the backend's four open questions are in
+`WEB_DATA_CONTRACT_ANSWERS.md`. Adopted so far: `guild_achievements` →
+Trophy Hall. Next: `records_leaderboard` → records hub (B-08),
+`transmog_changes` → what-changed (B-06), then fold `island_completion`
+and `recap_ribbon` into the existing Voyage/ribbon.
 
 ## The four folded-in ideas — where and why
 

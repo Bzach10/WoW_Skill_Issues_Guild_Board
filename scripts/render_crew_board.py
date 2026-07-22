@@ -37,6 +37,7 @@ from guild_board import profiles as profiles_mod  # noqa: E402
 from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
+from guild_board import site_data as site_data_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
 from guild_board import html_board  # noqa: E402
 
@@ -392,6 +393,9 @@ def main():
         "scene": scene,
         "manga": manga,
         "cameo": cameo,
+        # B-07: the trophy hall reads the backend's guild_achievements layer
+        # (committed sample until a credentialed refresh runs)
+        "trophies": site_data_mod.layer("guild_achievements"),
         "cast_drawn": len(cards),
         "cast_total": len(cards) + len(pending_cast),
         "pending_cast": pending_cast,
@@ -425,6 +429,15 @@ def main():
         env.get_template("web/pages/hall.html.j2").render(**trial_ctx),
         encoding="utf-8")
     logger.info("Wrote the grand hall to %s (%d faces)", hall_page, len(cards))
+
+    # the trophy hall (B-07): guild achievements from the web-data contract
+    trophy_page = out.parent / "trophy.html"
+    trophy_page.write_text(
+        env.get_template("web/pages/trophy.html.j2").render(**trial_ctx),
+        encoding="utf-8")
+    _tr = trial_ctx["trophies"] or {}
+    logger.info("Wrote the trophy hall to %s (available=%s, %d trophies)",
+                trophy_page, _tr.get("available"), len(_tr.get("trophies") or []))
 
     # the voyage map, rendered into the same site so the nav link resolves
     try:

@@ -21,6 +21,8 @@
          {% if nav_here == 'voyage' %}aria-current="page"{% endif %}>Voyage</a>
       <a href="{{ nav_root }}hall.html"
          {% if nav_here == 'hall' %}aria-current="page"{% endif %}>The Hall</a>
+      <a href="{{ nav_root }}trophy.html"
+         {% if nav_here == 'trophy' %}aria-current="page"{% endif %}>Trophies</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       {%- for key, t in themes.items() %}
