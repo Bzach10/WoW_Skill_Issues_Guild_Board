@@ -583,6 +583,26 @@ def main():
     if ctx["stub_note"]:
         logger.info(ctx["stub_note"])
 
+    # ---- build gate: nothing credential-shaped may reach the shipped pages.
+    # This runs AFTER the render, against the real output, because the thing
+    # being guarded is what a guild member's browser can fetch — not what the
+    # templates say. Raises rather than warns: a page that leaks is not a
+    # page worth publishing, and this project has a documented habit of
+    # letting warnings scroll past.
+    try:
+        sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+        from tests.test_no_credentials_in_output import find_violations, _format
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Credential guard could not be loaded (%s). The build "
+                       "is NOT verified clean — run "
+                       "tests/test_no_credentials_in_output.py by hand.", exc)
+    else:
+        violations = find_violations()
+        if violations:
+            raise SystemExit(_format(violations))
+        logger.info("Credential guard: clean (no credential names or "
+                    "credential-shaped values in shipped output).")
+
 
 if __name__ == "__main__":
     main()
