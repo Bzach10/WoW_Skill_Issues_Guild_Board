@@ -21,10 +21,14 @@
   <div class="wname">{{ e.name }}</div>
   <div class="wmeta">{{ [e.spec, e.cls]|select|join(' ') }}</div>
   <div class="wberry">
+    {%- if e.bounty is not none %}
     <span class="wsym">Ƀ</span>
-    <span class="wfig">{% if e.bounty is not none %}{{ '{:,}'.format(e.bounty) }}{% else %}—— UNRANKED ——{% endif %}</span>
+    <span class="wfig">{{ '{:,}'.format(e.bounty) }}</span>
+    {%- else %}
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
+    {%- endif %}
   </div>
-  <div class="wscore">{% if e.score is not none %}Mythic+ Score {{ '%.1f'|format(e.score) }}{% else %}no score on file yet{% endif %}</div>
+  <div class="wscore">{% if e.score is not none %}Mythic+ Score {{ '%.1f'|format(e.score) }}{% else %}awaiting a scored run — still one of the crew{% endif %}</div>
   {%- if e.titles or (e.delta and e.delta > 0) or (e.streak and e.streak > 1) %}
   <div class="wtags">
     {%- for t in e.titles %}<span class="wtag title">{{ t }}</span>{% endfor %}

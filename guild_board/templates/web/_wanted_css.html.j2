@@ -96,6 +96,11 @@
   background:rgba(168,54,42,.1); font-weight:700;}
 .bounty.wunranked{filter:saturate(.9);}
 .bounty.wunranked .wfig{font-size:16px; letter-spacing:.12em; color:var(--ink-soft);}
+/* a no-score crewmate is a deliberate "unconfirmed" bill, never a broken card */
+.bounty .wfig.wunconf{display:inline-block; font-family:'Special Elite',monospace;
+  font-size:13px; letter-spacing:.14em; color:var(--stamp); border:2px solid var(--stamp);
+  border-radius:3px; padding:3px 9px; transform:rotate(-3deg); opacity:.85;
+  -webkit-text-stroke:0;}
 
 /* ---------- MOST WANTED — the top 5 hero row ---------- */
 .mostwanted{margin:0 auto 34px; max-width:var(--measure);}

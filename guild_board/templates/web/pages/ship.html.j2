@@ -368,6 +368,13 @@ a{color:var(--accent);}
 .ladder-more{display:block; text-align:center; margin-top:12px; font-size:12.5px; color:var(--muted);}
 .ladder-more a{color:var(--accent);}
 .refresh-note{text-align:center; color:var(--muted); font-size:12px; margin-top:20px; font-style:italic;}
+/* the four parallel ladders — the light isn't only on the podium */
+.ladder-grid{display:grid; gap:16px; grid-template-columns:repeat(4,1fr); margin-top:22px;}
+@media (max-width:900px){.ladder-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:480px){.ladder-grid{grid-template-columns:1fr;}}
+.miniladder h3{flex-direction:column; align-items:flex-start; gap:2px;}
+.miniladder .lad{font-size:13px;}
+.lad-quiet{color:var(--muted); font-style:italic; font-size:12.5px; padding:8px 0;}
 
 {% include "web/_wanted_css.html.j2" %}
 {% include "web/_nav_css.html.j2" %}
@@ -543,6 +550,28 @@ a{color:var(--accent);}
         </div>
       </div>
     </div>
+
+    {%- if standings.ladders %}
+    <div class="ladder-grid">
+      {%- for L in standings.ladders %}
+      <div class="panel miniladder">
+        <h3>{{ L.icon }} {{ L.title }} <span class="hint">{{ L.note }}</span></h3>
+        {%- for r in L.rows %}
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">{{ loop.index }}</span>
+          <span class="nm"><b>{{ r.name }}</b></span>
+          <span class="vl">
+            {%- if L.unit == 'delta' %}<span style="color:#57e08a;">▲{{ '%.1f'|format(r.delta) }}</span>
+            {%- elif L.unit == 'streak' %}{{ r.streak }}w
+            {%- else %}{{ '%.0f'|format(r.score) }}{% endif %}</span>
+        </div>
+        {%- else %}
+        <div class="lad-quiet">Quiet week — nobody yet.</div>
+        {%- endfor %}
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
 
     {%- if not standings.has_web_stats %}
     <p class="refresh-note">Top parses show each role's season record. The full top-5 weekly

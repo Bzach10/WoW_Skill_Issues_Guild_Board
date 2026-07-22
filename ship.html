@@ -378,6 +378,13 @@ a{color:var(--accent);}
 .ladder-more{display:block; text-align:center; margin-top:12px; font-size:12.5px; color:var(--muted);}
 .ladder-more a{color:var(--accent);}
 .refresh-note{text-align:center; color:var(--muted); font-size:12px; margin-top:20px; font-style:italic;}
+/* the four parallel ladders — the light isn't only on the podium */
+.ladder-grid{display:grid; gap:16px; grid-template-columns:repeat(4,1fr); margin-top:22px;}
+@media (max-width:900px){.ladder-grid{grid-template-columns:repeat(2,1fr);}}
+@media (max-width:480px){.ladder-grid{grid-template-columns:1fr;}}
+.miniladder h3{flex-direction:column; align-items:flex-start; gap:2px;}
+.miniladder .lad{font-size:13px;}
+.lad-quiet{color:var(--muted); font-style:italic; font-size:12.5px; padding:8px 0;}
 
 
 .wanted{--paper:#e9d7ab; --paper-lo:#d8c08a; --paper-hi:#f3e7c4;
@@ -476,6 +483,11 @@ a{color:var(--accent);}
   background:rgba(168,54,42,.1); font-weight:700;}
 .bounty.wunranked{filter:saturate(.9);}
 .bounty.wunranked .wfig{font-size:16px; letter-spacing:.12em; color:var(--ink-soft);}
+/* a no-score crewmate is a deliberate "unconfirmed" bill, never a broken card */
+.bounty .wfig.wunconf{display:inline-block; font-family:'Special Elite',monospace;
+  font-size:13px; letter-spacing:.14em; color:var(--stamp); border:2px solid var(--stamp);
+  border-radius:3px; padding:3px 9px; transform:rotate(-3deg); opacity:.85;
+  -webkit-text-stroke:0;}
 
 /* ---------- MOST WANTED — the top 5 hero row ---------- */
 .mostwanted{margin:0 auto 34px; max-width:var(--measure);}
@@ -2617,10 +2629,9 @@ a{color:var(--accent);}
   <div class="wname">Aimme</div>
   <div class="wmeta">Devastation Evoker</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2636,10 +2647,9 @@ a{color:var(--accent);}
   <div class="wname">Balcmeg</div>
   <div class="wmeta">Arms Warrior</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="tank"
          data-score="-1"
@@ -2655,10 +2665,9 @@ a{color:var(--accent);}
   <div class="wname">Botso</div>
   <div class="wmeta">Brewmaster Monk</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="healer"
          data-score="-1"
@@ -2674,10 +2683,9 @@ a{color:var(--accent);}
   <div class="wname">Bwonsombro</div>
   <div class="wmeta">Holy Priest</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2693,10 +2701,9 @@ a{color:var(--accent);}
   <div class="wname">Deckler</div>
   <div class="wmeta">Retribution Paladin</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="unknown"
          data-score="-1"
@@ -2712,10 +2719,9 @@ a{color:var(--accent);}
   <div class="wname">Fleshripper</div>
   <div class="wmeta">Devourer Demon Hunter</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2731,10 +2737,9 @@ a{color:var(--accent);}
   <div class="wname">Gnomelyfans</div>
   <div class="wmeta">Frost Mage</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2750,10 +2755,9 @@ a{color:var(--accent);}
   <div class="wname">Gregus</div>
   <div class="wmeta">Retribution Paladin</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2769,10 +2773,9 @@ a{color:var(--accent);}
   <div class="wname">Iamdapopemon</div>
   <div class="wmeta">Shadow Priest</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2788,10 +2791,9 @@ a{color:var(--accent);}
   <div class="wname">Imshaman</div>
   <div class="wmeta">Elemental Shaman</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2807,10 +2809,9 @@ a{color:var(--accent);}
   <div class="wname">Kibli</div>
   <div class="wmeta">Unholy Death Knight</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2826,10 +2827,9 @@ a{color:var(--accent);}
   <div class="wname">Kreleran</div>
   <div class="wmeta">Unholy Death Knight</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2845,10 +2845,9 @@ a{color:var(--accent);}
   <div class="wname">Lebock</div>
   <div class="wmeta">Frost Mage</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2864,10 +2863,9 @@ a{color:var(--accent);}
   <div class="wname">Obstorm</div>
   <div class="wmeta">Retribution Paladin</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="tank"
          data-score="-1"
@@ -2883,10 +2881,9 @@ a{color:var(--accent);}
   <div class="wname">Omikogo</div>
   <div class="wmeta">Blood Death Knight</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2902,10 +2899,9 @@ a{color:var(--accent);}
   <div class="wname">Onesubstance</div>
   <div class="wmeta">Enhancement Shaman</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="tank"
          data-score="-1"
@@ -2921,10 +2917,9 @@ a{color:var(--accent);}
   <div class="wname">Orx</div>
   <div class="wmeta">Protection Warrior</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="healer"
          data-score="-1"
@@ -2940,10 +2935,9 @@ a{color:var(--accent);}
   <div class="wname">Oynax</div>
   <div class="wmeta">Holy Priest</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="healer"
          data-score="-1"
@@ -2959,10 +2953,9 @@ a{color:var(--accent);}
   <div class="wname">Phyrthepali</div>
   <div class="wmeta">Holy Paladin</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
   <div class="wtags"><span class="wtag title">Kept Us Alive · 96</span>
   </div>
 </article><article class="bounty wunranked"
@@ -2980,10 +2973,9 @@ a{color:var(--accent);}
   <div class="wname">Ragedx</div>
   <div class="wmeta">Beast Mastery Hunter</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -2999,10 +2991,9 @@ a{color:var(--accent);}
   <div class="wname">Rougex</div>
   <div class="wmeta">Outlaw Rogue</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="unknown"
          data-score="-1"
@@ -3018,10 +3009,9 @@ a{color:var(--accent);}
   <div class="wname">Shadowbelle</div>
   <div class="wmeta">Devourer Demon Hunter</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="healer"
          data-score="-1"
@@ -3037,10 +3027,9 @@ a{color:var(--accent);}
   <div class="wname">Shamanmates</div>
   <div class="wmeta">Restoration Shaman</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3056,10 +3045,9 @@ a{color:var(--accent);}
   <div class="wname">Shamnos</div>
   <div class="wmeta">Elemental Shaman</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3075,10 +3063,9 @@ a{color:var(--accent);}
   <div class="wname">Shaollynn</div>
   <div class="wmeta">Retribution Paladin</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3094,10 +3081,9 @@ a{color:var(--accent);}
   <div class="wname">Sômbrá</div>
   <div class="wmeta">Subtlety Rogue</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="tank"
          data-score="-1"
@@ -3113,10 +3099,9 @@ a{color:var(--accent);}
   <div class="wname">Tankmates</div>
   <div class="wmeta">Guardian Druid</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3132,10 +3117,9 @@ a{color:var(--accent);}
   <div class="wname">Tarvos</div>
   <div class="wmeta">Unholy Death Knight</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3151,10 +3135,9 @@ a{color:var(--accent);}
   <div class="wname">Thunderbloom</div>
   <div class="wmeta">Marksmanship Hunter</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3170,10 +3153,9 @@ a{color:var(--accent);}
   <div class="wname">Tommybravoox</div>
   <div class="wmeta">Demonology Warlock</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3189,10 +3171,9 @@ a{color:var(--accent);}
   <div class="wname">Tommybravoxx</div>
   <div class="wmeta">Subtlety Rogue</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="tank"
          data-score="-1"
@@ -3208,10 +3189,9 @@ a{color:var(--accent);}
   <div class="wname">Trollimon</div>
   <div class="wmeta">Guardian Druid</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="dps"
          data-score="-1"
@@ -3227,10 +3207,9 @@ a{color:var(--accent);}
   <div class="wname">Târheel</div>
   <div class="wmeta">Retribution Paladin</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="unknown"
          data-score="-1"
@@ -3246,10 +3225,9 @@ a{color:var(--accent);}
   <div class="wname">Waifumllkers</div>
   <div class="wmeta">Devourer Demon Hunter</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article><article class="bounty wunranked"
          data-role="healer"
          data-score="-1"
@@ -3265,10 +3243,9 @@ a{color:var(--accent);}
   <div class="wname">Wolfx</div>
   <div class="wmeta">Restoration Shaman</div>
   <div class="wberry">
-    <span class="wsym">Ƀ</span>
-    <span class="wfig">—— UNRANKED ——</span>
+    <span class="wfig wunconf">BOUNTY UNCONFIRMED</span>
   </div>
-  <div class="wscore">no score on file yet</div>
+  <div class="wscore">awaiting a scored run — still one of the crew</div>
 </article>
     </div>
     <p class="wall-empty" id="wallempty">No bounties match. They've slipped the net.</p>
@@ -3405,6 +3382,100 @@ a{color:var(--accent);}
               <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top tank parses</div><div style="color:var(--muted);font-size:12px;">—</div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="ladder-grid">
+      <div class="panel miniladder">
+        <h3>💰 Top Bounty <span class="hint">highest Mythic+ scores</span></h3>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">1</span>
+          <span class="nm"><b>Amrevenge</b></span>
+          <span class="vl">3908</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">2</span>
+          <span class="nm"><b>Shadoxii</b></span>
+          <span class="vl">3692</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">3</span>
+          <span class="nm"><b>Tommybravoo</b></span>
+          <span class="vl">3686</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">4</span>
+          <span class="nm"><b>Brewzleeh</b></span>
+          <span class="vl">3686</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">5</span>
+          <span class="nm"><b>Rakdisc</b></span>
+          <span class="vl">3529</span>
+        </div>
+      </div>
+      <div class="panel miniladder">
+        <h3>📈 Biggest Risers <span class="hint">climbed most this week</span></h3>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">1</span>
+          <span class="nm"><b>Tommybravoo</b></span>
+          <span class="vl"><span style="color:#57e08a;">▲18.6</span></span>
+        </div>
+      </div>
+      <div class="panel miniladder">
+        <h3>⚓ Iron Attendance <span class="hint">most weeks on deck</span></h3>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">1</span>
+          <span class="nm"><b>Buchalter</b></span>
+          <span class="vl">6w</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">2</span>
+          <span class="nm"><b>Healmates</b></span>
+          <span class="vl">3w</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">3</span>
+          <span class="nm"><b>Tommybravoo</b></span>
+          <span class="vl">2w</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">4</span>
+          <span class="nm"><b>Healyeah</b></span>
+          <span class="vl">2w</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">5</span>
+          <span class="nm"><b>Boondocka</b></span>
+          <span class="vl">2w</span>
+        </div>
+      </div>
+      <div class="panel miniladder">
+        <h3>🌊 New Blood <span class="hint">earning their stripes</span></h3>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">1</span>
+          <span class="nm"><b>Fluffy</b></span>
+          <span class="vl">349</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">2</span>
+          <span class="nm"><b>Padremort</b></span>
+          <span class="vl">225</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">3</span>
+          <span class="nm"><b>Unholyx</b></span>
+          <span class="vl">168</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">4</span>
+          <span class="nm"><b>Sandgs</b></span>
+          <span class="vl">167</span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">5</span>
+          <span class="nm"><b>Xavira</b></span>
+          <span class="vl">159</span>
         </div>
       </div>
     </div>

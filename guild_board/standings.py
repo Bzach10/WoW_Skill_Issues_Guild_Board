@@ -110,6 +110,34 @@ def _parses(board_state, web_stats):
     }
 
 
+def parallel_ladders(season_ladder):
+    """Four boards so the light isn't only on the top five parsers — the
+    elite, the climbers, the ever-present, and the new blood. Between them
+    they rank a big slice of the roster, not just the podium."""
+    scored = [r for r in season_ladder if r.get("score") is not None]
+    risers = sorted((r for r in scored if r.get("delta") and r["delta"] > 0),
+                    key=lambda r: -r["delta"])[:5]
+    attendance = sorted((r for r in scored if (r.get("streak") or 0) >= 2),
+                        key=lambda r: (-(r["streak"]), r["rank"]))[:5]
+    # "New blood" = the lowest scored who are still on the board — the
+    # opposite end from Top Bounty, so a different five get their name up.
+    rookies = list(reversed(sorted(scored, key=lambda r: r["score"])[:5]))
+    return [
+        {"key": "bounty", "icon": "💰", "title": "Top Bounty",
+         "note": "highest Mythic+ scores", "unit": "score",
+         "rows": scored[:5]},
+        {"key": "riser", "icon": "📈", "title": "Biggest Risers",
+         "note": "climbed most this week", "unit": "delta",
+         "rows": risers},
+        {"key": "iron", "icon": "⚓", "title": "Iron Attendance",
+         "note": "most weeks on deck", "unit": "streak",
+         "rows": attendance},
+        {"key": "rookie", "icon": "🌊", "title": "New Blood",
+         "note": "earning their stripes", "unit": "score",
+         "rows": rookies},
+    ]
+
+
 def build(board_state, voyage_data=None, web_stats=None, cfg=None):
     bs = board_state or {}
     ladder = _season_ladder(bs)
@@ -128,5 +156,6 @@ def build(board_state, voyage_data=None, web_stats=None, cfg=None):
         "records": records,
         "biggest_climb": biggest_climb,
         "iron_attendance": iron,
+        "ladders": parallel_ladders(ladder),
         "has_web_stats": bool(web_stats),
     }
