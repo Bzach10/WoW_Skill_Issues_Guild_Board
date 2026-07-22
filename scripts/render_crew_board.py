@@ -30,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
+from guild_board import featured as featured_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
 from guild_board import manga as manga_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
@@ -363,6 +364,14 @@ def main():
     if manga:
         logger.info("Manga strip: %d panels", len(manga["panels"]))
 
+    # ARC-09: cameo debt. Read the accumulated featured feed if it has
+    # landed, degrade to this week's spotlight otherwise, and emit this
+    # week's spotlight for the weekly job to fold into the history.
+    cameo = featured_mod.cameo_debt(ctx["crew"], board_state, cfg)
+    featured_mod.emit_week(board_state, cfg)
+    logger.info("Cameo debt: feed=%s, %d never featured of %d",
+                cameo["have_feed"], cameo["never_count"], cameo["cast_size"])
+
     from guild_board import admin_config
     panel = admin_config.current_settings(cfg)
 
@@ -382,6 +391,7 @@ def main():
     trial_ctx.update({
         "scene": scene,
         "manga": manga,
+        "cameo": cameo,
         "cast_drawn": len(cards),
         "cast_total": len(cards) + len(pending_cast),
         "pending_cast": pending_cast,

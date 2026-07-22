@@ -18,7 +18,7 @@ below at their sensible points, not appended.
 | 4 | **Clickable voyage islands** — click an island → its dungeon/raid data + completion state (X-05). Folds in the backend's island-completion feed. | ✅ shipped (badge + live detail; feed still parked) |
 | 5 | **Unlock-the-Cast meter (ENG-10)** — generated-vs-remaining progress; un-generated members as wanted-poster silhouettes. Makes the rollout itself content. Sits well beside the hero wall / roster. | ✅ shipped (in The Hall) |
 | 6 | **Weekly 2-panel manga strip (ANIM-08)** — scene stills + speech bubbles + real recap events. Reuses existing scene stills; consumes the backend recap feed (same source as the ribbon). | ✅ shipped (board top) |
-| 7 | **Cameo-Debt Tracker (ARC-09)** — track which characters have/haven't been featured; bias future casting toward never-featured members. **Casting logic — coordinate a `featured_history` data shape with the backend/creative session.** | ⏳ needs backend feed |
+| 7 | **Cameo-Debt Tracker (ARC-09)** — track which characters have/haven't been featured; bias future casting toward never-featured members. | ✅ frontend half shipped — emits `featured_this_week.json`, reads `featured_history.json` when it lands, degrades to the week's spotlight until then. Backend must accumulate the weekly emits into the history feed; casting session consumes it. |
 | 8+ | **The rest** — real profile pages polish, living-diorama backdrops, transmog "what changed", achievements trophy hall, records leaderboard hub, result-driven poses, trading-card export, remaining polish (WebP/AVIF, skeleton states, grid rhythm, reduced-motion, persisted state, week archive) + remaining interactions (parallax, drag-to-arrange, boss-kill burst, emote reactions, ambient FX, spin-the-wheel) | ⏳ |
 
 ## The four folded-in ideas — where and why
@@ -41,7 +41,13 @@ below at their sensible points, not appended.
 Built against contracts so features light up when feeds land:
 - `recap.json` — recap ribbon (live now), later the manga strip
 - island-completion feed — clickable islands (milestone 4)
-- `featured_history` — cameo-debt casting (milestone 7)
+- `featured_history.json` — cameo-debt casting (milestone 7). The frontend
+  now *emits* `featured_this_week.json` each render (the members the recap
+  and roast put on camera); the backend's weekly job should fold those into
+  a running `featured_history.json` (`{members: {slug: {features, last_featured,
+  where[]}}}`), which the Hall reads back for the cameo-debt view and the
+  casting session reads to bias toward never-featured members. Both emitted
+  and feed files are gitignored — they are data, not source.
 
 Until a feed lands, each feature degrades to the live Raider.io / board
 data already on disk.

@@ -155,7 +155,48 @@ a{color:var(--accent);}
 @media (prefers-reduced-motion:reduce){
   .face{animation:none; opacity:1; transform:none;}
   .face img{transition:none;}
+  .unlock-fill{animation:none;}
 }
+
+/* ---------- ARC-09: cameo debt ---------- */
+.cameo{max-width:var(--measure); margin:14px auto 0; padding:26px 22px 8px;}
+.cameo h2{font-family:var(--font-display); font-size:clamp(24px,4vw,34px);
+  color:var(--heading); text-align:center;}
+.cameo-lede{max-width:60ch; margin:10px auto 22px; text-align:center;
+  color:var(--muted); font-size:14px;}
+.cameo-cols{display:grid; grid-template-columns:1fr 1.4fr; gap:26px;
+  align-items:start;}
+@media (max-width:760px){.cameo-cols{grid-template-columns:1fr;}}
+.cameo-col h3{font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:12px; display:flex; align-items:center; gap:8px;}
+.cbadge{font-family:var(--font-display); font-size:15px; color:var(--accent);
+  letter-spacing:0;}
+.cameo-list{list-style:none; display:flex; flex-direction:column; gap:7px;}
+.cameo-list li{display:flex; align-items:center; gap:9px; font-size:14px;
+  padding:8px 12px; border-radius:10px; border:1px solid var(--line);
+  background:var(--panel);}
+.cameo-list b{color:var(--text); font-weight:600;}
+.cameo-list .cn{margin-left:auto; font-variant-numeric:tabular-nums;
+  color:var(--accent); font-weight:700;}
+.cdot{width:9px; height:9px; border-radius:50%; flex:0 0 auto;
+  box-shadow:0 0 0 2px color-mix(in srgb,var(--bg) 70%, transparent);}
+.cdot[data-role="tank"],.cchip[data-role="tank"]::before{background:var(--tank);}
+.cdot[data-role="healer"],.cchip[data-role="healer"]::before{background:var(--healer);}
+.cdot[data-role="dps"],.cchip[data-role="dps"]::before{background:var(--dps);}
+.cameo-chips{display:flex; flex-wrap:wrap; gap:8px;}
+.cameo-chips.spot{justify-content:center;}
+.cchip{position:relative; display:inline-flex; align-items:center; gap:7px;
+  font-size:13px; padding:7px 12px 7px 11px; border-radius:999px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text);}
+.cchip::before{content:""; width:7px; height:7px; border-radius:50%;
+  background:var(--muted); flex:0 0 auto;}
+.cchip.more{color:var(--muted); font-style:italic;}
+.cchip.more::before{display:none;}
+.cchip.lit{border-color:color-mix(in srgb,var(--accent) 55%, var(--line));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 30%, transparent);
+  padding:9px 14px;}
+.cchip .crole{font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted);}
 
 .sitenav{position:sticky; top:0; z-index:50; backdrop-filter:blur(10px);
   background:color-mix(in srgb, var(--bg) 90%, transparent);
@@ -1304,6 +1345,22 @@ a{color:var(--accent);}
     <span class="who"><b>Phyrthepali</b><span>awaiting summons</span></span>
   </div>
 </main>
+
+<section class="cameo" aria-label="Cameo debt">
+  <h2>Cameo Debt</h2>
+  <p class="cameo-lede">This week's spotlight — the members the board put on
+    camera in the recap and the strip. Full cameo history activates once the
+    weekly feed starts accumulating, and never-featured members surface here
+    to bias future casting toward them.</p>
+  <div class="cameo-chips spot">
+    <span class="cchip lit" data-role="dps">Amrevenge
+      <span class="crole">DPS</span></span>
+    <span class="cchip lit" data-role="healer">Healmates
+      <span class="crole">Healer</span></span>
+    <span class="cchip lit" data-role="healer">Phyrthepali
+      <span class="crole">Healer</span></span>
+  </div>
+</section>
 
 <footer class="foot">
   Skill Issues · a private test run · the hall grows as the cast is drawn
