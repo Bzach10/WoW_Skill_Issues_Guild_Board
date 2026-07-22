@@ -12,7 +12,11 @@ WCL-derived parse ladders when a data refresh has produced it.
 Nothing here is hand-kept; a daily refresh carries straight through.
 """
 
+import logging
+
 from .showcase import slugify
+
+logger = logging.getLogger(__name__)
 
 
 def _title(name):
@@ -84,19 +88,67 @@ def _raid(voyage_data, cfg=None):
     }
 
 
-def _parses(board_state, web_stats):
+def _roster_names(roster):
+    """The set of real character names, from roster_cache's `name-realm`
+    keys. Returns None when no roster was supplied, which disables the
+    membership check entirely (callers that cannot supply one keep the
+    old behaviour)."""
+    if not roster:
+        return None
+    names = set()
+    for entry in roster:
+        if not isinstance(entry, str):
+            entry = (entry or {}).get("name") or ""
+        # `name-realm` — realm slugs carry the hyphens, names do not
+        name = entry.split("-")[0].strip().lower()
+        if name:
+            names.add(name)
+    return names or None
+
+
+def _parses(board_state, web_stats, roster=None):
     """Top parse ladders. Full top-5 come from the pipeline's web_stats
     (WCL) when present; otherwise the season's record holder anchors each,
-    so the field is never blank."""
+    so the field is never blank.
+
+    A parse holder who is not in the roster is **logged, never dropped.**
+
+    An earlier revision of this function silently suppressed such rows, on
+    the theory that an off-roster name must be fabricated. That was wrong
+    and it cost a real person their record: Phyrthepali is a real Holy
+    Paladin in Skill Issues on Bleeding Hollow with a genuine 96 on
+    Imperator Averzian (Warcraft Logs, 2026-07-19, 166,925.6 HPS), and he
+    is simply **missing from `competition.json`'s roster pull.** Absence
+    from a derived roster is evidence that the roster is incomplete, not
+    that the person does not exist — and suppressing the row turns a
+    fixable data gap into a member's achievement quietly disappearing off
+    the front page, which is the worse failure.
+
+    So: surface the mismatch to whoever runs the build, and render the row.
+    """
     records = (board_state or {}).get("records") or {}
     ws = web_stats or {}
+    known = _roster_names(roster)
+
+    def check(name):
+        """Log an off-roster parse holder. Never changes what is rendered."""
+        if known is None or not name:
+            return
+        if str(name).split("-")[0].strip().lower() not in known:
+            logger.warning(
+                "Parse holder %r is not in the roster cache — the roster pull "
+                "is probably stale or incomplete. Rendering the row anyway; "
+                "refresh the roster rather than dropping the record.", name)
 
     def ladder(key, record_key, label):
         rows = ws.get(key) or []
         if rows:
+            for r in rows[:5]:
+                check(r.get("name"))
             return {"rows": rows[:5], "source": "wcl", "label": label}
         rec = records.get(record_key) or {}
         if rec.get("parse"):
+            check(rec.get("name"))
             return {"rows": [{
                 "name": _title(rec.get("name")), "value": rec["parse"],
                 "detail": " · ".join(b for b in (rec.get("boss"), rec.get("spec")) if b),
@@ -138,7 +190,7 @@ def parallel_ladders(season_ladder):
     ]
 
 
-def build(board_state, voyage_data=None, web_stats=None, cfg=None):
+def build(board_state, voyage_data=None, web_stats=None, cfg=None, roster=None):
     bs = board_state or {}
     ladder = _season_ladder(bs)
     climbers = [r for r in ladder if r["delta"]]
@@ -152,7 +204,7 @@ def build(board_state, voyage_data=None, web_stats=None, cfg=None):
         "season_count": len(ladder),
         "dungeon_keys": _dungeon_keys(voyage_data),
         "raid": _raid(voyage_data, cfg),
-        "parses": _parses(bs, web_stats),
+        "parses": _parses(bs, web_stats, roster),
         "records": records,
         "biggest_climb": biggest_climb,
         "iron_attendance": iron,

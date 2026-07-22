@@ -398,7 +398,8 @@ def main():
     # produced it) web_stats.json for the WCL parse ladders.
     voyage_data = _load_json("voyage_data.json", {})
     web_stats = _load_json("web_stats.json", None)
-    standings_data = standings_mod.build(board_state, voyage_data, web_stats, cfg)
+    standings_data = standings_mod.build(board_state, voyage_data, web_stats, cfg,
+                                         roster=roster)
 
     ship_data = {
         "crows_nest": ship_mod.crows_nest(ctx.get("islands"), board_state, theme),
