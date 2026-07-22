@@ -39,3 +39,6 @@ crew_board_doll.html
 # test fixtures. Un-ignore those explicitly; they are real inputs.
 !cast/**/board.png
 !tests/fixtures/**/board.png
+
+# Generated website data bundle (build with scripts/build_site_data.py)
+web_data/

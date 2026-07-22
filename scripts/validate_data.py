@@ -163,8 +163,53 @@ def check_profiles(cfg, report):
                          f"will skip this character")
         if not profile.get("transmog_render_url"):
             report.warn("profiles", f"{key}: no transmog_render_url")
+
+    _check_equipment(characters, report)
     report.ok(f"{len(characters)} profiles (updated {last_updated})")
     return characters
+
+
+def _check_equipment(characters, report):
+    """Is per-slot gear actually flowing? This is the art pipeline's gate:
+    without it, generation falls back to a hardcoded generic kit.
+
+    Also catches a response-shape mismatch. If Blizzard's /equipment payload
+    ever differs from what _equipped_item_summary expects, every field comes
+    back None rather than raising — slots present but no appearance ids is
+    the signature of exactly that, and it is worth an error rather than a
+    silent regression to generic art.
+    """
+    with_equipment = [k for k, p in characters.items() if p.get("equipment")]
+    without = [k for k, p in characters.items() if not p.get("equipment")]
+
+    if not with_equipment:
+        report.warn("equipment",
+                    f"no character has per-slot equipment — art will fall back "
+                    f"to a generic kit. Re-run refresh_blizzard_profiles.py "
+                    f"with a build that includes the /equipment fetch.")
+        return
+
+    if without:
+        report.warn("equipment",
+                    f"{len(without)} of {len(characters)} profiles have no "
+                    f"equipment: {', '.join(sorted(without)[:5])}"
+                    f"{' ...' if len(without) > 5 else ''}")
+
+    shape_broken = []
+    for key in with_equipment:
+        slots = characters[key]["equipment"]
+        if not any(s.get("appearance_item_id") for s in slots):
+            shape_broken.append(key)
+    if shape_broken:
+        report.error("equipment",
+                     f"{len(shape_broken)} profile(s) have equipment slots but no "
+                     f"appearance_item_id on any of them — the /equipment response "
+                     f"shape likely changed: {', '.join(sorted(shape_broken)[:5])}")
+
+    weights = [characters[k].get("armor_weight") for k in with_equipment]
+    known = [w for w in weights if w]
+    report.ok(f"equipment on {len(with_equipment)}/{len(characters)} profiles; "
+              f"armor_weight resolved for {len(known)}")
 
 
 def check_fingerprint_drift(manifest, report):

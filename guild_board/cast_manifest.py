@@ -98,6 +98,15 @@ def add_character(manifest, slug, profile, transmog_fingerprint=None):
         "role": profile.get("role", ""),
         "transmog_fingerprint": transmog_fingerprint or "",
         "render_url": profile.get("transmog_render_url", ""),
+        # Per-slot gear from Blizzard's /equipment endpoint. The art
+        # pipeline reads this to map real gear onto layers; without it it
+        # falls back to a generic kit. Empty list for profiles fetched
+        # before the equipment call existed, or when gear was unreadable —
+        # so consumers must treat [] as "unknown", not "wearing nothing".
+        "equipment": profile.get("equipment") or [],
+        # "Cloth"/"Leather"/"Mail"/"Plate", derived from the core armour
+        # slots. Selects the art pipeline's kit family. None if unknown.
+        "armor_weight": profile.get("armor_weight"),
         "styles": {},
         "history": [],
     }
