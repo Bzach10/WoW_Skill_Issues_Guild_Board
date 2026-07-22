@@ -24,7 +24,7 @@
 .themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
 
 /* the return affordance — a full-width bar, impossible to miss */
-.backbar{position:sticky; top:53px; z-index:45; display:block;
+.backbar{position:sticky; top:var(--nav-h, 53px); z-index:45; display:block;
   padding:11px 22px; text-align:left; font-size:13.5px; font-weight:600;
   text-decoration:none; color:var(--text);
   background:color-mix(in srgb, var(--accent) 16%, var(--bg));

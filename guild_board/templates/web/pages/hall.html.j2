@@ -29,6 +29,7 @@ html[data-crew-theme="{{ key }}"]{
 {%- endfor %}
 :root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b; --measure:1180px;}
 *{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
 body{background:var(--bg); color:var(--text); font-family:var(--font-body);
   font-size:16px; line-height:1.6; overflow-x:hidden;
   -webkit-font-smoothing:antialiased;}
@@ -46,7 +47,8 @@ a{color:var(--accent);}
   z-index:2;}
 .hallhead .kicker{font-size:12px; letter-spacing:.26em; text-transform:uppercase;
   color:var(--muted); margin-bottom:14px;}
-.hallhead .kicker b{color:var(--accent);}
+.hallhead .kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading));
+  font-weight:800;}
 .hallhead h1{font-family:var(--font-display); font-weight:900; line-height:.92;
   font-size:clamp(38px,9vw,92px); color:var(--heading);
   text-shadow:0 6px 40px color-mix(in srgb,var(--bg) 70%, transparent);}
@@ -100,15 +102,16 @@ a{color:var(--accent);}
 .face[data-role="tank"] .pip{background:var(--tank);}
 .face[data-role="healer"] .pip{background:var(--healer);}
 .face[data-role="dps"] .pip{background:var(--dps);}
-/* the name rides in from the bottom on hover / focus */
+/* A dim nameplate is shown AT REST — never hover-only, which is invisible
+   on touch — over the scrim, and brightens on hover / focus. */
 .face .who{position:absolute; left:0; right:0; bottom:0; z-index:3;
-  padding:20px 9px 8px; text-align:center; pointer-events:none;
-  transform:translateY(6px); opacity:0; transition:transform .3s, opacity .3s;}
+  padding:22px 9px 8px; text-align:center; pointer-events:none;
+  opacity:.9; transition:opacity .3s;}
 .face .who b{display:block; font-size:12px; line-height:1.2; color:#fff;
-  text-shadow:0 1px 6px rgba(0,0,0,.8);}
+  text-shadow:0 1px 6px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.6);}
 .face .who span{font-size:10px; letter-spacing:.08em; text-transform:uppercase;
-  color:color-mix(in srgb,#fff 78%, var(--accent));
-  text-shadow:0 1px 6px rgba(0,0,0,.8);}
+  color:color-mix(in srgb,#fff 82%, var(--accent));
+  text-shadow:0 1px 6px rgba(0,0,0,.85), 0 0 2px rgba(0,0,0,.6);}
 .face:hover,.face:focus-visible{transform:translateY(-4px) scale(1.04); z-index:5;
   border-color:var(--accent);
   box-shadow:0 18px 40px -18px rgba(0,0,0,.8),
@@ -116,7 +119,11 @@ a{color:var(--accent);}
   outline:none;}
 .face:hover img,.face:focus-visible img{transform:scale(1.08);}
 .face:hover::after,.face:focus-visible::after{opacity:.35;}
-.face:hover .who,.face:focus-visible .who{transform:none; opacity:1;}
+.face:hover .who,.face:focus-visible .who{opacity:1;}
+/* on hover the scrim lightens to reveal art, so keep a soft nameplate wash
+   behind the text for contrast */
+.face:hover .who,.face:focus-visible .who{
+  background:linear-gradient(transparent, color-mix(in srgb,var(--bg) 30%, transparent));}
 
 /* a gentle wash of role colour across the whole wall, so it reads as a
    composed hall rather than a contact sheet */

@@ -29,6 +29,7 @@ html[data-crew-theme="{{ key }}"]{
 {%- endfor %}
 :root{--dungeon:#4fc9a2; --raid:#d06a8a; --measure:1180px;}
 *{box-sizing:border-box;margin:0;padding:0;}
+html{overflow-x:hidden;}
 body{background:var(--bg); color:var(--text); font-family:var(--font-body);
   font-size:16px; line-height:1.6; overflow-x:hidden;
   -webkit-font-smoothing:antialiased;}
@@ -45,7 +46,8 @@ a{color:var(--accent);}
 .mast{text-align:center; padding:44px 0 18px;}
 .kicker{font-size:12px; letter-spacing:.24em; text-transform:uppercase;
   color:var(--muted); margin-bottom:14px;}
-.kicker b{color:var(--accent);}
+.kicker b{color:color-mix(in srgb, var(--accent) 66%, var(--heading));
+  font-weight:800;}
 .mast h1{font-family:var(--font-display); font-weight:900; line-height:.95;
   font-size:clamp(34px,7vw,68px); color:var(--heading);}
 .rule{width:min(400px,72%); height:3px; margin:20px auto 16px; border-radius:2px;

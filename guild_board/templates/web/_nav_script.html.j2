@@ -27,5 +27,19 @@
     var saved = localStorage.getItem('crewTheme');
     if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
   } catch(e){}
+
+  // Publish the real nav height so sticky bars below it (roster nav,
+  // backbar) offset correctly even when the nav wraps to two rows on a
+  // phone — a fixed 53px assumption tucked them under it.
+  var nav = document.querySelector('.sitenav');
+  if (nav){
+    var setNavH = function(){
+      doc.style.setProperty('--nav-h', Math.round(nav.getBoundingClientRect().height) + 'px');
+    };
+    setNavH();
+    window.addEventListener('resize', setNavH, {passive:true});
+    window.addEventListener('load', setNavH);
+    if ('ResizeObserver' in window) new ResizeObserver(setNavH).observe(nav);
+  }
 })();
 </script>
