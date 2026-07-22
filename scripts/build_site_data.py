@@ -24,6 +24,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from guild_board import season as season_mod  # noqa: E402
 from guild_board import web_data  # noqa: E402
+from guild_board.blizzard import load_guild_cache  # noqa: E402
 from guild_board.cast_manifest import load_manifest  # noqa: E402
 from guild_board.config import load_config, load_roster_cache, split_name_realm  # noqa: E402
 
@@ -111,8 +112,21 @@ def main(argv=None):
 
     board_state = _load_json(os.path.join(REPO_ROOT, "board_state.json"), {})
     manifest = load_manifest()
-    guild_ach = _load_json(os.path.join(args.out, "guild_achievements_raw.json"), None)
     snapshot = _load_json(os.path.join(args.out, "transmog_snapshot.json"), None)
+
+    # Guild achievements come from the committed blizzard_guild_cache.json,
+    # written by the cloud Action (scripts/refresh_guild_data.py). This is
+    # what flips layer 3 from pending -> available and layer 4 from inferred
+    # -> guild_achievements. Absent until the credentialed Action has run;
+    # both layers degrade cleanly to their documented empty/inferred shapes.
+    guild_cache, guild_updated = load_guild_cache(cfg)
+    guild_ach = guild_cache.get("achievements")
+    if guild_ach:
+        print(f"Using committed guild achievements (updated {guild_updated}).")
+    else:
+        print("No committed guild achievements yet — layer 3 pending, "
+              "layer 4 inferred. Run scripts/refresh_guild_data.py in the "
+              "credentialed Action to populate.")
 
     dungeon_cache = os.path.join(args.out, "dungeon_bests.json")
     if args.live_dungeons:
@@ -150,6 +164,10 @@ def main(argv=None):
     print(f"  ladder rows     : {site['records_leaderboard']['ladder_size']}")
     print(f"  achievements    : {'available' if site['guild_achievements']['available'] else site['guild_achievements']['status']}")
     print(f"  dungeon islands : {site['island_completion']['dungeons']['conquered']}/{site['island_completion']['dungeons']['total']} conquered")
+    raid = site["island_completion"]["raid"]
+    n_confirmed = sum(1 for b in raid["islands"] if b["kill_confirmed"])
+    print(f"  raid islands    : {n_confirmed} confirmed / {raid['bosses_killed']} killed "
+          f"(source: {raid['detail_source']})")
     print(f"  transmog changes: {site['transmog_changes']['changed_count']}"
           f"{' (first run — baseline seeded)' if site['transmog_changes']['is_first_run'] else ''}")
     return 0

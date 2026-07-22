@@ -237,6 +237,74 @@ def fetch_roster_profiles(token, region, roster):
 
 
 # ---------------------------------------------------------------------------
+# Guild-level data — achievements (trophy hall + per-boss raid kills) and
+# activity. Same client_credentials token as the profile fetch; these live
+# under /data/wow/guild/ but still require the profile-{region} namespace
+# (a documented source of 403s if you send dynamic-/static- instead).
+# ---------------------------------------------------------------------------
+
+def _guild_slug(guild_name):
+    """'Skill Issues' -> 'skill-issues'. Reuses the same slug rule the rest
+    of the pipeline uses for realm/server names."""
+    from guild_board.config import slugify_server
+    return slugify_server(guild_name)
+
+
+def fetch_guild_achievements(token, region, realm_slug, guild_name):
+    """Raw guild-achievements payload, or None.
+
+    /data/wow/guild/{realm}/{guild-slug}/achievements — the trophy hall
+    (layer 3) and the authoritative per-boss raid-kill source (layer 4):
+    each boss-kill achievement carries a completed_timestamp. Fails soft to
+    None so a missing guild or a creds/namespace problem cannot abort the
+    refresh.
+    """
+    guild = _guild_slug(guild_name)
+    if not guild:
+        return None
+    params = {"namespace": f"profile-{(region or 'us').lower()}", "locale": DEFAULT_LOCALE}
+    path = f"/data/wow/guild/{realm_slug}/{guild}/achievements"
+    try:
+        return _get(token, region, path, params)
+    except requests.RequestException:
+        logger.warning("Blizzard guild-achievements fetch failed for %s-%s",
+                       guild, realm_slug, exc_info=True)
+        return None
+
+
+def fetch_guild_activity(token, region, realm_slug, guild_name):
+    """Raw guild-activity payload, or None.
+
+    /data/wow/guild/{realm}/{guild-slug}/activity — recent guild events
+    (member joins, high-level dungeon/raid encounters). NOTE: Blizzard
+    returns these timestamps in local realm time, not UTC (a documented
+    quirk), unlike achievement timestamps — do not correlate the two on
+    time without accounting for that.
+    """
+    guild = _guild_slug(guild_name)
+    if not guild:
+        return None
+    params = {"namespace": f"profile-{(region or 'us').lower()}", "locale": DEFAULT_LOCALE}
+    path = f"/data/wow/guild/{realm_slug}/{guild}/activity"
+    try:
+        return _get(token, region, path, params)
+    except requests.RequestException:
+        logger.warning("Blizzard guild-activity fetch failed for %s-%s",
+                       guild, realm_slug, exc_info=True)
+        return None
+
+
+def fetch_guild_data(token, region, realm_slug, guild_name):
+    """Both guild-level payloads in one dict, for the guild cache. Either
+    value may be None; the caller decides whether that is worth persisting.
+    """
+    return {
+        "achievements": fetch_guild_achievements(token, region, realm_slug, guild_name),
+        "activity": fetch_guild_activity(token, region, realm_slug, guild_name),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Profile cache — same load/save/freshness shape as config.py's roster cache.
 # ---------------------------------------------------------------------------
 
@@ -312,3 +380,91 @@ def refresh_profile_cache(cfg, roster, max_age_days=7):
     merged.update(fetched)
     save_profile_cache(cfg, merged)
     return merged, True
+
+
+# ---------------------------------------------------------------------------
+# Guild cache — the guild-level payloads (achievements + activity), stored
+# separately from the per-character profile cache so each refresh path is
+# independent and neither blocks the other.
+# ---------------------------------------------------------------------------
+
+def get_guild_cache_path(cfg):
+    blizzard_cfg = (cfg or {}).get("blizzard", {})
+    return blizzard_cfg.get("guild_cache_file", "blizzard_guild_cache.json")
+
+
+def load_guild_cache(cfg):
+    """Returns (guild_data_dict, last_updated). guild_data_dict has
+    'achievements' and 'activity' keys (either may be None). Fails open to
+    ({}, None) so the site builder still runs without this file."""
+    path = get_guild_cache_path(cfg)
+    try:
+        with open(path, encoding="utf-8") as f:
+            data = json.load(f)
+        return {"achievements": data.get("achievements"),
+                "activity": data.get("activity")}, data.get("last_updated")
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}, None
+
+
+def save_guild_cache(cfg, guild_data):
+    path = get_guild_cache_path(cfg)
+    data = {
+        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "achievements": guild_data.get("achievements"),
+        "activity": guild_data.get("activity"),
+    }
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, sort_keys=True)
+    return path
+
+
+def refresh_guild_cache(cfg, max_age_days=7):
+    """Fetch the guild achievements + activity into the on-disk guild cache.
+
+    Same two gates as refresh_profile_cache (blizzard.enabled + both env
+    secrets), so it is a true no-op until deliberately turned on. Keeps the
+    existing cache on any failure rather than blanking the trophy hall.
+
+    Returns (guild_data_dict, changed_bool).
+    """
+    cached, last_updated = load_guild_cache(cfg)
+
+    blizzard_cfg = (cfg or {}).get("blizzard", {})
+    if not blizzard_cfg.get("enabled", False):
+        logger.info("blizzard.enabled is false in config.yml; skipping guild refresh.")
+        return cached, False
+
+    client_id = os.environ.get("BLIZZARD_CLIENT_ID", "").strip()
+    client_secret = os.environ.get("BLIZZARD_CLIENT_SECRET", "").strip()
+    if not client_id or not client_secret:
+        logger.info("BLIZZARD_CLIENT_ID/BLIZZARD_CLIENT_SECRET not set; skipping guild refresh.")
+        return cached, False
+
+    if last_updated and cached.get("achievements"):
+        try:
+            age = datetime.now(timezone.utc) - datetime.fromisoformat(last_updated)
+            if age < timedelta(days=max_age_days):
+                return cached, False
+        except ValueError:
+            pass
+
+    guild = (cfg or {}).get("guild") or {}
+    region = guild.get("region", "us")
+    realm_slug = guild.get("realm_slug", "")
+    guild_name = guild.get("name", "")
+    try:
+        token = get_blizzard_token(client_id, client_secret)
+        fetched = fetch_guild_data(token, region, realm_slug, guild_name)
+    except Exception:
+        logger.warning("Blizzard guild refresh failed; keeping existing cache.", exc_info=True)
+        return cached, False
+
+    # Only persist if we actually got something, so a transient empty
+    # response can't wipe a good cache.
+    if not fetched.get("achievements") and not fetched.get("activity"):
+        logger.warning("Guild refresh returned no achievements or activity; keeping existing cache.")
+        return cached, False
+
+    save_guild_cache(cfg, fetched)
+    return fetched, True

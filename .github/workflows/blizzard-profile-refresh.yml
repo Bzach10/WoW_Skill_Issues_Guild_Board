@@ -1,0 +1,99 @@
+name: Blizzard Profile Refresh
+
+# Separate from Weekly Guild Board on purpose: this is a pure data refresh
+# with no GPU/rendering step, so it can run unattended on GitHub's runners.
+# It reads the roster_cache.json already committed by the weekly board run
+# and never touches board rendering or the Discord post.
+#
+# Two independent refreshes run here, each gated + fail-soft on its own:
+#   1. per-character profiles (gender/race/class/spec + transmog render URL
+#      + per-slot equipment)  -> blizzard_profile_cache.json
+#   2. guild-level data (achievements + activity)
+#      -> blizzard_guild_cache.json
+# The guild cache is what populates the site's trophy hall (layer 3) and the
+# authoritative per-boss raid-island completion (layer 4).
+#
+# No-ops cleanly until BOTH of these exist:
+#   1. blizzard.enabled: true in config.yml
+#   2. the BLIZZARD_CLIENT_ID / BLIZZARD_CLIENT_SECRET repo secrets
+# See SETUP_BLIZZARD.md for the one-time setup.
+
+on:
+  schedule:
+    # 15 minutes after the weekly board's Tuesday 13:00 UTC run, so this
+    # picks up that run's freshly-updated roster_cache.json.
+    - cron: "15 13 * * 2"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force refresh even if the caches are still fresh"
+        type: boolean
+        required: false
+
+jobs:
+  refresh-blizzard-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Refresh Blizzard profile cache (profiles + equipment)
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
+        run: |
+          args=()
+          if [ "${{ github.event.inputs.force }}" == "true" ]; then
+            args+=(--force)
+          fi
+          python scripts/refresh_blizzard_profiles.py "${args[@]}"
+
+      - name: Refresh Blizzard guild cache (achievements + activity)
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
+        run: |
+          args=()
+          if [ "${{ github.event.inputs.force }}" == "true" ]; then
+            args+=(--force)
+          fi
+          python scripts/refresh_guild_data.py "${args[@]}"
+
+      - name: Rebuild the site data bundle (layers 3 & 4 now fill)
+        # --live-dungeons does the Raider.io roster sweep so layer 4's dungeon
+        # islands populate too (public API, no creds); guild achievements
+        # (committed above) drive the raid side.
+        run: python scripts/build_site_data.py --live-dungeons --out web_data_public
+
+      - name: Commit refreshed Blizzard data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          # The two caches are the credentialed source data; the rebuilt
+          # bundle under web_data_public/ is what the site serves.
+          git add blizzard_profile_cache.json blizzard_guild_cache.json web_data_public
+          if git diff --cached --quiet; then
+            echo "No Blizzard data changes to commit."
+          else
+            git commit -m "Update Blizzard profile + guild data [skip ci]"
+            if git pull --rebase origin ${{ github.ref_name }}; then
+              git push
+            else
+              git checkout --ours blizzard_profile_cache.json blizzard_guild_cache.json
+              git add blizzard_profile_cache.json blizzard_guild_cache.json web_data_public
+              git rebase --continue
+              git push
+            fi
+          fi

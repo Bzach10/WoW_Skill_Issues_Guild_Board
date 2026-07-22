@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T01:22:58.984462+00:00",
+  "generated_at": "2026-07-22T02:37:32.599581+00:00",
   "season_slug": "season-mn-1",
   "season_name": "Midnight Season 1",
   "dungeons": {
@@ -108,16 +108,18 @@
         "order": 1,
         "status": "conquered",
         "kill_confirmed": true,
-        "inferred_from_progress": false
+        "inferred_from_progress": false,
+        "first_kill_at": "2026-03-03T01:06:40+00:00"
       },
       {
         "id": "vorasius",
         "name": "Vorasius",
         "kind": "raid_boss",
         "order": 2,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true
+        "inferred_from_progress": false,
+        "first_kill_at": null
       },
       {
         "id": "fallenking-salhadaar",
@@ -125,26 +127,29 @@
         "kind": "raid_boss",
         "order": 3,
         "status": "conquered",
-        "kill_confirmed": false,
-        "inferred_from_progress": true
+        "kill_confirmed": true,
+        "inferred_from_progress": false,
+        "first_kill_at": "2026-03-22T17:20:00+00:00"
       },
       {
         "id": "vaelgor-ezzorak",
         "name": "Vaelgor & Ezzorak",
         "kind": "raid_boss",
         "order": 4,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true
+        "inferred_from_progress": false,
+        "first_kill_at": null
       },
       {
         "id": "lightblinded-vanguard",
         "name": "Lightblinded Vanguard",
         "kind": "raid_boss",
         "order": 5,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true
+        "inferred_from_progress": false,
+        "first_kill_at": null
       },
       {
         "id": "crown-of-the-cosmos",
@@ -153,7 +158,8 @@
         "order": 6,
         "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": false
+        "inferred_from_progress": false,
+        "first_kill_at": null
       },
       {
         "id": "chimaerus-the-undreamt-god",
@@ -162,7 +168,8 @@
         "order": 7,
         "status": "conquered",
         "kill_confirmed": true,
-        "inferred_from_progress": false
+        "inferred_from_progress": false,
+        "first_kill_at": null
       },
       {
         "id": "beloren-child-of-alar",
@@ -171,7 +178,8 @@
         "order": 8,
         "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": false
+        "inferred_from_progress": false,
+        "first_kill_at": null
       },
       {
         "id": "midnight-falls",
@@ -180,10 +188,11 @@
         "order": 9,
         "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": false
+        "inferred_from_progress": false,
+        "first_kill_at": null
       }
     ],
-    "detail_source": "raid_progression_count"
+    "detail_source": "guild_achievements"
   },
   "_sample": true
 }

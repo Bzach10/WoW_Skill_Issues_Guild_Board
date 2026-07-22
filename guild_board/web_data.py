@@ -324,8 +324,44 @@ def _achievement_criteria(criteria):
 # 4. Island completion
 # ---------------------------------------------------------------------------
 
+def extract_raid_boss_kills(achievements, season=None):
+    """Map a season's raid bosses to their earliest kill date, from the
+    guild-achievements payload.
+
+    Blizzard names boss-kill achievements after the boss ("Ahead of the
+    Curve: <boss>", "<boss>", etc.), so a boss is confirmed killed when its
+    display name appears in any completed achievement title. Returns
+    {boss_name: first_kill_iso_or_None}. Only bosses actually found are
+    included — an empty result means the payload had no matching titles,
+    which the caller treats as "fall back to the inferred count".
+    """
+    season = season or season_mod.CURRENT_SEASON
+    kills = {}
+    entries = (achievements or {}).get("achievements") or []
+    for boss in season["raid"]["bosses"]:
+        name = boss["name"]
+        earliest = None
+        for entry in entries:
+            title = ((entry.get("achievement") or {}).get("name") or "")
+            if name.lower() in title.lower():
+                iso = _ms_to_iso(entry.get("completed_timestamp"))
+                if iso and (earliest is None or iso < earliest):
+                    earliest = iso
+                elif earliest is None:
+                    earliest = iso or earliest
+        if earliest is not None or _boss_title_present(name, entries):
+            kills[name] = earliest
+    return kills
+
+
+def _boss_title_present(boss_name, entries):
+    return any(boss_name.lower() in ((e.get("achievement") or {}).get("name") or "").lower()
+               for e in entries)
+
+
 def build_island_completion(dungeon_bests=None, raid_progression=None,
-                            board_records=None, season=None):
+                            board_records=None, season=None,
+                            confirmed_boss_kills=None):
     """Per-island conquered/timed status for the Voyage Map.
 
     dungeon_bests: {dungeon_name: {"level": int, "timed": bool,
@@ -338,17 +374,23 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
                      "mythic_bosses_killed": 3, ...}}.
     board_records: board_state["records"], used to attribute specific
                     raid-boss records to their island where we have them.
+    confirmed_boss_kills: {boss_name: first_kill_iso_or_None} from the
+                    guild-achievements API (see extract_raid_boss_kills).
+                    When present, these are AUTHORITATIVE per-boss kills —
+                    every listed boss is kill_confirmed with a first_kill_at,
+                    detail_source becomes "guild_achievements", and the
+                    pull-order inference is only used to fill gaps.
 
     A dungeon island is "conquered" when someone timed it, "attempted" when
-    run but not timed, "locked" when untouched. Per-boss raid conquest needs
-    the guild-achievements API (see build_guild_achievements); until that is
-    wired, raid bosses report the tier's aggregate kill count and only the
-    specific bosses present in board_records are marked individually.
+    run but not timed, "locked" when untouched. Raid bosses are confirmed
+    from guild achievements when available, and otherwise inferred from the
+    tier's aggregate kill count by pull order (flagged as such).
     """
     season = season or season_mod.CURRENT_SEASON
     dungeon_bests = dungeon_bests or {}
     raid_progression = raid_progression or {}
     board_records = board_records or {}
+    confirmed_boss_kills = confirmed_boss_kills or {}
 
     islands = []
     conquered = 0
@@ -382,22 +424,28 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
     }
     record_bosses.discard(None)
 
+    # Guild achievements, when present, are the authoritative per-boss source.
+    have_achievements = bool(confirmed_boss_kills)
+    detail_source = "guild_achievements" if have_achievements else "raid_progression_count"
+
     boss_islands = []
     for boss in raid["bosses"]:
-        # We know the tier's kill COUNT but not exactly which bosses unless
-        # they appear in board_records. Mark the first `highest_killed` by
-        # pull order as beaten (kill order tracks pull order closely), and
-        # additionally confirm any boss we have a record for.
-        by_order = boss["order"] <= highest_killed
-        confirmed = boss["name"] in record_bosses
+        name = boss["name"]
+        # Confirmed if guild achievements name the kill, or we hold a record
+        # for that specific boss.
+        confirmed = name in confirmed_boss_kills or name in record_bosses
+        # Inference (pull order vs kill count) only fills gaps, and only when
+        # we don't have the authoritative achievement list.
+        by_order = (not have_achievements) and boss["order"] <= highest_killed
         boss_islands.append({
             "id": boss["slug"],
-            "name": boss["name"],
+            "name": name,
             "kind": "raid_boss",
             "order": boss["order"],
-            "status": "conquered" if (by_order or confirmed) else "locked",
+            "status": "conquered" if (confirmed or by_order) else "locked",
             "kill_confirmed": confirmed,
             "inferred_from_progress": by_order and not confirmed,
+            "first_kill_at": confirmed_boss_kills.get(name),
         })
 
     return {
@@ -425,10 +473,10 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
             },
             "total_bosses": len(raid["bosses"]),
             "islands": boss_islands,
-            # Honest about provenance: per-boss detail is inferred from a
-            # kill count unless kill_confirmed. Guild achievements upgrade
-            # this to exact per-boss kills + first-kill dates.
-            "detail_source": "raid_progression_count",
+            # Provenance: "guild_achievements" = authoritative per-boss kills
+            # with first_kill_at dates; "raid_progression_count" = per-boss
+            # status inferred from the aggregate kill count by pull order.
+            "detail_source": detail_source,
         },
     }
 
@@ -501,6 +549,9 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
     """
     season = season or season_mod.CURRENT_SEASON
     transmog = build_transmog_changes(manifest, snapshot=transmog_snapshot)
+    # Guild achievements feed BOTH layer 3 (trophy hall) and layer 4 (the
+    # authoritative per-boss raid kills), so extract the boss kills once here.
+    confirmed_boss_kills = extract_raid_boss_kills(guild_achievements, season=season)
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
@@ -512,6 +563,7 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
         "guild_achievements": build_guild_achievements(guild_achievements, season=season),
         "island_completion": build_island_completion(
             dungeon_bests, raid_progression,
-            (board_state or {}).get("records"), season=season),
+            (board_state or {}).get("records"), season=season,
+            confirmed_boss_kills=confirmed_boss_kills),
         "transmog_changes": transmog,
     }

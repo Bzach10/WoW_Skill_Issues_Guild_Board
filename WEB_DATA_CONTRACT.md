@@ -34,6 +34,21 @@ in all three states (`conquered` / `attempted` / `locked`), confirmed vs
 inferred raid bosses, and a real transmog change. A guard test keeps it in
 lockstep with the producers, so it can't silently go stale.
 
+### Where the LIVE bundle lives
+
+Three locations, clearly separated:
+
+| Path | Tracked? | What it is |
+|------|----------|------------|
+| `samples/*.sample.json` | committed | Dev fixtures — build against these now. |
+| `web_data_public/*.json` | committed by the Action | **The live served bundle.** Populated in the cloud. |
+| `web_data/*.json` | gitignored | Local `build_site_data.py` scratch output. |
+
+The **cloud path** (`web_data_public/`) is produced by the Blizzard Refresh
+GitHub Action, which holds the credentials — no local secret handling. It
+runs weekly (and on demand) and commits the refreshed bundle. Point the
+production site at `web_data_public/`; use `samples/` until it first fills.
+
 ---
 
 ## 1. `recap_ribbon` — story-of-the-week
@@ -95,10 +110,14 @@ notability.
 
 ## 3. `guild_achievements` — Midnight trophy hall
 
-⚠️ **Currently degraded — `available: false`.** The Blizzard guild
-achievements API needs `BLIZZARD_CLIENT_ID/SECRET`, absent in the current
-environment. The shape is stable so you can build the trophy hall now; it
-fills in when a credentialed refresh runs.
+**Fills automatically from the cloud.** The Blizzard Refresh Action now runs
+`scripts/refresh_guild_data.py` (it holds the repo secrets), which fetches
+`/data/wow/guild/{realm}/{name}/achievements` and commits
+`blizzard_guild_cache.json`; `build_site_data.py` reads it and this layer
+flips to `available: true`. Until that Action's first credentialed run it
+stays `available: false` — the shape is identical either way, so build the
+trophy hall now and it populates without a code change. **No local secret
+handling is required.**
 
 ```json
 // pending state (today):
@@ -145,7 +164,8 @@ per-boss raid detail is partly inferred until guild achievements are wired.
     "islands": [
       {"id": "imperator-averzian", "name": "Imperator Averzian",
        "kind": "raid_boss", "order": 1, "status": "conquered",
-       "kill_confirmed": true, "inferred_from_progress": false}
+       "kill_confirmed": true, "inferred_from_progress": false,
+       "first_kill_at": "2026-03-03T01:06:40+00:00"}
     ]
   }
 }
@@ -153,14 +173,21 @@ per-boss raid detail is partly inferred until guild achievements are wired.
 
 - Dungeon `status` ∈ `conquered` (timed), `attempted` (run, not timed),
   `locked` (untouched).
-- **Raid honesty flags:** `kill_confirmed` = we have a specific record for
-  that boss. `inferred_from_progress` = within the kill count by pull order
-  but not individually confirmed. When guild achievements land,
-  `detail_source` becomes `guild_achievements` and every boss is confirmed
-  with a first-kill date. **If you show a "conquered" boss that is only
-  inferred, consider a subtler treatment than a confirmed one.**
-- `--live-dungeons` must be passed to the builder for real dungeon data;
-  without it dungeons read `locked` (no cached bests).
+- **`raid.detail_source`** tells you how to trust the per-boss data:
+  - `guild_achievements` — authoritative. Every `kill_confirmed: true` boss
+    has a real `first_kill_at`; anything not in the achievement list is
+    `locked`. This is what the cloud Action produces.
+  - `raid_progression_count` — fallback before the Action has run. Bosses
+    within the kill count are `inferred_from_progress: true` (pull-order
+    guess, `first_kill_at: null`).
+- **Raid honesty flags:** `kill_confirmed` = a real, dated kill.
+  `inferred_from_progress` = a pull-order guess from the aggregate count.
+  **If you show an inferred boss as "conquered", give it a subtler
+  treatment than a confirmed one** — and it can flip to `locked` once the
+  authoritative achievement data arrives.
+- The cloud Action passes `--live-dungeons`, so the served bundle has real
+  dungeon data. A local build needs `--live-dungeons` too, else dungeons
+  read `locked` (no cached bests).
 
 ## 5. `transmog_changes` — "what changed this week"
 
