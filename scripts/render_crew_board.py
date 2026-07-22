@@ -32,6 +32,7 @@ import jinja2  # noqa: E402
 from guild_board import crew as crew_mod  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
+from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
@@ -338,9 +339,17 @@ def main():
         scene = dict(scene, hero=staged["src"], backdrop=staged["cutout"])
         logger.info("Scene for %s: %s", scene["month_name"], scene["title"])
 
+    recap = recap_mod.generate(board_state, cfg)
+    if recap["sentences"]:
+        logger.info("Recap (%s): %d beats", recap["source"], len(recap["sentences"]))
+
     trial_ctx = dict(ctx)
     trial_ctx.update({
         "scene": scene,
+        "recap": recap,
+        # a compact facet index for the filters + find-my-character
+        "facets": sorted({f for m in ctx["crew"] for f in (
+            m.get("cls"), m.get("spec"), m.get("role")) if f}),
         "year_plan": scenery_mod.year_plan(cfg),
         "cards": cards,
         "trial_status": ("%d characters drawn so far · %d still in the queue"
