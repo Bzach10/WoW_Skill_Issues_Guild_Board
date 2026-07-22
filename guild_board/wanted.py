@@ -9,7 +9,23 @@ Pure function of `board_state.json` + the crew, so a daily data refresh
 just re-runs it — no hand-maintained numbers anywhere.
 """
 
+from pathlib import Path
+
 from .showcase import slugify
+
+
+# The art pipeline bakes a finished 900×1350 WebP bounty poster per slug
+# (gold "MOST WANTED" for the top 5, standard, or "BOUNTY UNCONFIRMED" for
+# the scoreless). When present we ship the baked bill instead of the live
+# CSS card — it's the version Zach approved. Bundled at bounty/<slug>.webp.
+BOUNTY_DIR = Path("bounty")
+
+
+def baked_poster(slug):
+    """The bundled path to a slug's baked poster, or None if not baked."""
+    if slug and (BOUNTY_DIR / f"{slug}.webp").exists():
+        return f"bounty/{slug}.webp"
+    return None
 
 
 # A bounty poster reads better with a round, weighty figure. The real M+
@@ -77,6 +93,7 @@ def board(crew, board_state, cfg=None):
             "art": src,
             "pending": not src,
             "titles": titles.get(slug, []),
+            "baked": baked_poster(slug),
         })
 
     scored = sorted((e for e in entries if e["score"] is not None),

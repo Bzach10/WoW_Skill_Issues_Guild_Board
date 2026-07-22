@@ -20,7 +20,18 @@
   margin:0 auto 8px; font-size:14px;}
 .wanted-lede b{color:var(--accent);}
 
-/* ---------- the poster ---------- */
+/* ---------- baked poster (the art pipeline's finished bill) ---------- */
+.bounty-baked{display:block; text-decoration:none; border-radius:6px;
+  overflow:hidden; box-shadow:0 14px 34px -18px rgba(0,0,0,.7);
+  transition:transform .25s, box-shadow .25s; background:#d8c08a;}
+.bounty-baked img{display:block; width:100%; height:auto;}
+.bounty-baked:hover,.bounty-baked:focus-visible{transform:translateY(-4px) rotate(-.4deg);
+  box-shadow:0 24px 48px -20px rgba(0,0,0,.8); outline:none;}
+.bounty-baked:focus-visible{box-shadow:0 0 0 3px var(--accent), 0 24px 48px -20px rgba(0,0,0,.8);}
+.bounty-baked[hidden]{display:none;}
+.mw-row .bounty-baked:nth-child(1){transform:scale(1.05);}
+
+/* ---------- the poster (live CSS fallback) ---------- */
 .bounty{position:relative; color:var(--ink); text-align:center;
   font-family:'Special Elite','Courier New',monospace;
   background:

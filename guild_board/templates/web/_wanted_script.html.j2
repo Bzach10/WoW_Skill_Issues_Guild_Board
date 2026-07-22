@@ -7,7 +7,7 @@
   if (!board) return;
   var grid = document.getElementById('bountygrid');
   var empty = document.getElementById('wallempty');
-  var posters = Array.prototype.slice.call(grid.querySelectorAll('.bounty'));
+  var posters = Array.prototype.slice.call(grid.querySelectorAll('.bounty, .bounty-baked'));
   var sortBtns = board.querySelectorAll('.wanted-controls [data-sort]');
   var roleBtns = board.querySelectorAll('.wanted-controls [data-role]');
   var search = document.getElementById('wsearch');

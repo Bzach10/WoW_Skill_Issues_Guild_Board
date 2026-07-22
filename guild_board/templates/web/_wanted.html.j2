@@ -1,6 +1,21 @@
 {# The Wanted Board markup. Expects `wanted` = guild_board.wanted.board(...).
    Renders the top-5 hero row and the full ranked, sortable wall. #}
 {%- macro poster(e) -%}
+{%- if e.baked -%}
+{# the art pipeline's finished bounty bill — ships as-is #}
+<a class="bounty-baked{{ ' wunranked' if e.rank is none }}"
+   {% if e.profile_href %}href="{{ e.profile_href }}"{% endif %}
+   data-role="{{ e.role or '' }}"
+   data-score="{{ e.score if e.score is not none else -1 }}"
+   data-delta="{{ e.delta if e.delta is not none else -9999 }}"
+   data-streak="{{ e.streak or 0 }}"
+   data-name="{{ (e.name or '')|lower }}"
+   data-search="{{ [e.name, e.cls, e.spec, e.role_label]|select|join(' ')|lower }}"
+   aria-label="WANTED: {{ e.name }}{% if e.score is not none %} — bounty {{ '%.0f'|format(e.score) }}{% endif %}">
+  <img src="{{ e.baked }}" width="900" height="1350" loading="lazy" decoding="async"
+       alt="WANTED poster — {{ e.name }}{% if e.score is not none %}, Mythic+ {{ '%.1f'|format(e.score) }}{% else %}, bounty unconfirmed{% endif %}">
+</a>
+{%- else -%}
 <article class="bounty{{ ' wunranked' if e.rank is none }}"
          data-role="{{ e.role or '' }}"
          data-score="{{ e.score if e.score is not none else -1 }}"
@@ -37,6 +52,7 @@
   </div>
   {%- endif %}
 </article>
+{%- endif -%}
 {%- endmacro -%}
 
 <div class="wanted" id="wantedboard">
