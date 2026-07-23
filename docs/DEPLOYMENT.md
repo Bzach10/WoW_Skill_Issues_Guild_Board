@@ -66,14 +66,26 @@ keeps prior ones live. **Verified 2026-07-22:** the production alias
 URL printed by that same `wrangler pages deploy` run returned the full site, unauthenticated —
 same content, zero gate.
 
-**Fix:** Cloudflare Pages projects have a separate, project-wide toggle — **Workers & Pages →
-`skill-issues-board` → Settings → the "require Access for all `*.pages.dev` URLs" option** —
-that covers preview/deployment aliases too, distinct from the single-hostname Access
-application above. **Status of that toggle as of this writing: unverified — Zach was in the
-process of enabling it.** Do not assume it's on. Re-run §5 against a fresh preview URL (the one
-printed by your most recent `wrangler pages deploy`) before telling anyone this is private,
-every single time you deploy — a new deployment can mint a new unprotected URL even after the
-toggle is fixed once, if the toggle doesn't retroactively apply the way it's expected to.
+**Fix, confirmed against Cloudflare's own docs 2026-07-22:** Workers & Pages → `skill-issues-board`
+→ **Settings → General → "Enable access policy."** This is a dashboard-only toggle — it isn't
+exposed by `wrangler pages project` (which only has `list` / `create` / `delete`), and it isn't a
+Pages-API field either: under the hood it's a Cloudflare Access application, which needs Access/
+Zero Trust API scope. The Wrangler OAuth token this project uses for deploys does **not** have
+that scope (confirmed by inspecting `wrangler whoami`'s permission list), and repurposing that
+token for a raw API call it wasn't scoped for is not something an agent session should do
+unprompted — this one's a human-in-the-dashboard action, same category as `wrangler login`.
+
+**Cloudflare's own documented limitation, worth knowing before you rely on this:** "Enable access
+policy" protects `<hash>.skill-issues-board.pages.dev` deployment URLs — it does **not** extend to
+the `*.pages.dev` domain generally. Our case doesn't hit that gap (the production alias is already
+covered by the separate hostname-scoped Access application in this doc), but if a *branch* alias
+domain is ever added, re-check Cloudflare's "Known issues" page for preview deployments before
+assuming it's covered.
+
+**Status of the toggle as of this writing: still Zach's to click.** Do not assume it's on. Re-run
+§5 against a fresh preview URL (the one printed by your most recent `wrangler pages deploy`)
+before telling anyone this is private, every single time you deploy — a new deployment can mint a
+new unprotected URL even after the toggle is fixed once, if it doesn't retroactively apply.
 **This whole paragraph is the single most important thing in this document.**
 
 ## 3. Redeploying after a rebuild
