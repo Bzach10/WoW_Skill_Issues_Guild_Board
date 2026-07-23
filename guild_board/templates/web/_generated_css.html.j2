@@ -1,0 +1,29 @@
+{#
+  Generated-data marker — shared CSS for the `**value**` convention
+  (docs/DATA_INTEGRITY.md #4.1a, decided by Zach 2026-07-23).
+
+  Any fake/generated/inferred/sample value that is shown must be visually
+  flagged. `.generated` is that flag: real data around it stays plain,
+  the wrapped span reads as "not confirmed" at a glance (dashed outline +
+  accent color + a small superscript marker, not just bold — bold alone
+  is too easy to mistake for ordinary emphasis).
+#}
+<style>
+.generated{
+  position:relative;
+  color:var(--accent);
+  border-bottom:1px dashed var(--accent);
+  cursor:help;
+}
+.generated::after{
+  content:"generated";
+  position:absolute; left:50%; bottom:100%; transform:translateX(-50%);
+  margin-bottom:6px;
+  font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:700; font-family:var(--font-body);
+  color:var(--bg); background:var(--accent);
+  padding:3px 7px; border-radius:5px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity .12s;
+}
+.generated:hover::after, .generated:focus-visible::after{opacity:1;}
+</style>

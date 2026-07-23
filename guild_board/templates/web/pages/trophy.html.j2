@@ -92,6 +92,8 @@ a{color:var(--accent);}
   color:var(--muted); font-size:13px;}
 {% include "web/_nav_css.html.j2" %}
 </style>
+{% include "web/_generated_css.html.j2" %}
+{% from "web/_generated.html.j2" import generated %}
 </head>
 <body>
 <div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
@@ -103,7 +105,11 @@ a{color:var(--accent);}
   <div class="kicker">{{ guild_name }} · <b>Midnight, in silver and gold</b></div>
   <h1>The Trophy Hall</h1>
   {%- if trophies and trophies.available and trophies.total_points %}
-  <div class="points"><b>{{ "{:,}".format(trophies.total_points) }}</b>
+  <div class="points"><b>{%- if trophies._from_sample -%}
+      {{ generated("{:,}".format(trophies.total_points)) }}
+    {%- else -%}
+      {{ "{:,}".format(trophies.total_points) }}
+    {%- endif -%}</b>
     <span>achievement points</span></div>
   {%- endif %}
   <div class="rule"></div>
@@ -121,8 +127,11 @@ a{color:var(--accent);}
     <div class="medal" aria-hidden="true">{{ icon }}</div>
     <div class="tinfo">
       <div class="tcat">{{ cat }}</div>
-      <h2 class="tname">{{ nm }}</h2>
-      {%- if t.completed_at %}<div class="tdate">Earned {{ t.completed_at[:10] }}</div>{% endif %}
+      <h2 class="tname">{% if trophies._from_sample %}{{ generated(nm) }}{% else %}{{ nm }}{% endif %}</h2>
+      {%- if t.completed_at %}<div class="tdate">Earned
+        {%- if trophies._from_sample %} {{ generated(t.completed_at[:10]) }}
+        {%- else %} {{ t.completed_at[:10] }}
+        {%- endif %}</div>{% endif %}
       {%- if t.criteria and t.criteria.child_count %}
       <div class="tcrit">{{ t.criteria.child_count }} criteria met</div>
       {%- endif %}
@@ -142,7 +151,13 @@ a{color:var(--accent);}
 </main>
 
 <footer class="foot">
-  {{ guild_name }} · a private test run · achievements via the guild profile API
+  {{ guild_name }} · a private test run ·
+  {%- if trophies and trophies._from_sample %}
+    achievements shown are <b>{{ generated("placeholder") }}</b>, pending a
+    credentialed refresh — nothing above is a real Blizzard achievement yet
+  {%- else %}
+    achievements via the guild profile API
+  {%- endif %}
 </footer>
 {% include "web/_nav_script.html.j2" %}
 </body>

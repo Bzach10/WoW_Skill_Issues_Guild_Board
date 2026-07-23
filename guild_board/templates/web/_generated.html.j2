@@ -1,0 +1,10 @@
+{#
+  Generated-data marker macro (docs/DATA_INTEGRITY.md #4.1a).
+
+  Usage: {{ generated("1,655") }} or {% call generated() %}...{% endcall %}
+  for markup richer than plain text. Always include _generated_css.html.j2
+  in the page's <style> once per page before using this.
+#}
+{%- macro generated(value=none) -%}
+<span class="generated">{{ value if value is not none else caller() }}</span>
+{%- endmacro -%}

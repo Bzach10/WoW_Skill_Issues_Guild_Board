@@ -74,17 +74,24 @@ def _dungeon_detail(island, run):
 
 
 def _boss_detail(island, index, killed, records):
+    # `killed` is only a per-difficulty COUNT from raid_progression, not a
+    # per-boss kill list, so "this boss is dead" is inferred from its order
+    # position (index < count) rather than confirmed for that specific boss.
+    # Per docs/DATA_INTEGRITY.md #4.1a, that inference must be visually
+    # marked as generated/inferred, not shown as plain fact.
     name = html.escape(island["name"])
     status = ("Defeated on Mythic" if index < killed.get("mythic", 0)
               else "Defeated on Heroic" if index < killed.get("heroic", 0)
               else "Defeated on Normal" if index < killed.get("normal", 0)
               else None)
+    status_html = (f'<span class="generated">{status}</span>' if status
+                   else "Not yet defeated")
     bits = [f'<span class="tag raid">Raid boss</span><h3>{name}</h3>']
     bits.append('<div class="stats">')
     bits.append(f'<div class="stat"><div class="k">Status</div>'
-                f'<div class="v" style="font-size:15px;">{status or "Not yet defeated"}</div>'
+                f'<div class="v" style="font-size:15px;">{status_html}</div>'
                 f'<div class="d">boss {index + 1} of {killed.get("total", "?")}</div></div>')
-    for key, rec in (records or {}).items():
+    for _key, rec in (records or {}).items():
         bits.append(f'<div class="stat"><div class="k">{html.escape(rec["label"])}</div>'
                     f'<div class="v">{rec.get("parse")}</div>'
                     f'<div class="d">{html.escape(str(rec.get("name") or ""))}'
