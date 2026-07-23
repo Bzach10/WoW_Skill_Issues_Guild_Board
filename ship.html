@@ -36,7 +36,15 @@ html[data-crew-theme="chronicle"]{
   color-scheme:dark;
 }
 :root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b;
-  --brass:#c9974a; --rope:#b98b52; --measure:1180px;}
+  --brass:#c9974a; --rope:#b98b52; --measure:1180px;
+  /* design tokens (docs/INTEGRATION_PLAN.md #2.1, docs/LAYOUT_REVIEW.md C4/C5) —
+     one spacing step, one type scale, routed through the nav + section rhythm
+     first (the highest-repeat patterns); not yet every declaration in this file. */
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+  --space-6:32px; --space-7:48px; --space-8:64px;
+  --fs-h2:clamp(28px,5vw,46px); --fs-h3:clamp(18px,2.6vw,24px);
+  --fs-body:16px; --fs-small:14px; --fs-micro:12px;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{overflow-x:hidden; scroll-behavior:smooth;}
 body{background:var(--bg); color:var(--text); font-family:var(--font-body);
@@ -90,29 +98,38 @@ a{color:var(--accent);}
 .manifest{position:sticky; top:0; z-index:50; background:color-mix(in srgb,var(--bg) 92%, transparent);
   backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
   box-shadow:0 6px 20px -14px rgba(0,0,0,.7);}
-.manifest-in{display:flex; align-items:center; gap:6px; overflow-x:auto;
-  max-width:1320px; margin:0 auto; padding:9px 16px; scrollbar-width:thin;}
+.manifest-in{display:flex; align-items:center; gap:var(--space-2); overflow-x:auto;
+  max-width:1320px; margin:0 auto; padding:var(--space-2) var(--space-4); scrollbar-width:thin;}
 .manifest-in::-webkit-scrollbar{height:5px;}
 .manifest-in::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
-.manifest .brand{flex:0 0 auto; display:flex; align-items:center; gap:8px;
+.manifest .brand{flex:0 0 auto; display:flex; align-items:center; gap:var(--space-2);
   font-family:var(--font-display); font-weight:700; color:var(--heading);
-  text-decoration:none; padding-right:8px; margin-right:4px;
-  border-right:1px solid var(--line); font-size:14px; white-space:nowrap;}
-.deckchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px;
-  font-size:12.5px; text-decoration:none; color:var(--muted); white-space:nowrap;
-  padding:7px 12px; border-radius:999px; transition:all .2s;}
+  text-decoration:none; padding-right:var(--space-2); margin-right:var(--space-1);
+  border-right:1px solid var(--line); font-size:var(--fs-small); white-space:nowrap;}
+.deckchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:var(--space-1);
+  font-size:var(--fs-micro); text-decoration:none; color:var(--muted); white-space:nowrap;
+  padding:var(--space-2) var(--space-3); border-radius:999px; transition:all .2s;
+  min-height:44px; align-items:center;}
 .deckchip:hover{color:var(--text); background:color-mix(in srgb,var(--line) 45%, transparent);}
 .deckchip.active{color:var(--bg); background:var(--accent);}
 .deckchip .dot{font-size:14px;}
 .deck-split{flex:0 0 auto; font-size:9px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--faint,var(--muted)); opacity:.7; padding:0 4px; white-space:nowrap;}
+  color:var(--faint,var(--muted)); opacity:.7; padding:0 var(--space-1); white-space:nowrap;}
+.mode-toggle{flex:0 0 auto; display:inline-flex; align-items:center; gap:var(--space-1);
+  margin-left:auto; padding-left:var(--space-3); border-left:1px solid var(--line);}
+.mode-toggle a{font-size:var(--fs-micro); text-decoration:none; white-space:nowrap;
+  padding:var(--space-2) var(--space-3); border-radius:999px; min-height:44px;
+  display:inline-flex; align-items:center; border:1px solid var(--line); color:var(--muted);
+  transition:all .2s;}
+.mode-toggle a[aria-current="page"]{background:var(--accent); color:var(--bg); border-color:var(--accent);}
+.mode-toggle a:not([aria-current]):hover{color:var(--text); border-color:var(--accent);}
 
 /* ---------------- a room ---------------- */
-.room{position:relative; padding:56px 0 44px; border-bottom:1px solid
+.room{position:relative; padding:var(--space-8) 0 var(--space-7); border-bottom:1px solid
   color-mix(in srgb,var(--line) 60%, transparent); scroll-margin-top:58px;}
 .room:nth-child(even of .room){background:color-mix(in srgb,var(--panel) 22%, var(--bg));}
-.room-head{text-align:center; margin-bottom:30px;}
-.porthole{width:64px; height:64px; margin:0 auto 14px; border-radius:50%;
+.room-head{text-align:center; margin-bottom:var(--space-6);}
+.porthole{width:64px; height:64px; margin:0 auto var(--space-3); border-radius:50%;
   display:grid; place-items:center; font-size:30px;
   background:radial-gradient(circle at 35% 30%,
     color-mix(in srgb,var(--accent) 26%, var(--panel)),
@@ -121,14 +138,23 @@ a{color:var(--accent);}
   box-shadow:0 0 0 6px color-mix(in srgb,var(--panel) 60%, transparent),
     inset 0 2px 10px rgba(0,0,0,.4);}
 .room h2{font-family:var(--font-display); font-weight:900; color:var(--heading);
-  font-size:clamp(28px,5vw,46px); line-height:1;}
-.room .sub{color:var(--muted); margin-top:10px; max-width:60ch; margin-inline:auto;
-  font-size:14.5px;}
+  font-size:var(--fs-h2); line-height:1;}
+.room .sub{color:var(--muted); margin-top:var(--space-3); max-width:60ch; margin-inline:auto;
+  font-size:var(--fs-small);}
 .room .sub b{color:var(--accent);}
-.deeper{display:inline-block; margin-top:18px; font-size:13px; font-weight:600;
-  text-decoration:none; padding:9px 18px; border-radius:999px;
+.deeper{display:inline-block; margin-top:var(--space-4); font-size:13px; font-weight:600;
+  text-decoration:none; padding:var(--space-2) var(--space-4); border-radius:999px;
   border:1px solid var(--line); color:var(--text); transition:all .2s;}
 .deeper:hover{border-color:var(--accent); color:var(--accent);}
+
+/* ---------------- entrance preview banner ---------------- */
+.entrance-preview{display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap;
+  justify-content:center; text-align:center; max-width:var(--measure); margin:var(--space-5) auto 0;
+  padding:var(--space-4) var(--space-5); border-radius:16px; border:1px dashed var(--accent);
+  background:color-mix(in srgb,var(--accent) 8%, var(--panel));}
+.entrance-preview p{margin:0; font-size:var(--fs-small); color:var(--text); max-width:52ch;}
+.entrance-preview b{color:var(--accent);}
+.entrance-preview a.deeper{margin-top:0; flex:0 0 auto;}
 
 .card{background:var(--panel); border:1px solid var(--line); border-radius:16px;
   padding:20px 22px;}
@@ -588,6 +614,7 @@ a{color:var(--accent);}
 
 
 <header class="figurehead">
+  <div class="art" style="background-image:url('cast/_roster/_scene_silvermoon_city/profile.jpg');"></div>
   <div class="plate">
     <div class="ensign">⚓ Skill Issues · Bleeding Hollow · she sails the Voyage Map ⚓</div>
     <h1>S.S. Wipe Fest</h1>
@@ -616,8 +643,21 @@ a{color:var(--accent);}
     <a class="deckchip" href="voyage.html"><span class="dot">🧭</span>Voyage</a>
     <a class="deckchip" href="hall.html"><span class="dot">🖼️</span>The Hall</a>
     <a class="deckchip" href="trophy.html"><span class="dot">🏆</span>Trophies</a>
+    <div class="mode-toggle" role="group" aria-label="Immersive or Clean Data view">
+      <a href="#top" aria-current="page">Immersive</a>
+      <a href="review/clean-data/" title="Fast, no-RP data view — sanctioned mobile / low-power path">Clean&nbsp;data</a>
+    </div>
   </div>
 </nav>
+
+<div class="wrap">
+  <div class="entrance-preview">
+    <p>🚧 <b>The new 3D ship entrance is in preview</b> — the living ship, top crew moving on
+      deck, click-to-board navigation. Not wired in as the front door yet (it's still on a
+      hand-picked crew list, not the live roster).</p>
+    <a class="deeper" href="review/ship-entrance/">Preview the entrance →</a>
+  </div>
+</div>
 
 <main id="top">
 
@@ -641,12 +681,12 @@ a{color:var(--accent);}
     </div>
     <div class="look">
       <div class="k">Next raid muster</div>
-      <div class="big countdown" id="raidcount">Tomorrow</div>
+      <div class="big countdown" id="raidcount">Tonight</div>
       <div class="d">Thursday · 8 PM · all hands</div>
     </div>
     <div class="look">
       <div class="k">Guild standing</div>
-      <div class="big">#6,855</div>
+      <div class="big">#6,857</div>
       <div class="d">world · realm #49 · <span class="accent">recruiting deckhands</span></div>
     </div>
   </div>
@@ -659,7 +699,7 @@ a{color:var(--accent);}
     <h2>Main Deck — The Wanted Board</h2>
     <p class="sub">The whole crew's on deck. The bounty board pinned to the mast is
       <b>the competition that started this guild</b> — every bounty is a live Mythic+ score.
-      97 ranked, top five most wanted.</p>
+      40 ranked, top five most wanted.</p>
   </div>
   <div class="wanted" id="wantedboard">
 
@@ -686,12 +726,14 @@ a{color:var(--accent);}
    
    data-role="dps"
    data-score="3753.4"
-   data-delta="85.7"
+   data-delta="67.1"
    data-streak="2"
    data-name="tommybravoo"
    data-search="tommybravoo death knight unholy dk dps"
    aria-label="WANTED: Tommybravoo — bounty 3753">
-  <img src="bounty/tommybravoo.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/tommybravoo.webp" width="900" height="1350"
+       loading="eager" fetchpriority="high" decoding="async"
        alt="WANTED poster — Tommybravoo, Mythic+ 3753.4">
 </a>
 <a class="bounty-baked"
@@ -703,7 +745,9 @@ a{color:var(--accent);}
    data-name="brewzleeh"
    data-search="brewzleeh monk brewmaster tank"
    aria-label="WANTED: Brewzleeh — bounty 3686">
-  <img src="bounty/brewzleeh.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/brewzleeh.webp" width="900" height="1350"
+       loading="eager" fetchpriority="high" decoding="async"
        alt="WANTED poster — Brewzleeh, Mythic+ 3685.8">
 </a>
 <a class="bounty-baked"
@@ -715,7 +759,9 @@ a{color:var(--accent);}
    data-name="amrevenge"
    data-search="amrevenge hunter beast mastery dps"
    aria-label="WANTED: Amrevenge — bounty 3908">
-  <img src="bounty/amrevenge.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/amrevenge.webp" width="900" height="1350"
+       loading="eager" fetchpriority="high" decoding="async"
        alt="WANTED poster — Amrevenge, Mythic+ 3908.1">
 </a>
 <a class="bounty-baked"
@@ -727,7 +773,9 @@ a{color:var(--accent);}
    data-name="shadoxii"
    data-search="shadoxii monk mistweaver healer"
    aria-label="WANTED: Shadoxii — bounty 3692">
-  <img src="bounty/shadoxii.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/shadoxii.webp" width="900" height="1350"
+       loading="eager" fetchpriority="high" decoding="async"
        alt="WANTED poster — Shadoxii, Mythic+ 3692.2">
 </a>
 <a class="bounty-baked"
@@ -739,14 +787,16 @@ a{color:var(--accent);}
    data-name="enyò"
    data-search="enyò demon hunter devourer dh dps"
    aria-label="WANTED: Enyò — bounty 3619">
-  <img src="bounty/enyo.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/enyo.webp" width="900" height="1350"
+       loading="eager" fetchpriority="high" decoding="async"
        alt="WANTED poster — Enyò, Mythic+ 3618.8">
 </a>
     </div>
   </section>
 
   <section class="bountywall" aria-label="The full crew, ranked">
-    <h3>The <b>whole crew</b>, by bounty — 133 wanted</h3>
+    <h3>The <b>whole crew</b>, by bounty — 40 wanted</h3>
     <div class="bounty-grid" id="bountygrid">
 <a class="bounty-baked"
    
@@ -757,19 +807,23 @@ a{color:var(--accent);}
    data-name="amrevenge"
    data-search="amrevenge hunter beast mastery dps"
    aria-label="WANTED: Amrevenge — bounty 3908">
-  <img src="bounty/amrevenge.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/amrevenge.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Amrevenge, Mythic+ 3908.1">
 </a>
 <a class="bounty-baked"
    
    data-role="dps"
    data-score="3753.4"
-   data-delta="85.7"
+   data-delta="67.1"
    data-streak="2"
    data-name="tommybravoo"
    data-search="tommybravoo death knight unholy dk dps"
    aria-label="WANTED: Tommybravoo — bounty 3753">
-  <img src="bounty/tommybravoo.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/tommybravoo.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Tommybravoo, Mythic+ 3753.4">
 </a>
 <a class="bounty-baked"
@@ -781,7 +835,9 @@ a{color:var(--accent);}
    data-name="shadoxii"
    data-search="shadoxii monk mistweaver healer"
    aria-label="WANTED: Shadoxii — bounty 3692">
-  <img src="bounty/shadoxii.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/shadoxii.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Shadoxii, Mythic+ 3692.2">
 </a>
 <a class="bounty-baked"
@@ -793,7 +849,9 @@ a{color:var(--accent);}
    data-name="brewzleeh"
    data-search="brewzleeh monk brewmaster tank"
    aria-label="WANTED: Brewzleeh — bounty 3686">
-  <img src="bounty/brewzleeh.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/brewzleeh.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Brewzleeh, Mythic+ 3685.8">
 </a>
 <a class="bounty-baked"
@@ -805,7 +863,9 @@ a{color:var(--accent);}
    data-name="enyò"
    data-search="enyò demon hunter devourer dh dps"
    aria-label="WANTED: Enyò — bounty 3619">
-  <img src="bounty/enyo.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/enyo.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Enyò, Mythic+ 3618.8">
 </a>
 <a class="bounty-baked"
@@ -817,7 +877,9 @@ a{color:var(--accent);}
    data-name="rakdisc"
    data-search="rakdisc priest discipline healer"
    aria-label="WANTED: Rakdisc — bounty 3529">
-  <img src="bounty/rakdisc.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/rakdisc.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Rakdisc, Mythic+ 3529.2">
 </a>
 <a class="bounty-baked"
@@ -829,7 +891,9 @@ a{color:var(--accent);}
    data-name="rhansìk"
    data-search="rhansìk hunter beast mastery dps"
    aria-label="WANTED: Rhansìk — bounty 3510">
-  <img src="bounty/rhansik.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/rhansik.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Rhansìk, Mythic+ 3509.6">
 </a>
 <a class="bounty-baked"
@@ -841,7 +905,9 @@ a{color:var(--accent);}
    data-name="floofwall"
    data-search="floofwall monk brewmaster tank"
    aria-label="WANTED: Floofwall — bounty 3484">
-  <img src="bounty/floofwall.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/floofwall.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Floofwall, Mythic+ 3484.3">
 </a>
 <a class="bounty-baked"
@@ -853,7 +919,9 @@ a{color:var(--accent);}
    data-name="ellebasi"
    data-search="ellebasi druid guardian tank"
    aria-label="WANTED: Ellebasi — bounty 3437">
-  <img src="bounty/ellebasi.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/ellebasi.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Ellebasi, Mythic+ 3436.6">
 </a>
 <a class="bounty-baked"
@@ -865,7 +933,9 @@ a{color:var(--accent);}
    data-name="tommybravox"
    data-search="tommybravox demon hunter havoc dh dps"
    aria-label="WANTED: Tommybravox — bounty 3434">
-  <img src="bounty/tommybravox.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/tommybravox.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Tommybravox, Mythic+ 3434.5">
 </a>
 <a class="bounty-baked"
@@ -877,7 +947,9 @@ a{color:var(--accent);}
    data-name="jovala"
    data-search="jovala druid guardian tank"
    aria-label="WANTED: Jovala — bounty 3428">
-  <img src="bounty/jovala.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/jovala.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Jovala, Mythic+ 3428.0">
 </a>
 <a class="bounty-baked"
@@ -889,7 +961,9 @@ a{color:var(--accent);}
    data-name="hellful"
    data-search="hellful shaman elemental dps"
    aria-label="WANTED: Hellful — bounty 3419">
-  <img src="bounty/hellful.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/hellful.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Hellful, Mythic+ 3418.7">
 </a>
 <a class="bounty-baked"
@@ -901,7 +975,9 @@ a{color:var(--accent);}
    data-name="kegsmashroll"
    data-search="kegsmashroll monk brewmaster tank"
    aria-label="WANTED: Kegsmashroll — bounty 3414">
-  <img src="bounty/kegsmashroll.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/kegsmashroll.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Kegsmashroll, Mythic+ 3414.3">
 </a>
 <a class="bounty-baked"
@@ -913,7 +989,9 @@ a{color:var(--accent);}
    data-name="onessarain"
    data-search="onessarain shaman restoration healer"
    aria-label="WANTED: Onessarain — bounty 3414">
-  <img src="bounty/onessarain.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/onessarain.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Onessarain, Mythic+ 3414.3">
 </a>
 <a class="bounty-baked"
@@ -925,7 +1003,9 @@ a{color:var(--accent);}
    data-name="healmates"
    data-search="healmates priest holy healer"
    aria-label="WANTED: Healmates — bounty 3362">
-  <img src="bounty/healmates.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/healmates.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Healmates, Mythic+ 3362.0">
 </a>
 <a class="bounty-baked"
@@ -937,7 +1017,9 @@ a{color:var(--accent);}
    data-name="flogeron"
    data-search="flogeron warrior fury dps"
    aria-label="WANTED: Flogeron — bounty 3356">
-  <img src="bounty/flogeron.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/flogeron.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Flogeron, Mythic+ 3355.6">
 </a>
 <a class="bounty-baked"
@@ -949,7 +1031,9 @@ a{color:var(--accent);}
    data-name="shadoxi"
    data-search="shadoxi druid balance dps"
    aria-label="WANTED: Shadoxi — bounty 3334">
-  <img src="bounty/shadoxi.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/shadoxi.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Shadoxi, Mythic+ 3333.5">
 </a>
 <a class="bounty-baked"
@@ -961,7 +1045,9 @@ a{color:var(--accent);}
    data-name="healyeah"
    data-search="healyeah evoker preservation healer"
    aria-label="WANTED: Healyeah — bounty 3278">
-  <img src="bounty/healyeah.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/healyeah.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Healyeah, Mythic+ 3277.9">
 </a>
 <a class="bounty-baked"
@@ -973,7 +1059,9 @@ a{color:var(--accent);}
    data-name="impkiller"
    data-search="impkiller warlock demonology dps"
    aria-label="WANTED: Impkiller — bounty 3268">
-  <img src="bounty/impkiller.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/impkiller.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Impkiller, Mythic+ 3268.3">
 </a>
 <a class="bounty-baked"
@@ -985,7 +1073,9 @@ a{color:var(--accent);}
    data-name="yur"
    data-search="yur demon hunter vengeance dh tank"
    aria-label="WANTED: Yur — bounty 3245">
-  <img src="bounty/yur.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/yur.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Yur, Mythic+ 3245.1">
 </a>
 <a class="bounty-baked"
@@ -997,7 +1087,9 @@ a{color:var(--accent);}
    data-name="rexxhavocc"
    data-search="rexxhavocc hunter beast mastery dps"
    aria-label="WANTED: Rexxhavocc — bounty 3225">
-  <img src="bounty/rexxhavocc.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/rexxhavocc.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Rexxhavocc, Mythic+ 3224.9">
 </a>
 <a class="bounty-baked"
@@ -1009,7 +1101,9 @@ a{color:var(--accent);}
    data-name="buchalter"
    data-search="buchalter mage frost dps"
    aria-label="WANTED: Buchalter — bounty 3208">
-  <img src="bounty/buchalter.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/buchalter.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Buchalter, Mythic+ 3207.9">
 </a>
 <a class="bounty-baked"
@@ -1021,7 +1115,9 @@ a{color:var(--accent);}
    data-name="kelova"
    data-search="kelova monk brewmaster tank"
    aria-label="WANTED: Kelova — bounty 3143">
-  <img src="bounty/kelova.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/kelova.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Kelova, Mythic+ 3142.9">
 </a>
 <a class="bounty-baked"
@@ -1033,7 +1129,9 @@ a{color:var(--accent);}
    data-name="ohnomyais"
    data-search="ohnomyais warrior arms dps"
    aria-label="WANTED: Ohnomyais — bounty 3126">
-  <img src="bounty/ohnomyais.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/ohnomyais.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Ohnomyais, Mythic+ 3125.7">
 </a>
 <a class="bounty-baked"
@@ -1045,7 +1143,9 @@ a{color:var(--accent);}
    data-name="holyx"
    data-search="holyx paladin retribution dps"
    aria-label="WANTED: Holyx — bounty 3112">
-  <img src="bounty/holyx.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/holyx.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Holyx, Mythic+ 3112.4">
 </a>
 <a class="bounty-baked"
@@ -1057,7 +1157,9 @@ a{color:var(--accent);}
    data-name="aiime"
    data-search="aiime shaman restoration healer"
    aria-label="WANTED: Aiime — bounty 3106">
-  <img src="bounty/aiime.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/aiime.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Aiime, Mythic+ 3106.0">
 </a>
 <a class="bounty-baked"
@@ -1069,7 +1171,9 @@ a{color:var(--accent);}
    data-name="boondocka"
    data-search="boondocka hunter beast mastery dps"
    aria-label="WANTED: Boondocka — bounty 3104">
-  <img src="bounty/boondocka.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/boondocka.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Boondocka, Mythic+ 3103.9">
 </a>
 <a class="bounty-baked"
@@ -1081,7 +1185,9 @@ a{color:var(--accent);}
    data-name="kirrá"
    data-search="kirrá warlock demonology dps"
    aria-label="WANTED: Kirrá — bounty 3088">
-  <img src="bounty/kirra.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/kirra.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Kirrá, Mythic+ 3088.5">
 </a>
 <a class="bounty-baked"
@@ -1093,7 +1199,9 @@ a{color:var(--accent);}
    data-name="martylol"
    data-search="martylol mage frost dps"
    aria-label="WANTED: Martylol — bounty 3087">
-  <img src="bounty/martylol.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/martylol.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Martylol, Mythic+ 3086.7">
 </a>
 <a class="bounty-baked"
@@ -1105,7 +1213,9 @@ a{color:var(--accent);}
    data-name="arfas"
    data-search="arfas death knight unholy dk dps"
    aria-label="WANTED: Arfas — bounty 3077">
-  <img src="bounty/arfas.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/arfas.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Arfas, Mythic+ 3076.9">
 </a>
 <a class="bounty-baked"
@@ -1117,7 +1227,9 @@ a{color:var(--accent);}
    data-name="tinyx"
    data-search="tinyx druid guardian tank"
    aria-label="WANTED: Tinyx — bounty 3058">
-  <img src="bounty/tinyx.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/tinyx.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Tinyx, Mythic+ 3058.3">
 </a>
 <a class="bounty-baked"
@@ -1129,7 +1241,9 @@ a{color:var(--accent);}
    data-name="beastfriend"
    data-search="beastfriend hunter beast mastery dps"
    aria-label="WANTED: Beastfriend — bounty 3052">
-  <img src="bounty/beastfriend.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/beastfriend.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Beastfriend, Mythic+ 3051.8">
 </a>
 <a class="bounty-baked"
@@ -1141,7 +1255,9 @@ a{color:var(--accent);}
    data-name="marvinah"
    data-search="marvinah hunter beast mastery dps"
    aria-label="WANTED: Marvinah — bounty 3050">
-  <img src="bounty/marvinah.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/marvinah.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Marvinah, Mythic+ 3049.5">
 </a>
 <a class="bounty-baked"
@@ -1153,7 +1269,9 @@ a{color:var(--accent);}
    data-name="nokori"
    data-search="nokori shaman elemental dps"
    aria-label="WANTED: Nokori — bounty 3043">
-  <img src="bounty/nokori.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/nokori.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Nokori, Mythic+ 3042.7">
 </a>
 <a class="bounty-baked"
@@ -1165,7 +1283,9 @@ a{color:var(--accent);}
    data-name="maillo"
    data-search="maillo hunter beast mastery dps"
    aria-label="WANTED: Maillo — bounty 3033">
-  <img src="bounty/maillo.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/maillo.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Maillo, Mythic+ 3033.4">
 </a>
 <a class="bounty-baked"
@@ -1177,7 +1297,9 @@ a{color:var(--accent);}
    data-name="delusionz"
    data-search="delusionz priest discipline healer"
    aria-label="WANTED: Delusionz — bounty 3027">
-  <img src="bounty/delusionz.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/delusionz.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Delusionz, Mythic+ 3026.8">
 </a>
 <a class="bounty-baked"
@@ -1189,7 +1311,9 @@ a{color:var(--accent);}
    data-name="scounddrel"
    data-search="scounddrel hunter survival dps"
    aria-label="WANTED: Scounddrel — bounty 3024">
-  <img src="bounty/scounddrel.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/scounddrel.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Scounddrel, Mythic+ 3023.6">
 </a>
 <a class="bounty-baked"
@@ -1201,7 +1325,9 @@ a{color:var(--accent);}
    data-name="gandamar"
    data-search="gandamar warlock demonology dps"
    aria-label="WANTED: Gandamar — bounty 3022">
-  <img src="bounty/gandamar.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/gandamar.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Gandamar, Mythic+ 3021.6">
 </a>
 <a class="bounty-baked"
@@ -1213,7 +1339,9 @@ a{color:var(--accent);}
    data-name="rakell"
    data-search="rakell death knight frost dk dps"
    aria-label="WANTED: Rakell — bounty 2995">
-  <img src="bounty/rakell.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/rakell.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Rakell, Mythic+ 2994.6">
 </a>
 <a class="bounty-baked"
@@ -1225,1131 +1353,17 @@ a{color:var(--accent);}
    data-name="wabisukee"
    data-search="wabisukee warrior arms dps"
    aria-label="WANTED: Wabisukee — bounty 2977">
-  <img src="bounty/wabisukee.webp" width="900" height="1350" loading="lazy" decoding="async"
+  
+  <img src="bounty/wabisukee.webp" width="900" height="1350"
+       loading="lazy" decoding="async"
        alt="WANTED poster — Wabisukee, Mythic+ 2976.8">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2953.1"
-   data-delta="0.0"
-   data-streak="1"
-   data-name="slicerdicer"
-   data-search="slicerdicer demon hunter havoc dh dps"
-   aria-label="WANTED: Slicerdicer — bounty 2953">
-  <img src="bounty/slicerdicer.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Slicerdicer, Mythic+ 2953.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2881.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="tommybravo"
-   data-search="tommybravo priest shadow dps"
-   aria-label="WANTED: Tommybravo — bounty 2882">
-  <img src="bounty/tommybravo.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Tommybravo, Mythic+ 2881.9">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="2879.3"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="widowx"
-   data-search="widowx monk mistweaver healer"
-   aria-label="WANTED: Widowx — bounty 2879">
-  <img src="bounty/widowx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Widowx, Mythic+ 2879.3">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2873.8"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="autable"
-   data-search="autable demon hunter havoc dh dps"
-   aria-label="WANTED: Autable — bounty 2874">
-  <img src="bounty/autable.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Autable, Mythic+ 2873.8">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2839.7"
-   data-delta="2.7"
-   data-streak="0"
-   data-name="duskwolf"
-   data-search="duskwolf evoker augmentation dps"
-   aria-label="WANTED: Duskwolf — bounty 2840">
-  <img src="bounty/duskwolf.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Duskwolf, Mythic+ 2839.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2836.1"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="flemel"
-   data-search="flemel warlock destruction dps"
-   aria-label="WANTED: Flemel — bounty 2836">
-  <img src="bounty/flemel.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Flemel, Mythic+ 2836.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2818.1"
-   data-delta="0.0"
-   data-streak="1"
-   data-name="glinkz"
-   data-search="glinkz mage fire dps"
-   aria-label="WANTED: Glinkz — bounty 2818">
-  <img src="bounty/glinkz.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Glinkz, Mythic+ 2818.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2810.7"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="paleghost"
-   data-search="paleghost death knight unholy dk dps"
-   aria-label="WANTED: Paleghost — bounty 2811">
-  <img src="bounty/paleghost.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Paleghost, Mythic+ 2810.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2793.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="dragoonx"
-   data-search="dragoonx evoker augmentation dps"
-   aria-label="WANTED: Dragoonx — bounty 2794">
-  <img src="bounty/dragoonx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Dragoonx, Mythic+ 2793.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="2786.5"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="rakbear"
-   data-search="rakbear druid guardian tank"
-   aria-label="WANTED: Rakbear — bounty 2786">
-  <img src="bounty/rakbear.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Rakbear, Mythic+ 2786.5">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2765.8"
-   data-delta="0.0"
-   data-streak="1"
-   data-name="chokalock"
-   data-search="chokalock warlock demonology dps"
-   aria-label="WANTED: Chokalock — bounty 2766">
-  <img src="bounty/chokalock.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Chokalock, Mythic+ 2765.8">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="2751.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="chohno"
-   data-search="chohno warrior protection tank"
-   aria-label="WANTED: Chohno — bounty 2751">
-  <img src="bounty/chohno.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Chohno, Mythic+ 2751.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2750.2"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="skoala"
-   data-search="skoala death knight frost dk dps"
-   aria-label="WANTED: Skoala — bounty 2750">
-  <img src="bounty/skoala.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Skoala, Mythic+ 2750.2">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2710.1"
-   data-delta="0.0"
-   data-streak="1"
-   data-name="heximal"
-   data-search="heximal druid feral dps"
-   aria-label="WANTED: Heximal — bounty 2710">
-  <img src="bounty/heximal.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Heximal, Mythic+ 2710.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2703.2"
-   data-delta="45.5"
-   data-streak="1"
-   data-name="onetruemorty"
-   data-search="onetruemorty warrior arms dps"
-   aria-label="WANTED: Onetruemorty — bounty 2703">
-  <img src="bounty/onetruemorty.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Onetruemorty, Mythic+ 2703.2">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="2632.1"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="sidarien"
-   data-search="sidarien paladin protection tank"
-   aria-label="WANTED: Sidarien — bounty 2632">
-  <img src="bounty/sidarien.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Sidarien, Mythic+ 2632.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2624.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="icyx"
-   data-search="icyx mage frost dps"
-   aria-label="WANTED: Icyx — bounty 2625">
-  <img src="bounty/icyx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Icyx, Mythic+ 2624.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2556.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="coned"
-   data-search="coned warrior fury dps"
-   aria-label="WANTED: Coned — bounty 2557">
-  <img src="bounty/coned.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Coned, Mythic+ 2556.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2483.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="valkyrïe"
-   data-search="valkyrïe warlock demonology dps"
-   aria-label="WANTED: Valkyrïe — bounty 2484">
-  <img src="bounty/valkyrie.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Valkyrïe, Mythic+ 2483.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="2477.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="cptbenimaru"
-   data-search="cptbenimaru druid restoration healer"
-   aria-label="WANTED: Cptbenimaru — bounty 2478">
-  <img src="bounty/cptbenimaru.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Cptbenimaru, Mythic+ 2477.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2395.8"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="jilk"
-   data-search="jilk shaman elemental dps"
-   aria-label="WANTED: Jilk — bounty 2396">
-  <img src="bounty/jilk.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Jilk, Mythic+ 2395.8">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="2345.5"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="azell"
-   data-search="azell monk brewmaster tank"
-   aria-label="WANTED: Azell — bounty 2346">
-  <img src="bounty/azell.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Azell, Mythic+ 2345.5">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="2316.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="viôlence"
-   data-search="viôlence druid restoration healer"
-   aria-label="WANTED: Viôlence — bounty 2316">
-  <img src="bounty/violence-bleeding-hollow-2.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Viôlence, Mythic+ 2316.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2307.3"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="beroben"
-   data-search="beroben mage arcane dps"
-   aria-label="WANTED: Beroben — bounty 2307">
-  <img src="bounty/beroben-emerald-dream.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Beroben, Mythic+ 2307.3">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2244.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="gener"
-   data-search="gener death knight unholy dk dps"
-   aria-label="WANTED: Gener — bounty 2245">
-  <img src="bounty/gener.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Gener, Mythic+ 2244.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2222.1"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="eponax"
-   data-search="eponax demon hunter havoc dh dps"
-   aria-label="WANTED: Eponax — bounty 2222">
-  <img src="bounty/eponax.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Eponax, Mythic+ 2222.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2204"
-   data-delta="0"
-   data-streak="0"
-   data-name="huntlowx"
-   data-search="huntlowx hunter survival dps"
-   aria-label="WANTED: Huntlowx — bounty 2204">
-  <img src="bounty/huntlowx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Huntlowx, Mythic+ 2204.0">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2192.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="violënce"
-   data-search="violënce priest shadow dps"
-   aria-label="WANTED: Violënce — bounty 2193">
-  <img src="bounty/violence-bleeding-hollow.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Violënce, Mythic+ 2192.9">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="2177.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="thiccat"
-   data-search="thiccat druid guardian tank"
-   aria-label="WANTED: Thiccat — bounty 2178">
-  <img src="bounty/thiccat.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Thiccat, Mythic+ 2177.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2175.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="aime"
-   data-search="aime druid feral dps"
-   aria-label="WANTED: Aime — bounty 2175">
-  <img src="bounty/aime.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Aime, Mythic+ 2175.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="2172.2"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="kathrobbin"
-   data-search="kathrobbin paladin holy healer"
-   aria-label="WANTED: Kathrobbin — bounty 2172">
-  <img src="bounty/kathrobbin.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Kathrobbin, Mythic+ 2172.2">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="2154.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="nivella"
-   data-search="nivella warlock demonology dps"
-   aria-label="WANTED: Nivella — bounty 2155">
-  <img src="bounty/nivella.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Nivella, Mythic+ 2154.9">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="2134.2"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="milkbreath"
-   data-search="milkbreath druid guardian tank"
-   aria-label="WANTED: Milkbreath — bounty 2134">
-  <img src="bounty/milkbreath.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Milkbreath, Mythic+ 2134.2">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="1907.8"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="beroben"
-   data-search="beroben paladin protection tank"
-   aria-label="WANTED: Beroben — bounty 1908">
-  <img src="bounty/beroben-queldorei.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Beroben, Mythic+ 1907.8">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="1902.7"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="fugaku"
-   data-search="fugaku evoker preservation healer"
-   aria-label="WANTED: Fugaku — bounty 1903">
-  <img src="bounty/fugaku.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Fugaku, Mythic+ 1902.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1833.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="anbux"
-   data-search="anbux warlock demonology dps"
-   aria-label="WANTED: Anbux — bounty 1834">
-  <img src="bounty/anbux.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Anbux, Mythic+ 1833.9">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1593.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="junzolo"
-   data-search="junzolo warrior fury dps"
-   aria-label="WANTED: Junzolo — bounty 1594">
-  <img src="bounty/junzolo.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Junzolo, Mythic+ 1593.9">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1522.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="kitez"
-   data-search="kitez mage arcane dps"
-   aria-label="WANTED: Kitez — bounty 1522">
-  <img src="bounty/kitez.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Kitez, Mythic+ 1522.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="1221.3"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="wirmati"
-   data-search="wirmati monk brewmaster tank"
-   aria-label="WANTED: Wirmati — bounty 1221">
-  <img src="bounty/wirmati.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Wirmati, Mythic+ 1221.3">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="1175.2"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="sinistrad"
-   data-search="sinistrad paladin protection tank"
-   aria-label="WANTED: Sinistrad — bounty 1175">
-  <img src="bounty/sinistrad.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Sinistrad, Mythic+ 1175.2">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1137.7"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="critorical"
-   data-search="critorical druid balance dps"
-   aria-label="WANTED: Critorical — bounty 1138">
-  <img src="bounty/critorical.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Critorical, Mythic+ 1137.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1107.3"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="grëywolf"
-   data-search="grëywolf hunter marksmanship dps"
-   aria-label="WANTED: Grëywolf — bounty 1107">
-  <img src="bounty/greywolf.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Grëywolf, Mythic+ 1107.3">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1053.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="danethegreat"
-   data-search="danethegreat warrior arms dps"
-   aria-label="WANTED: Danethegreat — bounty 1053">
-  <img src="bounty/danethegreat.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Danethegreat, Mythic+ 1053.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="1036"
-   data-delta="0"
-   data-streak="0"
-   data-name="mushabi"
-   data-search="mushabi rogue assassination dps"
-   aria-label="WANTED: Mushabi — bounty 1036">
-  <img src="bounty/mushabi.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Mushabi, Mythic+ 1036.0">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="1022.2"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="breakdruid"
-   data-search="breakdruid druid guardian tank"
-   aria-label="WANTED: Breakdruid — bounty 1022">
-  <img src="bounty/breakdruid.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Breakdruid, Mythic+ 1022.2">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="977.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="uddershock"
-   data-search="uddershock shaman elemental dps"
-   aria-label="WANTED: Uddershock — bounty 978">
-  <img src="bounty/uddershock.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Uddershock, Mythic+ 977.9">
-</a>
-<a class="bounty-baked"
-   
-   data-role="tank"
-   data-score="953.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="ravokoflight"
-   data-search="ravokoflight paladin protection tank"
-   aria-label="WANTED: Ravokoflight — bounty 953">
-  <img src="bounty/ravokoflight.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Ravokoflight, Mythic+ 953.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="866.7"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="ranaria"
-   data-search="ranaria death knight unholy dk dps"
-   aria-label="WANTED: Ranaria — bounty 867">
-  <img src="bounty/ranaria.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Ranaria, Mythic+ 866.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="740.1"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="dathar"
-   data-search="dathar warrior fury dps"
-   aria-label="WANTED: Dathar — bounty 740">
-  <img src="bounty/dathar.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Dathar, Mythic+ 740.1">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="671.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="zackoh"
-   data-search="zackoh hunter beast mastery dps"
-   aria-label="WANTED: Zackoh — bounty 672">
-  <img src="bounty/zackoh.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Zackoh, Mythic+ 671.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="581.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="nythrael"
-   data-search="nythrael demon hunter devourer dh dps"
-   aria-label="WANTED: Nythrael — bounty 581">
-  <img src="bounty/nythrael.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Nythrael, Mythic+ 581.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="422.7"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="ricodandolo"
-   data-search="ricodandolo paladin retribution dps"
-   aria-label="WANTED: Ricodandolo — bounty 423">
-  <img src="bounty/ricodandolo.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Ricodandolo, Mythic+ 422.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="348.6"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="fluffy"
-   data-search="fluffy monk mistweaver healer"
-   aria-label="WANTED: Fluffy — bounty 349">
-  <img src="bounty/fluffy.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Fluffy, Mythic+ 348.6">
-</a>
-<a class="bounty-baked"
-   
-   data-role="healer"
-   data-score="224.7"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="padremort"
-   data-search="padremort priest holy healer"
-   aria-label="WANTED: Padremort — bounty 225">
-  <img src="bounty/padremort.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Padremort, Mythic+ 224.7">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="168.4"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="unholyx"
-   data-search="unholyx death knight unholy dk dps"
-   aria-label="WANTED: Unholyx — bounty 168">
-  <img src="bounty/unholyx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Unholyx, Mythic+ 168.4">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="166.8"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="sandgs"
-   data-search="sandgs demon hunter devourer dh dps"
-   aria-label="WANTED: Sandgs — bounty 167">
-  <img src="bounty/sandgs.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Sandgs, Mythic+ 166.8">
-</a>
-<a class="bounty-baked"
-   
-   data-role="dps"
-   data-score="158.9"
-   data-delta="0.0"
-   data-streak="0"
-   data-name="xavira"
-   data-search="xavira warlock affliction dps"
-   aria-label="WANTED: Xavira — bounty 159">
-  <img src="bounty/xavira.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Xavira, Mythic+ 158.9">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="aimme"
-   data-search="aimme evoker devastation dps"
-   aria-label="WANTED: Aimme">
-  <img src="bounty/aimme.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Aimme, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="balcmeg"
-   data-search="balcmeg warrior arms dps"
-   aria-label="WANTED: Balcmeg">
-  <img src="bounty/balcmeg.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Balcmeg, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="tank"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="botso"
-   data-search="botso monk brewmaster tank"
-   aria-label="WANTED: Botso">
-  <img src="bounty/botso.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Botso, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="healer"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="bwonsombro"
-   data-search="bwonsombro priest holy healer"
-   aria-label="WANTED: Bwonsombro">
-  <img src="bounty/bwonsombro.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Bwonsombro, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="deckler"
-   data-search="deckler paladin retribution dps"
-   aria-label="WANTED: Deckler">
-  <img src="bounty/deckler.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Deckler, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="fleshripper"
-   data-search="fleshripper demon hunter devourer dh dps"
-   aria-label="WANTED: Fleshripper">
-  <img src="bounty/fleshripper.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Fleshripper, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="gnomelyfans"
-   data-search="gnomelyfans mage frost dps"
-   aria-label="WANTED: Gnomelyfans">
-  <img src="bounty/gnomelyfans.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Gnomelyfans, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="gregus"
-   data-search="gregus paladin retribution dps"
-   aria-label="WANTED: Gregus">
-  <img src="bounty/gregus.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Gregus, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="iamdapopemon"
-   data-search="iamdapopemon priest shadow dps"
-   aria-label="WANTED: Iamdapopemon">
-  <img src="bounty/iamdapopemon.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Iamdapopemon, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="imshaman"
-   data-search="imshaman shaman elemental dps"
-   aria-label="WANTED: Imshaman">
-  <img src="bounty/imshaman.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Imshaman, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="kibli"
-   data-search="kibli death knight unholy dk dps"
-   aria-label="WANTED: Kibli">
-  <img src="bounty/kibli.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Kibli, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="kreleran"
-   data-search="kreleran death knight unholy dk dps"
-   aria-label="WANTED: Kreleran">
-  <img src="bounty/kreleran.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Kreleran, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="lebock"
-   data-search="lebock mage frost dps"
-   aria-label="WANTED: Lebock">
-  <img src="bounty/lebock.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Lebock, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="obstorm"
-   data-search="obstorm paladin retribution dps"
-   aria-label="WANTED: Obstorm">
-  <img src="bounty/obstorm.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Obstorm, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="tank"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="omikogo"
-   data-search="omikogo death knight blood dk tank"
-   aria-label="WANTED: Omikogo">
-  <img src="bounty/omikogo.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Omikogo, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="onesubstance"
-   data-search="onesubstance shaman enhancement dps"
-   aria-label="WANTED: Onesubstance">
-  <img src="bounty/onesubstance.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Onesubstance, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="tank"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="orx"
-   data-search="orx warrior protection tank"
-   aria-label="WANTED: Orx">
-  <img src="bounty/orx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Orx, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="healer"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="oynax"
-   data-search="oynax priest holy healer"
-   aria-label="WANTED: Oynax">
-  <img src="bounty/oynax.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Oynax, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="healer"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="1"
-   data-name="phyrthepali"
-   data-search="phyrthepali paladin holy healer"
-   aria-label="WANTED: Phyrthepali">
-  <img src="bounty/phyrthepali.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Phyrthepali, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="ragedx"
-   data-search="ragedx hunter beast mastery dps"
-   aria-label="WANTED: Ragedx">
-  <img src="bounty/ragedx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Ragedx, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="rougex"
-   data-search="rougex rogue outlaw dps"
-   aria-label="WANTED: Rougex">
-  <img src="bounty/rougex.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Rougex, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="shadowbelle"
-   data-search="shadowbelle demon hunter devourer dh dps"
-   aria-label="WANTED: Shadowbelle">
-  <img src="bounty/shadowbelle.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Shadowbelle, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="healer"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="shamanmates"
-   data-search="shamanmates shaman restoration healer"
-   aria-label="WANTED: Shamanmates">
-  <img src="bounty/shamanmates.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Shamanmates, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="shamnos"
-   data-search="shamnos shaman elemental dps"
-   aria-label="WANTED: Shamnos">
-  <img src="bounty/shamnos.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Shamnos, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="shaollynn"
-   data-search="shaollynn paladin retribution dps"
-   aria-label="WANTED: Shaollynn">
-  <img src="bounty/shaollynn.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Shaollynn, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="stinkypinkie"
-   data-search="stinkypinkie warrior arms dps"
-   aria-label="WANTED: Stinkypinkie">
-  <img src="bounty/stinkypinkie.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Stinkypinkie, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="sômbrá"
-   data-search="sômbrá rogue subtlety dps"
-   aria-label="WANTED: Sômbrá">
-  <img src="bounty/sombra.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Sômbrá, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="tank"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="tankmates"
-   data-search="tankmates druid guardian tank"
-   aria-label="WANTED: Tankmates">
-  <img src="bounty/tankmates.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Tankmates, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="tarvos"
-   data-search="tarvos death knight unholy dk dps"
-   aria-label="WANTED: Tarvos">
-  <img src="bounty/tarvos.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Tarvos, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="thunderbloom"
-   data-search="thunderbloom hunter marksmanship dps"
-   aria-label="WANTED: Thunderbloom">
-  <img src="bounty/thunderbloom.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Thunderbloom, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="tommybravoox"
-   data-search="tommybravoox warlock demonology dps"
-   aria-label="WANTED: Tommybravoox">
-  <img src="bounty/tommybravoox.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Tommybravoox, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="tommybravoxx"
-   data-search="tommybravoxx rogue subtlety dps"
-   aria-label="WANTED: Tommybravoxx">
-  <img src="bounty/tommybravoxx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Tommybravoxx, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="tank"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="trollimon"
-   data-search="trollimon druid guardian tank"
-   aria-label="WANTED: Trollimon">
-  <img src="bounty/trollimon.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Trollimon, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="târheel"
-   data-search="târheel paladin retribution dps"
-   aria-label="WANTED: Târheel">
-  <img src="bounty/tarheel.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Târheel, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="dps"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="waifumllkers"
-   data-search="waifumllkers demon hunter devourer dh dps"
-   aria-label="WANTED: Waifumllkers">
-  <img src="bounty/waifumllkers.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Waifumllkers, bounty unconfirmed">
-</a>
-<a class="bounty-baked wunranked"
-   
-   data-role="healer"
-   data-score="-1"
-   data-delta="-9999"
-   data-streak="0"
-   data-name="wolfx"
-   data-search="wolfx shaman restoration healer"
-   aria-label="WANTED: Wolfx">
-  <img src="bounty/wolfx.webp" width="900" height="1350" loading="lazy" decoding="async"
-       alt="WANTED poster — Wolfx, bounty unconfirmed">
 </a>
     </div>
     <p class="wall-empty" id="wallempty">No bounties match. They've slipped the net.</p>
   </section>
 </div>
   <div style="text-align:center;">
-    <a class="deeper" href="hall.html">Walk the full deck — all 133 crew →</a>
+    <a class="deeper" href="hall.html">Walk the full deck — all 40 crew →</a>
   </div>
 </section>
 
@@ -2365,11 +1379,11 @@ a{color:var(--accent);}
   <div class="standings">
     <div class="stat-strip">
       <div class="st"><div class="k">Guild Standing</div>
-        <div class="v">#6,855</div>
+        <div class="v">#6,857</div>
         <div class="d">world · realm #49</div></div>
       <div class="st"><div class="k">Biggest Climb</div>
-        <div class="v up">▲18.6</div>
-        <div class="d">Tommybravoo</div></div>
+        <div class="v up">▲1061.2</div>
+        <div class="d">Holyx</div></div>
       <div class="st"><div class="k">Iron Attendance</div>
         <div class="v">6w</div>
         <div class="d">Buchalter</div></div>
@@ -2395,31 +1409,31 @@ a{color:var(--accent);}
           </div>
         </div>
         <div class="panel" style="margin-top:16px;">
-          <h3>Season M+ Scores <span class="hint">top 12 of 96</span></h3>
+          <h3>Season M+ Scores <span class="hint">top 12 of 94</span></h3>
           <div class="lad"><span class="rk">1</span>
             <span class="nm"><b>Amrevenge</b></span>
             <span class="vl">3908.1</span></div>
           <div class="lad"><span class="rk">2</span>
+            <span class="nm"><b>Tommybravoo</b></span>
+            <span class="vl">3753.4<small>▲67.1</small></span></div>
+          <div class="lad"><span class="rk">3</span>
             <span class="nm"><b>Shadoxii</b></span>
             <span class="vl">3692.2</span></div>
-          <div class="lad"><span class="rk">3</span>
-            <span class="nm"><b>Tommybravoo</b></span>
-            <span class="vl">3686.3<small>▲18.6</small></span></div>
           <div class="lad"><span class="rk">4</span>
             <span class="nm"><b>Brewzleeh</b></span>
             <span class="vl">3685.8</span></div>
           <div class="lad"><span class="rk">5</span>
+            <span class="nm"><b>Enyò</b></span>
+            <span class="vl">3574.4<small>▲101.5</small></span></div>
+          <div class="lad"><span class="rk">6</span>
             <span class="nm"><b>Rakdisc</b></span>
             <span class="vl">3529.2</span></div>
-          <div class="lad"><span class="rk">6</span>
+          <div class="lad"><span class="rk">7</span>
             <span class="nm"><b>Rhansìk</b></span>
             <span class="vl">3509.6</span></div>
-          <div class="lad"><span class="rk">7</span>
+          <div class="lad"><span class="rk">8</span>
             <span class="nm"><b>Floofwall</b></span>
             <span class="vl">3484.3</span></div>
-          <div class="lad"><span class="rk">8</span>
-            <span class="nm"><b>Enyò</b></span>
-            <span class="vl">3472.9</span></div>
           <div class="lad"><span class="rk">9</span>
             <span class="nm"><b>Ellebasi</b></span>
             <span class="vl">3436.6</span></div>
@@ -2432,7 +1446,7 @@ a{color:var(--accent);}
           <div class="lad"><span class="rk">12</span>
             <span class="nm"><b>Hellful</b></span>
             <span class="vl">3418.7</span></div>
-          <span class="ladder-more"><a href="wanted.html">See all 96 on the Wanted Board →</a></span>
+          <span class="ladder-more"><a href="wanted.html">See all 94 on the Wanted Board →</a></span>
         </div>
       </div>
 
@@ -2469,14 +1483,15 @@ a{color:var(--accent);}
           <div class="parse-cols">
             <div>
               <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top DPS parses</div>
-              <div class="lad" style="grid-template-columns:1fr auto;"><span class="nm"><b>Amrevenge</b><br><span>Fallen-King Salhadaar · BeastMastery</span></span><span class="vl">97</span></div>
+              <div class="lad" style="grid-template-columns:1fr auto;"><span class="nm"><b>Amrevenge</b><br><span>Fallen-King Salhadaar · BeastMastery</span></span><span class="vl">96</span></div>
             </div>
             <div>
               <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top healing parses</div>
               <div class="lad" style="grid-template-columns:1fr auto;"><span class="nm"><b>Phyrthepali</b><br><span>Imperator Averzian · Holy</span></span><span class="vl">96</span></div>
             </div>
             <div>
-              <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top tank parses</div><div style="color:var(--muted);font-size:12px;">—</div>
+              <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;margin-bottom:6px;">Top tank parses</div><div style="color:var(--muted);font-size:12px;">BOUNTY UNCONFIRMED</div>
+              <div style="color:var(--muted);font-size:10px;line-height:1.35;margin-top:4px;">The board run produced no stats at all — Warcraft Logs was not queried this run.</div>
             </div>
           </div>
         </div>
@@ -2492,13 +1507,13 @@ a{color:var(--accent);}
         </div>
         <div class="lad" style="grid-template-columns:20px 1fr auto;">
           <span class="rk">2</span>
-          <span class="nm"><b>Shadoxii</b></span>
-          <span class="vl">3692</span>
+          <span class="nm"><b>Tommybravoo</b></span>
+          <span class="vl">3753</span>
         </div>
         <div class="lad" style="grid-template-columns:20px 1fr auto;">
           <span class="rk">3</span>
-          <span class="nm"><b>Tommybravoo</b></span>
-          <span class="vl">3686</span>
+          <span class="nm"><b>Shadoxii</b></span>
+          <span class="vl">3692</span>
         </div>
         <div class="lad" style="grid-template-columns:20px 1fr auto;">
           <span class="rk">4</span>
@@ -2507,16 +1522,36 @@ a{color:var(--accent);}
         </div>
         <div class="lad" style="grid-template-columns:20px 1fr auto;">
           <span class="rk">5</span>
-          <span class="nm"><b>Rakdisc</b></span>
-          <span class="vl">3529</span>
+          <span class="nm"><b>Enyò</b></span>
+          <span class="vl">3574</span>
         </div>
       </div>
       <div class="panel miniladder">
         <h3>📈 Biggest Risers <span class="hint">climbed most this week</span></h3>
         <div class="lad" style="grid-template-columns:20px 1fr auto;">
           <span class="rk">1</span>
+          <span class="nm"><b>Holyx</b></span>
+          <span class="vl"><span style="color:#57e08a;">▲1061.2</span></span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">2</span>
+          <span class="nm"><b>Enyò</b></span>
+          <span class="vl"><span style="color:#57e08a;">▲101.5</span></span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">3</span>
           <span class="nm"><b>Tommybravoo</b></span>
-          <span class="vl"><span style="color:#57e08a;">▲18.6</span></span>
+          <span class="vl"><span style="color:#57e08a;">▲67.1</span></span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">4</span>
+          <span class="nm"><b>Onetruemorty</b></span>
+          <span class="vl"><span style="color:#57e08a;">▲45.5</span></span>
+        </div>
+        <div class="lad" style="grid-template-columns:20px 1fr auto;">
+          <span class="rk">5</span>
+          <span class="nm"><b>Maillo</b></span>
+          <span class="vl"><span style="color:#57e08a;">▲23.2</span></span>
         </div>
       </div>
       <div class="panel miniladder">
@@ -2576,8 +1611,10 @@ a{color:var(--accent);}
         </div>
       </div>
     </div>
-    <p class="refresh-note">Top parses show each role's season record. The full top-5 weekly
-      parse ladders + weekly M+ parses populate automatically from the daily data refresh.</p>
+    <p class="refresh-note">Top parses show each role's season record — the single best
+      logged parse, not a weekly top-5. The full weekly ladders aren't running yet:
+      Raider.io doesn't publish parse data, so these fill in once Warcraft Logs is
+      connected.</p>
   </div>
   <div style="text-align:center;">
     <a class="deeper" href="voyage.html">Full Voyage Map + per-boss detail →</a>
@@ -2597,9 +1634,9 @@ a{color:var(--accent);}
   <div class="card log">
     <div class="k" style="font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">📖 The Captain's Log · this week aboard</div>
     <div class="beat"><span class="n">1.</span><span>Amrevenge drove the deepest key of the week — a timed +20 through Pit of Saron.</span></div>
-    <div class="beat"><span class="n">2.</span><span>Amrevenge topped the damage charts with a 97 parse on Fallen-King Salhadaar as BeastMastery Hunter.</span></div>
+    <div class="beat"><span class="n">2.</span><span>Amrevenge topped the damage charts with a 96 parse on Fallen-King Salhadaar as BeastMastery Hunter.</span></div>
     <div class="beat"><span class="n">3.</span><span>On heals, Phyrthepali answered with a 96 on Imperator Averzian — the crew lived to tell it.</span></div>
-    <div class="beat"><span class="n">4.</span><span>Tommybravoo climbed hardest this week, up 18.6 points of Mythic+ score.</span></div>
+    <div class="beat"><span class="n">4.</span><span>Holyx climbed hardest this week, up 1061.2 points of Mythic+ score.</span></div>
     <div class="beat"><span class="n">5.</span><span>Buchalter keeps showing up — 6 weeks on the board and counting.</span></div>
     <div class="beat"><span class="n">6.</span><span>And the roast of the week, from Rakdaddy aimed at Healmates: “Healmates Sucks”.</span></div>
   </div>
@@ -2610,7 +1647,7 @@ a{color:var(--accent);}
     <div class="shout"><span class="ic">📈</span>
       <span><b>Holyx</b> climbed hardest — up 1061.2 points of Mythic+ score.</span></div>
     <div class="shout"><span class="ic">🔥</span>
-      <span><b>Amrevenge</b> topped the charts with a 97 on Fallen-King Salhadaar.</span></div>
+      <span><b>Amrevenge</b> topped the charts with a 96 on Fallen-King Salhadaar.</span></div>
     <div class="shout"><span class="ic">⚓</span>
       <span><b>Buchalter</b> keeps showing up — 6 weeks on deck and counting.</span></div>
     <div class="shout"><span class="ic">✨</span>

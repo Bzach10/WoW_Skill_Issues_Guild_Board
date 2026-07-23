@@ -500,17 +500,13 @@ a{color:var(--accent);}
       <span class="brand-mark">⚓</span>
       <span class="brand-name">Skill Issues</span>
     </a>
+    
     <nav class="navlinks" aria-label="Primary">
       <a href="index.html"
-         aria-current="page">Board</a>
-      <a href="voyage.html"
-         >Voyage</a>
+         aria-current="page">The Ship</a>
       <a href="wanted.html"
-         >Wanted</a>
-      <a href="hall.html"
-         >The Hall</a>
-      <a href="trophy.html"
-         >Trophies</a>
+         >Wanted Board</a>
+      <a href="review/clean-data/">Clean&nbsp;Data</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       <button type="button" data-theme="codex"
@@ -527,24 +523,35 @@ a{color:var(--accent);}
 </header>
 
 <main>
-<section class="mast wrap">
-  <div class="kicker">
-    World <b>#6,855</b> ·
-    Realm <b>#49</b> · 3 characters drawn
+<div class="backdrop" aria-hidden="true"
+     style="--backdrop:url('cast/_roster/_scene_silvermoon_city/board.jpg');"></div>
+
+<header class="hero">
+  <div class="hero-art" aria-hidden="true" style="--hero:url('cast/_roster/_scene_silvermoon_city/profile.jpg');"></div>
+  <div class="wrap">
+    <section class="mast">
+      <span class="scenetag">July · <b>Silvermoon City</b></span>
+      <div class="kicker">
+        World <b>#6,857</b> ·
+        Realm <b>#49</b> · 37 characters drawn
+      </div>
+      <h1>The Guild Board</h1>
+      <div class="rule"></div>
+      <p class="lede">
+        A first look at the new board, built around <strong>the guild's own
+        characters drawn into their own scenes</strong>. Everything below is
+        real data pulled from Raider.io and Warcraft Logs — the scores, the
+        ranks, the streaks. Every character is drawn from their own real
+        transmog, in the style you approved.
+      </p>
+    </section>
   </div>
-  <h1>The Guild Board</h1>
-  <div class="rule"></div>
-  <p class="lede">
-    A first look at the new board, built around <strong>the guild's own
-    characters drawn into their own scenes</strong>. Everything below is
-    real data pulled from Raider.io and Warcraft Logs.
-  </p>
-</section>
+</header>
 
 <section class="ribbon wrap" data-section="recap" aria-label="This week">
   <div class="ribbon-in">
     <span class="ribbon-tag">This week</span>
-    <div class="ribbon-track"><span class="beat">Amrevenge drove the deepest key of the week — a timed +20 through Pit of Saron.</span><span class="beat">Amrevenge topped the damage charts with a 97 parse on Fallen-King Salhadaar as BeastMastery Hunter.</span><span class="beat">On heals, Phyrthepali answered with a 96 on Imperator Averzian — the crew lived to tell it.</span><span class="beat">Tommybravoo climbed hardest this week, up 18.6 points of Mythic+ score.</span><span class="beat">Buchalter keeps showing up — 6 weeks on the board and counting.</span><span class="beat">And the roast of the week, from Rakdaddy aimed at Healmates: “Healmates Sucks”.</span>
+    <div class="ribbon-track"><span class="beat">Amrevenge drove the deepest key of the week — a timed +20 through Pit of Saron.</span><span class="beat">Amrevenge topped the damage charts with a 96 parse on Fallen-King Salhadaar as BeastMastery Hunter.</span><span class="beat">On heals, Phyrthepali answered with a 96 on Imperator Averzian — the crew lived to tell it.</span><span class="beat">Holyx climbed hardest this week, up 1061.2 points of Mythic+ score.</span><span class="beat">Buchalter keeps showing up — 6 weeks on the board and counting.</span><span class="beat">And the roast of the week, from Rakdaddy aimed at Healmates: “Healmates Sucks”.</span>
     </div>
   </div>
 </section>
@@ -552,12 +559,12 @@ a{color:var(--accent);}
 <section class="manga wrap" aria-label="This week, as a two-panel strip">
   <div class="manga-tag">This week</div>
   <div class="manga-strip">
-    <figure class="mpanel">
+    <figure class="mpanel" style="--still:url('cast/_roster/_scene_silvermoon_city/profile.jpg');">
       <div class="mbubble narrate">
         <span class="mwho">Amrevenge</span> drove a +20 through Pit of Saron — the deepest key of the week.
       </div>
     </figure>
-    <figure class="mpanel">
+    <figure class="mpanel" style="--still:url('cast/_roster/_scene_icecrown_citadel/profile.jpg');">
       <div class="mbubble speech"><span class="mto">Rakdaddy → Healmates</span>
         <b>“Healmates Sucks”</b>
       </div>
@@ -567,7 +574,7 @@ a{color:var(--accent);}
 
 <section class="sec wrap" data-section="cast">
   <h2>The Cast</h2>
-  <p class="sub">3 characters drawn so far · 130 still in the queue</p>
+  <p class="sub">37 characters drawn so far · 3 still in the queue</p>
 
   
   <div class="roster-nav" id="rosternav">
@@ -576,53 +583,174 @@ a{color:var(--accent);}
              placeholder="Find your character…" autocomplete="off"
              aria-label="Search the roster">
       <div class="rfilters" role="group" aria-label="Filter by role">
-        <button type="button" data-filter="all" class="on" aria-pressed="true">All <span class="fc">3</span></button>
-        <button type="button" data-filter="tank" aria-pressed="false">Tanks <span class="fc">1</span></button>
-        <button type="button" data-filter="healer" aria-pressed="false">Healers <span class="fc">2</span></button>
-        <button type="button" data-filter="dps" aria-pressed="false">DPS <span class="fc">0</span></button>
+        <button type="button" data-filter="all" class="on" aria-pressed="true">All <span class="fc">37</span></button>
+        <button type="button" data-filter="tank" aria-pressed="false">Tanks <span class="fc">8</span></button>
+        <button type="button" data-filter="healer" aria-pressed="false">Healers <span class="fc">7</span></button>
+        <button type="button" data-filter="dps" aria-pressed="false">DPS <span class="fc">22</span></button>
       </div>
       <span class="rcount" id="rcount" aria-live="polite"></span>
     </div>
   </div>
 
   <div class="cast" id="cast">
-    <article class="card" data-role="tank"
-             data-name="floofwall"
-             data-class="monk"
-             data-spec="brewmaster"
-             data-realm="quel&#39;dorei"
-             data-search="floofwall pandaren brewmaster monk quel&#39;dorei"
+    <article class="card" data-role="dps"
+             data-name="amrevenge"
+             data-class="hunter"
+             data-spec="beast mastery"
+             data-realm="stormrage"
+             data-search="amrevenge orc beast mastery hunter stormrage"
              tabindex="0">
-      <div class="scene emotable" style="--fill:url('cast/floofwall/floofwall_anime_final.png');">
-        <img src="cast/floofwall/floofwall_anime_final.png" alt="Floofwall — The tavern"
-             loading="lazy" decoding="async"><span class="setting">The tavern</span>
+      <div class="scene emotable" style="--fill:url('cast/_roster/amrevenge/profile.jpg');"><span class="emote" aria-hidden="true">“Pet&#39;s doing 40% of that, actually.”</span>
+        <img src="cast/_roster/amrevenge/profile.jpg" alt="Amrevenge"
+             loading="lazy" decoding="async">
       </div>
       <div class="body">
-        <span class="role">Tank</span>
-        <h3><a href="p/floofwall.html">Floofwall</a>
+        <span class="role">DPS</span>
+        <h3><a href="p/amrevenge.html">Amrevenge</a>
         </h3>
         <p class="who">
-          Pandaren Brewmaster Monk · Quel&#39;dorei
+          Orc Beast Mastery Hunter · Stormrage
         </p>
+        <p class="phrase">“Pet&#39;s doing 40% of that, actually.”</p>
         <div class="stats">
           <div class="stat">
             <div class="k">M+ score</div>
-            <div class="v">3484.3</div>
+            <div class="v">3908.1</div>
           </div>
           <div class="stat">
             <div class="k">Guild rank</div>
-            <div class="v">#8</div>
+            <div class="v">#1</div>
           </div>
           <div class="stat">
             <div class="k">Streak</div>
             <div class="v">1</div>
           </div>
         </div>
-        <a class="more" href="p/floofwall.html">Full profile →</a>
+        <a class="more" href="p/amrevenge.html">Full profile →</a>
       </div>
       <div class="tip" aria-hidden="true">
-        <b>Floofwall</b>
-        <span>Pandaren Brewmaster Monk</span><span>Guild rank <b>#8</b> · score 3484.3</span>
+        <b>Amrevenge</b>
+        <span>Orc Beast Mastery Hunter</span><span>Guild rank <b>#1</b> · score 3908.1</span>
+        <span class="tip-rec">Highest timed key: <b>+20</b> +20 Pit of Saron</span>
+        <span class="tip-rec">Best DPS parse: <b>96</b> Fallen-King Salhadaar</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="tommybravoo"
+             data-class="death knight"
+             data-spec="unholy dk"
+             data-realm="bleeding hollow"
+             data-search="tommybravoo orc unholy dk death knight bleeding hollow"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/tommybravoo/profile.jpg');">
+        <img src="cast/_roster/tommybravoo/profile.jpg" alt="Tommybravoo"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/tommybravoo.html">Tommybravoo</a>
+        </h3>
+        <p class="who">
+          Orc Unholy DK Death Knight · Bleeding Hollow
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3753.4</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#2</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">2</div>
+          </div>
+        </div>
+        <a class="more" href="p/tommybravoo.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Tommybravoo</b>
+        <span>Orc Unholy DK Death Knight</span><span>Guild rank <b>#2</b> · score 3753.4</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="shadoxii"
+             data-class="monk"
+             data-spec="mistweaver"
+             data-realm="illidan"
+             data-search="shadoxii night elf mistweaver monk illidan"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/shadoxii/profile.jpg');">
+        <img src="cast/_roster/shadoxii/profile.jpg" alt="Shadoxii"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/shadoxii.html">Shadoxii</a>
+        </h3>
+        <p class="who">
+          Night Elf Mistweaver Monk · Illidan
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3692.2</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/shadoxii.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Shadoxii</b>
+        <span>Night Elf Mistweaver Monk</span><span>Guild rank <b>#3</b> · score 3692.2</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="brewzleeh"
+             data-class="monk"
+             data-spec="brewmaster"
+             data-realm="tichondrius"
+             data-search="brewzleeh pandaren brewmaster monk tichondrius"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/brewzleeh/profile.jpg');"><span class="emote" aria-hidden="true">“One more roll and I&#39;m even.”</span>
+        <img src="cast/_roster/brewzleeh/profile.jpg" alt="Brewzleeh"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/brewzleeh.html">Brewzleeh</a>
+        </h3>
+        <p class="who">
+          Pandaren Brewmaster Monk · Tichondrius
+        </p>
+        <p class="phrase">“One more roll and I&#39;m even.”</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3685.8</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#4</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/brewzleeh.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Brewzleeh</b>
+        <span>Pandaren Brewmaster Monk</span><span>Guild rank <b>#4</b> · score 3685.8</span>
       </div>
     </article>
     <article class="card" data-role="healer"
@@ -632,8 +760,8 @@ a{color:var(--accent);}
              data-realm="proudmoore"
              data-search="rakdisc nightborne discipline priest proudmoore"
              tabindex="0">
-      <div class="scene emotable" style="--fill:url('cast/rakdisc/rakdisc_anime_final.png');"><span class="emote" aria-hidden="true">“I can fix him. (I cannot fix him.)”</span>
-        <img src="cast/rakdisc/rakdisc_anime_final.png" alt="Rakdisc — The stone temple"
+      <div class="scene emotable" style="--fill:url('cast/_roster/rakdisc/profile.jpg');"><span class="emote" aria-hidden="true">“I can fix him. (I cannot fix him.)”</span>
+        <img src="cast/_roster/rakdisc/profile.jpg" alt="Rakdisc — The stone temple"
              loading="lazy" decoding="async"><span class="setting">The stone temple</span>
       </div>
       <div class="body">
@@ -665,6 +793,397 @@ a{color:var(--accent);}
         <span>Nightborne Discipline Priest</span><span>Guild rank <b>#6</b> · score 3529.2</span>
       </div>
     </article>
+    <article class="card" data-role="tank"
+             data-name="floofwall"
+             data-class="monk"
+             data-spec="brewmaster"
+             data-realm="quel&#39;dorei"
+             data-search="floofwall pandaren brewmaster monk quel&#39;dorei"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/floofwall/profile.jpg');">
+        <img src="cast/_roster/floofwall/profile.jpg" alt="Floofwall — The tavern"
+             loading="lazy" decoding="async"><span class="setting">The tavern</span>
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/floofwall.html">Floofwall</a>
+        </h3>
+        <p class="who">
+          Pandaren Brewmaster Monk · Quel&#39;dorei
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3484.3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#8</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/floofwall.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Floofwall</b>
+        <span>Pandaren Brewmaster Monk</span><span>Guild rank <b>#8</b> · score 3484.3</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="ellebasi"
+             data-class="druid"
+             data-spec="guardian"
+             data-realm="mal&#39;ganis"
+             data-search="ellebasi night elf guardian druid mal&#39;ganis"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/ellebasi/profile.jpg');">
+        <img src="cast/_roster/ellebasi/profile.jpg" alt="Ellebasi"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/ellebasi.html">Ellebasi</a>
+        </h3>
+        <p class="who">
+          Night Elf Guardian Druid · Mal&#39;Ganis
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3436.6</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/ellebasi.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Ellebasi</b>
+        <span>Night Elf Guardian Druid</span><span>Guild rank <b>#9</b> · score 3436.6</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="tommybravox"
+             data-class="demon hunter"
+             data-spec="havoc dh"
+             data-realm="bleeding hollow"
+             data-search="tommybravox blood elf havoc dh demon hunter bleeding hollow"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/tommybravox/profile.jpg');">
+        <img src="cast/_roster/tommybravox/profile.jpg" alt="Tommybravox"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/tommybravox.html">Tommybravox</a>
+        </h3>
+        <p class="who">
+          Blood Elf Havoc DH Demon Hunter · Bleeding Hollow
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3434.5</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#10</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/tommybravox.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Tommybravox</b>
+        <span>Blood Elf Havoc DH Demon Hunter</span><span>Guild rank <b>#10</b> · score 3434.5</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="jovala"
+             data-class="druid"
+             data-spec="guardian"
+             data-realm="stormrage"
+             data-search="jovala kul tiran guardian druid stormrage"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/jovala/profile.jpg');">
+        <img src="cast/_roster/jovala/profile.jpg" alt="Jovala"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/jovala.html">Jovala</a>
+        </h3>
+        <p class="who">
+          Kul Tiran Guardian Druid · Stormrage
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3428</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#11</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/jovala.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Jovala</b>
+        <span>Kul Tiran Guardian Druid</span><span>Guild rank <b>#11</b> · score 3428</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="hellful"
+             data-class="shaman"
+             data-spec="elemental"
+             data-realm="lightning&#39;s blade"
+             data-search="hellful troll elemental shaman lightning&#39;s blade"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/hellful/profile.jpg');">
+        <img src="cast/_roster/hellful/profile.jpg" alt="Hellful"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/hellful.html">Hellful</a>
+        </h3>
+        <p class="who">
+          Troll Elemental Shaman · Lightning&#39;s Blade
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3418.7</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#12</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/hellful.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Hellful</b>
+        <span>Troll Elemental Shaman</span><span>Guild rank <b>#12</b> · score 3418.7</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="kegsmashroll"
+             data-class="monk"
+             data-spec="brewmaster"
+             data-realm="stormrage"
+             data-search="kegsmashroll human brewmaster monk stormrage"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/kegsmashroll/profile.jpg');">
+        <img src="cast/_roster/kegsmashroll/profile.jpg" alt="Kegsmashroll"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/kegsmashroll.html">Kegsmashroll</a>
+        </h3>
+        <p class="who">
+          Human Brewmaster Monk · Stormrage
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3414.3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#13</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/kegsmashroll.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Kegsmashroll</b>
+        <span>Human Brewmaster Monk</span><span>Guild rank <b>#13</b> · score 3414.3</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="onessarain"
+             data-class="shaman"
+             data-spec="restoration"
+             data-realm="area 52"
+             data-search="onessarain draenei restoration shaman area 52"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/onessarain/profile.jpg');">
+        <img src="cast/_roster/onessarain/profile.jpg" alt="Onessarain"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/onessarain.html">Onessarain</a>
+        </h3>
+        <p class="who">
+          Draenei Restoration Shaman · Area 52
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3414.3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#14</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/onessarain.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Onessarain</b>
+        <span>Draenei Restoration Shaman</span><span>Guild rank <b>#14</b> · score 3414.3</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="healmates"
+             data-class="priest"
+             data-spec="holy"
+             data-realm="korgath"
+             data-search="healmates dracthyr holy priest korgath"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/healmates/profile.jpg');"><span class="emote" aria-hidden="true">“Stood in the fire. On purpose. For the bit.”</span>
+        <img src="cast/_roster/healmates/profile.jpg" alt="Healmates"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/healmates.html">Healmates</a>
+        </h3>
+        <p class="who">
+          Dracthyr Holy Priest · Korgath
+        </p>
+        <p class="phrase">“Stood in the fire. On purpose. For the bit.”</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3362</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#15</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">3</div>
+          </div>
+        </div>
+        <a class="more" href="p/healmates.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Healmates</b>
+        <span>Dracthyr Holy Priest</span><span>Guild rank <b>#15</b> · score 3362</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="flogeron"
+             data-class="warrior"
+             data-spec="fury"
+             data-realm="area 52"
+             data-search="flogeron dwarf fury warrior area 52"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/flogeron/profile.jpg');">
+        <img src="cast/_roster/flogeron/profile.jpg" alt="Flogeron"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/flogeron.html">Flogeron</a>
+        </h3>
+        <p class="who">
+          Dwarf Fury Warrior · Area 52
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3355.6</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#16</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/flogeron.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Flogeron</b>
+        <span>Dwarf Fury Warrior</span><span>Guild rank <b>#16</b> · score 3355.6</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="shadoxi"
+             data-class="druid"
+             data-spec="balance"
+             data-realm="illidan"
+             data-search="shadoxi night elf balance druid illidan"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/shadoxi/profile.jpg');">
+        <img src="cast/_roster/shadoxi/profile.jpg" alt="Shadoxi"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/shadoxi.html">Shadoxi</a>
+        </h3>
+        <p class="who">
+          Night Elf Balance Druid · Illidan
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3333.5</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#17</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/shadoxi.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Shadoxi</b>
+        <span>Night Elf Balance Druid</span><span>Guild rank <b>#17</b> · score 3333.5</span>
+      </div>
+    </article>
     <article class="card" data-role="healer"
              data-name="healyeah"
              data-class="evoker"
@@ -672,8 +1191,8 @@ a{color:var(--accent);}
              data-realm="quel&#39;dorei"
              data-search="healyeah dracthyr preservation evoker quel&#39;dorei"
              tabindex="0">
-      <div class="scene emotable" style="--fill:url('cast/healyeah/healyeah_anime_final.png');">
-        <img src="cast/healyeah/healyeah_anime_final.png" alt="Healyeah — The Dragon Isles"
+      <div class="scene emotable" style="--fill:url('cast/_roster/healyeah/profile.jpg');">
+        <img src="cast/_roster/healyeah/profile.jpg" alt="Healyeah — The Dragon Isles"
              loading="lazy" decoding="async"><span class="setting">The Dragon Isles</span>
       </div>
       <div class="body">
@@ -702,6 +1221,825 @@ a{color:var(--accent);}
       <div class="tip" aria-hidden="true">
         <b>Healyeah</b>
         <span>Dracthyr Preservation Evoker</span><span>Guild rank <b>#18</b> · score 3277.9</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="impkiller"
+             data-class="warlock"
+             data-spec="demonology"
+             data-realm="tichondrius"
+             data-search="impkiller orc demonology warlock tichondrius"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/impkiller/profile.jpg');">
+        <img src="cast/_roster/impkiller/profile.jpg" alt="Impkiller"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/impkiller.html">Impkiller</a>
+        </h3>
+        <p class="who">
+          Orc Demonology Warlock · Tichondrius
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3268.3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#19</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/impkiller.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Impkiller</b>
+        <span>Orc Demonology Warlock</span><span>Guild rank <b>#19</b> · score 3268.3</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="yur"
+             data-class="demon hunter"
+             data-spec="vengeance dh"
+             data-realm="whisperwind"
+             data-search="yur night elf vengeance dh demon hunter whisperwind"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/yur/profile.jpg');">
+        <img src="cast/_roster/yur/profile.jpg" alt="Yur"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/yur.html">Yur</a>
+        </h3>
+        <p class="who">
+          Night Elf Vengeance DH Demon Hunter · Whisperwind
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3245.1</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#20</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/yur.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Yur</b>
+        <span>Night Elf Vengeance DH Demon Hunter</span><span>Guild rank <b>#20</b> · score 3245.1</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="rexxhavocc"
+             data-class="hunter"
+             data-spec="beast mastery"
+             data-realm="area 52"
+             data-search="rexxhavocc night elf beast mastery hunter area 52"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/rexxhavocc/profile.jpg');">
+        <img src="cast/_roster/rexxhavocc/profile.jpg" alt="Rexxhavocc"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/rexxhavocc.html">Rexxhavocc</a>
+        </h3>
+        <p class="who">
+          Night Elf Beast Mastery Hunter · Area 52
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3224.9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#21</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/rexxhavocc.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Rexxhavocc</b>
+        <span>Night Elf Beast Mastery Hunter</span><span>Guild rank <b>#21</b> · score 3224.9</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="buchalter"
+             data-class="mage"
+             data-spec="frost"
+             data-realm="area 52"
+             data-search="buchalter goblin frost mage area 52"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/buchalter/profile.jpg');">
+        <img src="cast/_roster/buchalter/profile.jpg" alt="Buchalter"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/buchalter.html">Buchalter</a>
+        </h3>
+        <p class="who">
+          Goblin Frost Mage · Area 52
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3207.9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#22</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">6</div>
+          </div>
+        </div>
+        <a class="more" href="p/buchalter.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Buchalter</b>
+        <span>Goblin Frost Mage</span><span>Guild rank <b>#22</b> · score 3207.9</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="kelova"
+             data-class="monk"
+             data-spec="brewmaster"
+             data-realm="stormrage"
+             data-search="kelova dwarf brewmaster monk stormrage"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/kelova/profile.jpg');">
+        <img src="cast/_roster/kelova/profile.jpg" alt="Kelova"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/kelova.html">Kelova</a>
+        </h3>
+        <p class="who">
+          Dwarf Brewmaster Monk · Stormrage
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3142.9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#23</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/kelova.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Kelova</b>
+        <span>Dwarf Brewmaster Monk</span><span>Guild rank <b>#23</b> · score 3142.9</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="ohnomyais"
+             data-class="warrior"
+             data-spec="arms"
+             data-realm="area 52"
+             data-search="ohnomyais troll arms warrior area 52"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/ohnomyais/profile.jpg');">
+        <img src="cast/_roster/ohnomyais/profile.jpg" alt="Ohnomyais"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/ohnomyais.html">Ohnomyais</a>
+        </h3>
+        <p class="who">
+          Troll Arms Warrior · Area 52
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3125.7</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#24</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/ohnomyais.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Ohnomyais</b>
+        <span>Troll Arms Warrior</span><span>Guild rank <b>#24</b> · score 3125.7</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="holyx"
+             data-class="paladin"
+             data-spec="retribution"
+             data-realm="bleeding hollow"
+             data-search="holyx tauren retribution paladin bleeding hollow"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/holyx/profile.jpg');">
+        <img src="cast/_roster/holyx/profile.jpg" alt="Holyx"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/holyx.html">Holyx</a>
+        </h3>
+        <p class="who">
+          Tauren Retribution Paladin · Bleeding Hollow
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3112.4</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#25</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/holyx.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Holyx</b>
+        <span>Tauren Retribution Paladin</span><span>Guild rank <b>#25</b> · score 3112.4</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="aiime"
+             data-class="shaman"
+             data-spec="restoration"
+             data-realm="bleeding hollow"
+             data-search="aiime goblin restoration shaman bleeding hollow"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/aiime/profile.jpg');">
+        <img src="cast/_roster/aiime/profile.jpg" alt="Aiime"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/aiime.html">Aiime</a>
+        </h3>
+        <p class="who">
+          Goblin Restoration Shaman · Bleeding Hollow
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3106</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#26</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/aiime.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Aiime</b>
+        <span>Goblin Restoration Shaman</span><span>Guild rank <b>#26</b> · score 3106</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="boondocka"
+             data-class="hunter"
+             data-spec="beast mastery"
+             data-realm="hydraxis"
+             data-search="boondocka troll beast mastery hunter hydraxis"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/boondocka/profile.jpg');">
+        <img src="cast/_roster/boondocka/profile.jpg" alt="Boondocka"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/boondocka.html">Boondocka</a>
+        </h3>
+        <p class="who">
+          Troll Beast Mastery Hunter · Hydraxis
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3103.9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#27</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">2</div>
+          </div>
+        </div>
+        <a class="more" href="p/boondocka.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Boondocka</b>
+        <span>Troll Beast Mastery Hunter</span><span>Guild rank <b>#27</b> · score 3103.9</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="martylol"
+             data-class="mage"
+             data-spec="frost"
+             data-realm="illidan"
+             data-search="martylol nightborne frost mage illidan"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/martylol/profile.jpg');">
+        <img src="cast/_roster/martylol/profile.jpg" alt="Martylol"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/martylol.html">Martylol</a>
+        </h3>
+        <p class="who">
+          Nightborne Frost Mage · Illidan
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3086.7</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#29</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/martylol.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Martylol</b>
+        <span>Nightborne Frost Mage</span><span>Guild rank <b>#29</b> · score 3086.7</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="arfas"
+             data-class="death knight"
+             data-spec="unholy dk"
+             data-realm="quel&#39;dorei"
+             data-search="arfas worgen unholy dk death knight quel&#39;dorei"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/arfas/profile.jpg');">
+        <img src="cast/_roster/arfas/profile.jpg" alt="Arfas"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/arfas.html">Arfas</a>
+        </h3>
+        <p class="who">
+          Worgen Unholy DK Death Knight · Quel&#39;dorei
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3076.9</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#30</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/arfas.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Arfas</b>
+        <span>Worgen Unholy DK Death Knight</span><span>Guild rank <b>#30</b> · score 3076.9</span>
+      </div>
+    </article>
+    <article class="card" data-role="tank"
+             data-name="tinyx"
+             data-class="druid"
+             data-spec="guardian"
+             data-realm="bleeding hollow"
+             data-search="tinyx haranir guardian druid bleeding hollow"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/tinyx/profile.jpg');">
+        <img src="cast/_roster/tinyx/profile.jpg" alt="Tinyx"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Tank</span>
+        <h3><a href="p/tinyx.html">Tinyx</a>
+        </h3>
+        <p class="who">
+          Haranir Guardian Druid · Bleeding Hollow
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3058.3</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#31</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">2</div>
+          </div>
+        </div>
+        <a class="more" href="p/tinyx.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Tinyx</b>
+        <span>Haranir Guardian Druid</span><span>Guild rank <b>#31</b> · score 3058.3</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="beastfriend"
+             data-class="hunter"
+             data-spec="beast mastery"
+             data-realm="thrall"
+             data-search="beastfriend haranir beast mastery hunter thrall"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/beastfriend/profile.jpg');">
+        <img src="cast/_roster/beastfriend/profile.jpg" alt="Beastfriend"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/beastfriend.html">Beastfriend</a>
+        </h3>
+        <p class="who">
+          Haranir Beast Mastery Hunter · Thrall
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3051.8</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#32</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/beastfriend.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Beastfriend</b>
+        <span>Haranir Beast Mastery Hunter</span><span>Guild rank <b>#32</b> · score 3051.8</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="marvinah"
+             data-class="hunter"
+             data-spec="beast mastery"
+             data-realm="quel&#39;dorei"
+             data-search="marvinah void elf beast mastery hunter quel&#39;dorei"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/marvinah/profile.jpg');">
+        <img src="cast/_roster/marvinah/profile.jpg" alt="Marvinah"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/marvinah.html">Marvinah</a>
+        </h3>
+        <p class="who">
+          Void Elf Beast Mastery Hunter · Quel&#39;dorei
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3049.5</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#33</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/marvinah.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Marvinah</b>
+        <span>Void Elf Beast Mastery Hunter</span><span>Guild rank <b>#33</b> · score 3049.5</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="nokori"
+             data-class="shaman"
+             data-spec="elemental"
+             data-realm="proudmoore"
+             data-search="nokori vulpera elemental shaman proudmoore"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/nokori/profile.jpg');">
+        <img src="cast/_roster/nokori/profile.jpg" alt="Nokori"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/nokori.html">Nokori</a>
+        </h3>
+        <p class="who">
+          Vulpera Elemental Shaman · Proudmoore
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3042.7</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#34</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/nokori.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Nokori</b>
+        <span>Vulpera Elemental Shaman</span><span>Guild rank <b>#34</b> · score 3042.7</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="maillo"
+             data-class="hunter"
+             data-spec="beast mastery"
+             data-realm="area 52"
+             data-search="maillo haranir beast mastery hunter area 52"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/maillo/profile.jpg');">
+        <img src="cast/_roster/maillo/profile.jpg" alt="Maillo"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/maillo.html">Maillo</a>
+        </h3>
+        <p class="who">
+          Haranir Beast Mastery Hunter · Area 52
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3033.4</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#35</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">1</div>
+          </div>
+        </div>
+        <a class="more" href="p/maillo.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Maillo</b>
+        <span>Haranir Beast Mastery Hunter</span><span>Guild rank <b>#35</b> · score 3033.4</span>
+      </div>
+    </article>
+    <article class="card" data-role="healer"
+             data-name="delusionz"
+             data-class="priest"
+             data-spec="discipline"
+             data-realm="icecrown"
+             data-search="delusionz undead discipline priest icecrown"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/delusionz/profile.jpg');">
+        <img src="cast/_roster/delusionz/profile.jpg" alt="Delusionz"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">Healer</span>
+        <h3><a href="p/delusionz.html">Delusionz</a>
+        </h3>
+        <p class="who">
+          Undead Discipline Priest · Icecrown
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3026.8</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#36</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/delusionz.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Delusionz</b>
+        <span>Undead Discipline Priest</span><span>Guild rank <b>#36</b> · score 3026.8</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="scounddrel"
+             data-class="hunter"
+             data-spec="survival"
+             data-realm="maelstrom"
+             data-search="scounddrel haranir survival hunter maelstrom"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/scounddrel/profile.jpg');">
+        <img src="cast/_roster/scounddrel/profile.jpg" alt="Scounddrel"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/scounddrel.html">Scounddrel</a>
+        </h3>
+        <p class="who">
+          Haranir Survival Hunter · Maelstrom
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3023.6</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#37</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/scounddrel.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Scounddrel</b>
+        <span>Haranir Survival Hunter</span><span>Guild rank <b>#37</b> · score 3023.6</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="gandamar"
+             data-class="warlock"
+             data-spec="demonology"
+             data-realm="azgalor"
+             data-search="gandamar blood elf demonology warlock azgalor"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/gandamar/profile.jpg');">
+        <img src="cast/_roster/gandamar/profile.jpg" alt="Gandamar"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/gandamar.html">Gandamar</a>
+        </h3>
+        <p class="who">
+          Blood Elf Demonology Warlock · Azgalor
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">3021.6</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#38</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/gandamar.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Gandamar</b>
+        <span>Blood Elf Demonology Warlock</span><span>Guild rank <b>#38</b> · score 3021.6</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="rakell"
+             data-class="death knight"
+             data-spec="frost dk"
+             data-realm="proudmoore"
+             data-search="rakell undead frost dk death knight proudmoore"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/rakell/profile.jpg');">
+        <img src="cast/_roster/rakell/profile.jpg" alt="Rakell"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/rakell.html">Rakell</a>
+        </h3>
+        <p class="who">
+          Undead Frost DK Death Knight · Proudmoore
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">2994.6</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#39</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/rakell.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Rakell</b>
+        <span>Undead Frost DK Death Knight</span><span>Guild rank <b>#39</b> · score 2994.6</span>
+      </div>
+    </article>
+    <article class="card" data-role="dps"
+             data-name="wabisukee"
+             data-class="warrior"
+             data-spec="arms"
+             data-realm="bleeding hollow"
+             data-search="wabisukee undead arms warrior bleeding hollow"
+             tabindex="0">
+      <div class="scene emotable" style="--fill:url('cast/_roster/wabisukee/profile.jpg');">
+        <img src="cast/_roster/wabisukee/profile.jpg" alt="Wabisukee"
+             loading="lazy" decoding="async">
+      </div>
+      <div class="body">
+        <span class="role">DPS</span>
+        <h3><a href="p/wabisukee.html">Wabisukee</a>
+        </h3>
+        <p class="who">
+          Undead Arms Warrior · Bleeding Hollow
+        </p>
+        <div class="stats">
+          <div class="stat">
+            <div class="k">M+ score</div>
+            <div class="v">2976.8</div>
+          </div>
+          <div class="stat">
+            <div class="k">Guild rank</div>
+            <div class="v">#40</div>
+          </div>
+          <div class="stat">
+            <div class="k">Streak</div>
+            <div class="v">—</div>
+          </div>
+        </div>
+        <a class="more" href="p/wabisukee.html">Full profile →</a>
+      </div>
+      <div class="tip" aria-hidden="true">
+        <b>Wabisukee</b>
+        <span>Undead Arms Warrior</span><span>Guild rank <b>#40</b> · score 2976.8</span>
       </div>
     </article>
   </div>
@@ -771,8 +2109,8 @@ a{color:var(--accent);}
     </ul>
     <h4 style="margin-top:18px;">Still coming</h4>
     <ul>
-      <li class="todo">Scene art for the rest of the guild — 3 drawn,
-        130 still in the queue.</li>
+      <li class="todo">Scene art for the rest of the guild — 37 drawn,
+        3 still in the queue.</li>
       <li class="todo">The voyage map wired to the live season dungeon list.</li>
       <li class="todo">Victory and defeat poses driven by weekly results.</li>
     </ul>
@@ -782,40 +2120,40 @@ a{color:var(--accent);}
   <h2>The scene rotates monthly</h2>
   <p class="sub">One line in a config file decides the order</p>
   <div class="rotation">
-    <span class="mon pending">
+    <span class="mon">
       <b>Jan</b>Icecrown Citadel
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Feb</b>Dalaran
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Mar</b>Ungoro Crater
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Apr</b>Elwynn Forest
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>May</b>Stormwind City
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Jun</b>Mount Hyjal
     </span>
-    <span class="mon pending">
+    <span class="mon now">
       <b>Jul</b>Silvermoon City
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Aug</b>Orgrimmar
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Sep</b>Ironforge
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Oct</b>Dark Portal
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Nov</b>Undermine
     </span>
-    <span class="mon pending">
+    <span class="mon">
       <b>Dec</b>Caverns Of Time
     </span>
   </div>
@@ -830,7 +2168,7 @@ a{color:var(--accent);}
 
 <footer class="foot wrap">
   <p>“Git Gud.” — ancient guild proverb</p>
-  <p style="margin-top:8px;">Private trial build · board data from Jul 20, 2026
+  <p style="margin-top:8px;">Private trial build · board data from Jul 21, 2026
      · not connected to Discord or the guild website</p>
 </footer>
 

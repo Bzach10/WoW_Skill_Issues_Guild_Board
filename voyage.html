@@ -279,6 +279,26 @@ a{color:var(--accent);}
 .diorama-close:hover{border-color:var(--accent); color:var(--accent);}
 @media (prefers-reduced-motion:reduce){.ship{animation:none;} .diorama{animation:none;}}
 </style>
+
+<style>
+.generated{
+  position:relative;
+  color:var(--accent);
+  border-bottom:1px dashed var(--accent);
+  cursor:help;
+}
+.generated::after{
+  content:"generated";
+  position:absolute; left:50%; bottom:100%; transform:translateX(-50%);
+  margin-bottom:6px;
+  font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:700; font-family:var(--font-body);
+  color:var(--bg); background:var(--accent);
+  padding:3px 7px; border-radius:5px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity .12s;
+}
+.generated:hover::after, .generated:focus-visible::after{opacity:1;}
+</style>
 </head>
 <body>
 <div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
@@ -290,17 +310,13 @@ a{color:var(--accent);}
       <span class="brand-mark">⚓</span>
       <span class="brand-name">Skill Issues</span>
     </a>
+    
     <nav class="navlinks" aria-label="Primary">
       <a href="index.html"
-         >Board</a>
-      <a href="voyage.html"
-         aria-current="page">Voyage</a>
+         >The Ship</a>
       <a href="wanted.html"
-         >Wanted</a>
-      <a href="hall.html"
-         >The Hall</a>
-      <a href="trophy.html"
-         >Trophies</a>
+         >Wanted Board</a>
+      <a href="review/clean-data/">Clean&nbsp;Data</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       <button type="button" data-theme="codex"
@@ -316,7 +332,7 @@ a{color:var(--accent);}
   </div>
 </header>
 
-<a class="backbar" href="index.html">← Back to the board</a>
+<a class="backbar" href="index.html">← Back to the ship</a>
 <main class="wrap">
 <section class="mast">
   <div class="kicker">Skill Issues · the season as a voyage</div>
@@ -332,122 +348,122 @@ a{color:var(--accent);}
 
 <section class="ports" aria-label="Ports of call">
   <div class="portroute">
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="1" data-title="Icecrown Citadel"
             data-monthname="January"
-            
+            data-hero="cast/_roster/_scene_icecrown_citadel/profile.jpg"
             aria-label="January — Icecrown Citadel">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_icecrown_citadel/profile.jpg');">
       </span>
       <span class="portmon">Jan</span>
       <span class="portname">Icecrown Citadel</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="2" data-title="Dalaran"
             data-monthname="February"
-            
+            data-hero="cast/_roster/_scene_dalaran/profile.jpg"
             aria-label="February — Dalaran">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_dalaran/profile.jpg');">
       </span>
       <span class="portmon">Feb</span>
       <span class="portname">Dalaran</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="3" data-title="Ungoro Crater"
             data-monthname="March"
-            
+            data-hero="cast/_roster/_scene_ungoro_crater/profile.jpg"
             aria-label="March — Ungoro Crater">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_ungoro_crater/profile.jpg');">
       </span>
       <span class="portmon">Mar</span>
       <span class="portname">Ungoro Crater</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="4" data-title="Elwynn Forest"
             data-monthname="April"
-            
+            data-hero="cast/_roster/_scene_elwynn_forest/profile.jpg"
             aria-label="April — Elwynn Forest">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_elwynn_forest/profile.jpg');">
       </span>
       <span class="portmon">Apr</span>
       <span class="portname">Elwynn Forest</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="5" data-title="Stormwind City"
             data-monthname="May"
-            
+            data-hero="cast/_roster/_scene_stormwind_city/profile.jpg"
             aria-label="May — Stormwind City">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_stormwind_city/profile.jpg');">
       </span>
       <span class="portmon">May</span>
       <span class="portname">Stormwind City</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="6" data-title="Mount Hyjal"
             data-monthname="June"
-            
+            data-hero="cast/_roster/_scene_mount_hyjal/profile.jpg"
             aria-label="June — Mount Hyjal">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_mount_hyjal/profile.jpg');">
       </span>
       <span class="portmon">Jun</span>
       <span class="portname">Mount Hyjal</span>
     </button>
-    <button type="button" class="port here uncharted"
+    <button type="button" class="port here"
             data-month="7" data-title="Silvermoon City"
             data-monthname="July"
-            
+            data-hero="cast/_roster/_scene_silvermoon_city/profile.jpg"
             aria-label="July — Silvermoon City">
-      <span class="portdot"><span class="ship" title="The ship is here">⛵</span>
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_silvermoon_city/profile.jpg');"><span class="ship" title="The ship is here">⛵</span>
       </span>
       <span class="portmon">Jul</span>
       <span class="portname">Silvermoon City</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="8" data-title="Orgrimmar"
             data-monthname="August"
-            
+            data-hero="cast/_roster/_scene_orgrimmar/profile.jpg"
             aria-label="August — Orgrimmar">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_orgrimmar/profile.jpg');">
       </span>
       <span class="portmon">Aug</span>
       <span class="portname">Orgrimmar</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="9" data-title="Ironforge"
             data-monthname="September"
-            
+            data-hero="cast/_roster/_scene_ironforge/profile.jpg"
             aria-label="September — Ironforge">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_ironforge/profile.jpg');">
       </span>
       <span class="portmon">Sep</span>
       <span class="portname">Ironforge</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="10" data-title="Dark Portal"
             data-monthname="October"
-            
+            data-hero="cast/_roster/_scene_dark_portal/profile.jpg"
             aria-label="October — Dark Portal">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_dark_portal/profile.jpg');">
       </span>
       <span class="portmon">Oct</span>
       <span class="portname">Dark Portal</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="11" data-title="Undermine"
             data-monthname="November"
-            
+            data-hero="cast/_roster/_scene_undermine/profile.jpg"
             aria-label="November — Undermine">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_undermine/profile.jpg');">
       </span>
       <span class="portmon">Nov</span>
       <span class="portname">Undermine</span>
     </button>
-    <button type="button" class="port uncharted"
+    <button type="button" class="port"
             data-month="12" data-title="Caverns Of Time"
             data-monthname="December"
-            
+            data-hero="cast/_roster/_scene_caverns_of_time/profile.jpg"
             aria-label="December — Caverns Of Time">
-      <span class="portdot">
+      <span class="portdot" style="background-image:url('cast/_roster/_scene_caverns_of_time/profile.jpg');">
       </span>
       <span class="portmon">Dec</span>
       <span class="portname">Caverns Of Time</span>
@@ -592,7 +608,7 @@ a{color:var(--accent);}
               data-kind="raid_boss" data-state="cleared"
               data-season="season-mn-1-break-the-meta"
               data-name="Imperator Averzian"
-              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Imperator Averzian&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Mythic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 1 of 9&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Best HPS parse&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;96&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Phyrthepali · Holy Paladin&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Imperator Averzian&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;&lt;span class=&#34;generated&#34;&gt;Defeated on Mythic&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 1 of 9&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Best HPS parse&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;96&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Phyrthepali · Holy Paladin&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
               aria-selected="false">
         <span class="blob"></span>
         <span class="iname">Imperator Averzian</span>
@@ -602,7 +618,7 @@ a{color:var(--accent);}
               data-kind="raid_boss" data-state="cleared"
               data-season="season-mn-1-break-the-meta"
               data-name="Vorasius"
-              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vorasius&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Mythic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 2 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vorasius&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;&lt;span class=&#34;generated&#34;&gt;Defeated on Mythic&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 2 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
               aria-selected="false">
         <span class="blob"></span>
         <span class="iname">Vorasius</span>
@@ -612,7 +628,7 @@ a{color:var(--accent);}
               data-kind="raid_boss" data-state="cleared"
               data-season="season-mn-1-break-the-meta"
               data-name="Fallen-King Salhadaar"
-              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Fallen-King Salhadaar&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Mythic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 3 of 9&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Best DPS parse&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;97&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Amrevenge · BeastMastery Hunter&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Fallen-King Salhadaar&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;&lt;span class=&#34;generated&#34;&gt;Defeated on Mythic&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 3 of 9&lt;/div&gt;&lt;/div&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Best DPS parse&lt;/div&gt;&lt;div class=&#34;v&#34;&gt;97&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;Amrevenge · BeastMastery Hunter&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;"
               aria-selected="false">
         <span class="blob"></span>
         <span class="iname">Fallen-King Salhadaar</span>
@@ -622,7 +638,7 @@ a{color:var(--accent);}
               data-kind="raid_boss" data-state="cleared"
               data-season="season-mn-1-break-the-meta"
               data-name="Vaelgor &amp; Ezzorak"
-              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vaelgor &amp;amp; Ezzorak&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Heroic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 4 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Vaelgor &amp;amp; Ezzorak&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;&lt;span class=&#34;generated&#34;&gt;Defeated on Heroic&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 4 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
               aria-selected="false">
         <span class="blob"></span>
         <span class="iname">Vaelgor &amp; Ezzorak</span>
@@ -632,7 +648,7 @@ a{color:var(--accent);}
               data-kind="raid_boss" data-state="cleared"
               data-season="season-mn-1-break-the-meta"
               data-name="Lightblinded Vanguard"
-              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Lightblinded Vanguard&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;Defeated on Heroic&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 5 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
+              data-detail="&lt;span class=&#34;tag raid&#34;&gt;Raid boss&lt;/span&gt;&lt;h3&gt;Lightblinded Vanguard&lt;/h3&gt;&lt;div class=&#34;stats&#34;&gt;&lt;div class=&#34;stat&#34;&gt;&lt;div class=&#34;k&#34;&gt;Status&lt;/div&gt;&lt;div class=&#34;v&#34; style=&#34;font-size:15px;&#34;&gt;&lt;span class=&#34;generated&#34;&gt;Defeated on Heroic&lt;/span&gt;&lt;/div&gt;&lt;div class=&#34;d&#34;&gt;boss 5 of 9&lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;p class=&#34;norec&#34; style=&#34;margin-top:12px;&#34;&gt;No parse record on the board for this boss yet.&lt;/p&gt;"
               aria-selected="false">
         <span class="blob"></span>
         <span class="iname">Lightblinded Vanguard</span>

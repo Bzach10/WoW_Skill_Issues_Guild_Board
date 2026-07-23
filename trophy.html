@@ -143,6 +143,27 @@ a{color:var(--accent);}
     text-transform:capitalize;}
 }
 </style>
+
+<style>
+.generated{
+  position:relative;
+  color:var(--accent);
+  border-bottom:1px dashed var(--accent);
+  cursor:help;
+}
+.generated::after{
+  content:"generated";
+  position:absolute; left:50%; bottom:100%; transform:translateX(-50%);
+  margin-bottom:6px;
+  font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+  font-weight:700; font-family:var(--font-body);
+  color:var(--bg); background:var(--accent);
+  padding:3px 7px; border-radius:5px; white-space:nowrap;
+  opacity:0; pointer-events:none; transition:opacity .12s;
+}
+.generated:hover::after, .generated:focus-visible::after{opacity:1;}
+</style>
+
 </head>
 <body>
 <div class="private">Test run · <b>not final</b> · for review before we build the real thing</div>
@@ -154,17 +175,13 @@ a{color:var(--accent);}
       <span class="brand-mark">⚓</span>
       <span class="brand-name">Skill Issues</span>
     </a>
+    
     <nav class="navlinks" aria-label="Primary">
       <a href="index.html"
-         >Board</a>
-      <a href="voyage.html"
-         >Voyage</a>
+         >The Ship</a>
       <a href="wanted.html"
-         >Wanted</a>
-      <a href="hall.html"
-         >The Hall</a>
-      <a href="trophy.html"
-         aria-current="page">Trophies</a>
+         >Wanted Board</a>
+      <a href="review/clean-data/">Clean&nbsp;Data</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       <button type="button" data-theme="codex"
@@ -180,13 +197,13 @@ a{color:var(--accent);}
   </div>
 </header>
 
-<a class="backbar" href="index.html">← Back to the board</a>
+<a class="backbar" href="index.html">← Back to the ship</a>
 
 <main class="wrap">
 <section class="mast">
   <div class="kicker">Skill Issues · <b>Midnight, in silver and gold</b></div>
   <h1>The Trophy Hall</h1>
-  <div class="points"><b>1,655</b>
+  <div class="points"><b><span class="generated">1,655</span></b>
     <span>achievement points</span></div>
   <div class="rule"></div>
 </section>
@@ -195,7 +212,7 @@ a{color:var(--accent);}
     <div class="medal" aria-hidden="true">⚔️</div>
     <div class="tinfo">
       <div class="tcat">Heroic raid</div>
-      <h2 class="tname">Ahead of the Curve: Imperator Averzian</h2><div class="tdate">Earned 2026-03-03</div>
+      <h2 class="tname"><span class="generated">Ahead of the Curve: Imperator Averzian</span></h2><div class="tdate">Earned <span class="generated">2026-03-03</span></div>
       <div class="tcrit">2 criteria met</div>
     </div>
   </article>
@@ -203,14 +220,14 @@ a{color:var(--accent);}
     <div class="medal" aria-hidden="true">🔥</div>
     <div class="tinfo">
       <div class="tcat">Mythic raid</div>
-      <h2 class="tname">Cutting Edge: Fallen-King Salhadaar</h2><div class="tdate">Earned 2026-03-22</div>
+      <h2 class="tname"><span class="generated">Cutting Edge: Fallen-King Salhadaar</span></h2><div class="tdate">Earned <span class="generated">2026-03-22</span></div>
     </div>
   </article>
   <article class="trophy" style="--tint:var(--mplus);">
     <div class="medal" aria-hidden="true">🗝️</div>
     <div class="tinfo">
       <div class="tcat">Mythic+</div>
-      <h2 class="tname">Midnight Keystone Master: Season One</h2><div class="tdate">Earned 2026-03-31</div>
+      <h2 class="tname"><span class="generated">Midnight Keystone Master: Season One</span></h2><div class="tdate">Earned <span class="generated">2026-03-31</span></div>
       <div class="tcrit">8 criteria met</div>
     </div>
   </article>
@@ -218,7 +235,9 @@ a{color:var(--accent);}
 </main>
 
 <footer class="foot">
-  Skill Issues · a private test run · achievements via the guild profile API
+  Skill Issues · a private test run ·
+    achievements shown are <b><span class="generated">placeholder</span></b>, pending a
+    credentialed refresh — nothing above is a real Blizzard achievement yet
 </footer>
 
 <script>
