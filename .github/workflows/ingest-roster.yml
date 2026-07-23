@@ -1,0 +1,87 @@
+# Blizzard guild-roster ingestion — S.S. Wipe Fest data layer.
+#
+# STATUS: STUBBED PENDING CREDENTIALS. The code is complete; this workflow is the
+# place the live fetch runs, because the network and the BLIZZARD_CLIENT_ID /
+# BLIZZARD_CLIENT_SECRET secrets live in GitHub, not in the build sandbox.
+#
+# Before enabling:
+#   1. Confirm repo secrets BLIZZARD_CLIENT_ID and BLIZZARD_CLIENT_SECRET exist
+#      (Settings -> Secrets and variables -> Actions).
+#   2. Confirm the db_layer/ tree is committed at the path referenced below.
+#   3. Run once via "Run workflow" (workflow_dispatch) and inspect the summary /
+#      artifact before trusting the weekly schedule.
+#
+# Fail-open by construction: a failed fetch writes only a 'failed' row to
+# fetch_run and mutates nothing else (see wipefest_db/ingest_blizzard.py).
+
+name: ingest-guild-roster
+
+on:
+  workflow_dispatch: {}          # manual, for the first supervised run
+  schedule:
+    - cron: "0 13 * * 2"         # Tuesday 13:00 UTC — just before NA reset (project cadence)
+
+permissions:
+  contents: read                 # bump to write only if you choose to commit the .sqlite3 back
+
+jobs:
+  roster:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: db_layer
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      # No pip install: the data layer is stdlib-only (urllib, sqlite3, json).
+
+      - name: Initialise DB + import current roster snapshot (idempotent)
+        run: |
+          mkdir -p data
+          python -m wipefest_db.migrate_current --db data/wipefest.sqlite3 --data-dir ../data || true
+
+      - name: Fetch live Blizzard guild roster
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
+        run: |
+          if [ -z "$BLIZZARD_CLIENT_ID" ] || [ -z "$BLIZZARD_CLIENT_SECRET" ]; then
+            echo "::error::BLIZZARD_CLIENT_ID/SECRET not set — cannot run live fetch."
+            exit 1
+          fi
+          python -m wipefest_db.ingest_blizzard \
+            --db data/wipefest.sqlite3 \
+            --region us --realm bleeding-hollow --guild skill-issues
+
+      - name: Coverage summary
+        if: always()
+        run: |
+          python - <<'PY'
+          import sqlite3
+          c = sqlite3.connect("data/wipefest.sqlite3")
+          for row in c.execute("SELECT source, outcome, targets_attempted, targets_succeeded, "
+                               "error_summary FROM fetch_run ORDER BY run_id DESC LIMIT 5"):
+              print(row)
+          PY
+
+      - name: Upload DB artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wipefest-sqlite
+          path: db_layer/data/wipefest.sqlite3
+          if-no-files-found: warn
+
+      # OPTIONAL — commit the refreshed DB back (requires permissions: contents: write
+      # above and a dedicated data branch to avoid colliding with the site build):
+      # - name: Commit refreshed DB
+      #   run: |
+      #     git config user.name  "wipefest-bot"
+      #     git config user.email "bot@users.noreply.github.com"
+      #     git add data/wipefest.sqlite3
+      #     git commit -m "chore(data): weekly roster ingest" || echo "no change"
+      #     git push

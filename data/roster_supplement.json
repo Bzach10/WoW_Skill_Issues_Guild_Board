@@ -1,0 +1,326 @@
+{
+  "_comment": [
+    "Characters confirmed to be real guild members that data/competition.json's",
+    "roster pull does NOT return. Merged by scripts/bounty/extract_roster.py.",
+    "",
+    "This file exists because the pull is not the guild. Treating 'absent from",
+    "the pull' as 'not a real person' already cost us once: Phyrthepali's real",
+    "96 parse was removed from the front page on 2026-07-22 on exactly that",
+    "reasoning, and it was wrong.",
+    "",
+    "RULES FOR ADDING AN ENTRY:",
+    "  - `evidence` is mandatory and must name a source that can be re-checked",
+    "    by a human (an armory or Warcraft Logs URL), plus the date checked.",
+    "  - Never invent a score, rank or item level. Anything not directly",
+    "    observed stays null and fills in when the pull catches up.",
+    "  - Delete an entry once the pull returns that character natively; the",
+    "    extractor warns when a supplement has become redundant.",
+    "",
+    "2026-07-22 UPDATE — Phyrthepali was not a one-off. Reconciling the pull",
+    "against Raider.io's live guild roster found 15 real members missing from",
+    "data/competition.json, all 15 for the same reason (see why_missing_from_pull).",
+    "The other 14 are added below. `score` is null for every one of them: the",
+    "guild-roster endpoint does not carry an M+ score, and a guessed number is",
+    "worse than an empty one.",
+    "",
+    "The roster total is therefore AT LEAST 147 (pull 132 + 15). It is still a",
+    "floor: Blizzard's own guild-roster endpoint has never been called by this",
+    "project, so no source consulted so far is authoritative."
+  ],
+  "characters": [
+    {
+      "name": "Phyrthepali",
+      "realm": "Bleeding Hollow",
+      "realm_slug": "bleeding-hollow",
+      "key": "phyrthepali-bleeding-hollow",
+      "class": "Paladin",
+      "spec": "Holy Paladin",
+      "role": "HEALING",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://www.warcraftlogs.com/character/us/bleeding-hollow/phyrthepali",
+        "observed": "2026-07-22",
+        "by": "Zach (screenshot)",
+        "shows": "Skill Issues - Bleeding Hollow (US), Blood Elf Paladin, 8 mythic kills logged, best HPS 166,925.6, 96 parse on Imperator Averzian dated 2026-07-19",
+        "note": "M+ score deliberately left null - the WCL page shows All Star points, not a Raider.io M+ score, and a guessed number is worse than an empty one."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json.",
+      "corroborating_evidence": [
+        {
+          "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+          "observed": "2026-07-22",
+          "by": "Claude (live API fetch this session)",
+          "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+          "shows": "Phyrthepali, Blood Elf Paladin, Holy, rank 99, realm Bleeding Hollow — present in the guild's Raider.io roster, absent from roster_cache.json"
+        }
+      ]
+    },
+    {
+      "name": "Andika",
+      "realm": "Area 52",
+      "realm_slug": "area-52",
+      "key": "andika-area-52",
+      "class": "Hunter",
+      "spec": "Beast Mastery Hunter",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Andika — Hunter (Beast Mastery Hunter), realm Area 52, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Dropdot",
+      "realm": "Emerald Dream",
+      "realm_slug": "emerald-dream",
+      "key": "dropdot-emerald-dream",
+      "class": "Warlock",
+      "spec": "Demonology Warlock",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Dropdot — Warlock (Demonology Warlock), realm Emerald Dream, guild rank 7. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Ihatepugs",
+      "realm": "Dalaran",
+      "realm_slug": "dalaran",
+      "key": "ihatepugs-dalaran",
+      "class": "Shaman",
+      "spec": "Restoration Shaman",
+      "role": "HEALING",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Ihatepugs — Shaman (Restoration Shaman), realm Dalaran, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Jerbane",
+      "realm": "Illidan",
+      "realm_slug": "illidan",
+      "key": "jerbane-illidan",
+      "class": "Death Knight",
+      "spec": "Blood Death Knight",
+      "role": "TANK",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Jerbane — Death Knight (Blood Death Knight), realm Illidan, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Meowstal",
+      "realm": "Bleeding Hollow",
+      "realm_slug": "bleeding-hollow",
+      "key": "meowstal-bleeding-hollow",
+      "class": "Demon Hunter",
+      "spec": "Vengeance Demon Hunter",
+      "role": "TANK",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Meowstal — Demon Hunter (Vengeance Demon Hunter), realm Bleeding Hollow, guild rank 5. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Miallo",
+      "realm": "Area 52",
+      "realm_slug": "area-52",
+      "key": "miallo-area-52",
+      "class": "Druid",
+      "spec": "Guardian Druid",
+      "role": "TANK",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Miallo — Druid (Guardian Druid), realm Area 52, guild rank 8. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Muramorn",
+      "realm": "Dalaran",
+      "realm_slug": "dalaran",
+      "key": "muramorn-dalaran",
+      "class": "Paladin",
+      "spec": "Retribution Paladin",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Muramorn — Paladin (Retribution Paladin), realm Dalaran, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Peeoncorpses",
+      "realm": "Illidan",
+      "realm_slug": "illidan",
+      "key": "peeoncorpses-illidan",
+      "class": "Rogue",
+      "spec": "Assassination Rogue",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Peeoncorpses — Rogue (Assassination Rogue), realm Illidan, guild rank 7. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Purcules",
+      "realm": "Area 52",
+      "realm_slug": "area-52",
+      "key": "purcules-area-52",
+      "class": "Druid",
+      "spec": "Balance Druid",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Purcules — Druid (Balance Druid), realm Area 52, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Redgicide",
+      "realm": "Hydraxis",
+      "realm_slug": "hydraxis",
+      "key": "redgicide-hydraxis",
+      "class": "Paladin",
+      "spec": "Retribution Paladin",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Redgicide — Paladin (Retribution Paladin), realm Hydraxis, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Ugrage",
+      "realm": "Area 52",
+      "realm_slug": "area-52",
+      "key": "ugrage-area-52",
+      "class": "Death Knight",
+      "spec": "Unholy Death Knight",
+      "role": "DPS",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Ugrage — Death Knight (Unholy Death Knight), realm Area 52, guild rank 7. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Voidrak",
+      "realm": "Proudmoore",
+      "realm_slug": "proudmoore",
+      "key": "voidrak-proudmoore",
+      "class": "Demon Hunter",
+      "spec": "Vengeance Demon Hunter",
+      "role": "TANK",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Voidrak — Demon Hunter (Vengeance Demon Hunter), realm Proudmoore, guild rank 8. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Witherbear",
+      "realm": "Azuremyst",
+      "realm_slug": "azuremyst",
+      "key": "witherbear-azuremyst",
+      "class": "Druid",
+      "spec": "Guardian Druid",
+      "role": "TANK",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Witherbear — Druid (Guardian Druid), realm Azuremyst, guild rank 99. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    },
+    {
+      "name": "Witherhoard",
+      "realm": "Azuremyst",
+      "realm_slug": "azuremyst",
+      "key": "witherhoard-azuremyst",
+      "class": "Demon Hunter",
+      "spec": "Vengeance Demon Hunter",
+      "role": "TANK",
+      "score": null,
+      "rank": null,
+      "evidence": {
+        "source": "https://raider.io/api/v1/guilds/profile?region=us&realm=bleeding-hollow&name=Skill+Issues&fields=members",
+        "observed": "2026-07-22",
+        "by": "Claude (live API fetch this session)",
+        "human_checkable_at": "https://raider.io/guilds/us/bleeding-hollow/Skill%20Issues",
+        "shows": "Witherhoard — Demon Hunter (Vengeance Demon Hunter), realm Azuremyst, guild rank 8. Present in the guild's Raider.io roster; absent from roster_cache.json and data/competition.json."
+      },
+      "why_missing_from_pull": "DIAGNOSED 2026-07-22: the roster's only live source was Warcraft Logs (wcl.fetch_guild_member_roster -> roster_cache.json). WCL's guild member list is a by-product of log uploads, not a guild roster, so a member who has not surfaced in a parsed report tagged to the guild is simply absent. This character IS in Raider.io's guild roster and was NOT in roster_cache.json."
+    }
+  ]
+}
