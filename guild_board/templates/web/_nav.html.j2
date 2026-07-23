@@ -14,17 +14,23 @@
       <span class="brand-mark">⚓</span>
       <span class="brand-name">{{ guild_name }}</span>
     </a>
+    {# Consolidated 2026-07-23: five thin tabs -> three top-level entries.
+       Voyage and The Hall/Trophies fold into ship rooms (docs/STATUS.md
+       "Navigation IA") rather than staying separate top-nav pages; Wanted
+       keeps a direct top-level door in addition to living in the Bar room,
+       per SHIP_EXPERIENCE_VISION.md #1 ("two doors to the same room").
+
+       Clean Data is the third intended top-level entry (SHIP_EXPERIENCE_
+       VISION.md #4) but has NO real destination yet - porting the
+       roster-density List mode into the templated site is still-unstarted
+       work, not this pass. Deliberately left out rather than pointed at
+       crew_board.html (the immersive board), which would be a wrong link,
+       not just an early one. Add it back the moment a real page exists. #}
     <nav class="navlinks" aria-label="Primary">
-      <a href="{{ nav_root }}index.html"
-         {% if nav_here == 'board' %}aria-current="page"{% endif %}>Board</a>
-      <a href="{{ nav_root }}voyage.html"
-         {% if nav_here == 'voyage' %}aria-current="page"{% endif %}>Voyage</a>
+      <a href="{{ nav_root }}ship.html"
+         {% if nav_here == 'board' or nav_here == 'ship' %}aria-current="page"{% endif %}>The Ship</a>
       <a href="{{ nav_root }}wanted.html"
-         {% if nav_here == 'wanted' %}aria-current="page"{% endif %}>Wanted</a>
-      <a href="{{ nav_root }}hall.html"
-         {% if nav_here == 'hall' %}aria-current="page"{% endif %}>The Hall</a>
-      <a href="{{ nav_root }}trophy.html"
-         {% if nav_here == 'trophy' %}aria-current="page"{% endif %}>Trophies</a>
+         {% if nav_here == 'wanted' %}aria-current="page"{% endif %}>Wanted Board</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       {%- for key, t in themes.items() %}

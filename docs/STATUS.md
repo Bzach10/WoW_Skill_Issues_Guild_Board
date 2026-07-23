@@ -45,6 +45,42 @@ CLS). A full AVIF/WebP/JPEG `<picture>` pipeline with blur placeholders is the
 right next step but is medium-large work (touches staging + every image
 template) — sequenced honestly as the top remaining perf item, not dropped.
 
+## Navigation IA — decided 2026-07-23
+
+Consolidating five thin top-nav tabs (Board, Voyage, Wanted, The Hall, Trophies) down to
+three top-level entries, folding the rest into rooms aboard the ship.
+
+**Top level (site nav):**
+- **The Ship** — the hub. Was "Board"; `ship.html` is already the room-based page (5 rooms
+  as of the 11→5 trim), so this is the existing entry point, not a new page.
+- **Wanted Board** — kept as its own top-level, directly-reachable entry (`wanted.html`)
+  *in addition to* living physically inside the Bar room, per
+  [`SHIP_EXPERIENCE_VISION.md`](../../SHIP_EXPERIENCE_VISION.md) §1 ("path off to the side to
+  the Wanted wall"). Two doors to the same room, not two different things.
+- **Clean Data** — new, first-class, no-RP toggle. Promotes the roster-density List mode
+  (`prototypes/roster-density/`) to a real site-wide entry, per
+  [`SHIP_EXPERIENCE_VISION.md`](../../SHIP_EXPERIENCE_VISION.md) §4 and
+  [`DECISIONS.md`](../../DECISIONS.md) 0f. Not a room aboard the ship — a parallel, plain view
+  of the same data.
+
+**Rooms folded in from today's separate pages** (reached by navigating the ship, not the top
+nav):
+- **The Bar** — already a room; becomes the hub room per §1 (order drinks, path to the
+  Wanted wall). Existing room, gets richer content (Step 3).
+- **The Map Room** — folded from `voyage.html` (island/voyage completion). New room section.
+- **The Standings** — already a room (parallel ladders). Unchanged by this pass.
+- **The Hall** — folded from `hall.html`, **absorbing `trophy.html`'s content** (one thin
+  tab does not need to stay separate from an adjacent one covering similar ground).
+
+**Left alone, not in scope for this pass:** Crow's Nest (raid countdown) and Below Deck
+(the debt counter / wheel gag) are existing ship rooms that were never top-nav tabs and
+aren't named in this consolidation — no reason found to touch them here.
+
+**No dead ends:** every folded room keeps a reachable path via the ship's room nav
+(`ship-nav.js`/`ship-nav.css`, the approved, reviewed prototype at
+[`prototypes/ship-nav/`](../../prototypes/ship-nav/) — port in, don't reinvent) plus the
+existing back-to-board affordance already on every non-board page.
+
 ## Item 1 — realm resolution (DONE)
 Cross-realm resolution is centralized in `guild_board/links.py`: `realm_index`
 builds `{name: realm}` from the roster cache (each member stored `name-realm`),
