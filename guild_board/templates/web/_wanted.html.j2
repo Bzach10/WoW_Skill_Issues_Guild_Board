@@ -1,6 +1,6 @@
 {# The Wanted Board markup. Expects `wanted` = guild_board.wanted.board(...).
    Renders the top-5 hero row and the full ranked, sortable wall. #}
-{%- macro poster(e) -%}
+{%- macro poster(e, eager=false) -%}
 {%- if e.baked -%}
 {# the art pipeline's finished bounty bill — ships as-is #}
 <a class="bounty-baked{{ ' wunranked' if e.rank is none }}"
@@ -12,7 +12,15 @@
    data-name="{{ (e.name or '')|lower }}"
    data-search="{{ [e.name, e.cls, e.spec, e.role_label]|select|join(' ')|lower }}"
    aria-label="WANTED: {{ e.name }}{% if e.score is not none %} — bounty {{ '%.0f'|format(e.score) }}{% endif %}">
-  <img src="{{ e.baked }}" width="900" height="1350" loading="lazy" decoding="async"
+  {# The top-5 hero row is always above the fold on load. loading="lazy" left
+     rows 2-5 blank (naturalWidth:0) even in-viewport — some browsers defer
+     lazy images until after the first layout pass settles their position,
+     which a CSS grid row doesn't guarantee before the load decision is made.
+     Eager for the row that's always visible; lazy stays for the full wall,
+     which can be 100+ posters and genuinely benefits from it. #}
+  <img src="{{ e.baked }}" width="900" height="1350"
+       loading="{{ 'eager' if eager else 'lazy' }}"
+       {%- if eager %} fetchpriority="high"{% endif %} decoding="async"
        alt="WANTED poster — {{ e.name }}{% if e.score is not none %}, Mythic+ {{ '%.1f'|format(e.score) }}{% else %}, bounty unconfirmed{% endif %}">
 </a>
 {%- else -%}
@@ -27,7 +35,9 @@
   <div class="wtitle">WANTED</div>
   <div class="wphoto">
     {%- if e.art %}
-    <img src="{{ e.art }}" alt="{{ e.name }}" loading="lazy" decoding="async">
+    <img src="{{ e.art }}" alt="{{ e.name }}"
+         loading="{{ 'eager' if eager else 'lazy' }}"
+         {%- if eager %} fetchpriority="high"{% endif %} decoding="async">
     {%- else %}
     <span class="silo" aria-hidden="true"><svg viewBox="0 0 24 28"><path d="M12 3a4.2 4.2 0 1 1 0 8.4A4.2 4.2 0 0 1 12 3Zm0 10.2c4.4 0 8 2.7 8 6v3.3H4v-3.3c0-3.3 3.6-6 8-6Z"/></svg></span>
     {%- endif %}
@@ -84,7 +94,7 @@
     <div class="mw-row">
       {# order 2,4,1,3,5 so the #1 sits centre, flanked #}
       {%- set order = [1, 3, 0, 2, 4] %}
-      {%- for i in order %}{% if wanted.top5[i] is defined %}{{ poster(wanted.top5[i]) }}{% endif %}{% endfor %}
+      {%- for i in order %}{% if wanted.top5[i] is defined %}{{ poster(wanted.top5[i], eager=true) }}{% endif %}{% endfor %}
     </div>
   </section>
   {%- endif %}
