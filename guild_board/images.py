@@ -2,7 +2,6 @@ import logging
 
 from PIL import Image, ImageDraw, ImageFont
 
-
 logger = logging.getLogger(__name__)
 
 

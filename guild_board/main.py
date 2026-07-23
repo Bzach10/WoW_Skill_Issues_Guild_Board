@@ -5,17 +5,23 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
+from guild_board.board_image import generate_board_animation, generate_board_image
 from guild_board.config import load_config, require_env
 from guild_board.discord import post_to_discord
 from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
 from guild_board.filters import apply_roster_filters, make_name_filter
-from guild_board.board_image import generate_board_animation, generate_board_image
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
 from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
-from guild_board.state import (baselines_view, load_board_state, raid_attendance_streaks,
-                               raid_week_label, save_board_state, streaks_from_attendance,
-                               update_records)
+from guild_board.state import (
+    baselines_view,
+    load_board_state,
+    raid_attendance_streaks,
+    raid_week_label,
+    save_board_state,
+    streaks_from_attendance,
+    update_records,
+)
 
 
 def _sample_week(sample):
@@ -27,16 +33,16 @@ from guild_board.wcl import (
     MPLUS_DIFFICULTY,
     clear_report_cache,
     collect_improvement_history,
-    merge_improvement,
     collect_parses_only,
     collect_raid_stats,
     compute_improvement,
     detect_zone,
     fetch_guild_reports,
     fetch_guild_standing,
-    fill_missing_parses,
     fetch_realm_rank_leaders,
+    fill_missing_parses,
     get_wcl_token,
+    merge_improvement,
     try_difficulties,
 )
 

@@ -247,6 +247,18 @@ roster_cache:
   max_age_days: 7
 
 # ------------------------------------------------------------
+#  BLIZZARD CHARACTER PROFILES (optional, off by default) — feeds future
+#  character-likeness features: gender, race, class, active spec, and a
+#  transmog render URL per character, straight from Blizzard's own API.
+#  Needs a free Battle.net developer app + two repo secrets — nothing here
+#  runs until BOTH `enabled: true` below AND BLIZZARD_CLIENT_ID/SECRET
+#  exist. See SETUP_BLIZZARD.md. Does not touch the weekly board at all.
+# ------------------------------------------------------------
+blizzard:
+  enabled: true
+  cache_file: "blizzard_profile_cache.json"
+
+# ------------------------------------------------------------
 #  RAID SETTINGS
 # ------------------------------------------------------------
 raid:
