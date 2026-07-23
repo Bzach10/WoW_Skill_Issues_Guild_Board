@@ -14,9 +14,24 @@ board_anim_test.gif
 board_*_small.png
 site/
 board_web_render.html
+voyage_map_render.html
 
 # Redesign previews: the HTML pages and the small contact-sheet thumbs
 # are committed; the full-page screenshots are 10MB+ each and are
 # regenerated on demand with
 #   python scripts/render_redesign_previews.py --png
 redesign_previews/*.png
+
+# ------------------------------------------------------------------
+# SECRETS — never commit. Anything matching these holds live
+# credentials (RunPod API key, Blizzard client secret, etc).
+# Deliberately broad: it is cheap to ignore a file that turns out to be
+# harmless, and expensive to un-leak a key that was pushed once.
+# ------------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+secrets.json
+runpod_config.json

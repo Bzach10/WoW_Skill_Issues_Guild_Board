@@ -4,8 +4,72 @@
     {
       "name": "board-preview",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8788"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8788"
+      ],
       "port": 8788
+    },
+    {
+      "name": "crew-board-frontend",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8899",
+        "--directory",
+        "C:/wt/fc"
+      ],
+      "port": 8899
+    },
+    {
+      "name": "trial-bundle",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8790",
+        "--directory",
+        "C:/wt/GuildBoardTrial"
+      ],
+      "port": 8790
+    },
+    {
+      "name": "trial-bundle-desktop",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8791",
+        "--directory",
+        "C:/Users/zachf/Desktop/GuildBoardTrial"
+      ],
+      "port": 8791
+    },
+    {
+      "name": "app-shell",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8941",
+        "--directory",
+        "C:/Users/zachf/OneDrive/Documents/WoW Server Stuff/prototypes/app-shell"
+      ],
+      "port": 8941
+    },
+    {
+      "name": "fc-qa-readonly",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8940",
+        "--directory",
+        "C:/wt/fc"
+      ],
+      "port": 8940
     }
   ]
 }

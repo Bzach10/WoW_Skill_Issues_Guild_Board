@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Voyage Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{color:var(--text); font-family:var(--font-body); font-size:16px;
+    background:radial-gradient(1200px 500px at 50% -180px, rgba(224,122,40,.14), transparent 65%), var(--bg);
+    padding:32px 16px 60px;}
+  h1{font-family:var(--font-display); font-weight:900; letter-spacing:.08em;
+    text-align:center; font-size:clamp(24px, 4vw, 40px); margin-bottom:6px;
+    text-shadow:0 4px 22px #000;}
+  .sub{text-align:center; color:var(--accent); letter-spacing:.24em; font-size:12px;
+    font-weight:700; margin-bottom:32px;}
+
+  /* ---------------------------- the route ---------------------------- */
+  .route-wrap{max-width:1600px; margin:0 auto; overflow-x:auto; padding-bottom:12px;}
+  .route{display:flex; align-items:flex-start; gap:0; min-width:max-content; padding:20px 8px;}
+  .leg{display:flex; align-items:center; width:56px; flex:none;}
+  .leg .dash{flex:1; height:0; border-top:3px dashed var(--hairline);}
+  .island{width:150px; flex:none; text-align:center; cursor:pointer;
+    border:none; background:none; color:inherit; font:inherit;}
+  .island .node{width:64px; height:64px; margin:0 auto 8px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:26px;
+    background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(0,0,0,.25)), var(--panel);
+    border:2px solid var(--hairline); box-shadow:0 8px 18px rgba(0,0,0,.4);
+    transition:border-color .15s, transform .15s;}
+  .island:hover .node{transform:translateY(-3px); border-color:var(--accent);}
+  .island.current .node{border-color:var(--accent); box-shadow:0 0 0 4px rgba(201,151,74,.25), 0 8px 18px rgba(0,0,0,.5);}
+  .island .name{font-size:12.5px; font-weight:700; line-height:1.25;}
+  .island.dungeon .name{color:var(--text);}
+  .island.raid_boss .name{color:#e7c8a0;}
+  .island .kind{font-size:10px; color:var(--faint); letter-spacing:.08em; margin-top:2px;}
+  .ship{position:absolute; margin-top:-96px; margin-left:12px; font-size:22px;}
+
+  /* ------------------------- docked detail card ------------------------ */
+  .dock{max-width:640px; margin:28px auto 0; padding:20px 22px;
+    background:linear-gradient(180deg, rgba(255,255,255,.025), rgba(0,0,0,.14)), var(--panel);
+    border:1px solid var(--hairline); border-radius:14px; box-shadow:0 12px 34px rgba(0,0,0,.35);
+    display:none;}
+  .dock.open{display:block;}
+  .dock .t{font-family:var(--font-display); font-size:22px; margin-bottom:4px;}
+  .dock .flavor{color:var(--muted); font-size:14px; font-style:italic; margin-bottom:14px;}
+  .dock .record{display:flex; align-items:center; gap:12px; padding:10px 0; border-top:1px solid var(--hairline);}
+  .dock .record .lbl{font-size:12px; color:var(--accent); font-weight:800; letter-spacing:.06em; flex:none; width:110px;}
+  .dock .record .val{font-size:15px; font-weight:700;}
+  .dock .empty{color:var(--faint); font-size:13px; padding-top:10px; border-top:1px solid var(--hairline);}
+</style>
+</head>
+<body>
+  <h1>{{ guild_name.upper() }}'S VOYAGE</h1>
+  <div class="sub">THE CREW'S ROUTE THROUGH {{ season_label }}</div>
+  <div class="route-wrap">
+    <div class="route">
+      {%- for island in islands %}
+      {%- if not loop.first %}<div class="leg"><div class="dash"></div></div>{% endif %}
+      <button class="island {{ island.kind }}{{ ' current' if island.id == current_island_id }}"
+              data-island="{{ island.id }}" onclick="dock('{{ island.id }}')">
+        {%- if island.id == current_island_id %}<div class="ship">🏴‍☠️</div>{% endif %}
+        <div class="node">{{ '🗝️' if island.kind == 'dungeon' else '💀' }}</div>
+        <div class="name">{{ island.name }}</div>
+        <div class="kind">{{ 'DUNGEON' if island.kind == 'dungeon' else 'RAID BOSS' }}</div>
+      </button>
+      {%- endfor %}
+    </div>
+  </div>
+
+  {%- for island in islands %}
+  <div class="dock{{ ' open' if island.id == current_island_id }}" id="dock-{{ island.id }}">
+    <div class="t">{{ island.name }}</div>
+    {%- if island.flavor %}<div class="flavor">{{ island.flavor }}</div>{% endif %}
+    {%- if island.data %}
+    <div class="record">
+      <span class="lbl">{{ 'BEST TIMED KEY' if island.kind == 'dungeon' else ('TOP PARSE · ' ~ island.data.role|upper) }}</span>
+      <span class="val">
+        {%- if island.kind == 'dungeon' -%}
+        {{ island.data.name }} — +{{ island.data.level }}{% if island.data.spec %} ({{ island.data.spec }}){% endif %}
+        {%- else -%}
+        {{ island.data.name }} — {{ island.data.parse }}%{% if island.data.spec %} ({{ island.data.spec }} {{ island.data.cls }}){% endif %}
+        {%- endif %}
+      </span>
+    </div>
+    {%- else %}
+    <div class="empty">No record on this island yet.</div>
+    {%- endif %}
+  </div>
+  {%- endfor %}
+
+<script>
+function dock(id){
+  document.querySelectorAll('.dock').forEach(function(d){
+    d.classList.toggle('open', d.id === 'dock-' + id);
+  });
+}
+</script>
+</body>
+</html>

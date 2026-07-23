@@ -1,0 +1,253 @@
+[2026-07-21 03:23:47Z] INFO  === SMOKE TEST: Nightborne female base body ===
+[2026-07-21 03:23:47Z] INFO  resources pre: RAM 683/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:23:47Z] WARN  RAM is thin — throttling (longer pause between assets)
+[2026-07-21 03:24:02Z] INFO  SMOKE OK in 15s -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_overnight_smoke.png
+[2026-07-21 03:24:03Z] INFO  resources post: RAM 3019/31876 MB free, VRAM 8329/16375 MB free
+[2026-07-21 03:24:03Z] INFO  MEASURED: one 832x1216 layer costs ~15s
+[2026-07-21 03:24:48Z] INFO  === SWEEP: base body, LoRA strength ===
+[2026-07-21 03:25:03Z] INFO    lora00 (lora=0.0) 15s -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_sweeps\body_lora00.png
+[2026-07-21 03:25:18Z] INFO    lora25 (lora=0.25) 15s -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_sweeps\body_lora25.png
+[2026-07-21 03:25:33Z] INFO    lora40 (lora=0.4) 15s -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_sweeps\body_lora40.png
+[2026-07-21 03:25:48Z] INFO    lora55 (lora=0.55) 15s -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_sweeps\body_lora55.png
+[2026-07-21 03:26:59Z] INFO  === ALIGNMENT TEST (base silhouette = 128100 px) ===
+[2026-07-21 03:27:14Z] INFO    denoise=0.4 15s  IoU=0.971  centroid drift=(-0.0,+0.4)px  -> align_d40.png
+[2026-07-21 03:27:24Z] INFO    denoise=0.55 10s  IoU=0.964  centroid drift=(-0.1,+0.7)px  -> align_d55.png
+[2026-07-21 03:27:34Z] INFO    denoise=0.7 10s  IoU=0.962  centroid drift=(+0.0,-1.0)px  -> align_d70.png
+[2026-07-21 03:27:34Z] INFO  higher IoU = gear stayed on the same body. <0.75 means drift is eating the alignment and ControlNet is required.
+[2026-07-21 03:28:54Z] INFO  === CONTROLNET TEST: does the robe render AND stay aligned? ===
+[2026-07-21 03:29:09Z] INFO    strength=0.85 end=0.8 15s  IoU=0.527  added=14.2%  drift=(-7.1,+164.3)px -> cn_s85e80.png
+[2026-07-21 03:29:24Z] INFO    strength=0.7 end=0.6 15s  IoU=0.489  added=16.4%  drift=(-9.1,+177.2)px -> cn_s70e60.png
+[2026-07-21 03:29:39Z] INFO    strength=0.55 end=0.45 15s  IoU=0.486  added=16.6%  drift=(-8.0,+175.4)px -> cn_s55e45.png
+[2026-07-21 03:29:39Z] INFO  want: added% clearly >0 (robe exists) with small drift (pose held)
+[2026-07-21 03:33:55Z] INFO  ==============================================================
+[2026-07-21 03:33:55Z] INFO  OVERNIGHT RUN START — 39 tasks (0 already checkpointed)
+[2026-07-21 03:33:55Z] INFO  resources start: RAM 3117/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:33:55Z] INFO  [1/39] character rakdisc-proudmoore/cloth_robe_holy
+[2026-07-21 03:34:05Z] INFO    body nightborne_female -> nightborne_female.png
+[2026-07-21 03:34:20Z] INFO    gear nightborne_female/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:34:33Z] INFO    CHARACTER rakdisc-proudmoore: 6 layers, still=composite.png, gif=idle.gif, runtime=PASS
+[2026-07-21 03:34:36Z] INFO  [2/39] character floofwall-queldorei/leather_scout
+[2026-07-21 03:34:46Z] INFO    body pandaren_male -> pandaren_male.png
+[2026-07-21 03:35:01Z] INFO    gear pandaren_male/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:35:12Z] INFO    CHARACTER floofwall-queldorei: 5 layers, still=composite.png, gif=idle.gif, runtime=PASS
+[2026-07-21 03:35:15Z] INFO  [3/39] character healyeah-queldorei/mail_hunter
+[2026-07-21 03:35:25Z] INFO    body dracthyr_male -> dracthyr_male.png
+[2026-07-21 03:35:41Z] INFO    gear dracthyr_male/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:35:51Z] INFO    CHARACTER healyeah-queldorei: 5 layers, still=composite.png, gif=idle.gif, runtime=PASS
+[2026-07-21 03:35:54Z] INFO  [5/39] gear nightborne_female/cloth_robe_shadow
+[2026-07-21 03:36:10Z] INFO    gear nightborne_female/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:36:10Z] INFO  resources after 5: RAM 3585/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:36:13Z] INFO  [6/39] gear nightborne_female/leather_scout
+[2026-07-21 03:36:28Z] INFO    gear nightborne_female/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:36:31Z] INFO  [7/39] gear nightborne_female/mail_hunter
+[2026-07-21 03:36:47Z] INFO    gear nightborne_female/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:36:50Z] INFO  [8/39] gear nightborne_female/plate_warrior
+[2026-07-21 03:37:05Z] INFO    gear nightborne_female/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:37:09Z] INFO  [9/39] gear nightborne_female/plate_paladin
+[2026-07-21 03:37:24Z] INFO    gear nightborne_female/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:37:27Z] INFO  [10/39] gear pandaren_male/cloth_robe_holy
+[2026-07-21 03:37:43Z] INFO    gear pandaren_male/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:37:43Z] INFO  resources after 10: RAM 3646/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:37:46Z] INFO  [11/39] gear pandaren_male/cloth_robe_shadow
+[2026-07-21 03:38:01Z] INFO    gear pandaren_male/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:38:04Z] INFO  [13/39] gear pandaren_male/mail_hunter
+[2026-07-21 03:41:26Z] ALERT ComfyUI hung again after its one allowed relaunch. STOPPING recovery — needs a manual Comfy Desktop GUI restart.
+[2026-07-21T03:41:42Z] INFO  recovery ladder rewired: kill backend -> launch Comfy Desktop.exe -> verify 600s -> stop+alert. One-shot latch verified.
+[2026-07-21 03:42:55Z] INFO  ==============================================================
+[2026-07-21 03:42:55Z] INFO  BASE BODY PASS — 6 races (gate before any gear)
+[2026-07-21 03:43:05Z] INFO    body nightborne_female -> nightborne_female.png
+[2026-07-21 03:43:05Z] INFO    nightborne_female    -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_bodies\nightborne_female.png
+[2026-07-21 03:43:18Z] INFO    body pandaren_male -> pandaren_male.png
+[2026-07-21 03:43:18Z] INFO    pandaren_male        -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_bodies\pandaren_male.png
+[2026-07-21 03:43:31Z] INFO    body dracthyr_male -> dracthyr_male.png
+[2026-07-21 03:43:31Z] INFO    dracthyr_male        -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_bodies\dracthyr_male.png
+[2026-07-21 03:43:44Z] INFO    body nightelf_female -> nightelf_female.png
+[2026-07-21 03:43:44Z] INFO    nightelf_female      -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_bodies\nightelf_female.png
+[2026-07-21 03:43:58Z] INFO    body human_male -> human_male.png
+[2026-07-21 03:43:58Z] INFO    human_male           -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_bodies\human_male.png
+[2026-07-21 03:44:11Z] INFO    body orc_male -> orc_male.png
+[2026-07-21 03:44:11Z] INFO    orc_male             -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\_bodies\orc_male.png
+[2026-07-21 03:44:14Z] INFO  BASE BODY PASS DONE — inspect cast/_bodies/ before running gear
+[2026-07-21 03:44:14Z] INFO  ==============================================================
+[2026-07-21 03:44:58Z] INFO  ==============================================================
+[2026-07-21 03:44:58Z] INFO  OVERNIGHT RUN START — 39 tasks (0 already checkpointed)
+[2026-07-21 03:44:58Z] INFO  resources start: RAM 5264/31876 MB free, VRAM 8329/16375 MB free
+[2026-07-21 03:44:58Z] INFO  [1/39] character rakdisc-proudmoore/cloth_robe_holy
+[2026-07-21 03:45:08Z] INFO    body nightborne_female -> nightborne_female.png
+[2026-07-21 03:45:24Z] INFO    gear nightborne_female/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:45:34Z] INFO    CHARACTER rakdisc-proudmoore: 5 layers, still=composite.png, gif=idle.gif, runtime=PASS
+[2026-07-21 03:45:37Z] INFO  [2/39] character floofwall-queldorei/leather_scout
+[2026-07-21 03:45:47Z] INFO    body pandaren_male -> pandaren_male.png
+[2026-07-21 03:46:03Z] INFO    gear pandaren_male/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:46:14Z] INFO    CHARACTER floofwall-queldorei: 5 layers, still=composite.png, gif=idle.gif, runtime=PASS
+[2026-07-21 03:46:17Z] INFO  [3/39] character healyeah-queldorei/mail_hunter
+[2026-07-21 03:46:27Z] INFO    body dracthyr_male -> dracthyr_male.png
+[2026-07-21 03:46:43Z] INFO    gear dracthyr_male/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:46:54Z] INFO    CHARACTER healyeah-queldorei: 5 layers, still=composite.png, gif=idle.gif, runtime=PASS
+[2026-07-21 03:46:57Z] INFO  [5/39] gear nightborne_female/cloth_robe_shadow
+[2026-07-21 03:47:12Z] INFO    gear nightborne_female/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:47:12Z] INFO  resources after 5: RAM 5235/31876 MB free, VRAM 8329/16375 MB free
+[2026-07-21 03:47:15Z] INFO  [6/39] gear nightborne_female/leather_scout
+[2026-07-21 03:47:31Z] INFO    gear nightborne_female/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:47:34Z] INFO  [7/39] gear nightborne_female/mail_hunter
+[2026-07-21 03:47:49Z] INFO    gear nightborne_female/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:47:52Z] INFO  [8/39] gear nightborne_female/plate_warrior
+[2026-07-21 03:48:08Z] INFO    gear nightborne_female/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:48:11Z] INFO  [9/39] gear nightborne_female/plate_paladin
+[2026-07-21 03:48:26Z] INFO    gear nightborne_female/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:48:30Z] INFO  [10/39] gear pandaren_male/cloth_robe_holy
+[2026-07-21 03:48:45Z] INFO    gear pandaren_male/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:48:45Z] INFO  resources after 10: RAM 5205/31876 MB free, VRAM 8329/16375 MB free
+[2026-07-21 03:48:48Z] INFO  [11/39] gear pandaren_male/cloth_robe_shadow
+[2026-07-21 03:49:04Z] INFO    gear pandaren_male/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:49:07Z] INFO  [13/39] gear pandaren_male/mail_hunter
+[2026-07-21 03:49:22Z] INFO    gear pandaren_male/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:49:25Z] INFO  [14/39] gear pandaren_male/plate_warrior
+[2026-07-21 03:49:41Z] INFO    gear pandaren_male/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:49:44Z] INFO  [15/39] gear pandaren_male/plate_paladin
+[2026-07-21 03:50:00Z] INFO    gear pandaren_male/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:50:00Z] INFO  resources after 15: RAM 5263/31876 MB free, VRAM 8329/16375 MB free
+[2026-07-21 03:50:03Z] INFO  [16/39] gear dracthyr_male/cloth_robe_holy
+[2026-07-21 03:50:18Z] INFO    gear dracthyr_male/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:50:21Z] INFO  [17/39] gear dracthyr_male/cloth_robe_shadow
+[2026-07-21 03:50:37Z] INFO    gear dracthyr_male/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:50:40Z] INFO  [18/39] gear dracthyr_male/leather_scout
+[2026-07-21 03:50:56Z] INFO    gear dracthyr_male/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:50:59Z] INFO  [20/39] gear dracthyr_male/plate_warrior
+[2026-07-21 03:51:14Z] INFO    gear dracthyr_male/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:51:14Z] INFO  resources after 20: RAM 5586/31876 MB free, VRAM 8329/16375 MB free
+[2026-07-21 03:51:17Z] INFO  [21/39] gear dracthyr_male/plate_paladin
+[2026-07-21 03:51:33Z] INFO    gear dracthyr_male/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:51:36Z] INFO  [22/39] gear nightelf_female/cloth_robe_holy
+[2026-07-21 03:51:46Z] INFO    body nightelf_female -> nightelf_female.png
+[2026-07-21 03:52:01Z] INFO    gear nightelf_female/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:52:04Z] INFO  [23/39] gear nightelf_female/cloth_robe_shadow
+[2026-07-21 03:52:20Z] INFO    gear nightelf_female/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:52:23Z] INFO  [24/39] gear nightelf_female/leather_scout
+[2026-07-21 03:52:39Z] INFO    gear nightelf_female/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:52:42Z] INFO  [25/39] gear nightelf_female/mail_hunter
+[2026-07-21 03:52:57Z] INFO    gear nightelf_female/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:52:57Z] INFO  resources after 25: RAM 3703/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:53:00Z] INFO  [26/39] gear nightelf_female/plate_warrior
+[2026-07-21 03:53:16Z] INFO    gear nightelf_female/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:53:19Z] INFO  [27/39] gear nightelf_female/plate_paladin
+[2026-07-21 03:53:34Z] INFO    gear nightelf_female/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:53:37Z] INFO  [28/39] gear human_male/cloth_robe_holy
+[2026-07-21 03:53:48Z] INFO    body human_male -> human_male.png
+[2026-07-21 03:54:03Z] INFO    gear human_male/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:54:06Z] INFO  [29/39] gear human_male/cloth_robe_shadow
+[2026-07-21 03:54:22Z] INFO    gear human_male/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:54:25Z] INFO  [30/39] gear human_male/leather_scout
+[2026-07-21 03:54:40Z] INFO    gear human_male/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:54:40Z] INFO  resources after 30: RAM 3685/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:54:43Z] INFO  [31/39] gear human_male/mail_hunter
+[2026-07-21 03:54:59Z] INFO    gear human_male/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:55:02Z] INFO  [32/39] gear human_male/plate_warrior
+[2026-07-21 03:55:18Z] INFO    gear human_male/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:55:21Z] INFO  [33/39] gear human_male/plate_paladin
+[2026-07-21 03:55:36Z] INFO    gear human_male/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:55:39Z] INFO  [34/39] gear orc_male/cloth_robe_holy
+[2026-07-21 03:55:49Z] INFO    body orc_male -> orc_male.png
+[2026-07-21 03:56:05Z] INFO    gear orc_male/cloth_robe_holy -> arms, body, chest, face, legs
+[2026-07-21 03:56:08Z] INFO  [35/39] gear orc_male/cloth_robe_shadow
+[2026-07-21 03:56:24Z] INFO    gear orc_male/cloth_robe_shadow -> arms, body, chest, face, legs
+[2026-07-21 03:56:24Z] INFO  resources after 35: RAM 3260/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:56:27Z] INFO  [36/39] gear orc_male/leather_scout
+[2026-07-21 03:56:42Z] INFO    gear orc_male/leather_scout -> arms, body, chest, face, legs
+[2026-07-21 03:56:45Z] INFO  [37/39] gear orc_male/mail_hunter
+[2026-07-21 03:57:01Z] INFO    gear orc_male/mail_hunter -> arms, body, chest, face, legs
+[2026-07-21 03:57:04Z] INFO  [38/39] gear orc_male/plate_warrior
+[2026-07-21 03:57:15Z] INFO    gear orc_male/plate_warrior -> arms, body, chest, face, legs
+[2026-07-21 03:57:18Z] INFO  [39/39] gear orc_male/plate_paladin
+[2026-07-21 03:57:28Z] INFO    gear orc_male/plate_paladin -> arms, body, chest, face, legs
+[2026-07-21 03:57:32Z] INFO  RUN END — 36 generated, 0 failed, 3 already done
+[2026-07-21 03:57:32Z] INFO  resources end: RAM 3676/31876 MB free, VRAM 5928/16375 MB free
+[2026-07-21 03:57:32Z] INFO  ==============================================================
+[2026-07-21 05:04:38Z] INFO  === CONTROLNET TEST: does the robe render AND stay aligned? ===
+[2026-07-21 05:04:48Z] INFO    strength=0.85 end=0.8 10s  IoU=0.527  added=14.2%  drift=(-7.1,+164.3)px -> cn_s85e80.png
+[2026-07-21 05:04:58Z] INFO    strength=0.7 end=0.6 10s  IoU=0.489  added=16.4%  drift=(-9.1,+177.2)px -> cn_s70e60.png
+[2026-07-21 05:05:08Z] INFO    strength=0.55 end=0.45 10s  IoU=0.486  added=16.6%  drift=(-8.0,+175.4)px -> cn_s55e45.png
+[2026-07-21 05:05:08Z] INFO  want: added% clearly >0 (robe exists) with small drift (pose held)
+[2026-07-21 05:16:01Z] INFO  ==============================================================
+[2026-07-21 05:16:01Z] INFO  RUNPOD: key VERIFIED (0 pods, 0 volumes — nothing billing).
+[2026-07-21 05:16:01Z] INFO  RUNPOD: pod NOT started. Two blockers found after the key check:
+[2026-07-21 05:16:01Z] INFO    1. Exact models are not publicly sourceable — HF controlnet-union is
+[2026-07-21 05:16:01Z] INFO       1.26GB vs our 2.34GB local file, and Illustrious-XL-v1.1 is not on
+[2026-07-21 05:16:01Z] INFO       HF (only v0/v2.0). Pulling those would CHANGE the art style and
+[2026-07-21 05:16:01Z] INFO       make byte-identical parity impossible. Must upload our 9.1GB.
+[2026-07-21 05:16:01Z] INFO    2. Cheapest upload (S3 API, no pod billing) needs a SEPARATE S3 key
+[2026-07-21 05:16:01Z] INFO       (user_*/rps_*) only Zach can create in the console.
+[2026-07-21 05:16:01Z] INFO  DECISION: not spending pod time tonight. Local ComfyUI is healthy and
+[2026-07-21 05:16:01Z] INFO  free, mass-generation is explicitly deferred, so the cutover has no
+[2026-07-21 05:16:01Z] INFO  urgency tonight. Proceeding with Rakdisc locally at zero cost.
+[2026-07-21 05:16:01Z] INFO  DEPS: frontend z-order fix LANDED (headgear z=65, PROP_SLOTS square).
+[2026-07-21 05:16:01Z] INFO  DEPS: backend equipment code built but NO DATA (needs Blizzard creds).
+[2026-07-21 05:16:01Z] INFO        Using her real transmog RENDER as ground truth instead.
+[2026-07-21 05:16:01Z] INFO  ==============================================================
+[2026-07-21 05:16:50Z] INFO  ==============================================================
+[2026-07-21 05:16:50Z] INFO  RAKDISC HERO PASS — gear-accurate template build
+[2026-07-21 05:17:00Z] INFO    gear -> rakdisc_gear_raw.png
+[2026-07-21 05:17:10Z] INFO    prop headgear -> headgear_raw.png
+[2026-07-21 05:17:20Z] INFO    prop weapon_main -> weapon_main_raw.png
+[2026-07-21 05:17:30Z] INFO    prop weapon_off -> weapon_off_raw.png
+[2026-07-21 05:17:30Z] INFO  HERO PASS RENDERS DONE in 40s (gear=ok, props=['headgear', 'weapon_main', 'weapon_off'])
+[2026-07-21 05:17:30Z] INFO  ==============================================================
+[2026-07-21 05:18:30Z] INFO    gear v2 (robe-conditioned) 15s -> cast\_props\rakdisc_gear_raw.png
+[2026-07-21 05:20:09Z] INFO  ==============================================================
+[2026-07-21 05:20:09Z] INFO  RAKDISC ASSEMBLE — updated contract (headgear z=65, prop slots)
+[2026-07-21 05:20:09Z] INFO    garment layers: arms, body, chest, face, legs
+[2026-07-21 05:20:09Z] INFO    headgear -> headgear.png (mitre, above face)
+[2026-07-21 05:20:09Z] INFO    weapon_main -> weapon_main.png at pivot (0.68, 0.42)
+[2026-07-21 05:20:09Z] INFO    weapon_off -> weapon_off.png at pivot (0.32, 0.42)
+[2026-07-21 05:20:29Z] INFO    layers composited: body, legs, chest, arms, face, headgear, weapon_off, weapon_main
+[2026-07-21 05:20:29Z] INFO    still -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\rakdisc-proudmoore\one_piece\composite.png
+[2026-07-21 05:20:29Z] INFO    gif   -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\rakdisc-proudmoore\one_piece\idle.gif
+[2026-07-21 05:20:29Z] INFO  ==============================================================
+[2026-07-21 05:22:08Z] INFO  ==============================================================
+[2026-07-21 05:22:08Z] INFO  RAKDISC ASSEMBLE — updated contract (headgear z=65, prop slots)
+[2026-07-21 05:22:09Z] INFO    garment layers: arms, body, chest, face, legs
+[2026-07-21 05:22:09Z] INFO    headgear -> headgear.png (crown->brow, cx=438 brow=174)
+[2026-07-21 05:22:09Z] INFO    weapon_main -> weapon_main.png at hand (538, 632)
+[2026-07-21 05:22:09Z] INFO    weapon_off -> weapon_off.png at hand (312, 632)
+[2026-07-21 05:22:25Z] INFO    layers composited: body, legs, chest, arms, face, headgear, weapon_off, weapon_main
+[2026-07-21 05:22:25Z] INFO    still -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\rakdisc-proudmoore\one_piece\composite.png
+[2026-07-21 05:22:25Z] INFO    gif   -> C:\Users\zachf\OneDrive\Documents\WoW Server Stuff\Diven WoW Guild Board\WoW_Skill_Issues_Guild_Board\cast\rakdisc-proudmoore\one_piece\idle.gif
+[2026-07-21 05:22:25Z] INFO  ==============================================================
+[2026-07-21 05:28:57Z] INFO  ==============================================================
+[2026-07-21 05:28:57Z] INFO  SCENE TRIAL — Healyeah, approved w025 recipe, Dragonflight scene
+[2026-07-21 05:28:57Z] INFO    reference staged: healyeah_transmog_ref.png
+[2026-07-21 05:29:32Z] INFO    [1/3] seed 70101 35s -> healyeah_dragonflight_scene_w025_s70101.png
+[2026-07-21 05:30:02Z] INFO    [2/3] seed 70102 30s -> healyeah_dragonflight_scene_w025_s70102.png
+[2026-07-21 05:30:32Z] INFO    [3/3] seed 70103 30s -> healyeah_dragonflight_scene_w025_s70103.png
+[2026-07-21 05:30:32Z] INFO  SCENE TRIAL DONE — 3/3 produced
+[2026-07-21 05:30:32Z] INFO  ==============================================================
+[2026-07-21 05:31:34Z] INFO  ==============================================================
+[2026-07-21 05:31:34Z] INFO  SCENE TRIAL — Healyeah, approved w025 recipe, Dragonflight scene
+[2026-07-21 05:31:34Z] INFO    reference staged: healyeah_transmog_ref.png
+[2026-07-21 05:32:04Z] INFO    [1/3] seed 70201 30s -> healyeah_dragonflight_scene_w030_s70201.png
+[2026-07-21 05:32:34Z] INFO    [2/3] seed 70202 30s -> healyeah_dragonflight_scene_w030_s70202.png
+[2026-07-21 05:33:09Z] INFO    [3/3] seed 70203 35s -> healyeah_dragonflight_scene_w030_s70203.png
+[2026-07-21 05:33:09Z] INFO  SCENE TRIAL DONE — 3/3 produced
+[2026-07-21 05:33:09Z] INFO  ==============================================================
+[2026-07-21 05:36:09Z] INFO    flat 70301 50s -> healyeah_dragonflight_flat_w030_s70301.png
+[2026-07-21 05:37:04Z] INFO    flat 70302 55s -> healyeah_dragonflight_flat_w030_s70302.png
+[2026-07-21 05:40:14Z] INFO  ==============================================================
+[2026-07-21 05:40:14Z] INFO  TRIAL DELIVERED: 3 finals in cast/_trial/ (rakdisc, floofwall, healyeah)
+[2026-07-21 05:40:14Z] INFO    handed to frontend session via TRIAL_HANDOFF.md + direct message
+[2026-07-21 05:40:14Z] INFO  RUNPOD SPEND THIS SESSION: $0.00 — no pod created, no volume created.
+[2026-07-21 05:40:14Z] INFO    blocked on a separate S3 API key (user_*/rps_*) Zach must create;
+[2026-07-21 05:40:14Z] INFO    without it the only upload path bills pod time for a 9.1GB transfer.
+[2026-07-21 05:40:14Z] INFO  ==============================================================
+[2026-07-21 05:41:44Z] INFO  ==============================================================
+[2026-07-21 05:41:44Z] INFO  STAND DOWN — art pipeline session idle.
+[2026-07-21 05:41:44Z] INFO  RunPod: 0 pods, 0 network volumes, $0.00 spent. Nothing was ever
+[2026-07-21 05:41:44Z] INFO    provisioned, so there was nothing to spin down.
+[2026-07-21 05:41:44Z] INFO  Local: no generation running, ComfyUI queue empty, keep-awake released.
+[2026-07-21 05:41:44Z] INFO  Handing generation to the dedicated RunPod session. All outputs and
+[2026-07-21 05:41:44Z] INFO    scripts preserved on disk; nothing deleted.
+[2026-07-21 05:41:44Z] INFO  ==============================================================
+[2026-07-21 05:43:33Z] INFO  CORRECTION: earlier standdown line said keep-awake was released before
+[2026-07-21 05:43:33Z] INFO    it was verified. Re-checked: the holder process is confirmed gone
+[2026-07-21 05:43:33Z] INFO    (the earlier match was the check command matching itself). Orphaned
+[2026-07-21 05:43:33Z] INFO    wrapper shells cleaned up. Sleep behaviour restored; power plan was
+[2026-07-21 05:43:33Z] INFO    never modified.

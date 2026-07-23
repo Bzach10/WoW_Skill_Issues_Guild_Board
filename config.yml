@@ -259,6 +259,28 @@ blizzard:
   cache_file: "blizzard_profile_cache.json"
 
 # ------------------------------------------------------------
+#  FULL-CAST ART (scripts/generate_cast.py) — a One Piece style
+#  illustration per real roster member, driven entirely by
+#  blizzard_profile_cache.json (never hand-briefed). Waits for that cache
+#  to have data; does nothing until then. List anyone who'd rather not
+#  have art generated of their character here (same "name-realm" format
+#  as roster_cache.json).
+# ------------------------------------------------------------
+cast:
+  opt_out: []
+    # - "Somename-Somerealm"
+
+# ------------------------------------------------------------
+#  VOYAGE MAP (scripts/render_voyage_map.py) — the season's dungeons +
+#  raid as islands on the crew's route. Island list and flavor text are
+#  fixed (guild_board/voyage.py); current_island is the one knob an
+#  officer moves as the guild actually progresses. Leave blank for the
+#  first dungeon in the season pool.
+# ------------------------------------------------------------
+voyage:
+  current_island: ""   # island id, e.g. "grim-batol" or "chimaerus"
+
+# ------------------------------------------------------------
 #  RAID SETTINGS
 # ------------------------------------------------------------
 raid:
