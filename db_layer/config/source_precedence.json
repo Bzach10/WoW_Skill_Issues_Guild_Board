@@ -1,0 +1,57 @@
+{
+  "_comment": [
+    "SOURCE PRECEDENCE — S.S. Wipe Fest. Seeds the field_authority table.",
+    "docs/DATABASE_DESIGN.md §3.4 / §4.2. These are Zach's seed values and are",
+    "his to change: editing this file + rebuilding changes which source wins.",
+    "It is NEVER a re-ingestion — every source's observation is kept separately,",
+    "so nothing was discarded at ingest time that a precedence change would need.",
+    "",
+    "rank: 1 = highest authority. Lower ranks are consulted only when a higher",
+    "  rank has no (fresh) observation.",
+    "max_age_hours: beyond this age an observation is treated as stale and the",
+    "  next source is consulted. null = never expires on age alone.",
+    "tolerance: a disagreement smaller than this is not treated as a conflict.",
+    "  Only meaningful for numeric fields (mplus_score).",
+    "",
+    "The mplus_score tolerance exists as INSURANCE against a plausible-but-",
+    "unmeasured raider.io/Blizzard float-vs-int divergence (§2 refinement 2,",
+    "labelled [unknown]); it is not a response to a measured effect."
+  ],
+  "fields": [
+    { "field": "membership",             "source": "blizzard",     "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "membership",             "source": "raiderio",     "rank": 2, "max_age_hours": null, "tolerance": null },
+    { "field": "membership",             "source": "warcraftlogs", "rank": 3, "max_age_hours": null, "tolerance": null },
+
+    { "field": "roster_existence",       "source": "manual",       "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "roster_existence",       "source": "blizzard",     "rank": 2, "max_age_hours": null, "tolerance": null },
+    { "field": "roster_existence",       "source": "raiderio",     "rank": 3, "max_age_hours": null, "tolerance": null },
+
+    { "field": "identity",               "source": "blizzard",     "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "identity",               "source": "raiderio",     "rank": 2, "max_age_hours": null, "tolerance": null },
+    { "field": "identity",               "source": "warcraftlogs", "rank": 3, "max_age_hours": null, "tolerance": null },
+
+    { "field": "class_race_level",       "source": "blizzard",     "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "class_race_level",       "source": "raiderio",     "rank": 2, "max_age_hours": null, "tolerance": null },
+
+    { "field": "achievements",           "source": "blizzard",     "rank": 1, "max_age_hours": null, "tolerance": null },
+
+    { "field": "raid_kill_whether",      "source": "blizzard",     "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "raid_kill_whether",      "source": "warcraftlogs", "rank": 2, "max_age_hours": null, "tolerance": null },
+
+    { "field": "raid_kill_detail",       "source": "warcraftlogs", "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "parse",                  "source": "warcraftlogs", "rank": 1, "max_age_hours": null, "tolerance": null },
+
+    { "field": "mplus_score",            "source": "raiderio",     "rank": 1, "max_age_hours": null, "tolerance": 0.1 },
+    { "field": "mplus_score",            "source": "blizzard",     "rank": 2, "max_age_hours": null, "tolerance": 0.1 },
+    { "field": "mplus_score",            "source": "warcraftlogs", "rank": 3, "max_age_hours": null, "tolerance": 0.1 },
+
+    { "field": "mplus_key_runs",         "source": "raiderio",     "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "mplus_key_runs",         "source": "warcraftlogs", "rank": 2, "max_age_hours": null, "tolerance": null },
+    { "field": "mplus_key_runs",         "source": "blizzard",     "rank": 3, "max_age_hours": null, "tolerance": null },
+
+    { "field": "mplus_run_detail",       "source": "warcraftlogs", "rank": 1, "max_age_hours": null, "tolerance": null },
+
+    { "field": "guild_raid_progression", "source": "blizzard",     "rank": 1, "max_age_hours": null, "tolerance": null },
+    { "field": "guild_raid_progression", "source": "warcraftlogs", "rank": 2, "max_age_hours": null, "tolerance": null }
+  ]
+}
