@@ -432,7 +432,17 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
     for boss in raid["bosses"]:
         name = boss["name"]
         # Confirmed if guild achievements name the kill, or we hold a record
-        # for that specific boss.
+        # for that specific boss. The record path is only as trustworthy as
+        # the record's own provenance - Amrevenge's 97 on Fallen-King
+        # Salhadaar (board_records.best_dps_parse) was [unknown] until
+        # 2026-07-23, when Zach confirmed it real (owner-confirmed + WCL);
+        # see docs/DATA_INTEGRITY.md #4.1/#6. Salhadaar's kill_confirmed
+        # here rests on that record and is sound now that it's verified.
+        # A record whose own provenance is still unverified would make this
+        # a weaker signal than "confirmed" implies - see DATA_INTEGRITY.md
+        # #2 leak path 5 (kill_confirmed conflates two confidence levels;
+        # the DB-layer fix is DATABASE_DESIGN.md #7.3's kill_state, not yet
+        # landed).
         confirmed = name in confirmed_boss_kills or name in record_bosses
         # Inference (pull order vs kill count) only fills gaps, and only when
         # we don't have the authoritative achievement list.
