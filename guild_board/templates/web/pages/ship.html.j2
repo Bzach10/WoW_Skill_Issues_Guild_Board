@@ -26,7 +26,15 @@ html[data-crew-theme="{{ key }}"]{
 }
 {%- endfor %}
 :root{--tank:#6ea8fe; --healer:#5fce9b; --dps:#e07b6b;
-  --brass:#c9974a; --rope:#b98b52; --measure:1180px;}
+  --brass:#c9974a; --rope:#b98b52; --measure:1180px;
+  /* design tokens (docs/INTEGRATION_PLAN.md #2.1, docs/LAYOUT_REVIEW.md C4/C5) —
+     one spacing step, one type scale, routed through the nav + section rhythm
+     first (the highest-repeat patterns); not yet every declaration in this file. */
+  --space-1:4px; --space-2:8px; --space-3:12px; --space-4:16px; --space-5:24px;
+  --space-6:32px; --space-7:48px; --space-8:64px;
+  --fs-h2:clamp(28px,5vw,46px); --fs-h3:clamp(18px,2.6vw,24px);
+  --fs-body:16px; --fs-small:14px; --fs-micro:12px;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
 html{overflow-x:hidden; scroll-behavior:smooth;}
 body{background:var(--bg); color:var(--text); font-family:var(--font-body);
@@ -80,29 +88,38 @@ a{color:var(--accent);}
 .manifest{position:sticky; top:0; z-index:50; background:color-mix(in srgb,var(--bg) 92%, transparent);
   backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
   box-shadow:0 6px 20px -14px rgba(0,0,0,.7);}
-.manifest-in{display:flex; align-items:center; gap:6px; overflow-x:auto;
-  max-width:1320px; margin:0 auto; padding:9px 16px; scrollbar-width:thin;}
+.manifest-in{display:flex; align-items:center; gap:var(--space-2); overflow-x:auto;
+  max-width:1320px; margin:0 auto; padding:var(--space-2) var(--space-4); scrollbar-width:thin;}
 .manifest-in::-webkit-scrollbar{height:5px;}
 .manifest-in::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
-.manifest .brand{flex:0 0 auto; display:flex; align-items:center; gap:8px;
+.manifest .brand{flex:0 0 auto; display:flex; align-items:center; gap:var(--space-2);
   font-family:var(--font-display); font-weight:700; color:var(--heading);
-  text-decoration:none; padding-right:8px; margin-right:4px;
-  border-right:1px solid var(--line); font-size:14px; white-space:nowrap;}
-.deckchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:6px;
-  font-size:12.5px; text-decoration:none; color:var(--muted); white-space:nowrap;
-  padding:7px 12px; border-radius:999px; transition:all .2s;}
+  text-decoration:none; padding-right:var(--space-2); margin-right:var(--space-1);
+  border-right:1px solid var(--line); font-size:var(--fs-small); white-space:nowrap;}
+.deckchip{flex:0 0 auto; display:inline-flex; align-items:center; gap:var(--space-1);
+  font-size:var(--fs-micro); text-decoration:none; color:var(--muted); white-space:nowrap;
+  padding:var(--space-2) var(--space-3); border-radius:999px; transition:all .2s;
+  min-height:44px; align-items:center;}
 .deckchip:hover{color:var(--text); background:color-mix(in srgb,var(--line) 45%, transparent);}
 .deckchip.active{color:var(--bg); background:var(--accent);}
 .deckchip .dot{font-size:14px;}
 .deck-split{flex:0 0 auto; font-size:9px; letter-spacing:.18em; text-transform:uppercase;
-  color:var(--faint,var(--muted)); opacity:.7; padding:0 4px; white-space:nowrap;}
+  color:var(--faint,var(--muted)); opacity:.7; padding:0 var(--space-1); white-space:nowrap;}
+.mode-toggle{flex:0 0 auto; display:inline-flex; align-items:center; gap:var(--space-1);
+  margin-left:auto; padding-left:var(--space-3); border-left:1px solid var(--line);}
+.mode-toggle a{font-size:var(--fs-micro); text-decoration:none; white-space:nowrap;
+  padding:var(--space-2) var(--space-3); border-radius:999px; min-height:44px;
+  display:inline-flex; align-items:center; border:1px solid var(--line); color:var(--muted);
+  transition:all .2s;}
+.mode-toggle a[aria-current="page"]{background:var(--accent); color:var(--bg); border-color:var(--accent);}
+.mode-toggle a:not([aria-current]):hover{color:var(--text); border-color:var(--accent);}
 
 /* ---------------- a room ---------------- */
-.room{position:relative; padding:56px 0 44px; border-bottom:1px solid
+.room{position:relative; padding:var(--space-8) 0 var(--space-7); border-bottom:1px solid
   color-mix(in srgb,var(--line) 60%, transparent); scroll-margin-top:58px;}
 .room:nth-child(even of .room){background:color-mix(in srgb,var(--panel) 22%, var(--bg));}
-.room-head{text-align:center; margin-bottom:30px;}
-.porthole{width:64px; height:64px; margin:0 auto 14px; border-radius:50%;
+.room-head{text-align:center; margin-bottom:var(--space-6);}
+.porthole{width:64px; height:64px; margin:0 auto var(--space-3); border-radius:50%;
   display:grid; place-items:center; font-size:30px;
   background:radial-gradient(circle at 35% 30%,
     color-mix(in srgb,var(--accent) 26%, var(--panel)),
@@ -111,14 +128,23 @@ a{color:var(--accent);}
   box-shadow:0 0 0 6px color-mix(in srgb,var(--panel) 60%, transparent),
     inset 0 2px 10px rgba(0,0,0,.4);}
 .room h2{font-family:var(--font-display); font-weight:900; color:var(--heading);
-  font-size:clamp(28px,5vw,46px); line-height:1;}
-.room .sub{color:var(--muted); margin-top:10px; max-width:60ch; margin-inline:auto;
-  font-size:14.5px;}
+  font-size:var(--fs-h2); line-height:1;}
+.room .sub{color:var(--muted); margin-top:var(--space-3); max-width:60ch; margin-inline:auto;
+  font-size:var(--fs-small);}
 .room .sub b{color:var(--accent);}
-.deeper{display:inline-block; margin-top:18px; font-size:13px; font-weight:600;
-  text-decoration:none; padding:9px 18px; border-radius:999px;
+.deeper{display:inline-block; margin-top:var(--space-4); font-size:13px; font-weight:600;
+  text-decoration:none; padding:var(--space-2) var(--space-4); border-radius:999px;
   border:1px solid var(--line); color:var(--text); transition:all .2s;}
 .deeper:hover{border-color:var(--accent); color:var(--accent);}
+
+/* ---------------- entrance preview banner ---------------- */
+.entrance-preview{display:flex; align-items:center; gap:var(--space-4); flex-wrap:wrap;
+  justify-content:center; text-align:center; max-width:var(--measure); margin:var(--space-5) auto 0;
+  padding:var(--space-4) var(--space-5); border-radius:16px; border:1px dashed var(--accent);
+  background:color-mix(in srgb,var(--accent) 8%, var(--panel));}
+.entrance-preview p{margin:0; font-size:var(--fs-small); color:var(--text); max-width:52ch;}
+.entrance-preview b{color:var(--accent);}
+.entrance-preview a.deeper{margin-top:0; flex:0 0 auto;}
 
 .card{background:var(--panel); border:1px solid var(--line); border-radius:16px;
   padding:20px 22px;}
@@ -416,8 +442,21 @@ a{color:var(--accent);}
     <a class="deckchip" href="voyage.html"><span class="dot">🧭</span>Voyage</a>
     <a class="deckchip" href="hall.html"><span class="dot">🖼️</span>The Hall</a>
     <a class="deckchip" href="trophy.html"><span class="dot">🏆</span>Trophies</a>
+    <div class="mode-toggle" role="group" aria-label="Immersive or Clean Data view">
+      <a href="#top" aria-current="page">Immersive</a>
+      <a href="review/clean-data/" title="Fast, no-RP data view — sanctioned mobile / low-power path">Clean&nbsp;data</a>
+    </div>
   </div>
 </nav>
+
+<div class="wrap">
+  <div class="entrance-preview">
+    <p>🚧 <b>The new 3D ship entrance is in preview</b> — the living ship, top crew moving on
+      deck, click-to-board navigation. Not wired in as the front door yet (it's still on a
+      hand-picked crew list, not the live roster).</p>
+    <a class="deeper" href="review/ship-entrance/">Preview the entrance →</a>
+  </div>
+</div>
 
 <main id="top">
 

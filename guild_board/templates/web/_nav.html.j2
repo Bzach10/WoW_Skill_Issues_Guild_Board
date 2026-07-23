@@ -20,17 +20,21 @@
        keeps a direct top-level door in addition to living in the Bar room,
        per SHIP_EXPERIENCE_VISION.md #1 ("two doors to the same room").
 
-       Clean Data is the third intended top-level entry (SHIP_EXPERIENCE_
-       VISION.md #4) but has NO real destination yet - porting the
-       roster-density List mode into the templated site is still-unstarted
-       work, not this pass. Deliberately left out rather than pointed at
-       crew_board.html (the immersive board), which would be a wrong link,
-       not just an early one. Add it back the moment a real page exists. #}
+       "The Ship" points at index.html, not ship.html: build_trial.py
+       deploys the ship.html.j2 render AS index.html (the entry point),
+       so ship.html never exists in the shipped bundle
+       (docs/INTEGRATION_PLAN.md #1 — this was leaving ../ship.html
+       dangling on every profile/secondary page).
+
+       Clean Data now has a real destination: /review/clean-data/
+       (docs/INTEGRATION_PLAN.md #2, 2026-07-23) — gated the same as the
+       rest of /review, so linking it here adds no new exposure. #}
     <nav class="navlinks" aria-label="Primary">
-      <a href="{{ nav_root }}ship.html"
+      <a href="{{ nav_root }}index.html"
          {% if nav_here == 'board' or nav_here == 'ship' %}aria-current="page"{% endif %}>The Ship</a>
       <a href="{{ nav_root }}wanted.html"
          {% if nav_here == 'wanted' %}aria-current="page"{% endif %}>Wanted Board</a>
+      <a href="{{ nav_root }}review/clean-data/">Clean&nbsp;Data</a>
     </nav>
     <div class="themeswitch" role="group" aria-label="Theme">
       {%- for key, t in themes.items() %}
@@ -43,5 +47,5 @@
 </header>
 {%- if nav_here != 'board' %}
 {# a big, obvious return affordance — the thing Zach could not find #}
-<a class="backbar" href="{{ nav_root }}index.html">← Back to the board</a>
+<a class="backbar" href="{{ nav_root }}index.html">← Back to the ship</a>
 {%- endif %}
