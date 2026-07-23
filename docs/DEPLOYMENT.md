@@ -88,6 +88,64 @@ before telling anyone this is private, every single time you deploy — a new de
 new unprotected URL even after the toggle is fixed once, if it doesn't retroactively apply.
 **This whole paragraph is the single most important thing in this document.**
 
+## 2a. Flipping to public (board public, `/review/*` stays gated) — NOT done, pending Zach's go-ahead
+
+**Current state (2026-07-23): everything is gated, unchanged.** Zach wants to keep the login for
+now and flip later. This section exists so that when he says go, it's a five-minute checklist,
+not a rediscovery. **Do not perform these steps without an explicit go-ahead in that session.**
+
+**Target end-state:**
+- `https://skill-issues-board.pages.dev/` and every board page (`/wanted`, `/hall`, `/trophy`,
+  `/voyage`, character profiles, etc.) — **public, no login.**
+- `https://skill-issues-board.pages.dev/review/*` — **stays exactly as gated as it is today**
+  (the internal prototypes and `database.html` data-design doc live there; nothing in `/review`
+  is meant to go public with this change).
+
+**The one Access application already in place** (`Application domain: skill-issues-board.pages.dev`,
+id `8d4a01e3-b7d7-4d1b-8623-0f603042fce8`, per §2 above) currently covers the **whole hostname**.
+The flip is re-scoping that one application's path from the whole domain down to `/review*`,
+not touching the "Allowed viewers" policy itself.
+
+### How to do it — dashboard (no credential needed beyond Zach's own Cloudflare login)
+
+1. **one.dash.cloudflare.com** → **Access → Applications**.
+2. Open the application for `skill-issues-board.pages.dev` (id `8d4a01e3-b7d7-4d1b-8623-0f603042fce8`).
+3. Edit the application's **domain/path**. Cloudflare Access lets a self-hosted application scope
+   to a path under a hostname — change it from the bare hostname (`skill-issues-board.pages.dev`,
+   which matches everything) to `skill-issues-board.pages.dev/review*` (matches only `/review` and
+   everything under it).
+4. **Save.** Per Cloudflare, this takes effect immediately, same as the viewer-list edits in §2 —
+   no redeploy needed.
+5. Immediately run the verification below. If a hostname-level Access app can't be path-scoped in
+   the current dashboard UI (Cloudflare has changed this before), the fallback is: delete the
+   hostname-wide app and create a new self-hosted Access application scoped directly to
+   `skill-issues-board.pages.dev/review*` from the start, carrying over the same "Allowed viewers"
+   policy (§2) onto the new app.
+
+### How to do it — API (if Zach hands over a scoped token instead of doing it himself)
+
+The Wrangler OAuth token this project already uses for deploys does **not** carry Access/Zero
+Trust scope (confirmed by inspecting `wrangler whoami`'s permission list — no `Access: Apps and
+Policies` entry). Re-scoping the application via the Cloudflare API needs a **separate, purpose-made
+API token**: Cloudflare dashboard → My Profile → API Tokens → Create Token → permission
+**Account → Access: Apps and Policies → Edit**, scoped to this one account. Hand it over as an
+env var (`CLOUDFLARE_API_TOKEN`), never pasted inline. With that token, the change is a single
+`PUT` to `/accounts/{account_id}/access/apps/8d4a01e3-b7d7-4d1b-8623-0f603042fce8` updating the
+`domain` field to `skill-issues-board.pages.dev/review*` — then run the verification below.
+
+### Verification — run immediately after, every time
+
+```bash
+curl -sI https://skill-issues-board.pages.dev/          # expect 200 — public now
+curl -sI https://skill-issues-board.pages.dev/wanted     # expect 200 — public now
+curl -sI https://skill-issues-board.pages.dev/review/    # expect 302 — still gated
+```
+
+If `/review/` ever comes back 200, **stop and re-gate it before telling anyone the board link is
+public** — it holds the internal prototypes and `database.html`. If the board root still comes
+back 302 after the change, the path-scope edit didn't take (or hasn't propagated) — re-check step
+3 rather than assuming it just needs time.
+
 ## 3. Redeploying after a rebuild
 
 ```
