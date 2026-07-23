@@ -123,6 +123,11 @@ class IngestResult:
     surrogates_created: int = 0
     intervals_opened: int = 0
     intervals_closed: int = 0
+    intervals_aged: int = 0            # confirmed-absent but still within the grace window
+    unconfirmed_absent: int = 0       # open seed/competition-scope members Blizzard never confirmed (never closed by a Blizzard pull)
+    identity_links_proposed: int = 0  # spelling/realm-drift matches raised for human review
+    members_shielded: int = 0         # existing members protected from departure by a pending link candidate
+    ambiguous_identities: int = 0     # observed names that fold-match >1 existing member (NOT merged)
     error: Optional[str] = None
 
 
@@ -132,12 +137,21 @@ def run_roster_ingest(conn, *, fetcher: Callable[[], dict],
                       guild_name_slug: str = "skill-issues",
                       guild_display_name: str = "Skill Issues",
                       complete_pull: bool = True,
+                      grace_pulls: int = 2,
                       now: Optional[str] = None) -> IngestResult:
     """Ingest one guild-roster pull.
 
     `fetcher()` returns the raw Blizzard roster payload (or raises). On any
     exception, the run is recorded as 'failed' and NOTHING else is written:
     no identity, no interval, no profile, no departure. Prior data is untouched.
+
+    Departures are hardened (2026-07-23, see docs/ENGINEERING_REVIEW.md). Before
+    minting a new surrogate we reconcile the observed name against existing
+    members (spelling/realm drift -> a human-reviewed identity_link_candidate,
+    and the existing member is SHIELDED from departure). The sweep then closes
+    only members Blizzard has actually confirmed, and only after `grace_pulls`
+    consecutive complete pulls of absence. This is what stops a real, present
+    member (e.g. both Viôlence and Violënce) being falsely marked departed.
     """
     now = now or db.now_utc()
     endpoint = f"/data/wow/guild/{guild_realm_slug}/{guild_name_slug}/roster"
@@ -155,27 +169,71 @@ def run_roster_ingest(conn, *, fetcher: Callable[[], dict],
                                       guild_name_slug, guild_display_name)
     members = parse_roster(payload, region=region)
     seen_char_ids: set[int] = set()
-    created = opened = 0
+    shielded_ids: set[int] = set()
+    deferred_links: list = []          # (new_cid, matched_cid, confidence, evidence)
+    created = opened = links = ambiguous = 0
     try:
         for mem in members:
             if not mem["name"] or not mem["realm_slug"]:
                 db.log_attempt(conn, run_id, target_key=str(mem.get("name")),
                                outcome="error", error="missing name/realm")
                 continue
-            cid, was_created = db.mint_or_get_character(
-                conn, mem["region"], mem["realm_slug"], mem["name"],
-                source="blizzard", run_id=run_id, blizzard_id=mem["blizzard_id"],
-                observed_at=now,
-            )
-            created += int(was_created)
+
+            # Reuse an exact-name surrogate if we have one; otherwise reconcile
+            # BEFORE minting so drift doesn't duplicate + falsely depart a member.
+            existing = db.find_character_by_identity(
+                conn, mem["region"], mem["realm_slug"], mem["name"])
+            if existing is not None:
+                cid = existing
+            else:
+                # Who might this observed string already BE? (folding/blizzard_id)
+                # Recorded now, resolved after the loop — a match that is ALSO
+                # present under its own exact name this run is a distinct person,
+                # not a link (that's how Viôlence + Violënce coexist cleanly).
+                for cand_id, conf, evidence in db.find_link_candidates(
+                        conn, mem["region"], mem["realm_slug"], mem["name"],
+                        blizzard_id=mem["blizzard_id"]):
+                    deferred_links.append((None, cand_id, conf, evidence))
+                cid, was_created = db.mint_or_get_character(
+                    conn, mem["region"], mem["realm_slug"], mem["name"],
+                    source="blizzard", run_id=run_id, blizzard_id=mem["blizzard_id"],
+                    observed_at=now,
+                )
+                created += int(was_created)
+                # backfill the just-minted surrogate id onto its pending links
+                deferred_links = [(cid if n is None else n, c, cf, ev)
+                                  for (n, c, cf, ev) in deferred_links]
+
             seen_char_ids.add(cid)
             iid = db.open_membership_if_absent(conn, cid, guild_id, run_id=run_id,
                                               rank=mem["rank"], observed_from=now)
             opened += int(iid is not None)
+            # This membership is now vouched for by an authoritative Blizzard pull.
+            db.confirm_blizzard_membership(conn, cid, guild_id, run_id)
             db.insert_profile(conn, cid, source="blizzard", observed_at=now, run_id=run_id,
                               character_class=mem["class"], level=mem["level"],
                               faction=mem["faction"])
             db.log_attempt(conn, run_id, character_id=cid, http_status=200, outcome="ok")
+
+        # ---- resolve identity links now the whole pull is known --------------
+        by_new: dict = {}
+        for new_cid, cand_id, conf, evidence in deferred_links:
+            if cand_id in seen_char_ids:
+                continue    # the match is present under its own exact name -> distinct person
+            by_new.setdefault(new_cid, []).append((cand_id, conf, evidence))
+        for new_cid, cands in by_new.items():
+            for cand_id, conf, evidence in cands:
+                db.propose_identity_link(conn, new_cid, cand_id, conf, evidence, now=now)
+                shielded_ids.add(cand_id)          # never auto-depart a possible match
+                links += 1
+            if len(cands) > 1:
+                ambiguous += 1
+                # Anti-collapse guard: an accent-folding source made two real
+                # people look like one. We minted ONE new surrogate and left
+                # every candidate intact + shielded — never merged.
+                print(f"::warning title=Ambiguous identity::new surrogate {new_cid} "
+                      f"fold/blizzard-matches {len(cands)} existing members "
+                      f"{[c[0] for c in cands]}; shielded all pending review — NOT merged.")
     except Exception as exc:
         conn.commit()
         db.finish_fetch_run(conn, run_id, "partial",
@@ -183,30 +241,26 @@ def run_roster_ingest(conn, *, fetcher: Callable[[], dict],
                             targets_succeeded=len(seen_char_ids),
                             error_summary=f"processing halted: {type(exc).__name__}: {exc}")
         return IngestResult(run_id=run_id, outcome="partial", members_seen=len(seen_char_ids),
-                            surrogates_created=created, intervals_opened=opened, error=str(exc))
+                            surrogates_created=created, intervals_opened=opened,
+                            identity_links_proposed=links, members_shielded=len(shielded_ids),
+                            ambiguous_identities=ambiguous, error=str(exc))
 
-    # ---- departures: ONLY on a complete, successful pull -----------------
-    closed = 0
+    # ---- departures: ONLY on a complete, successful pull, and only for
+    #      members Blizzard has confirmed, after the grace window ----------
+    closed = aged = unconfirmed = 0
     if complete_pull and seen_char_ids:
-        open_rows = conn.execute(
-            "SELECT interval_id, character_id FROM membership_interval "
-            "WHERE guild_id=? AND observed_to IS NULL", (guild_id,)
-        ).fetchall()
-        for row in open_rows:
-            if row["character_id"] not in seen_char_ids:
-                conn.execute(
-                    "UPDATE membership_interval SET observed_to=?, closed_run_id=?, "
-                    "closed_reason='absent_from_complete_roster_pull' WHERE interval_id=?",
-                    (now, run_id, row["interval_id"]),
-                )
-                closed += 1
+        closed, aged, unconfirmed = db.reconcile_departures(
+            conn, guild_id, run_id, seen_ids=seen_char_ids,
+            shielded_ids=shielded_ids, now=now, grace_pulls=grace_pulls)
     conn.commit()
     db.finish_fetch_run(conn, run_id, "success",
                         targets_attempted=len(members),
                         targets_succeeded=len(seen_char_ids))
     return IngestResult(run_id=run_id, outcome="success", members_seen=len(seen_char_ids),
                         surrogates_created=created, intervals_opened=opened,
-                        intervals_closed=closed)
+                        intervals_closed=closed, intervals_aged=aged,
+                        unconfirmed_absent=unconfirmed, identity_links_proposed=links,
+                        members_shielded=len(shielded_ids), ambiguous_identities=ambiguous)
 
 
 def live_fetcher(region="us", guild_realm_slug="bleeding-hollow",

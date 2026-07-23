@@ -13,6 +13,7 @@ without a `pip install`.
 """
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 import unicodedata
@@ -176,6 +177,152 @@ def open_membership_if_absent(conn, character_id, guild_id, *, run_id,
         (character_id, guild_id, observed_from, rank, run_id, run_id),
     )
     return cur.lastrowid
+
+
+# --- identity reconciliation (candidate generation; NEVER auto-applied) -----
+#
+# The bug this fixes (docs/ENGINEERING_REVIEW.md, "28 departed"): the ingest
+# keyed identity on EXACT (region, realm, name) only. When a source spelled a
+# name differently than Blizzard (diacritics are the classic case) the seeded
+# surrogate was never matched, so the member was BOTH duplicated AND falsely
+# marked departed. And when a source dropped accents entirely, two distinct
+# people (Viôlence / Violënce) collapsed into one surrogate at ingest — the
+# very merge the surrogate key was built to prevent.
+#
+# The fix keeps the EXACT-name key intact (folding is still never a join key)
+# and adds a candidate-generation step: before minting a brand-new surrogate we
+# look for who the observed string might ALREADY be, propose a human-reviewed
+# identity_link_candidate, and SHIELD those existing members from auto-departure
+# for the run. We never auto-merge and never auto-close on a fold match — a fold
+# match is ambiguous by construction (it might be the twin, not a rename).
+
+def find_link_candidates(conn, region, realm_slug, name, *, blizzard_id=None):
+    """Existing CURRENT surrogates that plausibly ARE the character just observed
+    under a different exact string. Returns [(character_id, confidence, evidence)].
+
+    Two signals, neither ever used as a key, a join, or an auto-apply:
+      * accent-fold match — same (region, realm, name_folded) but a DIFFERENT
+        exact name. AMBIGUOUS (Viôlence and Violënce fold alike), so 'low':
+        used only to PROPOSE a link and to SHIELD from auto-departure.
+      * blizzard_id match — a stored observed id (may change on transfer, may
+        collide across realms): 'high' within the same realm, else 'medium'.
+    An exact (region, realm, name) hit is a reuse, not a link, and is excluded.
+    """
+    exact = nfc(name)
+    folded = fold_name(name)
+    out = {}  # character_id -> (confidence, evidence)
+    for row in conn.execute(
+        """SELECT character_id, name FROM character_identity
+           WHERE region=? AND realm_slug=? AND name_folded=? AND name<>? AND observed_to IS NULL""",
+        (region, realm_slug, folded, exact),
+    ):
+        out[row["character_id"]] = ("low", {
+            "signal": "accent_fold", "observed_name": exact,
+            "matched_name": row["name"], "realm_slug": realm_slug})
+    if blizzard_id is not None:
+        for row in conn.execute(
+            """SELECT character_id, realm_slug, name FROM character_identity
+               WHERE blizzard_id=? AND observed_to IS NULL
+                 AND NOT (realm_slug=? AND name=?)""",
+            (blizzard_id, realm_slug, exact),
+        ):
+            conf = "high" if row["realm_slug"] == realm_slug else "medium"
+            prev = out.get(row["character_id"])
+            if prev is None or prev[0] == "low":  # blizzard_id evidence outranks a fold-only hit
+                out[row["character_id"]] = (conf, {
+                    "signal": "blizzard_id", "blizzard_id": blizzard_id,
+                    "observed": f"{realm_slug}/{exact}",
+                    "matched": f"{row['realm_slug']}/{row['name']}"})
+    return [(cid, conf, ev) for cid, (conf, ev) in out.items()]
+
+
+def propose_identity_link(conn, from_character, to_character, confidence, evidence,
+                          *, now=None):
+    """Record a PENDING identity link for human review (never auto-applied).
+    Idempotent: will not re-open an already-pending candidate for the same pair.
+    """
+    if from_character == to_character:
+        return None
+    row = conn.execute(
+        """SELECT candidate_id FROM identity_link_candidate
+           WHERE from_character=? AND to_character=? AND status='pending'""",
+        (from_character, to_character),
+    ).fetchone()
+    if row:
+        return row["candidate_id"]
+    cur = conn.execute(
+        """INSERT INTO identity_link_candidate(
+               from_character, to_character, confidence, evidence_json,
+               proposed_at, status)
+           VALUES (?,?,?,?,?,'pending')""",
+        (from_character, to_character, confidence, json.dumps(evidence, ensure_ascii=False),
+         now or now_utc()),
+    )
+    return cur.lastrowid
+
+
+def confirm_blizzard_membership(conn, character_id, guild_id, run_id):
+    """Mark an OPEN membership as confirmed by an authoritative Blizzard pull:
+    stamp the first confirming run (only once) and reset the absence streak.
+    Only Blizzard-source ingestion calls this; a seed/manual open interval stays
+    unconfirmed until Blizzard vouches for it.
+    """
+    conn.execute(
+        """UPDATE membership_interval
+             SET last_run_id=?, absent_streak=0,
+                 blizzard_confirmed_run_id=COALESCE(blizzard_confirmed_run_id, ?)
+           WHERE character_id=? AND guild_id=? AND observed_to IS NULL""",
+        (run_id, run_id, character_id, guild_id),
+    )
+
+
+def reconcile_departures(conn, guild_id, run_id, *, seen_ids, shielded_ids, now,
+                         grace_pulls=2):
+    """Close / age open memberships absent from a COMPLETE Blizzard pull.
+
+    Departure rules (hardened 2026-07-23):
+      1. A member SEEN this run, or SHIELDED by a pending identity-link candidate
+         raised this run, is never touched.
+      2. A member Blizzard has NEVER confirmed (blizzard_confirmed_run_id IS NULL
+         — a seed / competition-scope membership) is NEVER closed by a Blizzard
+         pull. The raider.io competition seed is a WIDER set than the guild
+         roster, so first Blizzard contact must not evict everyone it omits.
+      3. A previously-CONFIRMED member who is absent has absent_streak
+         incremented, and is closed only once absent on `grace_pulls`
+         consecutive complete pulls (grace against a flaky pull / a live rename).
+
+    Returns (closed, aged, unconfirmed_absent).
+    """
+    rows = conn.execute(
+        """SELECT interval_id, character_id, blizzard_confirmed_run_id, absent_streak
+           FROM membership_interval WHERE guild_id=? AND observed_to IS NULL""",
+        (guild_id,),
+    ).fetchall()
+    closed = aged = unconfirmed = 0
+    for r in rows:
+        cid = r["character_id"]
+        if cid in seen_ids or cid in shielded_ids:
+            continue
+        if r["blizzard_confirmed_run_id"] is None:
+            unconfirmed += 1                     # rule 2 — provisional, leave open
+            continue
+        new_streak = (r["absent_streak"] or 0) + 1
+        if new_streak >= grace_pulls:
+            conn.execute(
+                """UPDATE membership_interval
+                     SET observed_to=?, closed_run_id=?, absent_streak=?,
+                         closed_reason='absent_from_complete_roster_pull'
+                   WHERE interval_id=?""",
+                (now, run_id, new_streak, r["interval_id"]),
+            )
+            closed += 1
+        else:
+            conn.execute(
+                "UPDATE membership_interval SET absent_streak=? WHERE interval_id=?",
+                (new_streak, r["interval_id"]),
+            )
+            aged += 1                            # rule 3 — within grace, not yet closed
+    return closed, aged, unconfirmed
 
 
 # --- append-only facts ------------------------------------------------------

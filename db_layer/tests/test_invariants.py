@@ -3,12 +3,16 @@
 Stdlib `unittest` ONLY — runs with `python -m unittest` and needs no PyPI
 (pytest optional). Also discoverable by pytest on the host: `pytest tests/`.
 
-Covers the four invariants the brief requires, plus zero-loss migration:
+Covers the four invariants the brief requires, plus zero-loss migration, plus
+the 2026-07-23 departure hardening (the "28 departed" regression suite):
   1. Character-ID keying keeps the two Berobens separate.
   2. Viôlence / Violënce stay separate (no ASCII fold on the key).
   3. Append-only never overwrites.
   4. Fail-open keeps prior data on a simulated failed fetch.
   +  Migration imports the current roster with zero member loss.
+  +  Departure hardening: no false departures from spelling/realm drift, no
+     mass-departure of competition-scope seed on first pull, no accent-collapse
+     merge, and a grace window before a confirmed member is closed.
 """
 import os
 import sys
@@ -201,22 +205,33 @@ class UnitInvariantTests(unittest.TestCase):
         self.assertGreaterEqual(failed_runs, 1)
 
     def test_departure_only_on_successful_complete_pull(self):
-        """A member absent from a later SUCCESSFUL complete pull is closed; a
-        failed pull never closes anyone (guards the fail-open write rule)."""
+        """A confirmed member absent from complete pulls is closed AFTER the grace
+        window (default 2 consecutive); a failed pull never closes anyone; a
+        single absence only ages, it does not close (guards fail-open + grace)."""
         conn = fresh_db()
         ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
             ("Alpha", "bleeding-hollow", 111, 0),
             ("Beta", "bleeding-hollow", 222, 5),
-        ]))
-        # failed pull: Beta must NOT be closed
+        ]))  # both now Blizzard-confirmed
+        # failed pull: Beta must NOT be closed and must NOT even age
         ing.run_roster_ingest(conn, fetcher=lambda: (_ for _ in ()).throw(IOError("x")))
         self.assertEqual(conn.execute(
             "SELECT COUNT(*) FROM membership_interval WHERE observed_to IS NOT NULL"
         ).fetchone()[0], 0)
-        # successful complete pull without Beta: Beta IS closed, Alpha stays open
-        ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+        # 1st complete pull without Beta: Beta AGES (streak 1), not yet closed
+        r1 = ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
             ("Alpha", "bleeding-hollow", 111, 0),
         ]))
+        self.assertEqual(r1.intervals_closed, 0)
+        self.assertEqual(r1.intervals_aged, 1)
+        self.assertEqual(conn.execute(
+            "SELECT COUNT(*) FROM membership_interval WHERE observed_to IS NOT NULL"
+        ).fetchone()[0], 0, "a single missed pull must not evict a confirmed member")
+        # 2nd consecutive complete pull without Beta: NOW Beta is closed, Alpha stays
+        r2 = ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Alpha", "bleeding-hollow", 111, 0),
+        ]))
+        self.assertEqual(r2.intervals_closed, 1)
         closed = conn.execute(
             "SELECT ci.name FROM membership_interval mi "
             "JOIN character_identity ci ON ci.character_id=mi.character_id "
@@ -226,6 +241,116 @@ class UnitInvariantTests(unittest.TestCase):
         # Beta's identity row still exists (never deleted)
         self.assertIsNotNone(conn.execute(
             "SELECT 1 FROM character_identity WHERE name='Beta'").fetchone())
+        # Alpha, seen every pull, is never aged/closed
+        self.assertIsNone(conn.execute(
+            "SELECT mi.observed_to FROM membership_interval mi "
+            "JOIN character_identity ci ON ci.character_id=mi.character_id "
+            "WHERE ci.name='Alpha'").fetchone()["observed_to"])
+
+
+class DepartureHardeningTests(unittest.TestCase):
+    """Regression tests for the '28 departed incl. both Viôlences' bug
+    (docs/ENGINEERING_REVIEW.md). These are the paths the old ingest broke:
+    cross-source spelling drift, competition-scope seed, and accent-collapse."""
+
+    def _closed_names(self, conn):
+        return [r["name"] for r in conn.execute(
+            "SELECT ci.name FROM membership_interval mi "
+            "JOIN character_identity ci ON ci.character_id=mi.character_id "
+            "WHERE mi.observed_to IS NOT NULL")]
+
+    def test_spelling_drift_does_not_falsely_depart(self):
+        """A confirmed member returning under a drifted spelling (accent dropped
+        by the source) must NOT be departed or duplicated-then-orphaned: the
+        original is shielded and a pending link candidate is raised."""
+        conn = fresh_db()
+        # pull 1: the real accented member, Blizzard-confirmed
+        ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Viôlence", "bleeding-hollow", 501, 5)]))
+        # pull 2: same person, source dropped the accent + gave a new id
+        res = ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Violence", "bleeding-hollow", 502, 5)]))
+        # the accented original is NOT departed
+        self.assertEqual(self._closed_names(conn), [])
+        self.assertEqual(res.intervals_closed, 0)
+        # it was shielded and a candidate was raised for a human to resolve
+        self.assertGreaterEqual(res.members_shielded, 1)
+        self.assertEqual(res.identity_links_proposed, 1)
+        cand = conn.execute(
+            "SELECT confidence, evidence_json, status FROM identity_link_candidate"
+        ).fetchone()
+        self.assertEqual(cand["status"], "pending")
+        self.assertEqual(cand["confidence"], "low")          # fold match is ambiguous
+        self.assertIn("accent_fold", cand["evidence_json"])
+        # both exact names now exist as distinct surrogates (never merged)
+        self.assertEqual(conn.execute(
+            "SELECT COUNT(*) FROM character_identity "
+            "WHERE name_folded='violence'").fetchone()[0], 2)
+
+    def test_blizzard_id_drift_raises_high_confidence_link(self):
+        """Same blizzard_id, new (realm,name) = a rename/transfer signal: shield
+        + a stronger candidate, still never auto-applied."""
+        conn = fresh_db()
+        ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Oldname", "bleeding-hollow", 900, 5)]))
+        res = ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Newname", "bleeding-hollow", 900, 5)]))   # same id, same realm
+        self.assertEqual(res.intervals_closed, 0)
+        self.assertEqual(self._closed_names(conn), [])
+        cand = conn.execute(
+            "SELECT confidence, evidence_json FROM identity_link_candidate").fetchone()
+        self.assertEqual(cand["confidence"], "high")         # same-realm id match
+        self.assertIn("blizzard_id", cand["evidence_json"])
+
+    def test_competition_scope_seed_not_mass_departed_on_first_pull(self):
+        """The migration seeds a WIDER (raider.io competition) scope than the
+        guild roster. First Blizzard contact must confirm those it lists and
+        leave the rest OPEN — never evict everyone Blizzard doesn't return."""
+        conn = fresh_db()
+        seed = db.start_fetch_run(conn, "legacy_json", "seed")
+        gid = db.get_or_create_guild(conn, "us", "bleeding-hollow", "skill-issues", "Skill Issues")
+        for name, realm in [("Inguild", "bleeding-hollow"),
+                            ("Crossrealm", "stormrage"),      # competition-scope, not a guild member
+                            ("Alsoseed", "area-52")]:
+            cid, _ = db.mint_or_get_character(conn, "us", realm, name,
+                                              source="raiderio", run_id=seed)
+            db.open_membership_if_absent(conn, cid, gid, run_id=seed)
+        db.finish_fetch_run(conn, seed, "success")
+        # Blizzard returns only the one true guild member
+        res = ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Inguild", "bleeding-hollow", 1, 0)]))
+        self.assertEqual(res.intervals_closed, 0, "no seed member may be closed on first pull")
+        self.assertEqual(res.unconfirmed_absent, 2, "the two unseen seed members stay open, unconfirmed")
+        self.assertEqual(self._closed_names(conn), [])
+        # all three still current; exactly one is Blizzard-confirmed
+        self.assertEqual(conn.execute(
+            "SELECT COUNT(*) FROM v_current_roster").fetchone()[0], 3)
+        self.assertEqual(conn.execute(
+            "SELECT COUNT(*) FROM v_blizzard_confirmed_roster").fetchone()[0], 1)
+
+    def test_accent_collapse_never_merges_two_people(self):
+        """The exact sim from the review: a folding source returns one 'Violence'
+        for two real people. We mint ONE new surrogate, shield BOTH twins, raise
+        TWO candidates, flag ambiguity — and merge NOBODY, depart NOBODY."""
+        conn = fresh_db()
+        # both twins confirmed first
+        ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Viôlence", "bleeding-hollow", 601, 5),
+            ("Violënce", "bleeding-hollow", 602, 5)]))
+        self.assertEqual(conn.execute("SELECT COUNT(*) FROM character").fetchone()[0], 2)
+        # source folds both to "Violence" in a later pull
+        res = ing.run_roster_ingest(conn, fetcher=lambda: fake_roster([
+            ("Violence", "bleeding-hollow", 603, 5)]))
+        self.assertEqual(res.surrogates_created, 1, "mint exactly one new surrogate, not a merge")
+        self.assertEqual(res.ambiguous_identities, 1)
+        self.assertEqual(res.members_shielded, 2, "both twins shielded")
+        self.assertEqual(res.intervals_closed, 0, "neither twin departed")
+        self.assertEqual(self._closed_names(conn), [])
+        # 3 distinct people on record now; 2 pending links for a human to resolve
+        self.assertEqual(conn.execute("SELECT COUNT(*) FROM character").fetchone()[0], 3)
+        self.assertEqual(conn.execute(
+            "SELECT COUNT(*) FROM identity_link_candidate WHERE status='pending'"
+        ).fetchone()[0], 2)
 
 
 if __name__ == "__main__":
