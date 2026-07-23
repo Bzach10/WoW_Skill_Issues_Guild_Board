@@ -68,6 +68,12 @@ pinch-zooming (toggle: `display.mobile_companion` in `config.yml`).
 
 ## Web board (one-time setup, ~5 minutes)
 
+**This section is about the OLD, intentionally-public web board below.** There is now a
+SEPARATE, gated Cloudflare Pages deploy of the newer ship-themed site
+(`skill-issues-board.pages.dev`, access-restricted to specific emails) — see
+`docs/DEPLOYMENT.md` for that one. Don't confuse the two: this one is meant to be public,
+that one is not.
+
 The post can carry a **📱 Web Board** button linking to a live, responsive
 website version of the board — real HTML that auto-scales to any screen
 (4 columns on a desktop, one column on a phone). CI renders it each week
