@@ -131,6 +131,10 @@ def main():
         headers={
             "Authorization": f"Bearer {api_key}",
             "Content-Type": "application/json",
+            # Without this, RunPod's edge returns 403 for Python's default
+            # urllib User-Agent string (confirmed 2026-07-22: identical
+            # request succeeds with a browser-shaped UA, fails without one).
+            "User-Agent": "Mozilla/5.0",
         },
     )
 
