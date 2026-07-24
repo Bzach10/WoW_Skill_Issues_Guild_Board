@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-22T06:57:10.852176+00:00",
+  "generated_at": "2026-07-24T23:25:00.415723+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T06:57:10.852207+00:00",
+    "generated_at": "2026-07-24T23:25:00.415756+00:00",
     "week_of": "2026-07-14",
     "based_on": "2026-07-20T12:14:49+00:00",
     "beats": [
@@ -75,7 +75,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T06:57:10.852222+00:00",
+    "generated_at": "2026-07-24T23:25:00.415771+00:00",
     "based_on": "2026-07-20T12:14:49+00:00",
     "standing": {
       "realm": 49,
@@ -180,7 +180,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T06:57:10.852230+00:00",
+    "generated_at": "2026-07-24T23:25:00.415890+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -218,7 +218,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T06:57:10.852243+00:00",
+    "generated_at": "2026-07-24T23:25:00.415905+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -415,7 +415,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T06:57:10.852146+00:00",
+    "generated_at": "2026-07-24T23:25:00.415694+00:00",
     "is_first_run": false,
     "changed": [
       {
@@ -438,7 +438,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-22T06:57:10.852248+00:00",
+    "generated_at": "2026-07-24T23:25:00.415910+00:00",
     "available": true,
     "status": "ok",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -1223,7 +1223,7 @@
     },
     "parses": {
       "available": "partial",
-      "source": "board_state records (Warcraft Logs enrichment pending WCL_CLIENT_ID/SECRET; Raider.io does not expose parses)",
+      "source": "board_state records (Warcraft Logs enrichment not yet enabled; Raider.io does not expose parses)",
       "leaders": [
         {
           "name": "Amrevenge",
@@ -1255,7 +1255,7 @@
         "field": "guild_announcement",
         "served_by": "records_leaderboard/guild_pulse",
         "state": "pending",
-        "note": "Discord announcement channel (needs DISCORD_BOT_TOKEN)"
+        "note": "Discord announcement channel (needs Discord bot access)"
       },
       {
         "field": "guild_standing",
@@ -1291,7 +1291,7 @@
         "field": "top_dps_parses",
         "served_by": "competition.parses.leaders",
         "state": "partial",
-        "note": "full weekly list needs WCL_CLIENT_ID/SECRET"
+        "note": "full weekly list needs Warcraft Logs enrichment"
       },
       {
         "field": "top_healing_parses",
@@ -1333,7 +1333,7 @@
         "field": "roast_of_the_week",
         "served_by": "guild_pulse (pending)",
         "state": "pending",
-        "note": "needs DISCORD_BOT_TOKEN"
+        "note": "needs Discord bot access"
       },
       {
         "field": "guild_achievements",

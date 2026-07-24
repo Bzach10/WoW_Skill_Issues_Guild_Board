@@ -644,20 +644,20 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
 #   pending   structurally present but needs a credentialed refresh to fill
 # The front-end can iterate this to guarantee no section renders dead.
 _PARITY_SPEC = [
-    ("guild_announcement", "records_leaderboard/guild_pulse", "Discord announcement channel (needs DISCORD_BOT_TOKEN)"),
+    ("guild_announcement", "records_leaderboard/guild_pulse", "Discord announcement channel (needs Discord bot access)"),
     ("guild_standing", "records_leaderboard.standing", None),
     ("overall_realm_rank", "records_leaderboard.standing", None),
     ("mplus_weekly_keys", "competition.key_records", None),
     ("mplus_season_scores", "competition.rankings", None),
     ("mplus_season_parses", "competition.characters[].best_runs", None),
-    ("top_dps_parses", "competition.parses.leaders", "full weekly list needs WCL_CLIENT_ID/SECRET"),
+    ("top_dps_parses", "competition.parses.leaders", "full weekly list needs Warcraft Logs enrichment"),
     ("top_healing_parses", "competition.parses.leaders", "full weekly list needs WCL creds"),
     ("top_tank_parses", "competition.parses", "needs WCL creds"),
     ("weekly_raid_boss_ranks", "island_completion.raid", "WCL realm/region ranks need WCL creds"),
     ("raid_progression", "island_completion.raid", None),
     ("most_deaths", "competition (pending)", "needs WCL creds"),
     ("most_improved", "competition.movement", None),
-    ("roast_of_the_week", "guild_pulse (pending)", "needs DISCORD_BOT_TOKEN"),
+    ("roast_of_the_week", "guild_pulse (pending)", "needs Discord bot access"),
     ("guild_achievements", "guild_achievements", "needs BLIZZARD creds"),
 ]
 

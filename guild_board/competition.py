@@ -364,7 +364,7 @@ def _build_parse_block(board_state, ranked):
             })
     return {
         "available": "partial" if leaders else "none",
-        "source": "board_state records (Warcraft Logs enrichment pending "
-                  "WCL_CLIENT_ID/SECRET; Raider.io does not expose parses)",
+        "source": "board_state records (Warcraft Logs enrichment not yet "
+                  "enabled; Raider.io does not expose parses)",
         "leaders": leaders,
     }
