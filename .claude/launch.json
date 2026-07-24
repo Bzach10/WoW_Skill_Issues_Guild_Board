@@ -60,6 +60,18 @@
       "port": 8941
     },
     {
+      "name": "app-shell-alt",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8942",
+        "--directory",
+        "C:/Users/zachf/OneDrive/Documents/WoW Server Stuff/prototypes/app-shell"
+      ],
+      "port": 8942
+    },
+    {
       "name": "fc-qa-readonly",
       "runtimeExecutable": "python",
       "runtimeArgs": [
