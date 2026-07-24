@@ -1,0 +1,67 @@
+name: Board Redesign Vote
+
+# MANUAL ONLY. There is deliberately no push/schedule trigger: this
+# posts to the guild's Discord, so it fires when a human clicks
+# "Run workflow" and never as a side effect of committing.
+#
+# It renders the redesign candidates from the guild's committed board
+# state, screenshots them, and posts them as a numbered vote with
+# 1..N reactions seeded (needs the bot to have "Add Reactions"; without
+# that it still posts and asks members to react).
+#
+# Set "dry_run" to true to see the exact message and attachment list in
+# the Actions log WITHOUT sending anything to Discord.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Print the message and send nothing"
+        type: boolean
+        default: true
+      confirm:
+        description: 'Type POST to actually send it (ignored when dry_run is true)'
+        type: string
+        default: ""
+
+# Renders and posts only; nothing is committed back to the repo.
+permissions:
+  contents: read
+
+jobs:
+  post-redesign-vote:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Chromium for the renderer
+        run: python -m playwright install --with-deps chromium
+
+      - name: Render the candidates and screenshot them
+        run: python scripts/render_redesign_previews.py --png
+
+      - name: Guard — a real post needs the confirm word
+        if: ${{ inputs.dry_run == false && inputs.confirm != 'POST' }}
+        run: |
+          echo "::error::dry_run is false but confirm was not 'POST'. Refusing to post."
+          exit 1
+
+      - name: Preview the vote (sends nothing)
+        if: ${{ inputs.dry_run }}
+        run: python scripts/post_redesign_vote.py --dry-run
+
+      - name: Post the vote to Discord
+        if: ${{ inputs.dry_run == false && inputs.confirm == 'POST' }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+        run: python scripts/post_redesign_vote.py

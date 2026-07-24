@@ -1,0 +1,99 @@
+# ==================================================================
+#  THEME: GILDED CODEX  ·  layout: codex
+#
+#  The one that is NOT dark. Real cream vellum, iron-gall ink, gold
+#  leaf and royal blue — an illuminated manuscript of the raid week.
+#  This is the ink-on-light-paper direction, done as a whole page
+#  rather than four poster cards.
+#
+#  TO USE IT:  copy this file over theme.yml in the repo root, then
+#  Actions -> "Weekly Guild Board" -> Run workflow.
+#  Art: assets/generated/gildedcodex/ (see assets/art_prompts.yml).
+# ==================================================================
+
+board:
+  web_layout: codex
+  header: banner            # the light art suits the simpler image header
+  footer: graveyard
+  poster_eyebrow: "❧ BY ORDER OF THE GUILD ❧"
+  poster_reward: "ENTERED INTO THE RECORD · REWARD: RENOWN"
+
+# Ink on paper: the "background" is the page, the "text" is the ink.
+colors:
+  accent: "#9a6f16"       # gold leaf
+  background: "#e9dcc0"   # vellum
+  panel: "#f4ecd8"        # a brighter leaf laid on the page
+  hairline: "#c3ac7e"
+  text: "#241c12"         # iron-gall ink
+  muted: "#6a5940"
+  faint: "#95815f"
+  red: "#a3301f"          # rubric red
+  green: "#3d6b33"
+
+fonts:
+  display: "Cinzel Decorative"
+  display_weights: "700;900"
+  body: "EB Garamond"
+  mono: "JetBrains Mono"
+
+backgrounds:
+  header: "assets/generated/gildedcodex/header.png"
+  middle: "assets/generated/gildedcodex/middle.png"
+  middle_tint: 0.30      # the light art is the point — barely tint it
+  footer: "assets/generated/gildedcodex/footer.png"
+  poster: "assets/generated/gildedcodex/poster.png"
+  crest: "assets/generated/gildedcodex/crest.png"
+
+header:
+  sign_text: "GIT GUD"
+  sign_subtext: "SO IT IS WRITTEN"
+  wipes_sub: "deaths: {deaths} · personal best: still zero"
+  repair_sub: "donations welcome · thoughts & prayers accepted"
+  counter_label: "“GO AGANE” COUNTER"
+  counter_sub: "morale: unaffected · copium: stable"
+  debuffs:
+    - {icon: inv_misc_questionmark, kind: bad, label: "Skill Issue", stack: "40"}
+    - {icon: spell_fire_fire, kind: bad, label: "Standing in Fire", stack: "6w"}
+    - {icon: inv_misc_bone_humanskull_01, kind: bad, label: "Graveyard Timeshare", stack: "deaths"}
+    - {icon: spell_nature_sleep, kind: good, label: "Coping", stack: "∞"}
+    - {icon: spell_holy_layonhands, kind: good, label: "Healer Diff", stack: "1"}
+
+footer:
+  debt:
+    enabled: true
+    title: "Brewzleeh's Gambling Debt"
+    principal: 137000
+    weekly_rate_pct: 9.99
+    interest_note: "interest: 9.99% weekly · collateral: his monk"
+    lines:
+      - "Binds on !roll"
+      - "Deathroll Ledger|Unique"
+      - "+15 Gambling Addiction"
+      - "-100% Gold Retention Aura"
+      - "Equip: Doubles down on a 2% win chance."
+      - "Equip: Cannot leave while ahead. Has never been ahead."
+      - "Use: Borrows from GBank tab 3. Again. (No Cooldown)"
+    flavor: "“Just one more roll.” — Brewzleeh, at 4 AM"
+    requires: "Requires: An intervention"
+  graveyard:
+    title: "GRAVEYARD CAMPERS MEMORIAL"
+    caption: "Plots assigned by deaths-per-pull. The campfire is load-bearing."
+    reserved: "HEALMATES"
+    reserved_note: "6 consecutive weeks in the fire"
+  item_title: "GUILD ITEM OF THE MONTH"
+
+motd_quips:
+  - "MORE DOTS. MORE DOTS. … OK STOP DOTS."
+  - "That's a 50 DKP MINUS."
+  - "Healmates has now stood in the fire for 6 consecutive weeks — a new guild record."
+  - "Key depleted? That is a you problem."
+  - "At least Leeroy had a plan."
+  - "Raid times: Tue/Thu, 8 PM to whenever Rakdisc stops blaming people."
+  - "Repair bills are self-inflicted and therefore not reimbursable."
+
+credits: "“Git Gud.” — ancient guild proverb"
+
+awards:
+  enabled: true
+  per_week: 2
+  top_n: 3

@@ -1,0 +1,75 @@
+name: Security Scan
+
+# Runs the exact same checks as `python scripts/security_check.py`, so what
+# fails here is reproducible locally with one command. Deliberately no
+# third-party actions: nothing to pin to a SHA, nothing that can be swapped
+# under us by an upstream compromise.
+
+on:
+  schedule:
+    # Mondays 08:00 UTC — a day before the Tuesday board run, so a bad
+    # dependency shows up before the weekly post depends on it.
+    - cron: "0 8 * * 1"
+  push:
+    branches: [main, "2.0"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: security-scan-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+        with:
+          # The secret sweep walks every blob ever committed, which needs
+          # real history rather than the default depth-1 checkout.
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install scanners
+        run: pip install --quiet pip-audit bandit
+
+      # Split into named steps so the Actions UI names the thing that broke
+      # instead of just "security_check.py failed".
+      - name: Dependency CVEs
+        run: python scripts/security_check.py --only deps
+
+      - name: Static analysis
+        run: python scripts/security_check.py --only static
+
+      - name: Secret scan (working tree + full history)
+        run: python scripts/security_check.py --only secrets
+
+      - name: Workflow injection + least privilege
+        run: python scripts/security_check.py --only actions
+
+  # The board pipeline's own tests. A security fix that breaks the Tuesday
+  # post is not a fix, so this gates the same PRs.
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest -q

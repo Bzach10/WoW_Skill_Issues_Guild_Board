@@ -1,0 +1,402 @@
+{#
+  LAYOUT: ember_terminal — "the scrying slate"
+
+  The board as arcane machinery, but NOT as a set of boxes. Rebuilt to
+  kill the card-grid look:
+
+    - the four data columns are torn/singed SLATES of unequal width that
+      overlap and tilt, not equal bordered cards on a grid
+    - the stat readout is a rule of numerals divided by flame glyphs,
+      with no container around it at all
+    - the headline sits directly on the artwork on a torn plate
+    - the cultural modules come from theme.yml (which ones, what order,
+      what frame, what art) via the shared ornament kit
+    - illustrated dividers separate the zones instead of gaps
+
+  Frames come from _ornaments.html.j2: the rough edges are painted on a
+  filtered pseudo-element behind the text, so the plate is ragged while
+  the words stay crisp.
+#}
+{% import "web/_ornaments.html.j2" as orn with context %}
+{% import "web/_modules.html.j2" as mods with context %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ guild_name }} — Weekly Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔮</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="{{ font_css_url }}" rel="stylesheet">
+<style>
+  :root{
+    --bg:{{ theme.colors.background }}; --panel:{{ theme.colors.panel }};
+    --hairline:{{ theme.colors.hairline }}; --accent:{{ theme.colors.accent }};
+    --text:{{ theme.colors.text }}; --muted:{{ theme.colors.muted }};
+    --faint:{{ theme.colors.faint }};
+    --red:{{ theme.colors.red }}; --green:{{ theme.colors.green }};
+    --bg-rgb:{{ bg_rgb }};
+    --font-display:'{{ theme.fonts.display }}',serif;
+    --font-body:'{{ theme.fonts.body }}','Segoe UI',sans-serif;
+    --font-mono:'{{ theme.fonts.mono }}','JetBrains Mono',ui-monospace,Consolas,monospace;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{color:var(--text); font-family:var(--font-body); font-size:16px;
+    background:var(--bg); position:relative; min-height:100vh; overflow-x:hidden;}
+
+  {%- if theme.backgrounds.middle %}
+  .backdrop{position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:url("{{ theme.backgrounds.middle }}") center/cover no-repeat;
+    opacity:.66; filter:saturate(1.14);}
+  {%- else %}
+  .backdrop{position:absolute; inset:0; z-index:0; pointer-events:none;
+    background:radial-gradient(80% 60% at 50% 0%, rgba(255,255,255,.06), transparent 70%);}
+  {%- endif %}
+  .veil{position:absolute; inset:0; z-index:1; pointer-events:none;
+    background:
+      radial-gradient(125% 95% at 50% 0%, transparent 6%, rgba(var(--bg-rgb),.40) 55%, rgba(var(--bg-rgb),.85) 100%),
+      linear-gradient(180deg, rgba(var(--bg-rgb),.16), rgba(var(--bg-rgb),.6));}
+  .scan{position:absolute; inset:0; z-index:2; pointer-events:none; opacity:.42;
+    background:repeating-linear-gradient(180deg, rgba(0,0,0,.2) 0 1px, transparent 1px 3px);}
+  .motes{position:fixed; inset:0; z-index:2; pointer-events:none; overflow:hidden;}
+  .motes i{position:absolute; bottom:-12px; border-radius:50%; background:var(--accent);
+    opacity:.5; filter:blur(.4px); animation:rise 9s linear infinite;}
+  @keyframes rise{to{transform:translateY(-102vh) translateX(var(--dx,0)); opacity:0;}}
+  @media (prefers-reduced-motion:reduce){.motes{display:none;}}
+
+  .page{position:relative; z-index:3; max-width:1640px; margin:0 auto;
+    padding:0 clamp(12px,3vw,30px) 46px;}
+
+  /* ------------------------------ masthead ----------------------------- */
+  .band{position:relative; z-index:3; overflow:hidden;}
+  {%- if theme.backgrounds.header %}
+  .band .art{position:absolute; inset:0; pointer-events:none;
+    background:url("{{ theme.backgrounds.header }}") center 42%/cover no-repeat;}
+  .band .art::after{content:""; position:absolute; inset:0;
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.3) 0%, rgba(var(--bg-rgb),.48) 55%, rgba(var(--bg-rgb),.96) 100%);}
+  {%- endif %}
+  .band .inner{position:relative; max-width:1640px; margin:0 auto;
+    padding:0 clamp(12px,3vw,30px);}
+  .mast{display:flex; align-items:center; gap:clamp(12px,2.5vw,28px);
+    padding:clamp(46px,9vw,108px) 2px clamp(28px,5vw,54px); flex-wrap:wrap;}
+  {%- if theme.backgrounds.crest %}
+  .sigil{width:clamp(58px,10vw,108px); height:clamp(58px,10vw,108px); flex:none;
+    background:url("{{ theme.backgrounds.crest }}") center/cover;
+    border-radius:50%; filter:drop-shadow(0 0 34px rgba(0,0,0,.8));
+    box-shadow:0 0 0 1px var(--hairline), 0 0 44px -8px var(--accent);}
+  {%- endif %}
+  .mast .id{min-width:0; flex:1;}
+  .mast h1{font-family:var(--font-display); font-weight:900; line-height:1;
+    font-size:clamp(28px,6.6vw,66px); letter-spacing:.055em;
+    text-shadow:0 0 38px rgba(0,0,0,.92);}
+  .mast .realm{margin-top:9px; font-family:var(--font-mono);
+    font-size:clamp(10px,2.2vw,13px); letter-spacing:.28em; color:var(--accent);
+    text-transform:uppercase;}
+  .mast .meta{font-family:var(--font-mono); font-size:12px; color:var(--muted);
+    text-align:right; line-height:1.9; white-space:nowrap;}
+  .mast .meta .on{color:var(--green);}
+
+  /* ---------------- command rail (no box: a floating line) -------------- */
+  .cmd{position:sticky; top:0; z-index:9; display:flex; align-items:center; gap:6px;
+    flex-wrap:wrap; padding:11px 6px; margin-bottom:8px;
+    font-family:var(--font-mono); font-size:12.5px;
+    background:linear-gradient(180deg, rgba(var(--bg-rgb),.95), rgba(var(--bg-rgb),.72));
+    backdrop-filter:blur(10px);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 4%,#000 96%,transparent);}
+  .cmd .caret{color:var(--accent); font-weight:700;}
+  .cmd a,.cmd button{font:inherit; color:var(--muted); background:none; cursor:pointer;
+    text-decoration:none; padding:5px 10px; border:0; border-bottom:1px solid transparent;
+    white-space:nowrap; transition:color .15s, border-color .15s;}
+  .cmd a:hover,.cmd button:hover{color:var(--accent); border-bottom-color:var(--accent);}
+  .cmd button.on{color:var(--accent); border-bottom-color:var(--accent);}
+  .cmd .sp{flex:1;}
+  .cmd input,.cmd select{font:inherit; color:var(--text); background:rgba(0,0,0,.32);
+    border:0; border-bottom:1px solid var(--hairline); padding:5px 8px; outline:none;}
+  .cmd input{width:150px;} .cmd input:focus,.cmd select:focus{border-bottom-color:var(--accent);}
+  .filters{display:contents;}
+
+  /* ------------- broadcast: type on the art, torn plate behind --------- */
+  .cast{position:relative; margin:8px 0 4px; padding:clamp(20px,3.4vw,34px) clamp(18px,3vw,36px);}
+  .cast::before{content:""; position:absolute; inset:-6px; z-index:0;
+    background:linear-gradient(100deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.42));
+    filter:url(#gb-deckle) drop-shadow(0 16px 34px rgba(0,0,0,.55));}
+  .cast > *{position:relative; z-index:1;}
+  .cast .lbl{font-family:var(--font-mono); font-size:11px; letter-spacing:.3em;
+    color:var(--accent); text-transform:uppercase;}
+  .cast h2{font-family:var(--font-display); font-weight:900; margin-top:10px;
+    font-size:clamp(20px,4.2vw,44px); line-height:1.14;
+    text-shadow:0 4px 26px rgba(0,0,0,.7);}
+  .cast .prog{margin-top:16px; height:5px; background:rgba(0,0,0,.5); overflow:hidden;
+    -webkit-mask-image:linear-gradient(90deg,#000,#000 92%,transparent);
+    mask-image:linear-gradient(90deg,#000,#000 92%,transparent);}
+  .cast .prog i{display:block; height:100%;
+    background:linear-gradient(90deg,var(--accent),transparent);
+    box-shadow:0 0 16px var(--accent);}
+  .cast .progcap{margin-top:7px; font-family:var(--font-mono); font-size:11.5px; color:var(--muted);}
+
+  /* --------- readout: numerals on a rule, divided by flame glyphs ------- */
+  .diag{display:flex; flex-wrap:wrap; align-items:flex-end; gap:clamp(14px,3vw,40px);
+    padding:22px 6px 20px; margin:6px 0 4px;
+    border-top:1px solid var(--hairline); border-bottom:1px solid var(--hairline);
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);
+    mask-image:linear-gradient(90deg,transparent,#000 3%,#000 97%,transparent);}
+  .diag .d{position:relative; min-width:96px;}
+  .diag .d+.d::before{content:""; position:absolute; left:calc(clamp(14px,3vw,40px) / -2);
+    top:6px; bottom:6px; width:1px; background:var(--hairline); opacity:.7;}
+  .diag .k{font-family:var(--font-mono); font-size:10px; letter-spacing:.2em;
+    color:var(--faint); text-transform:uppercase;}
+  .diag .v{font-family:var(--font-display); font-weight:900; margin-top:6px;
+    font-size:clamp(21px,3.4vw,34px); line-height:1; font-variant-numeric:tabular-nums;
+    text-shadow:0 2px 18px rgba(0,0,0,.6);}
+  .diag .v small{font-family:var(--font-mono); font-size:.42em; margin-left:6px; font-weight:400;}
+
+  /* ------------- the slates: unequal, overlapping, not a grid ----------- */
+  .logs{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(20px,2.6vw,38px) clamp(16px,2.2vw,30px); align-items:start;
+    padding-top:10px;}
+  .slate{position:relative; min-width:0; padding:30px 26px 26px;}
+  .slate > *{position:relative; z-index:1;}
+  .slate::before{content:""; position:absolute; inset:-6px; z-index:0;
+    background:linear-gradient(168deg, rgba(var(--bg-rgb),.93), rgba(var(--bg-rgb),.68));
+    box-shadow:inset 0 0 0 1px rgba(var(--bg-rgb),.5);
+    filter:url(#gb-singe) drop-shadow(0 18px 36px rgba(0,0,0,.55));}
+  /* deliberately unequal spans, staggered depth, slight rotation */
+  .slate:nth-child(1){grid-column:1 / span 7; transform:rotate(-.45deg);}
+  .slate:nth-child(2){grid-column:8 / span 5; margin-top:34px; transform:rotate(.5deg);}
+  .slate:nth-child(3){grid-column:1 / span 5; margin-top:-18px; transform:rotate(.35deg);}
+  .slate:nth-child(4){grid-column:6 / span 7; margin-top:6px; transform:rotate(-.3deg);}
+  .slate:nth-child(odd){z-index:2;}
+
+  .slate > .h{display:flex; align-items:baseline; gap:9px; padding-bottom:11px;
+    margin-bottom:13px; font-family:var(--font-mono); font-size:clamp(12px,1.9vw,15px);
+    border-bottom:1px solid var(--hairline);
+    -webkit-mask-image:linear-gradient(90deg,#000 82%,transparent);
+    mask-image:linear-gradient(90deg,#000 82%,transparent);}
+  .slate > .h .caret{color:var(--accent);}
+  .slate > .h .t{font-weight:700; letter-spacing:.06em; text-transform:lowercase;}
+  .slate > .h .n{margin-left:auto; font-size:11px; color:var(--faint);}
+
+  .sec{margin-bottom:17px;} .sec:last-child{margin-bottom:0;}
+  .sec-h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:7px; opacity:.94;}
+  .sec-h::before{content:"// "; color:var(--faint);}
+
+  .row{display:flex; align-items:center; gap:9px; min-height:34px; padding:3px 8px;
+    margin:0 -8px; min-width:0; font-family:var(--font-mono); transition:background .15s;}
+  .row:hover{background:rgba(255,255,255,.05);}
+  .row .rk{flex:none; font-size:11px; color:var(--faint); width:22px;}
+  .row .rk.top{color:var(--accent);}
+  .row .icon{width:20px; height:20px; border-radius:3px; flex:none;
+    box-shadow:0 0 0 1px rgba(255,255,255,.14);}
+  .row .name{font-family:var(--font-body); font-size:14.5px; font-weight:700;
+    text-decoration:none; white-space:nowrap;}
+  .row a.name:hover{text-decoration:underline;}
+  .row .dot{flex:1; min-width:10px; height:1px; opacity:.3;
+    background:repeating-linear-gradient(90deg,var(--faint) 0 2px,transparent 2px 5px);}
+  .row .detail{font-size:11.5px; color:var(--muted); white-space:nowrap; overflow:hidden;
+    text-overflow:ellipsis; max-width:38%;}
+  .row .value{font-size:14px; font-weight:700; white-space:nowrap;
+    font-variant-numeric:tabular-nums;}
+  .row .value small{font-size:11px; font-weight:400; color:var(--muted);}
+  .row.textrow{font-size:12px; color:var(--muted); font-family:var(--font-body);}
+  .empty{font-family:var(--font-mono); font-size:12px; color:var(--faint); padding:6px 0;}
+  .nohit{display:none !important;}
+
+  /* --------------- cultural modules (framed by the theme) -------------- */
+  /* modules get unequal spans too — four equal columns would put the
+     grid straight back */
+  .strip{display:grid; grid-template-columns:repeat(12,1fr);
+    gap:clamp(22px,3vw,40px) clamp(18px,2.4vw,32px); align-items:start; margin-top:10px;}
+  .strip > *{min-width:0;}
+  .strip > *:nth-child(1){grid-column:span 5;}
+  .strip > *:nth-child(2){grid-column:span 4; margin-top:20px;}
+  .strip > *:nth-child(3){grid-column:span 3; margin-top:-14px;}
+  .strip > *:nth-child(4){grid-column:span 4; margin-top:10px;}
+  .strip > *:nth-child(n+5){grid-column:span 6;}
+  .mod{--fr-surface:linear-gradient(172deg, rgba(var(--bg-rgb),.94), rgba(var(--bg-rgb),.7));}
+  .mod-h{font-family:var(--font-mono); font-size:11px; letter-spacing:.2em;
+    color:var(--accent); text-transform:uppercase; margin-bottom:12px;}
+  .mod-h::before{content:"◆ ";}
+  .mod-quote{font-family:var(--font-display); font-size:clamp(15px,2.6vw,22px); line-height:1.45;}
+  .mod-attr{font-family:var(--font-mono); font-size:11.5px; color:var(--muted);
+    margin-top:10px; text-align:right;}
+  .mod-amt{font-family:var(--font-mono); font-weight:700; color:var(--red);
+    font-size:clamp(26px,5vw,44px); line-height:1; font-variant-numeric:tabular-nums;
+    text-shadow:0 0 28px rgba(0,0,0,.85);}
+  .mod-amt sup{font-size:.42em; margin-left:4px; color:var(--muted);}
+  .mod-sub{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-top:6px;}
+  .mod-lines{list-style:none; font-size:12.5px; line-height:1.75; margin-top:12px;}
+  .mod-lines li{display:flex; gap:10px;}
+  .mod-lines li .r{margin-left:auto; color:var(--faint); white-space:nowrap;}
+  .mod-lines li.is-green{color:var(--green);}
+  .mod-flavor{font-style:italic; color:var(--muted); font-size:12px; margin-top:10px;}
+  .mod-req{color:var(--red); font-size:11.5px; margin-top:4px;}
+  .mod-plots{display:flex; flex-wrap:wrap; gap:10px;}
+  .plot{flex:1 1 104px; min-width:0; text-align:center; padding:12px 6px 9px;
+    border-radius:52% 52% 5px 5px / 30% 30% 5px 5px;
+    background:linear-gradient(180deg, rgba(255,255,255,.11), rgba(0,0,0,.36));
+    box-shadow:inset 0 0 0 1px var(--hairline), 0 6px 14px rgba(0,0,0,.4);}
+  .plot-n{font-family:var(--font-display); font-size:12px; font-weight:700;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+  .plot-d{font-family:var(--font-mono); font-size:10px; color:var(--muted); margin-top:5px;}
+  .mod-cap{font-size:11.5px; color:var(--faint); margin-top:10px;}
+  .mod-res{font-family:var(--font-mono); font-size:11px; color:var(--accent); margin-top:8px;}
+  .mod-img{width:100%; height:auto; display:block;}
+
+  /* ------------------------------ footer ------------------------------- */
+  .motd{position:relative; margin-top:34px; padding:18px 22px;
+    display:flex; align-items:center; gap:14px;
+    font-family:var(--font-mono); font-size:13px; color:var(--accent);}
+  .motd::before{content:""; position:absolute; inset:-4px; z-index:0;
+    background:linear-gradient(90deg, rgba(var(--bg-rgb),.9), rgba(var(--bg-rgb),.5));
+    filter:url(#gb-deckle) drop-shadow(0 10px 20px rgba(0,0,0,.45));}
+  .motd > *{position:relative; z-index:1;}
+  .motd .chip{flex:none; font-size:10px; letter-spacing:.24em; padding:4px 9px;
+    border:1px solid var(--accent);}
+  .credits{display:flex; flex-wrap:wrap; gap:6px 18px; justify-content:space-between;
+    padding:20px 6px 0; font-family:var(--font-mono); font-size:11px; color:var(--faint);}
+
+  /* ------------------------------- phone ------------------------------- */
+  @media (max-width:900px){
+    .logs,.strip{grid-template-columns:1fr;}
+    .slate:nth-child(n){grid-column:1 / -1; margin-top:0; transform:none;}
+    .strip > *:nth-child(n){grid-column:1 / -1; margin-top:0;}
+    .mast .meta{text-align:left;}
+  }
+  @media (max-width:520px){
+    .row .detail{display:none;}
+    .cmd{position:static;}
+    .cmd input{width:118px;}
+    .slate{padding:22px 18px 20px;}
+  }
+</style>
+</head>
+<body>
+{# import above exposes the macros; this include emits the SVG filter
+   defs and the frame CSS the macros rely on #}
+{% include "web/_ornaments.html.j2" %}
+  <div class="backdrop"></div><div class="veil"></div><div class="scan"></div>
+  <div class="motes" aria-hidden="true">
+    {%- for w in wisps %}
+    <i style="left:{{ w.left }}%; --dx:{{ w.drift }}px; animation-delay:{{ w.delay }}s;
+              width:{{ w.size }}px; height:{{ w.size }}px;"></i>
+    {%- endfor %}
+  </div>
+
+  <div class="band">
+    <div class="art" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="mast">
+        {%- if theme.backgrounds.crest %}<div class="sigil"></div>{% endif %}
+        <div class="id">
+          <h1>{{ guild_name.upper() }}</h1>
+          <div class="realm">{{ realm_label }}</div>
+        </div>
+        <div class="meta">
+          <div><span class="on">●</span> {{ subtitle }}</div>
+          <div>{{ date_range }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="page">
+    <nav class="cmd">
+      <span class="caret">&gt;</span>
+      {%- for col in columns %}
+      <a href="#log-{{ loop.index }}">{{ col.title | lower }}</a>
+      {%- endfor %}
+      <span class="sp"></span>
+      <span class="filters" id="filters" hidden>
+        <button class="on" data-role="all">all</button>
+        <button data-role="dps">dps</button>
+        <button data-role="healer">healers</button>
+        <button data-role="tank">tanks</button>
+      </span>
+      <input id="search" type="search" placeholder="find a player…" hidden>
+      <select id="weeksel" hidden><option value="">this week</option></select>
+    </nav>
+
+    {%- if headline %}
+    <div class="cast">
+      <div class="lbl">▲ broadcast · week of {{ week_label }}</div>
+      <h2>{{ headline }}</h2>
+      <div class="prog"><i style="width:{{ bar_pct }}%;"></i></div>
+      <div class="progcap">{{ bar_label }}</div>
+    </div>
+    {%- endif %}
+
+    {%- if hero_tiles %}
+    <div class="diag">
+      {%- for t in hero_tiles %}
+      <div class="d">
+        <div class="k">{{ t.label }}</div>
+        <div class="v">{{ t.value }}{% if t.delta %}<small style="color:{{ t.delta_color }};">{{ t.delta }}</small>{% endif %}</div>
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+
+    <div class="logs">
+      {%- for col in columns %}
+      <section class="slate" id="log-{{ loop.index }}" style="scroll-margin-top:70px;">
+        <div class="h"><span class="caret">&gt;</span>
+          <span class="t">query {{ col.title | lower | replace(' ', '_') }}</span>
+          <span class="n">--week</span></div>
+        {%- if not col.sections %}<div class="empty">{{ col.empty }}</div>{% endif %}
+        {%- for sec in col.sections %}
+        <div class="sec">
+          <div class="sec-h">{{ sec.title }}</div>
+          {%- for row in sec.rows %}
+          {%- if row.text is defined %}
+          <div class="row textrow">{{ row.text }}</div>
+          {%- else %}
+          <div class="row" data-name="{{ row.name | lower }}"
+               data-tags="{{ ((row.detail_bits or []) | join(' ') ~ ' ' ~ sec.title) | lower }}">
+            <span class="rk{{ ' top' if row.medal }}">{{ '%02d' % row.rank }}</span>
+            {%- if icons_on and row.icon %}<img class="icon" src="{{ row.icon }}" alt="" loading="lazy">{% endif %}
+            {%- set purl = profile_urls.get(row.name | lower) %}
+            {%- if purl %}<a class="name" href="{{ purl }}"
+               target="_blank" rel="noopener" title="Open {{ row.name }} on Warcraft Logs"
+               style="color:{{ row.color }}; text-shadow:0 0 16px {{ row.color }}55;">{{ row.name }}</a>
+            {%- else %}<span class="name" style="color:{{ row.color }}; text-shadow:0 0 16px {{ row.color }}55;">{{ row.name }}</span>{% endif %}
+            <span class="detail">{{ row.detail }}</span>
+            <span class="dot"></span>
+            <span class="value" style="color:{{ row.value_color }};">{{ row.value }}{% if row.value_suffix %} <small>{{ row.value_suffix }}</small>{% endif %}</span>
+          </div>
+          {%- endif %}
+          {%- endfor %}
+        </div>
+        {%- endfor %}
+      </section>
+      {%- endfor %}
+    </div>
+
+    {%- if culture_modules %}
+    {{ orn.rule('flame') }}
+    <div class="strip">
+      {%- set tilts = ['fr-tilt-a','fr-tilt-b','fr-tilt-c',''] %}
+      {%- for m in culture_modules %}
+      {%- set anchor = 'roast' if m.key == 'roast' else m.key %}
+      <div id="{{ anchor }}" style="scroll-margin-top:70px;">
+        {{ orn.module_open(m, tilts[loop.index0 % 4]) }}
+          {{ mods.body(m) }}
+        {{ orn.module_close(m) }}
+      </div>
+      {%- endfor %}
+    </div>
+    {%- endif %}
+
+    {%- if motd %}
+    <div class="motd"><span class="chip">{{ motd_label }}</span><span>{{ motd }}</span></div>
+    {%- endif %}
+    <div class="credits">
+      <span>{{ theme.credits }}</span>
+      <span>{{ watermark }}</span>
+    </div>
+  </div>
+{% include "web/_interactive.html.j2" %}
+</body>
+</html>

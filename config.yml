@@ -226,6 +226,13 @@ sections:
 #  Right-click a channel -> "Copy Channel ID" (needs Developer
 #  Mode under Discord Settings -> Advanced).
 # ------------------------------------------------------------
+competition:
+  # The WANTED BOARD — daily M+ standings. Data always refreshes; this flag
+  # only gates the optional daily Discord post (off by default so the daily
+  # Action never surprise-posts). Set true to post the board like the old
+  # guild board.
+  daily_post: false
+
 discord_inputs:
   enabled: true
   # Roast sources — channels AND their threads/forum posts are scanned.
@@ -237,6 +244,23 @@ discord_inputs:
   vote_emoji: "🔥"
   min_votes: 1
   announcement_channel_id: "1528114032941207582"  # officers-only channel
+
+  # --- Guild Pulse: the website's living Discord feed --------------------
+  # ONLY the channels listed here are ever read (allowlist). DMs and private
+  # channels are never touched, and the bot can only read channels it's been
+  # granted View + Read Message History on. Fill in your guild-PUBLIC social
+  # channels; `kind` groups them in the feed (chat / memes / banter /
+  # gambling). Leave pulse_channels empty to keep the feed off.
+  pulse_channels: []
+  #   - { id: "123...", label: "general",      kind: "chat" }
+  #   - { id: "123...", label: "memes",        kind: "memes" }
+  #   - { id: "123...", label: "bully-corner", kind: "banter" }
+  #   - { id: "123...", label: "guild-casino", kind: "gambling" }
+  pulse_lookback_days: 14        # how far back the feed looks
+  pulse_per_channel_limit: 20    # max items kept per channel
+  pulse_exclude_emoji: "🙈"       # react with this to drop a message
+  pulse_opt_out_marker: "[nofeed]"  # put this in a message to drop it
+  pulse_blocklist: []            # substrings that drop any matching message
 
 # Roster cache — keeps the auto-fetched guild roster between runs.
 # Refreshes automatically when older than max_age_days (new fetches are

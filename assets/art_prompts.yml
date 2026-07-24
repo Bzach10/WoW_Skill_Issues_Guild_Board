@@ -1,0 +1,156 @@
+# ==================================================================
+#  ART DIRECTION — the prompts that generate the board's artwork.
+#
+#  Safe for ANY member to edit. Change a prompt, re-run
+#      python scripts/generate_theme_art.py --theme emberforge
+#  and the new art lands in assets/generated/<theme>/ and is picked up
+#  by that theme's themes/theme.<name>.yml automatically.
+#
+#  Generation runs LOCALLY on the guild PC's RTX 4080 via ComfyUI —
+#  no API keys, no cost, no upload of anything. See assets/ART_GUIDE.md
+#  for how to start ComfyUI, and REDESIGN_NOTES.md for which art is
+#  real vs. placeholder.
+#
+#  HARD RULE: never ask for text in the art. AI lettering comes out
+#  mangled; every word on the board comes from the templates + fonts.
+#  The shared negative prompt below enforces it.
+# ==================================================================
+
+# Model + sampler settings. sd_xl_base_1.0 is what's installed; the
+# generator falls back to whatever checkpoint the server does have.
+model:
+  checkpoint: "sd_xl_base_1.0.safetensors"
+  steps: 32
+  cfg: 7.0
+  sampler: "dpmpp_2m"
+  scheduler: "karras"
+
+# Appended to EVERY prompt — the house style that keeps the themes
+# looking like one guild's board and not five different websites.
+style_suffix: >-
+  painterly digital matte painting, world of warcraft concept art style,
+  dramatic cinematic lighting, rich atmospheric depth, volumetric haze,
+  highly detailed, artstation quality, no text
+
+# Appended to EVERY negative prompt — the "no text" guarantee lives here.
+negative_suffix: >-
+  text, letters, words, writing, typography, lettering, watermark,
+  signature, logo, ui, interface, caption, subtitle, numbers, blurry,
+  low quality, jpeg artifacts, deformed, extra limbs, people, faces,
+  characters, portrait
+
+# Canvas sizes per slot. Kept near SDXL's native 1024x1024 area —
+# extreme banner ratios make the model duplicate objects. CSS covers
+# and crops these to the final board dimensions.
+sizes:
+  header: [1344, 512]
+  middle: [1216, 832]
+  footer: [1344, 512]
+  poster: [1024, 1024]
+  crest:  [1024, 1024]
+
+# ------------------------------------------------------------------
+#  THEMES — one block per look. Each slot is a prompt; `seed` keeps a
+#  re-run reproducible (change it to roll new variations).
+# ------------------------------------------------------------------
+themes:
+
+  emberforge:
+    label: "Emberforge — the molten under-forge"
+    seed: 70401
+    slots:
+      header: >-
+        colossal underground dwarven forge hall, black basalt arches, rivers of
+        molten orange metal, hanging iron braziers, drifting embers and sparks,
+        heat shimmer, deep shadow with fierce orange rim light, wide banner
+      middle: >-
+        vast molten forge cavern seen from a high ledge, glowing lava channels
+        carving through black rock, immense iron chains and anvils, ember storm,
+        smoke and heat haze, bold silhouettes, orange and near-black palette
+      footer: >-
+        smouldering forge floor at the base of a wall, banked coals and dying
+        embers, scattered iron tools, cracked obsidian flagstones, warm low
+        firelight from below, dark and smoky, wide banner
+      poster: >-
+        sheet of soot stained iron plate, hammered texture, scorch marks and
+        heat discoloration, rivets at the corners, dark charcoal grey with warm
+        orange patina, empty flat surface, top down
+      crest: >-
+        heraldic emblem of a blacksmith hammer crossed with a broken sword over
+        an anvil, wreathed in flame, forged iron and molten gold on black,
+        symmetrical, centered emblem, glowing edges
+
+  arcanevault:
+    label: "Arcane Vault — the astral archive"
+    seed: 70402
+    slots:
+      header: >-
+        soaring arcane library vault, floating crystal shards, indigo and violet
+        stone arches inlaid with glowing cyan runes, drifting motes of starlight,
+        deep space visible through a shattered ceiling, wide banner
+      middle: >-
+        immense astral observatory chamber, orbiting rune stones and constellation
+        orreries, violet nebula light pouring through tall arched windows,
+        levitating shards, deep indigo and teal palette, cinematic wide shot
+      footer: >-
+        base of an arcane vault wall, glowing ley line seams running through dark
+        marble floor, scattered crystal fragments, soft violet underglow,
+        drifting arcane dust, wide banner
+      poster: >-
+        sheet of pale astral vellum, faint glowing rune watermark, star chart
+        etching barely visible, edges frayed, cool violet and silver tint,
+        empty flat surface, top down
+      crest: >-
+        heraldic emblem of an open eye inside a many pointed arcane star,
+        orbiting rune rings, violet and cyan energy on deep indigo,
+        symmetrical, centered emblem, glowing
+
+  drownedgods:
+    label: "Drowned Gods — the abyssal deep"
+    seed: 70403
+    slots:
+      header: >-
+        sunken temple hall deep underwater, colossal barnacle crusted pillars,
+        sickly green bioluminescence, drifting silt and kelp, shafts of dim light
+        from far above, abyssal teal and black palette, wide banner
+      middle: >-
+        vast drowned cathedral of a forgotten sea god, tentacular carved stonework,
+        glowing green abyssal light, schools of shadow, immense scale, murky water
+        haze, corrupted gold accents, cinematic wide shot
+      footer: >-
+        abyssal sea floor at the base of a ruined wall, coral encrusted rubble,
+        glowing green anemones, drifting particles, deep teal darkness,
+        wide banner
+      poster: >-
+        waterlogged sheet of oilcloth, salt stains and water damage rings,
+        barnacle speckling at the edges, desaturated sea green and bone,
+        empty flat surface, top down
+      crest: >-
+        heraldic emblem of a tentacle wrapped trident over a cracked nautilus
+        shell, abyssal green and tarnished gold on black, symmetrical,
+        centered emblem, faintly glowing
+
+  gildedcodex:
+    label: "Gilded Codex — illuminated manuscript (light)"
+    seed: 70404
+    slots:
+      header: >-
+        illuminated manuscript border on cream vellum, gold leaf filigree,
+        deep royal blue and crimson ink flourishes, intricate knotwork vines,
+        medieval scriptorium style, bright parchment background, wide banner
+      middle: >-
+        aged cream parchment page, faint gold leaf illumination in the corners,
+        delicate ink flourish border, subtle fiber texture and age spotting,
+        warm bright paper, mostly empty center, top down
+      footer: >-
+        illuminated manuscript foot border on cream vellum, gold leaf and royal
+        blue vine work, small heraldic shields, torn deckle bottom edge,
+        bright parchment, wide banner
+      poster: >-
+        sheet of fine aged vellum, warm cream white, visible fiber grain,
+        soft foxing spots, gently torn deckle edges, faint gold leaf corner
+        flourish, empty flat surface, top down, bright even lighting
+      crest: >-
+        heraldic emblem of a crowned lion rampant over a kite shield with
+        crossed swords, gold leaf and royal blue on cream vellum, illuminated
+        manuscript style, symmetrical, centered emblem, ink and gilt

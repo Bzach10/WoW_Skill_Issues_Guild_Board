@@ -22,6 +22,7 @@ from guild_board.state import (
     streaks_from_attendance,
     update_records,
 )
+from guild_board.web_stats import dump_web_stats
 
 
 def _sample_week(sample):
@@ -517,6 +518,11 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                             mplus_results, mplus_season_scores, mplus_season_parses,
                             start_dt, end_dt, no_logs,
                             progress_image_url=progress_image_url)
+
+    # The website's Standings hub reads these same WCL ladders from
+    # web_stats.json (fail-open on both sides). Snapshot, not memory --
+    # written on preview/dry-run too so the site can be tested offline.
+    dump_web_stats(stats)
 
     if preview:
         return embed, image_path

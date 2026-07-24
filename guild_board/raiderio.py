@@ -1,14 +1,26 @@
 import logging
-import time
 
 import requests
 
-from guild_board.config import clean_spec_name
+from guild_board.config import clean_spec_name, split_name_realm
+from guild_board.http import RateLimiter, get_session
 from guild_board.wcl import gql
 
 logger = logging.getLogger(__name__)
 
 RAIDERIO_URL = "https://raider.io/api/v1/characters/profile"
+
+# One limiter shared by every collector in this module, so three roster
+# passes in the same run cannot stack up to 3x the intended request rate.
+_rio_limiter = RateLimiter()
+
+
+def _rio_get(params, timeout=30):
+    """GET the Raider.io profile endpoint through the pooled session, paced
+    by the shared limiter. Replaces per-call requests.get + sleep(0.3)."""
+    _rio_limiter.acquire()
+    return get_session().get(RAIDERIO_URL, params=params, timeout=timeout)
+
 
 DUNGEON_NAME_FIXES = {
     "Ara-Kara, City of Echoes": "Ara-Kara, City of Echoes",
@@ -40,7 +52,7 @@ def collect_mplus(cfg, token=None):
     for entry in roster:
         name, realm = _split_name_realm(entry, cfg)
         try:
-            resp = requests.get(RAIDERIO_URL, params={
+            resp = _rio_get(params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
@@ -66,7 +78,6 @@ def collect_mplus(cfg, token=None):
         except requests.RequestException as exc:
             logger.warning("Error fetching %s: %s", name, exc)
             continue
-        time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
     logger.info("Found %s players with weekly runs", len(results))
     return results
@@ -86,7 +97,7 @@ def collect_mplus_season_scores(cfg, token=None):
     for entry in roster:
         name, realm = _split_name_realm(entry, cfg)
         try:
-            resp = requests.get(RAIDERIO_URL, params={
+            resp = _rio_get(params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
@@ -121,7 +132,6 @@ def collect_mplus_season_scores(cfg, token=None):
         except Exception as exc:
             logger.warning("Unexpected error for %s: %s", name, exc)
             continue
-        time.sleep(0.3)
     results.sort(key=lambda r: r[0], reverse=True)
     logger.info("Found %s players with season scores", len(results))
     return results
@@ -180,7 +190,7 @@ def collect_mplus_raiderio_season_runs(cfg, roster):
     for entry in roster:
         name, realm = _split_name_realm(entry, cfg)
         try:
-            resp = requests.get(RAIDERIO_URL, params={
+            resp = _rio_get(params={
                 "region": region,
                 "realm": realm.strip(),
                 "name": name.strip(),
@@ -216,7 +226,6 @@ def collect_mplus_raiderio_season_runs(cfg, roster):
         except requests.RequestException as exc:
             logger.warning("Error fetching %s: %s", name, exc)
             continue
-        time.sleep(0.3)
     return results, top_key
 
 
@@ -255,33 +264,36 @@ query ($name: String!, $slug: String!, $region: String!) {
 
 
 def collect_mplus_wcl_parses(cfg, token, raiderio_results):
-    """Attempt to fetch M+ parse percentiles from Warcraft Logs for top Raider.io entries."""
-    logger.info("Attempting WCL parse enrichment for top Raider.io entries")
-    results = []
-    region = cfg["guild"]["region"]
-    default_slug = cfg["guild"]["realm_slug"]
+    """WCL M+ parse enrichment — NOT IMPLEMENTED. Returns [] deliberately.
 
-    for score, dungeon, name, spec, _ in raiderio_results[:15]:
-        try:
-            resp = requests.get(RAIDERIO_URL, params={
-                "region": region,
-                "realm": default_slug,
-                "name": name,
-                "fields": "mythic_plus_best_runs",
-            }, timeout=30)
-            if resp.status_code != 200:
-                continue
-            rio = resp.json()
-            runs = rio.get("mythic_plus_best_runs") or []
-            for run in runs:
-                if _normalize_dungeon_name(run.get("dungeon", "")) == _normalize_dungeon_name(dungeon):
-                    from_wcl = run.get("score", 0)
-                    if from_wcl:
-                        results.append((from_wcl, dungeon, name, spec, True))
-                        break
-        except requests.RequestException:
-            continue
-    return results
+    This function's name and its previous body disagreed. Despite claiming
+    to fetch parse percentiles from Warcraft Logs it never contacted WCL:
+    it re-queried Raider.io (ignoring `token` entirely), took Raider.io's
+    dungeon *score*, and returned it tagged is_wcl=True. formatters.py
+    renders anything tagged that way with a percent sign, so the board
+    published lines like:
+
+        Rakdisc (Discipline Priest) - 456% on Skyreach
+
+    A parse percentile is 0-100 by definition; those were unbounded
+    Raider.io scores. It also looked every character up on the guild's own
+    realm slug regardless of their actual realm, so cross-realm members
+    either missed or matched a same-named stranger.
+
+    Returning [] leaves the caller's Raider.io results untouched, and those
+    already render correctly as "<n> score". That is strictly better than
+    publishing a fabricated percentage, and it saves 15 redundant requests
+    per run.
+
+    To implement this for real: WCL_MPLUS_QUERY above is the (currently
+    unused) GraphQL query for it. It needs a per-character serverSlug from
+    split_name_realm(), and its parse.percent values then genuinely are
+    percentiles and can carry is_wcl=True.
+    """
+    logger.info(
+        "WCL M+ parse enrichment is not implemented; keeping Raider.io "
+        "scores as-is. See collect_mplus_wcl_parses.__doc__.")
+    return []
 
 
 def _mplus_dungeon_name(cfg, token, encounter_id):
@@ -321,11 +333,10 @@ def _mplus_dungeon_name(cfg, token, encounter_id):
 
 
 def _split_name_realm(entry, cfg):
-    if "-" in entry:
-        name, realm = entry.split("-", 1)
-    else:
-        name, realm = entry, cfg["guild"]["realm_slug"]
-    return name.strip(), realm.strip()
+    """Thin wrapper over config.split_name_realm that supplies this guild's
+    realm as the fallback. Kept so the existing call sites in this module
+    read unchanged; the splitting rule itself lives in one place now."""
+    return split_name_realm(entry, default_realm=cfg["guild"]["realm_slug"])
 
 
 def _normalize_dungeon_name(name):

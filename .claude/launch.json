@@ -4,8 +4,34 @@
     {
       "name": "board-preview",
       "runtimeExecutable": "python",
-      "runtimeArgs": ["-m", "http.server", "8788"],
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8788"
+      ],
       "port": 8788
+    },
+    {
+      "name": "crew-board",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8899"
+      ],
+      "port": 8899
+    },
+    {
+      "name": "trial-bundle",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8790",
+        "--directory",
+        "C:/wt/GuildBoardTrial"
+      ],
+      "port": 8790
     }
   ]
 }

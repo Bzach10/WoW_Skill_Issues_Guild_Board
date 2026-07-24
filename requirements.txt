@@ -1,6 +1,17 @@
-requests>=2.31
-PyYAML>=6.0
-Pillow>=10.0
+# Floors are the first PATCHED release for CVEs that touch this pipeline,
+# not the oldest version that merely works. `pip install -r` resolves to the
+# newest release anyway; these floors exist so a constrained or offline
+# resolve can't quietly land on a known-vulnerable build.
+#
+#   requests >=2.32.4  .netrc credential leak on cross-host redirect
+#   Pillow   >=12.2.0  PSD/FITS buffer overflow + decompression bomb
+#                      (CVE-2026-25990 hits 10.3.0-12.1.0). Relevant here:
+#                      the board downloads remote icon and character-render
+#                      images and decodes them with Pillow.
+#   Jinja2   >=3.1.5   sandbox breakout via indirect .format (CVE-2024-56326)
+requests>=2.32.4
+PyYAML>=6.0.2
+Pillow>=12.2.0
 pytest>=7.0
-Jinja2>=3.1
+Jinja2>=3.1.5
 playwright>=1.45

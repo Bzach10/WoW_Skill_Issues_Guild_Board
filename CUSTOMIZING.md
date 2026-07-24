@@ -108,6 +108,40 @@ board:
   footer: simple        # graveyard (tombstones + debt + item) or simple (quiet strip)
 ```
 
+### Change the website's whole layout
+
+The Discord image and the public website are separate surfaces. The line
+above dresses the image; this one restructures the **website**:
+
+```yaml
+board:
+  web_layout: chronicle
+```
+
+| Value | What the site becomes |
+|---|---|
+| `poster` | the WANTED-poster grid (the default, what's live today) |
+| `chronicle` | an editorial front page — one huge headline, lead column + sidebar |
+| `ember_terminal` | an arcane console: art backdrop, scanlines, log-style rankings |
+| `codex` | a single illuminated manuscript page, chapter by chapter |
+
+Every layout shows the same data and keeps the debt card, the graveyard,
+the roast and the MOTD — they just arrange them differently. A name that
+doesn't exist falls back to `poster`, so a typo can't blank the site.
+
+Ready-made theme files pairing colors and art with each layout live in
+`themes/` — copy one over `theme.yml` to take it wholesale. See
+`REDESIGN_NOTES.md` for what each looks like.
+
+### Make your own website layout
+
+Same idea as a header module: copy a layout out of
+`guild_board/templates/web/` into **`board_templates/web/my_layout.html.j2`**
+and name it in `web_layout`. Keep the `{% include "web/_interactive.html.j2" %}`
+line and the `.row[data-name]` / `#filters` / `#search` hooks it documents,
+and your layout inherits role filters, player search and the week archive
+for free.
+
 ### Make your own header or footer
 
 1. Copy a built-in module out of `guild_board/templates/headers/` (or

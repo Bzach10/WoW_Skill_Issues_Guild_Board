@@ -1,3 +1,62 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "guild-board"
+version = "2.0.0"
+description = "Weekly World of Warcraft guild board: pulls real data from Blizzard, Raider.io and Warcraft Logs, renders an illustrated board, and posts it to Discord."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Bzach10" }]
+keywords = ["worldofwarcraft", "wow", "guild", "raiderio", "warcraftlogs", "discord"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Environment :: Console",
+    "Topic :: Games/Entertainment",
+]
+
+# Lower bounds are the oldest versions the code is known to work against;
+# upper bounds stop a major release from silently breaking a scheduled run.
+# The exact versions this was last verified green on are in
+# requirements.lock.txt — use that for reproducible installs.
+dependencies = [
+    "requests>=2.31,<3",
+    "PyYAML>=6.0,<7",
+    "Pillow>=10.0,<13",
+    "Jinja2>=3.1,<4",
+]
+
+[project.optional-dependencies]
+# Headless-browser rendering for the HTML board. Optional because the data
+# pipeline and Discord posting work without it, and Playwright pulls a
+# large browser download.
+render = ["playwright>=1.45,<2"]
+dev = [
+    "pytest>=7.0,<10",
+    "ruff>=0.4.0",
+    "mypy>=1.8.0",
+]
+
+[project.scripts]
+guild-board = "guild_board.main:main"
+
+[project.urls]
+Homepage = "https://github.com/Bzach10/WoW_Skill_Issues_Guild_Board"
+
+[tool.setuptools]
+# Explicit package list: a bare find would sweep in `scripts`, `tests`, and
+# the art directories that live at the repo root.
+packages = ["guild_board"]
+
+[tool.setuptools.package-data]
+guild_board = ["templates/*.j2"]
+
 [tool.pytest.ini_options]
 # CI runs bare `pytest`, which does not put the repo root on sys.path.
 # pythonpath ensures `import guild_board` works everywhere.
@@ -5,11 +64,25 @@ pythonpath = ["."]
 testpaths = ["tests"]
 
 [tool.ruff]
-line-length = 120
+line-length = 100
+target-version = "py310"
 
 [tool.ruff.lint]
-# Defaults (E4/E7/E9/F) plus import sorting. The ignores are style
-# choices the existing code makes on purpose (one-letter loop vars,
-# semicolon one-liners, sys.path inserts before imports in scripts).
-select = ["E4", "E7", "E9", "F", "I"]
-ignore = ["E741", "E702", "E731", "E401", "E402"]
+select = ["E", "F", "W", "I", "UP", "B"]
+ignore = [
+    "E501",  # long lines here are mostly prompt/flavor strings, not logic
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Scripts insert the repo root on sys.path before importing guild_board,
+# so their imports legitimately come after statements.
+"scripts/*.py" = ["E402"]
+"tests/*.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+# The codebase is not yet annotated; start permissive so mypy is usable now
+# and tighten per-module as annotations land.
+check_untyped_defs = false
+warn_unused_ignores = true

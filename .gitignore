@@ -14,3 +14,41 @@ board_anim_test.gif
 board_*_small.png
 site/
 board_web_render.html
+
+# Redesign previews: the HTML pages and the small contact-sheet thumbs
+# are committed; the full-page screenshots are 10MB+ each and are
+# regenerated on demand with
+#   python scripts/render_redesign_previews.py --png
+redesign_previews/*.png
+
+# Python build artifacts
+build/
+dist/
+*.egg-info/
+
+# Front-end crew board: rendered output + screenshots are build artifacts
+crew_board.html
+previews/
+crew_board_proof.html
+crew_board_watercolor.html
+crew_board_doll.html
+
+# The unanchored `board.png` rule above targets the generated board image
+# at the repo root, but git matches it at ANY depth — so it also swallows
+# the art pipeline's cut-outs (cast/<slug>/<style>/board.png) and the
+# test fixtures. Un-ignore those explicitly; they are real inputs.
+!cast/**/board.png
+!tests/fixtures/**/board.png
+
+# Generated website data bundle (build with scripts/build_site_data.py)
+web_data/
+
+# Front-end: rendered per-player pages, season views, bounty output
+p/
+seasons/
+bounty/
+
+# local admin tool output — never publish
+config.yml.tmp
+featured_this_week.json
+featured_history.json

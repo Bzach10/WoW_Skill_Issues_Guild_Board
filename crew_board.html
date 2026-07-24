@@ -1,0 +1,3379 @@
+
+<!DOCTYPE html>
+<html lang="en" data-crew-theme="codex">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Skill Issues — The Guild Board</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏴‍☠️</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&amp;family=Inter:wght@400;600;700;900&amp;family=JetBrains+Mono:wght@400;700&amp;display=swap" rel="stylesheet">
+<style>
+/* ---------- THEMES (generated from theme.yml + shipped defaults) ---------- */
+html[data-crew-theme="codex"]{
+  --bg:#e7d3ad;
+  --text:#3a2c17;
+  --heading:#4a2f12;
+  --accent:#9b5e1f;
+  --panel:#f7eed8;
+  --line:#c8ad7e;
+  --muted:#6b5637;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:light;
+}
+html[data-crew-theme="console"]{
+  --bg:#120c1e;
+  --text:#e7dcf7;
+  --heading:#e7dcf7;
+  --accent:#38e0c8;
+  --panel:#191128;
+  --line:#33264d;
+  --muted:#9d8fbb;
+  --font-display:'JetBrains Mono',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+html[data-crew-theme="chronicle"]{
+  --bg:#180f28;
+  --text:#efe7dd;
+  --heading:#efe7dd;
+  --accent:#d8a24a;
+  --panel:#20152c;
+  --line:#3c2e4a;
+  --muted:#b0a08f;
+  --font-display:'Cinzel Decorative',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  color-scheme:dark;
+}
+:root{
+  --tank:#6f9fd0;
+  --healer:#4fc9a2;
+  --dps:#b07fe0;
+  --unknown:#9b8f7a;
+  --measure:1180px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg); color:var(--text);
+  font-family:var(--font-body); font-size:16px; line-height:1.55;
+  overflow-x:hidden; -webkit-font-smoothing:antialiased;
+  transition:background .5s ease, color .5s ease;
+}
+.wrap{max-width:var(--measure); margin:0 auto; padding:0 20px;}
+a{color:inherit;}
+
+/* ---------- ambient embers ---------- */
+.embers{position:fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden;}
+.ember{
+  position:absolute; bottom:-12px; width:4px; height:4px; border-radius:50%;
+  background:var(--accent); opacity:0; filter:blur(.4px);
+  animation:drift linear infinite;
+}
+@keyframes drift{
+  0%{transform:translate3d(0,0,0) scale(.6); opacity:0;}
+  12%{opacity:.55;}
+  75%{opacity:.35;}
+  100%{transform:translate3d(var(--dx,20px),-105vh,0) scale(1.1); opacity:0;}
+}
+
+/* ---------- top bar: theme switch ---------- */
+.topbar{
+  position:sticky; top:0; z-index:40; backdrop-filter:blur(8px);
+  background:color-mix(in srgb, var(--bg) 86%, transparent);
+  border-bottom:1px solid var(--line);
+}
+.topbar .wrap{display:flex; align-items:center; justify-content:space-between;
+  gap:12px; padding-top:10px; padding-bottom:10px; flex-wrap:wrap;}
+.brandmark{font-family:var(--font-display); letter-spacing:.14em;
+  text-transform:uppercase; font-size:12px; color:var(--muted);}
+.themeswitch{display:flex; gap:6px; flex-wrap:wrap;}
+.themeswitch button{
+  font:inherit; font-size:12px; letter-spacing:.05em; cursor:pointer;
+  padding:6px 12px; border-radius:999px; color:var(--muted);
+  background:transparent; border:1px solid var(--line);
+  transition:all .25s ease;
+}
+.themeswitch button[aria-pressed="true"]{
+  color:var(--bg); background:var(--accent); border-color:var(--accent);
+}
+.themeswitch button:hover{color:var(--text); border-color:var(--accent);}
+.themeswitch button[aria-pressed="true"]:hover{color:var(--bg);}
+
+/* ---------- masthead ---------- */
+.masthead{position:relative; z-index:1; text-align:center; padding:54px 0 26px;}
+.kicker{
+  font-size:12px; letter-spacing:.24em; text-transform:uppercase;
+  color:var(--muted); margin-bottom:16px;
+}
+.kicker b{color:var(--accent); font-weight:700;}
+.masthead h1{
+  font-family:var(--font-display); font-weight:900; line-height:.95;
+  font-size:clamp(38px,9vw,86px); color:var(--heading);
+  letter-spacing:.01em;
+}
+.goldrule{
+  width:min(420px,72%); height:3px; margin:22px auto 18px; border-radius:2px;
+  background:linear-gradient(90deg,transparent,var(--accent),transparent);
+}
+.gag{font-style:italic; color:var(--muted); font-size:clamp(14px,2.4vw,18px);}
+.updated{margin-top:10px; font-size:12px; color:var(--muted); opacity:.8;}
+
+/* ---------- controls: role tabs + search ---------- */
+.controls{position:relative; z-index:20; display:flex; gap:14px; flex-wrap:wrap;
+  align-items:center; justify-content:center; padding:6px 0 26px;}
+.tabs{display:flex; gap:8px; flex-wrap:wrap; justify-content:center;}
+.tab{
+  font:inherit; font-size:13px; cursor:pointer; padding:9px 18px;
+  border-radius:999px; border:1px solid var(--line); background:var(--panel);
+  color:var(--text); transition:all .25s ease; position:relative;
+}
+.tab .count{color:var(--muted); font-size:11px; margin-left:6px;}
+.tab:hover{border-color:var(--role,var(--accent)); transform:translateY(-1px);}
+.tab[aria-pressed="true"]{
+  border-color:var(--role,var(--accent));
+  box-shadow:inset 0 0 0 1px var(--role,var(--accent));
+}
+.tab[data-role="tank"]{--role:var(--tank);}
+.tab[data-role="healer"]{--role:var(--healer);}
+.tab[data-role="dps"]{--role:var(--dps);}
+.search{
+  font:inherit; font-size:13px; padding:9px 14px; border-radius:999px;
+  border:1px solid var(--line); background:var(--panel); color:var(--text);
+  min-width:200px;
+}
+.search::placeholder{color:var(--muted);}
+.search:focus{outline:2px solid var(--accent); outline-offset:1px;}
+
+/* ---------- CREW STAGE ----------
+   THE LAYER STACK, bottom to top. The crew are transparent cut-outs
+   composited over the scene, so the scene can change or animate freely
+   without the character art ever being touched:
+
+     z 0  .scene       backdrop (tint + optional art), crossfades
+     z 1  .deckboard   the ship's deck the crew stand on
+     z 2  .member      the cast — transparent cutouts where the roster
+                       generation supplied one, otherwise the full scene
+                       image in a frame
+     z 5+ bubbles, spotlights, toggles
+*/
+.stage{
+  position:relative; z-index:1; margin:0 auto 10px; max-width:var(--measure);
+  padding:0 12px;
+}
+.scene{
+  position:absolute; inset:0 0 18px; z-index:0; overflow:hidden;
+  border-radius:26px; pointer-events:none;
+}
+/* Two stacked plates so a scene change CROSSFADES instead of cutting.
+   JS paints the idle plate, then swaps which one is visible. */
+.scene-plate{
+  position:absolute; inset:0; opacity:0; transition:opacity .75s ease;
+  background-position:center bottom; background-size:cover;
+  background-repeat:no-repeat;
+}
+.scene-plate.on{opacity:1;}
+/* The tint is blended against the live theme, so one scene definition
+   reads correctly in codex, console and chronicle alike. */
+.scene-plate::after{
+  content:""; position:absolute; inset:0;
+  background:radial-gradient(ellipse 120% 78% at 50% 108%,
+    color-mix(in srgb, var(--scene-tint, var(--accent)) 42%, transparent),
+    transparent 72%);
+}
+.scene-plate::before{
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(180deg, transparent 35%,
+    color-mix(in srgb, var(--bg) 72%, transparent));
+}
+/* A slow horizon drift — the scene moves, the crew do not. */
+@keyframes tide{
+  0%,100%{transform:translate3d(-1.5%,0,0) scale(1.04);}
+  50%{transform:translate3d(1.5%,0,0) scale(1.04);}
+}
+.scene-plate.on{animation:tide 26s ease-in-out infinite;}
+.deck{
+  position:relative; display:flex; align-items:flex-end; justify-content:center;
+  min-height:clamp(300px,44vw,430px); padding-bottom:26px;
+  /* A full crew is wider than the measure — let the deck scroll rather
+     than bleeding members off both edges of the page. */
+  overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity;
+  scrollbar-width:thin;
+}
+.deck::-webkit-scrollbar{height:6px;}
+.deck::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+/* the ship's deck the crew stands on */
+.deckboard{
+  position:absolute; left:2%; right:2%; bottom:0; height:64px; z-index:1;
+  border-radius:50%/22px;
+  background:linear-gradient(180deg,
+    color-mix(in srgb,var(--accent) 26%, var(--panel)),
+    var(--panel));
+  border:1px solid var(--line);
+  box-shadow:0 18px 40px -18px rgba(0,0,0,.6);
+}
+.deckboard::after{
+  content:""; position:absolute; inset:6px 8% auto; height:1px;
+  background:linear-gradient(90deg,transparent,var(--line),transparent);
+}
+
+.member{
+  position:relative; z-index:2; flex:0 0 auto; width:clamp(96px,15vw,168px);
+  scroll-snap-align:center;
+  display:flex; flex-direction:column; align-items:center;
+  transition:opacity .45s ease, filter .45s ease, transform .45s cubic-bezier(.2,.8,.3,1);
+  cursor:pointer; background:none; border:0; padding:0; color:inherit;
+  font:inherit; text-align:center;
+}
+/* ---------- THE CREW PORTRAITS ----------
+   The restyled art is scene-baked, so members are framed portraits
+   rather than transparent cut-outs composited over the scene layer.
+   3:4 art fills its frame; anything off-spec is contained over a
+   blurred copy of itself so no composition is ever cropped. */
+/* A transparent cutout needs no frame — it stands on the deck and the
+   scene layer shows through behind it, which is the whole point. */
+.figure{
+  position:relative; display:block; width:100%; aspect-ratio:3/4;
+  animation:breathe 3.4s ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+  transition:filter .45s ease;
+}
+.figure img{width:100%; height:100%; object-fit:contain; display:block;
+  filter:drop-shadow(0 10px 16px rgba(0,0,0,.45));}
+.member[data-idle="paused"] .figure{animation-play-state:paused;}
+
+.portrait{
+  position:relative; display:block; width:100%; aspect-ratio:3/4;
+  overflow:hidden; border-radius:14px; border:1px solid var(--line);
+  box-shadow:0 12px 22px -12px rgba(0,0,0,.6);
+  animation:breathe 3.4s ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+  transition:filter .45s ease;
+}
+.portrait::before{content:""; position:absolute; inset:-6%;
+  background-image:var(--fill); background-size:cover; background-position:center;
+  filter:blur(22px) saturate(.75) brightness(.7);}
+.portrait img{position:relative; width:100%; height:100%; object-fit:contain;
+  display:block;}
+.portrait.fills img{object-fit:cover;}
+.portrait.fills::before{display:none;}
+.portrait.pending{background:var(--panel);}
+.portrait.pending::before{display:none;}
+.portrait.pending img{object-fit:contain; padding:12%;}
+
+@keyframes breathe{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-6px);}
+}
+/* Offscreen crew stop animating entirely — this is what lets the deck
+   scale past 100 characters without burning frame budget. */
+.member[data-idle="paused"] .portrait{animation-play-state:paused;}
+
+.member img{
+  width:100%; height:auto; display:block;
+}
+.member .plate{
+  margin-top:-6px; font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); line-height:1.5;
+}
+.member .plate b{display:block; font-size:13px; letter-spacing:.04em;
+  color:var(--text); text-transform:none;}
+.member .plate a.plink{color:inherit; text-decoration:none;
+  border-bottom:1px solid transparent;}
+.member:hover .plate a.plink{border-bottom-color:var(--accent);}
+.member .rolepip{
+  display:inline-block; width:7px; height:7px; border-radius:50%;
+  background:var(--pip); margin-right:5px; vertical-align:middle;
+}
+.member .score{color:var(--accent); font-weight:700;}
+
+/* speech bubble */
+.bubble{
+  position:absolute; top:-6px; left:50%; transform:translate(-50%,-100%) scale(.9);
+  background:var(--panel); border:1px solid var(--line); color:var(--text);
+  padding:8px 12px; border-radius:14px; font-size:12px; line-height:1.35;
+  width:max(140px,11vw); opacity:0; pointer-events:none;
+  transition:opacity .3s ease, transform .3s ease; z-index:5;
+  box-shadow:0 8px 20px -10px rgba(0,0,0,.6);
+}
+.bubble::after{
+  content:""; position:absolute; left:50%; bottom:-7px; width:12px; height:12px;
+  background:var(--panel); border-right:1px solid var(--line);
+  border-bottom:1px solid var(--line);
+  transform:translateX(-50%) rotate(45deg);
+}
+.member:hover .bubble, .member:focus-visible .bubble{
+  opacity:1; transform:translate(-50%,-100%) scale(1);
+}
+
+/* SIGNATURE INTERACTION — role spotlight */
+.deck[data-spot] .member{opacity:.28; filter:grayscale(.85) brightness(.72);}
+.deck[data-spot] .member[data-role-active]{
+  opacity:1; filter:none;
+  transform:translateY(-22px) scale(1.09); z-index:6;
+}
+.deck[data-spot] .member[data-role-active] .portrait,
+.deck[data-spot] .member[data-role-active] .figure{
+  filter:drop-shadow(0 0 26px var(--pip)) drop-shadow(0 12px 18px rgba(0,0,0,.5));
+}
+.deck[data-spot] .member[data-role-active]::before{
+  content:""; position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+  width:130%; height:56px; border-radius:50%;
+  background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
+  opacity:.4; pointer-events:none;
+}
+/* SUMMON — the character steps forward out of the line. This is the
+   hook the story layer will build on. */
+.member[data-summoned]{
+  transform:translateY(-26px) scale(1.12); z-index:8;
+}
+.member[data-summoned] .portrait,
+.member[data-summoned] .figure{
+  filter:drop-shadow(0 0 30px var(--pip)) drop-shadow(0 16px 22px rgba(0,0,0,.55));
+}
+.member[data-summoned]::after{
+  content:""; position:absolute; bottom:-16px; left:50%; transform:translateX(-50%);
+  width:140%; height:60px; border-radius:50%;
+  background:radial-gradient(ellipse at center, var(--pip), transparent 70%);
+  opacity:.45; pointer-events:none; z-index:-1;
+}
+
+/* filtered-out (tab CLICKED, not hovered) */
+.member[hidden]{display:none;}
+
+/* shadowform toggle */
+.sform{
+  /* top-right of the figure, clear of the name plate underneath */
+  position:absolute; top:2px; right:0; z-index:7;
+  font:inherit; font-size:10px; letter-spacing:.06em; text-transform:uppercase;
+  padding:4px 9px; border-radius:999px; cursor:pointer;
+  background:var(--panel); color:var(--accent); border:1px solid var(--accent);
+  transition:all .3s ease;
+}
+.member[data-form="shadow"] .sform{
+  background:#2b0b40; color:#c98bff; border-color:#8b4bd0;
+  box-shadow:0 0 14px -2px #8b4bd0;
+}
+.member[data-form="shadow"] .portrait,
+.member[data-form="shadow"] .figure{
+  filter:drop-shadow(0 0 22px #8b4bd0) drop-shadow(0 10px 16px rgba(0,0,0,.5))
+         hue-rotate(-38deg) saturate(1.25);
+}
+
+.stagenote{text-align:center; font-size:11px; color:var(--muted); opacity:.75;
+  padding-bottom:14px;}
+
+/* ---------- SECTION HEADS ---------- */
+.sechead{
+  font-family:var(--font-display); font-size:clamp(22px,4vw,34px);
+  color:var(--heading); text-align:center; margin:44px 0 6px;
+}
+.sechead + .subhead{text-align:center; color:var(--muted); font-size:13px;
+  margin-bottom:22px;}
+
+/* ---------- VOYAGE MAP ---------- */
+.voyage{position:relative; z-index:1; padding:10px 0 30px;}
+.map{
+  position:relative; border:1px solid var(--line); border-radius:22px;
+  background:var(--panel); padding:26px 18px 18px; overflow:hidden;
+  transition:background .5s ease, box-shadow .5s ease;
+}
+.map.washed{box-shadow:inset 0 0 90px -20px var(--wash,transparent);}
+.route{
+  position:relative; display:flex; gap:8px; overflow-x:auto; padding:10px 4px 22px;
+  scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch;
+}
+.route::-webkit-scrollbar{height:6px;}
+.route::-webkit-scrollbar-thumb{background:var(--line); border-radius:3px;}
+.island{
+  position:relative; flex:0 0 auto; width:118px; scroll-snap-align:center;
+  background:none; border:0; color:inherit; font:inherit; cursor:pointer;
+  padding:8px 4px; text-align:center; border-radius:14px;
+  transition:transform .3s ease, background .3s ease;
+  /* the island's own children must be blockified — a <button> does not
+     blockify them the way a flex container would */
+  display:flex; flex-direction:column; align-items:center;
+}
+.island:hover,.island:focus-visible{transform:translateY(-5px);
+  background:color-mix(in srgb,var(--accent) 12%, transparent);}
+.island[aria-current="true"] .blob{
+  box-shadow:0 0 0 3px var(--accent), 0 0 26px -4px var(--accent);
+}
+.blob{
+  display:block; flex:0 0 auto;
+  width:62px; height:44px; margin:0 auto 8px; border-radius:50% 50% 46% 54%/60% 62% 40% 38%;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--accent) 55%, var(--panel)),
+    color-mix(in srgb,var(--line) 70%, var(--panel)));
+  border:1px solid var(--line); position:relative;
+}
+.island[data-kind="raid_boss"] .blob{
+  border-radius:44% 56% 40% 60%/54% 40% 60% 46%;
+  background:linear-gradient(160deg,
+    color-mix(in srgb,var(--accent) 30%, #6a1f3a),
+    color-mix(in srgb,var(--line) 60%, var(--panel)));
+}
+.island .iname{display:block; font-size:11px; line-height:1.25; color:var(--text);}
+.island .ikind{display:block; font-size:9px; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--muted); margin-top:3px;}
+.ship{font-size:20px; position:absolute; top:-4px; left:50%;
+  transform:translateX(-50%); animation:bob 3.4s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0);}
+  50%{transform:translateX(-50%) translateY(-6px);}}
+/* the dotted route line, threaded through the middle of the island blobs */
+.route::before{
+  content:""; position:absolute; left:0; right:0; top:40px; height:0;
+  border-top:2px dashed var(--line); z-index:0;
+}
+.islandinfo{
+  border-top:1px solid var(--line); margin-top:6px; padding-top:16px;
+  min-height:96px;
+}
+.islandinfo h3{font-family:var(--font-display); font-size:19px; color:var(--heading);}
+.islandinfo .flavor{color:var(--muted); font-size:13.5px; margin:6px 0 10px; font-style:italic;}
+.islandinfo .rec{font-size:14px;}
+.islandinfo .rec b{color:var(--accent);}
+.islandinfo .norec{color:var(--muted); font-size:13px;}
+
+/* ---------- DATA CARDS (tilted, overlapping — never a rigid grid) ---------- */
+.cards{
+  position:relative; z-index:1; display:grid; gap:18px; padding:8px 0 60px;
+  grid-template-columns:repeat(12,1fr);
+}
+.card{
+  background:var(--panel); border:1px solid var(--line); border-radius:18px;
+  padding:22px 22px 20px; position:relative; align-self:start;
+  box-shadow:0 22px 44px -26px rgba(0,0,0,.7);
+  transition:transform .35s cubic-bezier(.2,.8,.3,1), box-shadow .35s ease;
+}
+.card:hover{transform:rotate(0deg) translateY(-4px) !important;
+  box-shadow:0 28px 54px -24px rgba(0,0,0,.75); z-index:5;}
+.card h2{font-family:var(--font-display); font-size:22px; color:var(--heading);
+  margin-bottom:4px;}
+.card .cardsub{font-size:12px; color:var(--muted); margin-bottom:14px;
+  letter-spacing:.06em; text-transform:uppercase;}
+/* the deliberate off-grid placement */
+.card--ladder{grid-column:1/8; transform:rotate(-.7deg);}
+.card--roast{grid-column:8/13; transform:rotate(1deg); margin-top:26px;}
+.card--debt{grid-column:3/12; transform:rotate(-.4deg); margin-top:-14px;}
+
+.ladder{list-style:none;}
+.ladder li{
+  display:flex; align-items:baseline; gap:10px; padding:8px 0;
+  border-bottom:1px dashed var(--line);
+}
+.ladder li:last-child{border-bottom:0;}
+.ladder .rank{font-family:var(--font-display); color:var(--accent);
+  font-size:15px; width:28px; flex:0 0 28px;}
+.ladder .who{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis;
+  white-space:nowrap;}
+.ladder .who a{text-decoration:none; border-bottom:1px solid transparent;}
+.ladder .who a:hover{border-bottom-color:var(--accent);}
+.ladder .val{font-weight:700; color:var(--text);}
+.ladder li[hidden]{display:none;}
+/* the shared interactive layer hides filtered-out rows/sections */
+.nohit{display:none !important;}
+.tab.on{border-color:var(--role,var(--accent));
+  box-shadow:inset 0 0 0 1px var(--role,var(--accent));}
+
+.roastline{font-family:var(--font-display); font-size:clamp(19px,3vw,26px);
+  color:var(--heading); line-height:1.25; margin:6px 0 12px;}
+.roastmeta{font-size:13px; color:var(--muted);}
+.roastmeta b{color:var(--accent);}
+
+.debtnum{font-family:var(--font-display); font-size:clamp(28px,6vw,46px);
+  color:var(--accent); line-height:1;}
+.debtnote{font-size:12px; color:var(--muted); margin:6px 0 14px;}
+.debtlines{list-style:none; font-size:13.5px;}
+.debtlines li{display:flex; justify-content:space-between; gap:12px;
+  padding:3px 0; color:var(--text);}
+.debtlines li span:last-child{color:var(--muted);}
+.debtflavor{margin-top:12px; font-style:italic; color:var(--muted); font-size:13px;}
+
+/* ---------- footer / archive ---------- */
+.foot{border-top:1px solid var(--line); padding:26px 0 60px; text-align:center;
+  color:var(--muted); font-size:13px; position:relative; z-index:1;}
+.foot a{color:var(--accent);}
+.archive{display:flex; gap:10px; justify-content:center; flex-wrap:wrap;
+  margin:12px 0 16px;}
+.archive a{
+  font-size:12px; padding:6px 12px; border-radius:999px; text-decoration:none;
+  border:1px solid var(--line); color:var(--muted);
+}
+.archive a:hover{border-color:var(--accent); color:var(--text);}
+.stub{font-size:11px; opacity:.7; margin-top:10px;}
+
+/* ---------- RESPONSIVE (phone first is the real case) ---------- */
+@media (max-width:860px){
+  .card--ladder,.card--roast,.card--debt{
+    grid-column:1/13; transform:none; margin-top:0;
+  }
+  .deck{gap:2px; min-height:280px; overflow-x:auto; justify-content:flex-start;
+    padding:0 8px 26px; scroll-snap-type:x proximity;}
+  .member{width:132px; scroll-snap-align:center;}
+  .bubble{width:150px;}
+  .masthead{padding:34px 0 18px;}
+}
+@media (max-width:480px){
+  body{font-size:15px;}
+  .member{width:118px;}
+  .island{width:104px;}
+}
+
+/* ---------- REDUCED MOTION — kill the loops, keep everything readable ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.001ms !important; animation-iteration-count:1 !important;
+    transition-duration:.001ms !important; scroll-behavior:auto !important;
+  }
+  .embers{display:none;}
+  .member{transform:none !important;}
+  .portrait, .figure{animation:none !important;}
+  .deck[data-spot] .member[data-role-active]{transform:none !important;}
+  /* spotlight still communicates, just without movement */
+  .deck[data-spot] .member{opacity:.45;}
+  .bubble{opacity:1; position:static; transform:none; width:auto; margin-bottom:8px;}
+  .bubble::after{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div class="embers" aria-hidden="true">
+  <i class="ember" style="left:32.38%; --dx:-52px;
+     width:4px; height:4px;
+     animation-duration:20.8s; animation-delay:1.3s;"></i>
+  <i class="ember" style="left:53.59%; --dx:3px;
+     width:5px; height:5px;
+     animation-duration:11.9s; animation-delay:9.1s;"></i>
+  <i class="ember" style="left:3.75%; --dx:21px;
+     width:4px; height:4px;
+     animation-duration:12.0s; animation-delay:1.6s;"></i>
+  <i class="ember" style="left:42.45%; --dx:54px;
+     width:2px; height:2px;
+     animation-duration:25.2s; animation-delay:11.4s;"></i>
+  <i class="ember" style="left:58.3%; --dx:-75px;
+     width:5px; height:5px;
+     animation-duration:19.8s; animation-delay:0.9s;"></i>
+  <i class="ember" style="left:22.11%; --dx:52px;
+     width:3px; height:3px;
+     animation-duration:15.3s; animation-delay:2.6s;"></i>
+  <i class="ember" style="left:11.78%; --dx:-12px;
+     width:5px; height:5px;
+     animation-duration:23.2s; animation-delay:3.3s;"></i>
+  <i class="ember" style="left:58.16%; --dx:73px;
+     width:3px; height:3px;
+     animation-duration:16.6s; animation-delay:9.9s;"></i>
+  <i class="ember" style="left:6.28%; --dx:-75px;
+     width:5px; height:5px;
+     animation-duration:14.1s; animation-delay:12.2s;"></i>
+  <i class="ember" style="left:42.76%; --dx:-10px;
+     width:4px; height:4px;
+     animation-duration:19.8s; animation-delay:8.2s;"></i>
+  <i class="ember" style="left:29.98%; --dx:-44px;
+     width:3px; height:3px;
+     animation-duration:12.2s; animation-delay:5.4s;"></i>
+  <i class="ember" style="left:49.51%; --dx:-3px;
+     width:4px; height:4px;
+     animation-duration:15.3s; animation-delay:17.6s;"></i>
+  <i class="ember" style="left:11.81%; --dx:17px;
+     width:3px; height:3px;
+     animation-duration:22.4s; animation-delay:2.7s;"></i>
+  <i class="ember" style="left:48.9%; --dx:-80px;
+     width:2px; height:2px;
+     animation-duration:22.5s; animation-delay:10.3s;"></i>
+  <i class="ember" style="left:87.55%; --dx:-10px;
+     width:3px; height:3px;
+     animation-duration:21.4s; animation-delay:10.7s;"></i>
+  <i class="ember" style="left:57.99%; --dx:26px;
+     width:2px; height:2px;
+     animation-duration:23.6s; animation-delay:17.0s;"></i>
+  <i class="ember" style="left:47.41%; --dx:80px;
+     width:2px; height:2px;
+     animation-duration:11.9s; animation-delay:12.6s;"></i>
+  <i class="ember" style="left:64.71%; --dx:84px;
+     width:4px; height:4px;
+     animation-duration:15.3s; animation-delay:6.9s;"></i>
+  <i class="ember" style="left:66.87%; --dx:-85px;
+     width:4px; height:4px;
+     animation-duration:16.3s; animation-delay:11.0s;"></i>
+  <i class="ember" style="left:49.37%; --dx:-35px;
+     width:3px; height:3px;
+     animation-duration:12.9s; animation-delay:4.5s;"></i>
+  <i class="ember" style="left:39.09%; --dx:37px;
+     width:2px; height:2px;
+     animation-duration:13.5s; animation-delay:7.2s;"></i>
+  <i class="ember" style="left:27.78%; --dx:-55px;
+     width:4px; height:4px;
+     animation-duration:24.0s; animation-delay:5.0s;"></i>
+</div>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brandmark">Skill Issues</div>
+    <div class="themeswitch" role="group" aria-label="Board theme">
+      <button type="button" data-theme="codex"
+              aria-pressed="true">Illuminated Codex</button>
+      <button type="button" data-theme="console"
+              aria-pressed="false">Arcane Console</button>
+      <button type="button" data-theme="chronicle"
+              aria-pressed="false">Chronicle</button>
+    </div>
+  </div>
+</header>
+
+<main>
+<section class="masthead wrap">
+  <div class="kicker">
+    World <b>#6,855</b> ·
+    Region <b>#2,219</b> ·
+    Realm <b>#49</b>
+  </div>
+  <h1>The Guild Board</h1>
+  <div class="goldrule"></div>
+  <p class="gag">Healmates has now stood in the fire for 6 consecutive weeks — a new guild record.</p>
+  <p class="updated">Last updated Jul 20, 2026</p>
+</section>
+
+<section class="controls wrap">
+  
+  <div class="tabs" id="filters" role="group" aria-label="Filter crew by role" hidden>
+    <button type="button" class="tab on" data-role="all" aria-pressed="true">
+      All Hands <span class="count">133</span></button>
+    <button type="button" class="tab" data-role="tank" aria-pressed="false">
+      Tanks <span class="count">24</span></button>
+    <button type="button" class="tab" data-role="healer" aria-pressed="false">
+      Healers <span class="count">19</span></button>
+    <button type="button" class="tab" data-role="dps" aria-pressed="false">
+      DPS <span class="count">90</span></button>
+  </div>
+  <input id="search" class="search" type="search" placeholder="Search a player…"
+         aria-label="Search players" autocomplete="off" hidden>
+  <select id="weeksel" class="search" aria-label="Week archive" hidden>
+    <option value="">This week</option>
+  </select>
+</section>
+
+<!-- ---------------- CREW STAGE ---------------- -->
+<section class="stage" aria-label="The crew">
+  
+  <div class="scene" id="scene" aria-hidden="true"
+       style="--scene-tint:var(--accent);">
+    <div class="scene-plate on" data-plate="a"
+         ></div>
+    <div class="scene-plate" data-plate="b"></div>
+  </div>
+  <div class="deck" id="deck">
+    <div class="deckboard" aria-hidden="true"></div>
+    <button type="button" class="member" data-name="amrevenge"
+            data-role="dps" data-slug="amrevenge"
+            
+            style="--delay:0.0s; --pip:var(--dps);"
+            aria-label="Amrevenge, Beast Mastery Hunter">
+      <span class="bubble">Pet&#39;s doing 40% of that, actually.</span>
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Amrevenge (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/amrevenge.html">Amrevenge</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3908.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tommybravoo"
+            data-role="dps" data-slug="tommybravoo"
+            
+            style="--delay:0.28s; --pip:var(--dps);"
+            aria-label="Tommybravoo, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tommybravoo (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tommybravoo.html">Tommybravoo</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3753.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="shadoxii"
+            data-role="healer" data-slug="shadoxii"
+            
+            style="--delay:0.56s; --pip:var(--healer);"
+            aria-label="Shadoxii, Mistweaver Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Shadoxii (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/shadoxii.html">Shadoxii</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3692.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="brewzleeh"
+            data-role="tank" data-slug="brewzleeh"
+            
+            style="--delay:0.8400000000000001s; --pip:var(--tank);"
+            aria-label="Brewzleeh, Brewmaster Monk">
+      <span class="bubble">One more roll and I&#39;m even.</span>
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Brewzleeh (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/brewzleeh.html">Brewzleeh</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3685.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="enyò"
+            data-role="dps" data-slug="enyo"
+            
+            style="--delay:1.12s; --pip:var(--dps);"
+            aria-label="Enyò, Devourer DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Enyò (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/enyo.html">Enyò</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3618.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="rakdisc"
+            data-role="healer" data-slug="rakdisc"
+            data-form="light"
+            style="--delay:1.4000000000000001s; --pip:var(--healer);"
+            aria-label="Rakdisc, Discipline Priest">
+      <span class="bubble">I can fix him. (I cannot fix him.)</span>
+      
+      <span class="portrait"
+            style="--fill:url('cast/rakdisc/rakdisc_anime_final.png');">
+        <img src="cast/rakdisc/rakdisc_anime_final.png" alt="Rakdisc" decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/rakdisc.html">Rakdisc</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3529.2</span>
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Rakdisc">Light</span>
+    </button>
+    <button type="button" class="member" data-name="rhansìk"
+            data-role="dps" data-slug="rhansik"
+            
+            style="--delay:1.6800000000000002s; --pip:var(--dps);"
+            aria-label="Rhansìk, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Rhansìk (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/rhansik.html">Rhansìk</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3509.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="floofwall"
+            data-role="tank" data-slug="floofwall"
+            
+            style="--delay:1.9600000000000002s; --pip:var(--tank);"
+            aria-label="Floofwall, Brewmaster Monk">
+      
+      <span class="portrait"
+            style="--fill:url('cast/floofwall/floofwall_anime_final.png');">
+        <img src="cast/floofwall/floofwall_anime_final.png" alt="Floofwall" decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/floofwall.html">Floofwall</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3484.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="ellebasi"
+            data-role="tank" data-slug="ellebasi"
+            
+            style="--delay:2.24s; --pip:var(--tank);"
+            aria-label="Ellebasi, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Ellebasi (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/ellebasi.html">Ellebasi</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3436.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tommybravox"
+            data-role="dps" data-slug="tommybravox"
+            
+            style="--delay:2.5200000000000005s; --pip:var(--dps);"
+            aria-label="Tommybravox, Havoc DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tommybravox (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tommybravox.html">Tommybravox</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3434.5</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="jovala"
+            data-role="tank" data-slug="jovala"
+            
+            style="--delay:2.8000000000000003s; --pip:var(--tank);"
+            aria-label="Jovala, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Jovala (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/jovala.html">Jovala</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3428</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="hellful"
+            data-role="dps" data-slug="hellful"
+            
+            style="--delay:3.08s; --pip:var(--dps);"
+            aria-label="Hellful, Elemental Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Hellful (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/hellful.html">Hellful</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3418.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kegsmashroll"
+            data-role="tank" data-slug="kegsmashroll"
+            
+            style="--delay:3.3600000000000003s; --pip:var(--tank);"
+            aria-label="Kegsmashroll, Brewmaster Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kegsmashroll (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kegsmashroll.html">Kegsmashroll</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3414.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="onessarain"
+            data-role="healer" data-slug="onessarain"
+            
+            style="--delay:3.6400000000000006s; --pip:var(--healer);"
+            aria-label="Onessarain, Restoration Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Onessarain (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/onessarain.html">Onessarain</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3414.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="healmates"
+            data-role="healer" data-slug="healmates"
+            data-form="light"
+            style="--delay:3.9200000000000004s; --pip:var(--healer);"
+            aria-label="Healmates, Holy Priest">
+      <span class="bubble">Stood in the fire. On purpose. For the bit.</span>
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Healmates (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/healmates.html">Healmates</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3362</span>
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Healmates">Light</span>
+    </button>
+    <button type="button" class="member" data-name="flogeron"
+            data-role="dps" data-slug="flogeron"
+            
+            style="--delay:4.2s; --pip:var(--dps);"
+            aria-label="Flogeron, Fury Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Flogeron (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/flogeron.html">Flogeron</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3355.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="shadoxi"
+            data-role="dps" data-slug="shadoxi"
+            
+            style="--delay:4.48s; --pip:var(--dps);"
+            aria-label="Shadoxi, Balance Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Shadoxi (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/shadoxi.html">Shadoxi</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3333.5</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="healyeah"
+            data-role="healer" data-slug="healyeah"
+            
+            style="--delay:4.760000000000001s; --pip:var(--healer);"
+            aria-label="Healyeah, Preservation Evoker">
+      
+      <span class="portrait"
+            style="--fill:url('cast/healyeah/healyeah_anime_final.png');">
+        <img src="cast/healyeah/healyeah_anime_final.png" alt="Healyeah" decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/healyeah.html">Healyeah</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3277.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="impkiller"
+            data-role="dps" data-slug="impkiller"
+            
+            style="--delay:5.040000000000001s; --pip:var(--dps);"
+            aria-label="Impkiller, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Impkiller (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/impkiller.html">Impkiller</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3268.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="yur"
+            data-role="tank" data-slug="yur"
+            
+            style="--delay:5.32s; --pip:var(--tank);"
+            aria-label="Yur, Vengeance DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Yur (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/yur.html">Yur</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3245.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="rexxhavocc"
+            data-role="dps" data-slug="rexxhavocc"
+            
+            style="--delay:5.6000000000000005s; --pip:var(--dps);"
+            aria-label="Rexxhavocc, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Rexxhavocc (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/rexxhavocc.html">Rexxhavocc</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3224.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="buchalter"
+            data-role="dps" data-slug="buchalter"
+            
+            style="--delay:5.880000000000001s; --pip:var(--dps);"
+            aria-label="Buchalter, Frost Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Buchalter (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/buchalter.html">Buchalter</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3207.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kelova"
+            data-role="tank" data-slug="kelova"
+            
+            style="--delay:6.16s; --pip:var(--tank);"
+            aria-label="Kelova, Brewmaster Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kelova (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kelova.html">Kelova</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3142.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="ohnomyais"
+            data-role="dps" data-slug="ohnomyais"
+            
+            style="--delay:6.44s; --pip:var(--dps);"
+            aria-label="Ohnomyais, Arms Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Ohnomyais (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/ohnomyais.html">Ohnomyais</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3125.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="holyx"
+            data-role="dps" data-slug="holyx"
+            
+            style="--delay:6.720000000000001s; --pip:var(--dps);"
+            aria-label="Holyx, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Holyx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/holyx.html">Holyx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3112.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="aiime"
+            data-role="healer" data-slug="aiime"
+            
+            style="--delay:7.000000000000001s; --pip:var(--healer);"
+            aria-label="Aiime, Restoration Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Aiime (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/aiime.html">Aiime</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3106</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="boondocka"
+            data-role="dps" data-slug="boondocka"
+            
+            style="--delay:7.280000000000001s; --pip:var(--dps);"
+            aria-label="Boondocka, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Boondocka (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/boondocka.html">Boondocka</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3103.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kirrá"
+            data-role="dps" data-slug="kirra"
+            
+            style="--delay:7.5600000000000005s; --pip:var(--dps);"
+            aria-label="Kirrá, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kirrá (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kirra.html">Kirrá</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3088.5</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="martylol"
+            data-role="dps" data-slug="martylol"
+            
+            style="--delay:7.840000000000001s; --pip:var(--dps);"
+            aria-label="Martylol, Frost Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Martylol (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/martylol.html">Martylol</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3086.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="arfas"
+            data-role="dps" data-slug="arfas"
+            
+            style="--delay:8.120000000000001s; --pip:var(--dps);"
+            aria-label="Arfas, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Arfas (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/arfas.html">Arfas</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3076.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tinyx"
+            data-role="tank" data-slug="tinyx"
+            
+            style="--delay:8.4s; --pip:var(--tank);"
+            aria-label="Tinyx, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tinyx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tinyx.html">Tinyx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">3058.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="beastfriend"
+            data-role="dps" data-slug="beastfriend"
+            
+            style="--delay:8.680000000000001s; --pip:var(--dps);"
+            aria-label="Beastfriend, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Beastfriend (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/beastfriend.html">Beastfriend</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3051.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="marvinah"
+            data-role="dps" data-slug="marvinah"
+            
+            style="--delay:8.96s; --pip:var(--dps);"
+            aria-label="Marvinah, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Marvinah (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/marvinah.html">Marvinah</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3049.5</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="nokori"
+            data-role="dps" data-slug="nokori"
+            
+            style="--delay:9.24s; --pip:var(--dps);"
+            aria-label="Nokori, Elemental Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Nokori (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/nokori.html">Nokori</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3042.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="maillo"
+            data-role="dps" data-slug="maillo"
+            
+            style="--delay:9.520000000000001s; --pip:var(--dps);"
+            aria-label="Maillo, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Maillo (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/maillo.html">Maillo</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3033.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="delusionz"
+            data-role="healer" data-slug="delusionz"
+            data-form="light"
+            style="--delay:9.8s; --pip:var(--healer);"
+            aria-label="Delusionz, Discipline Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Delusionz (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/delusionz.html">Delusionz</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">3026.8</span>
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Delusionz">Light</span>
+    </button>
+    <button type="button" class="member" data-name="scounddrel"
+            data-role="dps" data-slug="scounddrel"
+            
+            style="--delay:10.080000000000002s; --pip:var(--dps);"
+            aria-label="Scounddrel, Survival Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Scounddrel (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/scounddrel.html">Scounddrel</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3023.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="gandamar"
+            data-role="dps" data-slug="gandamar"
+            
+            style="--delay:10.360000000000001s; --pip:var(--dps);"
+            aria-label="Gandamar, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Gandamar (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/gandamar.html">Gandamar</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">3021.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="rakell"
+            data-role="dps" data-slug="rakell"
+            
+            style="--delay:10.64s; --pip:var(--dps);"
+            aria-label="Rakell, Frost DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Rakell (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/rakell.html">Rakell</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2994.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="wabisukee"
+            data-role="dps" data-slug="wabisukee"
+            
+            style="--delay:10.920000000000002s; --pip:var(--dps);"
+            aria-label="Wabisukee, Arms Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Wabisukee (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/wabisukee.html">Wabisukee</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2976.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="slicerdicer"
+            data-role="dps" data-slug="slicerdicer"
+            
+            style="--delay:11.200000000000001s; --pip:var(--dps);"
+            aria-label="Slicerdicer, Havoc DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Slicerdicer (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/slicerdicer.html">Slicerdicer</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2953.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tommybravo"
+            data-role="dps" data-slug="tommybravo"
+            data-form="light"
+            style="--delay:11.48s; --pip:var(--dps);"
+            aria-label="Tommybravo, Shadow Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tommybravo (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tommybravo.html">Tommybravo</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2881.9</span>
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Tommybravo">Light</span>
+    </button>
+    <button type="button" class="member" data-name="widowx"
+            data-role="healer" data-slug="widowx"
+            
+            style="--delay:11.760000000000002s; --pip:var(--healer);"
+            aria-label="Widowx, Mistweaver Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Widowx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/widowx.html">Widowx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">2879.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="autable"
+            data-role="dps" data-slug="autable"
+            
+            style="--delay:12.040000000000001s; --pip:var(--dps);"
+            aria-label="Autable, Havoc DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Autable (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/autable.html">Autable</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2873.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="duskwolf"
+            data-role="dps" data-slug="duskwolf"
+            
+            style="--delay:12.32s; --pip:var(--dps);"
+            aria-label="Duskwolf, Augmentation Evoker">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Duskwolf (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/duskwolf.html">Duskwolf</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2839.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="flemel"
+            data-role="dps" data-slug="flemel"
+            
+            style="--delay:12.600000000000001s; --pip:var(--dps);"
+            aria-label="Flemel, Destruction Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Flemel (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/flemel.html">Flemel</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2836.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="glinkz"
+            data-role="dps" data-slug="glinkz"
+            
+            style="--delay:12.88s; --pip:var(--dps);"
+            aria-label="Glinkz, Fire Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Glinkz (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/glinkz.html">Glinkz</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2818.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="paleghost"
+            data-role="dps" data-slug="paleghost"
+            
+            style="--delay:13.160000000000002s; --pip:var(--dps);"
+            aria-label="Paleghost, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Paleghost (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/paleghost.html">Paleghost</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2810.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="dragoonx"
+            data-role="dps" data-slug="dragoonx"
+            
+            style="--delay:13.440000000000001s; --pip:var(--dps);"
+            aria-label="Dragoonx, Augmentation Evoker">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Dragoonx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/dragoonx.html">Dragoonx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2793.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="rakbear"
+            data-role="tank" data-slug="rakbear"
+            
+            style="--delay:13.72s; --pip:var(--tank);"
+            aria-label="Rakbear, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Rakbear (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/rakbear.html">Rakbear</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">2786.5</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="chokalock"
+            data-role="dps" data-slug="chokalock"
+            
+            style="--delay:14.000000000000002s; --pip:var(--dps);"
+            aria-label="Chokalock, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Chokalock (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/chokalock.html">Chokalock</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2765.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="chohno"
+            data-role="tank" data-slug="chohno"
+            
+            style="--delay:14.280000000000001s; --pip:var(--tank);"
+            aria-label="Chohno, Protection Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Chohno (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/chohno.html">Chohno</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">2751.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="skoala"
+            data-role="dps" data-slug="skoala"
+            
+            style="--delay:14.560000000000002s; --pip:var(--dps);"
+            aria-label="Skoala, Frost DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Skoala (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/skoala.html">Skoala</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2750.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="heximal"
+            data-role="dps" data-slug="heximal"
+            
+            style="--delay:14.840000000000002s; --pip:var(--dps);"
+            aria-label="Heximal, Feral Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Heximal (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/heximal.html">Heximal</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2710.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="onetruemorty"
+            data-role="dps" data-slug="onetruemorty"
+            
+            style="--delay:15.120000000000001s; --pip:var(--dps);"
+            aria-label="Onetruemorty, Arms Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Onetruemorty (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/onetruemorty.html">Onetruemorty</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2703.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="sidarien"
+            data-role="tank" data-slug="sidarien"
+            
+            style="--delay:15.400000000000002s; --pip:var(--tank);"
+            aria-label="Sidarien, Protection Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Sidarien (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/sidarien.html">Sidarien</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">2632.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="icyx"
+            data-role="dps" data-slug="icyx"
+            
+            style="--delay:15.680000000000001s; --pip:var(--dps);"
+            aria-label="Icyx, Frost Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Icyx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/icyx.html">Icyx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2624.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="coned"
+            data-role="dps" data-slug="coned"
+            
+            style="--delay:15.96s; --pip:var(--dps);"
+            aria-label="Coned, Fury Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Coned (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/coned.html">Coned</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2556.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="valkyrïe"
+            data-role="dps" data-slug="valkyrie"
+            
+            style="--delay:16.240000000000002s; --pip:var(--dps);"
+            aria-label="Valkyrïe, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Valkyrïe (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/valkyrie.html">Valkyrïe</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2483.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="cptbenimaru"
+            data-role="healer" data-slug="cptbenimaru"
+            
+            style="--delay:16.520000000000003s; --pip:var(--healer);"
+            aria-label="Cptbenimaru, Restoration Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Cptbenimaru (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/cptbenimaru.html">Cptbenimaru</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">2477.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="jilk"
+            data-role="dps" data-slug="jilk"
+            
+            style="--delay:16.8s; --pip:var(--dps);"
+            aria-label="Jilk, Elemental Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Jilk (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/jilk.html">Jilk</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2395.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="azell"
+            data-role="tank" data-slug="azell"
+            
+            style="--delay:17.080000000000002s; --pip:var(--tank);"
+            aria-label="Azell, Brewmaster Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Azell (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/azell.html">Azell</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">2345.5</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="viôlence"
+            data-role="healer" data-slug="violence-bleeding-hollow-2"
+            
+            style="--delay:17.360000000000003s; --pip:var(--healer);"
+            aria-label="Viôlence, Restoration Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Viôlence (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/violence-bleeding-hollow-2.html">Viôlence</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">2316.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="beroben"
+            data-role="dps" data-slug="beroben-emerald-dream"
+            
+            style="--delay:17.64s; --pip:var(--dps);"
+            aria-label="Beroben, Arcane Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Beroben (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/beroben-emerald-dream.html">Beroben</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2307.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="gener"
+            data-role="dps" data-slug="gener"
+            
+            style="--delay:17.92s; --pip:var(--dps);"
+            aria-label="Gener, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Gener (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/gener.html">Gener</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2244.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="eponax"
+            data-role="dps" data-slug="eponax"
+            
+            style="--delay:18.200000000000003s; --pip:var(--dps);"
+            aria-label="Eponax, Havoc DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Eponax (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/eponax.html">Eponax</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2222.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="huntlowx"
+            data-role="dps" data-slug="huntlowx"
+            
+            style="--delay:18.48s; --pip:var(--dps);"
+            aria-label="Huntlowx, Survival Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Huntlowx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/huntlowx.html">Huntlowx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2204</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="violënce"
+            data-role="dps" data-slug="violence-bleeding-hollow"
+            data-form="light"
+            style="--delay:18.76s; --pip:var(--dps);"
+            aria-label="Violënce, Shadow Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Violënce (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/violence-bleeding-hollow.html">Violënce</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2192.9</span>
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Violënce">Light</span>
+    </button>
+    <button type="button" class="member" data-name="thiccat"
+            data-role="tank" data-slug="thiccat"
+            
+            style="--delay:19.040000000000003s; --pip:var(--tank);"
+            aria-label="Thiccat, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Thiccat (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/thiccat.html">Thiccat</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">2177.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="aime"
+            data-role="dps" data-slug="aime"
+            
+            style="--delay:19.32s; --pip:var(--dps);"
+            aria-label="Aime, Feral Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Aime (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/aime.html">Aime</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2175.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kathrobbin"
+            data-role="healer" data-slug="kathrobbin"
+            
+            style="--delay:19.6s; --pip:var(--healer);"
+            aria-label="Kathrobbin, Holy Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kathrobbin (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kathrobbin.html">Kathrobbin</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">2172.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="nivella"
+            data-role="dps" data-slug="nivella"
+            
+            style="--delay:19.880000000000003s; --pip:var(--dps);"
+            aria-label="Nivella, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Nivella (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/nivella.html">Nivella</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">2154.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="milkbreath"
+            data-role="tank" data-slug="milkbreath"
+            
+            style="--delay:20.160000000000004s; --pip:var(--tank);"
+            aria-label="Milkbreath, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Milkbreath (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/milkbreath.html">Milkbreath</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">2134.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="beroben"
+            data-role="tank" data-slug="beroben-queldorei"
+            
+            style="--delay:20.44s; --pip:var(--tank);"
+            aria-label="Beroben, Protection Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Beroben (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/beroben-queldorei.html">Beroben</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">1907.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="fugaku"
+            data-role="healer" data-slug="fugaku"
+            
+            style="--delay:20.720000000000002s; --pip:var(--healer);"
+            aria-label="Fugaku, Preservation Evoker">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Fugaku (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/fugaku.html">Fugaku</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">1902.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="anbux"
+            data-role="dps" data-slug="anbux"
+            
+            style="--delay:21.000000000000004s; --pip:var(--dps);"
+            aria-label="Anbux, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Anbux (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/anbux.html">Anbux</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1833.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="junzolo"
+            data-role="dps" data-slug="junzolo"
+            
+            style="--delay:21.28s; --pip:var(--dps);"
+            aria-label="Junzolo, Fury Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Junzolo (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/junzolo.html">Junzolo</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1593.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kitez"
+            data-role="dps" data-slug="kitez"
+            
+            style="--delay:21.560000000000002s; --pip:var(--dps);"
+            aria-label="Kitez, Arcane Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kitez (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kitez.html">Kitez</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1522.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="wirmati"
+            data-role="tank" data-slug="wirmati"
+            
+            style="--delay:21.840000000000003s; --pip:var(--tank);"
+            aria-label="Wirmati, Brewmaster Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Wirmati (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/wirmati.html">Wirmati</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">1221.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="sinistrad"
+            data-role="tank" data-slug="sinistrad"
+            
+            style="--delay:22.12s; --pip:var(--tank);"
+            aria-label="Sinistrad, Protection Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Sinistrad (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/sinistrad.html">Sinistrad</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">1175.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="critorical"
+            data-role="dps" data-slug="critorical"
+            
+            style="--delay:22.400000000000002s; --pip:var(--dps);"
+            aria-label="Critorical, Balance Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Critorical (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/critorical.html">Critorical</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1137.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="grëywolf"
+            data-role="dps" data-slug="greywolf"
+            
+            style="--delay:22.680000000000003s; --pip:var(--dps);"
+            aria-label="Grëywolf, Marksmanship Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Grëywolf (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/greywolf.html">Grëywolf</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1107.3</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="danethegreat"
+            data-role="dps" data-slug="danethegreat"
+            
+            style="--delay:22.96s; --pip:var(--dps);"
+            aria-label="Danethegreat, Arms Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Danethegreat (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/danethegreat.html">Danethegreat</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1053.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="mushabi"
+            data-role="dps" data-slug="mushabi"
+            
+            style="--delay:23.240000000000002s; --pip:var(--dps);"
+            aria-label="Mushabi, Assassination Rogue">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Mushabi (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/mushabi.html">Mushabi</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">1036</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="breakdruid"
+            data-role="tank" data-slug="breakdruid"
+            
+            style="--delay:23.520000000000003s; --pip:var(--tank);"
+            aria-label="Breakdruid, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Breakdruid (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/breakdruid.html">Breakdruid</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">1022.2</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="uddershock"
+            data-role="dps" data-slug="uddershock"
+            
+            style="--delay:23.8s; --pip:var(--dps);"
+            aria-label="Uddershock, Elemental Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Uddershock (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/uddershock.html">Uddershock</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">977.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="ravokoflight"
+            data-role="tank" data-slug="ravokoflight"
+            
+            style="--delay:24.080000000000002s; --pip:var(--tank);"
+            aria-label="Ravokoflight, Protection Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Ravokoflight (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/ravokoflight.html">Ravokoflight</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank · <span class="score">953.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="ranaria"
+            data-role="dps" data-slug="ranaria"
+            
+            style="--delay:24.360000000000003s; --pip:var(--dps);"
+            aria-label="Ranaria, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Ranaria (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/ranaria.html">Ranaria</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">866.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="dathar"
+            data-role="dps" data-slug="dathar"
+            
+            style="--delay:24.64s; --pip:var(--dps);"
+            aria-label="Dathar, Fury Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Dathar (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/dathar.html">Dathar</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">740.1</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="zackoh"
+            data-role="dps" data-slug="zackoh"
+            
+            style="--delay:24.92s; --pip:var(--dps);"
+            aria-label="Zackoh, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Zackoh (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/zackoh.html">Zackoh</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">671.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="nythrael"
+            data-role="dps" data-slug="nythrael"
+            
+            style="--delay:25.200000000000003s; --pip:var(--dps);"
+            aria-label="Nythrael, Devourer DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Nythrael (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/nythrael.html">Nythrael</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">581.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="ricodandolo"
+            data-role="dps" data-slug="ricodandolo"
+            
+            style="--delay:25.480000000000004s; --pip:var(--dps);"
+            aria-label="Ricodandolo, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Ricodandolo (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/ricodandolo.html">Ricodandolo</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">422.7</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="fluffy"
+            data-role="healer" data-slug="fluffy"
+            
+            style="--delay:25.76s; --pip:var(--healer);"
+            aria-label="Fluffy, Mistweaver Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Fluffy (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/fluffy.html">Fluffy</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">348.6</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="padremort"
+            data-role="healer" data-slug="padremort"
+            data-form="light"
+            style="--delay:26.040000000000003s; --pip:var(--healer);"
+            aria-label="Padremort, Holy Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Padremort (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/padremort.html">Padremort</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer · <span class="score">224.7</span>
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Padremort">Light</span>
+    </button>
+    <button type="button" class="member" data-name="unholyx"
+            data-role="dps" data-slug="unholyx"
+            
+            style="--delay:26.320000000000004s; --pip:var(--dps);"
+            aria-label="Unholyx, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Unholyx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/unholyx.html">Unholyx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">168.4</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="sandgs"
+            data-role="dps" data-slug="sandgs"
+            
+            style="--delay:26.6s; --pip:var(--dps);"
+            aria-label="Sandgs, Devourer DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Sandgs (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/sandgs.html">Sandgs</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">166.8</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="xavira"
+            data-role="dps" data-slug="xavira"
+            
+            style="--delay:26.880000000000003s; --pip:var(--dps);"
+            aria-label="Xavira, Affliction Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Xavira (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/xavira.html">Xavira</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS · <span class="score">158.9</span>
+      </span>
+    </button>
+    <button type="button" class="member" data-name="aimme"
+            data-role="dps" data-slug="aimme"
+            
+            style="--delay:27.160000000000004s; --pip:var(--dps);"
+            aria-label="Aimme, Devastation Evoker">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Aimme (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/aimme.html">Aimme</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="balcmeg"
+            data-role="dps" data-slug="balcmeg"
+            
+            style="--delay:27.44s; --pip:var(--dps);"
+            aria-label="Balcmeg, Arms Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Balcmeg (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/balcmeg.html">Balcmeg</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="botso"
+            data-role="tank" data-slug="botso"
+            
+            style="--delay:27.720000000000002s; --pip:var(--tank);"
+            aria-label="Botso, Brewmaster Monk">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Botso (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/botso.html">Botso</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank
+      </span>
+    </button>
+    <button type="button" class="member" data-name="bwonsombro"
+            data-role="healer" data-slug="bwonsombro"
+            data-form="light"
+            style="--delay:28.000000000000004s; --pip:var(--healer);"
+            aria-label="Bwonsombro, Holy Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Bwonsombro (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/bwonsombro.html">Bwonsombro</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Bwonsombro">Light</span>
+    </button>
+    <button type="button" class="member" data-name="deckler"
+            data-role="dps" data-slug="deckler"
+            
+            style="--delay:28.28s; --pip:var(--dps);"
+            aria-label="Deckler, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Deckler (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/deckler.html">Deckler</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="fleshripper"
+            data-role="dps" data-slug="fleshripper"
+            
+            style="--delay:28.560000000000002s; --pip:var(--dps);"
+            aria-label="Fleshripper, Devourer DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Fleshripper (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/fleshripper.html">Fleshripper</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="gnomelyfans"
+            data-role="dps" data-slug="gnomelyfans"
+            
+            style="--delay:28.840000000000003s; --pip:var(--dps);"
+            aria-label="Gnomelyfans, Frost Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Gnomelyfans (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/gnomelyfans.html">Gnomelyfans</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="gregus"
+            data-role="dps" data-slug="gregus"
+            
+            style="--delay:29.120000000000005s; --pip:var(--dps);"
+            aria-label="Gregus, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Gregus (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/gregus.html">Gregus</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="iamdapopemon"
+            data-role="dps" data-slug="iamdapopemon"
+            data-form="light"
+            style="--delay:29.400000000000002s; --pip:var(--dps);"
+            aria-label="Iamdapopemon, Shadow Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Iamdapopemon (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/iamdapopemon.html">Iamdapopemon</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Iamdapopemon">Light</span>
+    </button>
+    <button type="button" class="member" data-name="imshaman"
+            data-role="dps" data-slug="imshaman"
+            
+            style="--delay:29.680000000000003s; --pip:var(--dps);"
+            aria-label="Imshaman, Elemental Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Imshaman (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/imshaman.html">Imshaman</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kibli"
+            data-role="dps" data-slug="kibli"
+            
+            style="--delay:29.960000000000004s; --pip:var(--dps);"
+            aria-label="Kibli, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kibli (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kibli.html">Kibli</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="kreleran"
+            data-role="dps" data-slug="kreleran"
+            
+            style="--delay:30.240000000000002s; --pip:var(--dps);"
+            aria-label="Kreleran, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Kreleran (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/kreleran.html">Kreleran</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="lebock"
+            data-role="dps" data-slug="lebock"
+            
+            style="--delay:30.520000000000003s; --pip:var(--dps);"
+            aria-label="Lebock, Frost Mage">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Lebock (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/lebock.html">Lebock</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="obstorm"
+            data-role="dps" data-slug="obstorm"
+            
+            style="--delay:30.800000000000004s; --pip:var(--dps);"
+            aria-label="Obstorm, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Obstorm (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/obstorm.html">Obstorm</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="omikogo"
+            data-role="tank" data-slug="omikogo"
+            
+            style="--delay:31.080000000000002s; --pip:var(--tank);"
+            aria-label="Omikogo, Blood DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Omikogo (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/omikogo.html">Omikogo</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank
+      </span>
+    </button>
+    <button type="button" class="member" data-name="onesubstance"
+            data-role="dps" data-slug="onesubstance"
+            
+            style="--delay:31.360000000000003s; --pip:var(--dps);"
+            aria-label="Onesubstance, Enhancement Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Onesubstance (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/onesubstance.html">Onesubstance</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="orx"
+            data-role="tank" data-slug="orx"
+            
+            style="--delay:31.640000000000004s; --pip:var(--tank);"
+            aria-label="Orx, Protection Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Orx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/orx.html">Orx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank
+      </span>
+    </button>
+    <button type="button" class="member" data-name="oynax"
+            data-role="healer" data-slug="oynax"
+            data-form="light"
+            style="--delay:31.92s; --pip:var(--healer);"
+            aria-label="Oynax, Holy Priest">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Oynax (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/oynax.html">Oynax</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer
+      </span>
+      <span class="sform" role="button" tabindex="0"
+            data-shadowtoggle aria-label="Toggle Shadowform for Oynax">Light</span>
+    </button>
+    <button type="button" class="member" data-name="phyrthepali"
+            data-role="healer" data-slug="phyrthepali"
+            
+            style="--delay:32.2s; --pip:var(--healer);"
+            aria-label="Phyrthepali, Holy Paladin">
+      <span class="bubble">You are welcome. You are ALL welcome.</span>
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Phyrthepali (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/phyrthepali.html">Phyrthepali</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer
+      </span>
+    </button>
+    <button type="button" class="member" data-name="ragedx"
+            data-role="dps" data-slug="ragedx"
+            
+            style="--delay:32.480000000000004s; --pip:var(--dps);"
+            aria-label="Ragedx, Beast Mastery Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Ragedx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/ragedx.html">Ragedx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="rougex"
+            data-role="dps" data-slug="rougex"
+            
+            style="--delay:32.760000000000005s; --pip:var(--dps);"
+            aria-label="Rougex, Outlaw Rogue">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Rougex (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/rougex.html">Rougex</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="shadowbelle"
+            data-role="dps" data-slug="shadowbelle"
+            
+            style="--delay:33.040000000000006s; --pip:var(--dps);"
+            aria-label="Shadowbelle, Devourer DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Shadowbelle (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/shadowbelle.html">Shadowbelle</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="shamanmates"
+            data-role="healer" data-slug="shamanmates"
+            
+            style="--delay:33.32s; --pip:var(--healer);"
+            aria-label="Shamanmates, Restoration Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Shamanmates (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/shamanmates.html">Shamanmates</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer
+      </span>
+    </button>
+    <button type="button" class="member" data-name="shamnos"
+            data-role="dps" data-slug="shamnos"
+            
+            style="--delay:33.6s; --pip:var(--dps);"
+            aria-label="Shamnos, Elemental Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Shamnos (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/shamnos.html">Shamnos</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="shaollynn"
+            data-role="dps" data-slug="shaollynn"
+            
+            style="--delay:33.88s; --pip:var(--dps);"
+            aria-label="Shaollynn, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Shaollynn (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/shaollynn.html">Shaollynn</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="stinkypinkie"
+            data-role="dps" data-slug="stinkypinkie"
+            
+            style="--delay:34.160000000000004s; --pip:var(--dps);"
+            aria-label="Stinkypinkie, Arms Warrior">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Stinkypinkie (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/stinkypinkie.html">Stinkypinkie</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="sômbrá"
+            data-role="dps" data-slug="sombra"
+            
+            style="--delay:34.440000000000005s; --pip:var(--dps);"
+            aria-label="Sômbrá, Subtlety Rogue">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Sômbrá (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/sombra.html">Sômbrá</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tankmates"
+            data-role="tank" data-slug="tankmates"
+            
+            style="--delay:34.720000000000006s; --pip:var(--tank);"
+            aria-label="Tankmates, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tankmates (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tankmates.html">Tankmates</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tarvos"
+            data-role="dps" data-slug="tarvos"
+            
+            style="--delay:35.0s; --pip:var(--dps);"
+            aria-label="Tarvos, Unholy DK Death Knight">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tarvos (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tarvos.html">Tarvos</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="thunderbloom"
+            data-role="dps" data-slug="thunderbloom"
+            
+            style="--delay:35.28s; --pip:var(--dps);"
+            aria-label="Thunderbloom, Marksmanship Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Thunderbloom (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/thunderbloom.html">Thunderbloom</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tommybravoox"
+            data-role="dps" data-slug="tommybravoox"
+            
+            style="--delay:35.56s; --pip:var(--dps);"
+            aria-label="Tommybravoox, Demonology Warlock">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tommybravoox (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tommybravoox.html">Tommybravoox</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="tommybravoxx"
+            data-role="dps" data-slug="tommybravoxx"
+            
+            style="--delay:35.84s; --pip:var(--dps);"
+            aria-label="Tommybravoxx, Subtlety Rogue">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Tommybravoxx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tommybravoxx.html">Tommybravoxx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="trollimon"
+            data-role="tank" data-slug="trollimon"
+            
+            style="--delay:36.120000000000005s; --pip:var(--tank);"
+            aria-label="Trollimon, Guardian Druid">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Trollimon (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/trollimon.html">Trollimon</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Tank
+      </span>
+    </button>
+    <button type="button" class="member" data-name="târheel"
+            data-role="dps" data-slug="tarheel"
+            
+            style="--delay:36.400000000000006s; --pip:var(--dps);"
+            aria-label="Târheel, Retribution Paladin">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Târheel (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/tarheel.html">Târheel</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="waifumllkers"
+            data-role="dps" data-slug="waifumllkers"
+            
+            style="--delay:36.68000000000001s; --pip:var(--dps);"
+            aria-label="Waifumllkers, Devourer DH Demon Hunter">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Waifumllkers (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/waifumllkers.html">Waifumllkers</a></b>
+        <span class="rolepip" aria-hidden="true"></span>DPS
+      </span>
+    </button>
+    <button type="button" class="member" data-name="wolfx"
+            data-role="healer" data-slug="wolfx"
+            
+            style="--delay:36.96s; --pip:var(--healer);"
+            aria-label="Wolfx, Restoration Shaman">
+      
+      <span class="portrait pending">
+        <img src="cast/placeholders/crew_slot.png" alt="Wolfx (art pending)"
+             decoding="async">
+      </span>
+      <span class="plate">
+        <b><a class="plink"
+           href="p/wolfx.html">Wolfx</a></b>
+        <span class="rolepip" aria-hidden="true"></span>Healer
+      </span>
+    </button>
+  </div>
+  <p class="stagenote">Hover a role tab to spotlight that watch · click a tab to filter the deck</p>
+</section>
+
+<!-- ---------------- VOYAGE MAP ---------------- -->
+<section class="voyage wrap" aria-label="The season's voyage">
+  <h2 class="sechead">The Voyage</h2>
+  <p class="subhead">
+    5 islands this season · the ship is docked at
+    <b>Ara-Kara, City of Echoes</b>
+  </p>
+  <div class="map" id="map">
+    <div class="route" role="tablist" aria-label="Islands">
+      <button type="button" class="island" role="tab"
+              data-island="ara-kara--city-of-echoes" data-kind="dungeon"
+              data-name="Ara-Kara, City of Echoes"
+              data-flavor=""
+              data-record="&lt;span class=&#34;norec&#34;&gt;No record yet — the crew hasn&#39;t claimed this one.&lt;/span&gt;"
+              data-scene-tint=""
+              data-scene-image=""
+              data-scene-label="Dungeon approach"
+              aria-current="true"
+              aria-selected="true">
+        <span class="blob" aria-hidden="true"><span class="ship" title="You are here">⛵</span>
+        </span>
+        <span class="iname">Ara-Kara, City of Echoes</span>
+        <span class="ikind">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-island="city-of-threads" data-kind="dungeon"
+              data-name="City of Threads"
+              data-flavor=""
+              data-record="&lt;span class=&#34;norec&#34;&gt;No record yet — the crew hasn&#39;t claimed this one.&lt;/span&gt;"
+              data-scene-tint=""
+              data-scene-image=""
+              data-scene-label="Dungeon approach"
+              aria-current="false"
+              aria-selected="false">
+        <span class="blob" aria-hidden="true">
+        </span>
+        <span class="iname">City of Threads</span>
+        <span class="ikind">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-island="the-dawnbreaker" data-kind="dungeon"
+              data-name="The Dawnbreaker"
+              data-flavor=""
+              data-record="&lt;span class=&#34;norec&#34;&gt;No record yet — the crew hasn&#39;t claimed this one.&lt;/span&gt;"
+              data-scene-tint=""
+              data-scene-image=""
+              data-scene-label="Dungeon approach"
+              aria-current="false"
+              aria-selected="false">
+        <span class="blob" aria-hidden="true">
+        </span>
+        <span class="iname">The Dawnbreaker</span>
+        <span class="ikind">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-island="the-stonevault" data-kind="dungeon"
+              data-name="The Stonevault"
+              data-flavor=""
+              data-record="&lt;span class=&#34;norec&#34;&gt;No record yet — the crew hasn&#39;t claimed this one.&lt;/span&gt;"
+              data-scene-tint=""
+              data-scene-image=""
+              data-scene-label="Dungeon approach"
+              aria-current="false"
+              aria-selected="false">
+        <span class="blob" aria-hidden="true">
+        </span>
+        <span class="iname">The Stonevault</span>
+        <span class="ikind">Dungeon</span>
+      </button>
+      <button type="button" class="island" role="tab"
+              data-island="imperator-averzian" data-kind="raid_boss"
+              data-name="Imperator Averzian"
+              data-flavor=""
+              data-record="&lt;span class=&#34;norec&#34;&gt;No record yet — the crew hasn&#39;t claimed this one.&lt;/span&gt;"
+              data-scene-tint="#a3335c"
+              data-scene-image=""
+              data-scene-label="Boss arena"
+              aria-current="false"
+              aria-selected="false">
+        <span class="blob" aria-hidden="true">
+        </span>
+        <span class="iname">Imperator Averzian</span>
+        <span class="ikind">Boss</span>
+      </button>
+    </div>
+    <div class="islandinfo" id="islandinfo" aria-live="polite">
+      <h3 id="ii-name">Ara-Kara, City of Echoes</h3>
+      <p class="flavor" id="ii-flavor"></p>
+      <div class="rec" id="ii-rec"><span class="norec">No record yet — the crew hasn't claimed this one.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ---------------- DATA CARDS ---------------- -->
+<section class="cards wrap">
+
+  <article class="card card--ladder">
+    <h2>The Keystone Ladder</h2>
+    <p class="cardsub">Season Mythic+ score · top 12</p>
+    
+    <div class="sec">
+    <ol class="ladder" id="ladder">
+      <li class="row" data-name="amrevenge" data-tags="beast mastery hunter dps">
+        <span class="rank">1</span>
+        <span class="who"><a href="p/amrevenge.html" target="_blank" rel="noopener">Amrevenge</a>
+        </span>
+        <span class="val">3908.1</span>
+      </li>
+      <li class="row" data-name="shadoxii" data-tags="mistweaver monk healer">
+        <span class="rank">2</span>
+        <span class="who"><a href="p/shadoxii.html" target="_blank" rel="noopener">Shadoxii</a>
+        </span>
+        <span class="val">3692.2</span>
+      </li>
+      <li class="row" data-name="tommybravoo" data-tags="unholy dk death knight dps">
+        <span class="rank">3</span>
+        <span class="who"><a href="p/tommybravoo.html" target="_blank" rel="noopener">Tommybravoo</a>
+        </span>
+        <span class="val">3686.3</span>
+      </li>
+      <li class="row" data-name="brewzleeh" data-tags="brewmaster monk tank">
+        <span class="rank">4</span>
+        <span class="who"><a href="p/brewzleeh.html" target="_blank" rel="noopener">Brewzleeh</a>
+        </span>
+        <span class="val">3685.8</span>
+      </li>
+      <li class="row" data-name="rakdisc" data-tags="discipline priest healer">
+        <span class="rank">5</span>
+        <span class="who"><a href="p/rakdisc.html" target="_blank" rel="noopener">Rakdisc</a>
+        </span>
+        <span class="val">3529.2</span>
+      </li>
+      <li class="row" data-name="rhansìk" data-tags="">
+        <span class="rank">6</span>
+        <span class="who"><a href="https://raider.io/characters/us/area-52/rhansìk" target="_blank" rel="noopener">Rhansìk</a>
+        </span>
+        <span class="val">3509.6</span>
+      </li>
+      <li class="row" data-name="floofwall" data-tags="brewmaster monk tank">
+        <span class="rank">7</span>
+        <span class="who"><a href="p/floofwall.html" target="_blank" rel="noopener">Floofwall</a>
+        </span>
+        <span class="val">3484.3</span>
+      </li>
+      <li class="row" data-name="enyò" data-tags="">
+        <span class="rank">8</span>
+        <span class="who"><a href="https://raider.io/characters/us/area-52/enyò" target="_blank" rel="noopener">Enyò</a>
+        </span>
+        <span class="val">3472.9</span>
+      </li>
+      <li class="row" data-name="ellebasi" data-tags="guardian druid tank">
+        <span class="rank">9</span>
+        <span class="who"><a href="p/ellebasi.html" target="_blank" rel="noopener">Ellebasi</a>
+        </span>
+        <span class="val">3436.6</span>
+      </li>
+      <li class="row" data-name="tommybravox" data-tags="havoc dh demon hunter dps">
+        <span class="rank">10</span>
+        <span class="who"><a href="p/tommybravox.html" target="_blank" rel="noopener">Tommybravox</a>
+        </span>
+        <span class="val">3434.5</span>
+      </li>
+      <li class="row" data-name="jovala" data-tags="guardian druid tank">
+        <span class="rank">11</span>
+        <span class="who"><a href="p/jovala.html" target="_blank" rel="noopener">Jovala</a>
+        </span>
+        <span class="val">3428</span>
+      </li>
+      <li class="row" data-name="hellful" data-tags="elemental shaman dps">
+        <span class="rank">12</span>
+        <span class="who"><a href="p/hellful.html" target="_blank" rel="noopener">Hellful</a>
+        </span>
+        <span class="val">3418.7</span>
+      </li>
+    </ol>
+    </div>
+  </article>
+  <article class="card card--roast">
+    <h2>Roast of the Week</h2>
+    <p class="cardsub">Decided by 🔥</p>
+    <p class="roastline">“Healmates Sucks”</p>
+    <p class="roastmeta">
+      — <b>Rakdaddy</b>, on Healmates
+    </p>
+  </article>
+  <article class="card card--debt">
+    <h2>Brewzleeh&#39;s Gambling Debt</h2>
+    <p class="cardsub">The ledger</p>
+    <div class="debtnum">2,384,056g</div>
+    <p class="debtnote">interest: 9.99% weekly · collateral: his monk</p>
+    <ul class="debtlines">
+      <li><span>Binds on !roll</span></li>
+      <li><span>Deathroll Ledger</span><span>Unique</span></li>
+      <li><span>+15 Gambling Addiction</span></li>
+      <li><span>-100% Gold Retention Aura</span></li>
+      <li><span>Equip: Doubles down on a 2% win chance.</span></li>
+      <li><span>Equip: Cannot leave while ahead. Has never been ahead.</span></li>
+      <li><span>Use: Borrows from GBank tab 3. Again. (No Cooldown)</span></li>
+    </ul><p class="debtflavor">“Just one more roll.” — Brewzleeh, at 4 AM</p>
+  </article>
+
+</section>
+</main>
+
+<footer class="foot wrap">
+  <p>“Git Gud.” — ancient guild proverb</p><p class="stub">Still stubbed: crew art for 130 of 133 (the rest are rendered); voyage islands (sample chain — guild_board.voyage not on this branch); per-island records (only the raid bosses in board_state.json resolve offline)</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var doc = document.documentElement;
+
+  /* ---------- theme switch (persisted) ---------- */
+  var themeBtns = Array.prototype.slice.call(document.querySelectorAll('.themeswitch button'));
+  function setTheme(key){
+    doc.setAttribute('data-crew-theme', key);
+    themeBtns.forEach(function(b){
+      b.setAttribute('aria-pressed', b.dataset.theme === key ? 'true' : 'false');
+    });
+    try { localStorage.setItem('crewTheme', key); } catch(e){}
+  }
+  themeBtns.forEach(function(b){
+    b.addEventListener('click', function(){ setTheme(b.dataset.theme); });
+  });
+  try {
+    var saved = localStorage.getItem('crewTheme');
+    if (saved && document.querySelector('.themeswitch button[data-theme="'+saved+'"]')) setTheme(saved);
+  } catch(e){}
+
+  /* ---------- role tabs: hover = spotlight, click = filter ---------- */
+  var deck = document.getElementById('deck');
+  var members = Array.prototype.slice.call(deck.querySelectorAll('.member'));
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('.tab'));
+  var activeFilter = 'all';
+  /* The shared partial reveals #filters/#search only when it finds rows
+     to act on. The deck is always here, so make sure the controls are
+     visible either way — the deck's own filtering must not depend on
+     the ladder existing. */
+  ['filters','search'].forEach(function(id){
+    var el = document.getElementById(id);
+    if (el) el.hidden = false;
+  });
+
+  function spotlight(role){
+    if (!role || role === 'all'){ deck.removeAttribute('data-spot'); }
+    else { deck.setAttribute('data-spot', role); }
+    members.forEach(function(m){
+      if (role && role !== 'all' && m.dataset.role === role) m.setAttribute('data-role-active','');
+      else m.removeAttribute('data-role-active');
+    });
+  }
+  function applyFilter(){
+    members.forEach(function(m){
+      var okRole = activeFilter === 'all' || m.dataset.role === activeFilter;
+      var okName = !query || m.dataset.name.indexOf(query) !== -1;
+      m.hidden = !(okRole && okName);
+    });
+  }
+  tabs.forEach(function(t){
+    t.addEventListener('mouseenter', function(){ spotlight(t.dataset.role); });
+    t.addEventListener('focus', function(){ spotlight(t.dataset.role); });
+    t.addEventListener('mouseleave', function(){ spotlight(activeFilter); });
+    t.addEventListener('blur', function(){ spotlight(activeFilter); });
+    t.addEventListener('click', function(){
+      activeFilter = t.dataset.role;
+      tabs.forEach(function(o){
+        o.setAttribute('aria-pressed', o === t ? 'true' : 'false');
+      });
+      applyFilter();
+      spotlight(activeFilter);
+    });
+  });
+
+  /* ---------- player search (deck + ladder) ---------- */
+  var query = '';
+  var q = document.getElementById('search');
+  if (q) {
+    q.addEventListener('input', function(){
+      query = q.value.trim().toLowerCase();
+      applyFilter();
+    });
+  }
+
+  /* ---------- idle runtime ----------
+     Idle animation is pure CSS, so the only thing JS has to do is stop
+     paying for characters nobody can see. With a full cast that is the
+     difference between a smooth deck and a hot laptop. */
+  if ('IntersectionObserver' in window) {
+    var idleWatch = new IntersectionObserver(function(entries){
+      entries.forEach(function(en){
+        en.target.dataset.idle = en.isIntersecting ? 'playing' : 'paused';
+      });
+    }, {root: null, rootMargin: '160px'});
+    members.forEach(function(m){ idleWatch.observe(m); });
+  }
+
+  /* Hover/click to SUMMON: the character steps forward out of the line.
+     This is the hook the story layer will hang off — it already emits an
+     event with the character's identity. */
+  var summoned = null;
+  function summon(member){
+    if (summoned === member) return;
+    if (summoned) summoned.removeAttribute('data-summoned');
+    summoned = member || null;
+    if (summoned) {
+      summoned.setAttribute('data-summoned', '');
+      deck.dispatchEvent(new CustomEvent('crew:summon', {detail: {
+        slug: summoned.dataset.slug, name: summoned.dataset.name,
+        role: summoned.dataset.role
+      }}));
+    } else {
+      deck.dispatchEvent(new CustomEvent('crew:dismiss'));
+    }
+  }
+  members.forEach(function(m){
+    m.addEventListener('mouseenter', function(){ summon(m); });
+    m.addEventListener('focus', function(){ summon(m); });
+    m.addEventListener('click', function(ev){
+      if (ev.target.closest('[data-shadowtoggle]')) return;
+      summon(summoned === m ? null : m);
+    });
+  });
+  deck.addEventListener('mouseleave', function(){ summon(null); });
+
+  /* The public surface the story/interactive layer will drive. */
+  window.CrewStage = {
+    summon: function(slug){
+      summon(members.filter(function(m){ return m.dataset.slug === slug; })[0] || null);
+    },
+    dismiss: function(){ summon(null); },
+    spotlightRole: function(role){ spotlight(role); },
+    setScene: function(tint, image){ setScene(tint, image); },
+    roster: function(){
+      return members.map(function(m){
+        return {slug: m.dataset.slug, name: m.dataset.name, role: m.dataset.role,
+                art: (m.querySelector('.portrait img') || {}).getAttribute
+                     ? m.querySelector('.portrait img').getAttribute('src') : null};
+      });
+    },
+    on: function(type, fn){ deck.addEventListener(type, fn); }
+  };
+
+  /* ---------- Shadowform toggle ---------- */
+  Array.prototype.slice.call(document.querySelectorAll('[data-shadowtoggle]'))
+    .forEach(function(btn){
+      function flip(ev){
+        ev.preventDefault(); ev.stopPropagation();
+        var member = btn.closest('.member');
+        var img = member.querySelector('img');
+        var next = member.dataset.form === 'shadow' ? 'light' : 'shadow';
+        member.dataset.form = next;
+        btn.textContent = next === 'shadow' ? 'Shadow' : 'Light';
+        var src = img.dataset[next];
+        if (src) img.src = src;
+      }
+      btn.addEventListener('click', flip);
+      btn.addEventListener('keydown', function(ev){
+        if (ev.key === 'Enter' || ev.key === ' ') flip(ev);
+      });
+    });
+
+  /* ---------- voyage map ---------- */
+  var islands = Array.prototype.slice.call(document.querySelectorAll('.island'));
+  var map = document.getElementById('map');
+  var iiName = document.getElementById('ii-name');
+  var iiFlavor = document.getElementById('ii-flavor');
+  var iiRec = document.getElementById('ii-rec');
+  var WASH = { dungeon: 'var(--accent)', raid_boss: '#a3335c' };
+
+  /* ---------- scene changes ----------
+     Crossfade between two plates. The crew's cut-outs sit on their own
+     layer above this and are never touched, so the backdrop can change
+     (or animate) freely underneath them. */
+  var scene = document.getElementById('scene');
+  var plates = scene ? Array.prototype.slice.call(
+    scene.querySelectorAll('.scene-plate')) : [];
+  function setScene(tint, image){
+    if (plates.length < 2) return;
+    var visible = plates.filter(function(p){ return p.classList.contains('on'); })[0] || plates[0];
+    var idle = plates.filter(function(p){ return p !== visible; })[0];
+    idle.style.backgroundImage = image ? "url('" + image + "')" : '';
+    scene.style.setProperty('--scene-tint', tint || 'var(--accent)');
+    visible.classList.remove('on');
+    idle.classList.add('on');
+  }
+
+  function showIsland(btn){
+    iiName.textContent = btn.dataset.name;
+    iiFlavor.textContent = btn.dataset.flavor || '';
+    iiRec.innerHTML = btn.dataset.record || '<span class="norec">No record yet.</span>';
+    map.classList.add('washed');
+    map.style.setProperty('--wash', WASH[btn.dataset.kind] || 'transparent');
+    setScene(btn.dataset.sceneTint, btn.dataset.sceneImage);
+    islands.forEach(function(o){
+      o.setAttribute('aria-selected', o === btn ? 'true' : 'false');
+    });
+  }
+  islands.forEach(function(btn){
+    btn.addEventListener('mouseenter', function(){ showIsland(btn); });
+    btn.addEventListener('focus', function(){ showIsland(btn); });
+    btn.addEventListener('click', function(){ showIsland(btn); });
+  });
+})();
+</script>
+
+<script>
+(function () {
+  "use strict";
+  /* Everything below is progressive enhancement: any failure leaves the
+     clean static page untouched. */
+  try {
+    var rows = Array.prototype.slice.call(document.querySelectorAll('.row[data-name]'));
+    var secs = Array.prototype.slice.call(document.querySelectorAll('.sec'));
+
+    /* --- role classification from spec/section keywords ---
+       WHOLE-WORD tokens only: substring matching classified every
+       Unholy DK as a healer, because "unholy" contains "holy". */
+    var HEAL = ['holy', 'discipline', 'restoration', 'resto', 'mistweaver', 'preservation', 'healing', 'hps', 'healer', 'healers'];
+    var TANK = ['protection', 'brewmaster', 'blood', 'vengeance', 'guardian', 'tank', 'tanks'];
+    function roleOf(row) {
+      var tokens = (row.getAttribute('data-tags') || '').split(/[^a-z0-9+]+/);
+      var hit = function (words) {
+        return words.some(function (w) { return tokens.indexOf(w) !== -1; });
+      };
+      if (hit(TANK)) return 'tank';
+      if (hit(HEAL)) return 'healer';
+      return 'dps';
+    }
+    rows.forEach(function (r) { r.setAttribute('data-role', roleOf(r)); });
+
+    /* --- search + role filter (remembered across visits) --- */
+    var activeRole = 'all', query = '';
+    function remember() {
+      try {
+        localStorage.setItem('gb.role', activeRole);
+        localStorage.setItem('gb.query', query);
+        localStorage.setItem('gb.view', activeView);
+      } catch (e) { /* private mode etc. — filters just reset next visit */ }
+    }
+    function apply() {
+      rows.forEach(function (r) {
+        var okRole = activeRole === 'all' || r.getAttribute('data-role') === activeRole;
+        var okName = !query || (r.getAttribute('data-name') || '').indexOf(query) !== -1;
+        r.classList.toggle('nohit', !(okRole && okName));
+      });
+      secs.forEach(function (s) {
+        var any = s.querySelector('.row[data-name]:not(.nohit)');
+        var filtering = activeRole !== 'all' || query;
+        s.classList.toggle('nohit', Boolean(filtering && !any));
+      });
+    }
+    /* --- view filter (e.g. RAID vs MYTHIC PLUS) ---
+       These tabs used to be plain #anchor jump links sitting in the same
+       bar as the role filters, so they read as a view switcher but only
+       scrolled — and on desktop, where every column is already on screen,
+       that looked like nothing happened at all. Now they actually filter.
+       The href is left intact, so with JS off they still jump. */
+    var activeView = 'all';
+    var viewTabs = Array.prototype.slice.call(document.querySelectorAll('a[data-view]'));
+    var viewBlocks = Array.prototype.slice.call(document.querySelectorAll('[data-viewid]'));
+    function applyView() {
+      viewBlocks.forEach(function (b) {
+        b.classList.toggle('nohit',
+          activeView !== 'all' && b.getAttribute('data-viewid') !== activeView);
+      });
+      viewTabs.forEach(function (t) {
+        t.classList.toggle('on', t.getAttribute('data-view') === activeView);
+      });
+    }
+    if (viewTabs.length && viewBlocks.length) {
+      viewTabs.forEach(function (t) {
+        t.addEventListener('click', function (ev) {
+          ev.preventDefault();
+          activeView = t.getAttribute('data-view') || 'all';
+          remember();
+          applyView();
+          if (activeView !== 'all') {
+            var target = document.querySelector('[data-viewid="' + activeView + '"]');
+            if (target) target.scrollIntoView({behavior: 'smooth', block: 'start'});
+          }
+        });
+      });
+    }
+
+    var filters = document.getElementById('filters');
+    var search = document.getElementById('search');
+    if (filters && rows.length) {
+      filters.hidden = false;
+      Array.prototype.forEach.call(filters.querySelectorAll('button'), function (b) {
+        b.addEventListener('click', function () {
+          Array.prototype.forEach.call(filters.querySelectorAll('button'), function (x) { x.classList.remove('on'); });
+          b.classList.add('on');
+          activeRole = b.getAttribute('data-role');
+          remember();
+          apply();
+        });
+      });
+    }
+    if (search && rows.length) {
+      search.hidden = false;
+      search.addEventListener('input', function () {
+        query = search.value.trim().toLowerCase();
+        remember();
+        apply();
+      });
+    }
+    /* restore the last visit's view */
+    try {
+      var savedView = localStorage.getItem('gb.view');
+      if (savedView && document.querySelector('a[data-view="' + savedView + '"]')) {
+        activeView = savedView;
+        applyView();
+      }
+      var savedRole = localStorage.getItem('gb.role');
+      var savedQuery = localStorage.getItem('gb.query') || '';
+      if (filters && savedRole && savedRole !== 'all') {
+        var btn = filters.querySelector('button[data-role="' + savedRole + '"]');
+        if (btn) { btn.click(); }
+      }
+      if (search && savedQuery) {
+        search.value = savedQuery;
+        query = savedQuery.toLowerCase();
+        apply();
+      }
+    } catch (e) { /* fail-quiet */ }
+
+    /* --- week archive dropdown (manifest written by CI) --- */
+    var inArchive = location.pathname.indexOf('/archive/') !== -1;
+    var base = inArchive ? '../' : '';
+    var current = inArchive ? location.pathname.split('/').pop().replace('.html', '') : '';
+    fetch(base + 'archive/index.json', {cache: 'no-store'})
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .then(function (weeks) {
+        if (!Array.isArray(weeks) || !weeks.length) return;
+        var sel = document.getElementById('weeksel');
+        if (!sel) return;
+        weeks.forEach(function (w) {
+          var o = document.createElement('option');
+          o.value = w;
+          o.textContent = 'Week of ' + w;
+          if (w === current) o.selected = true;
+          sel.appendChild(o);
+        });
+        sel.hidden = false;
+        sel.addEventListener('change', function () {
+          location.href = sel.value ? base + 'archive/' + sel.value + '.html' : base + 'index.html';
+        });
+      })
+      .catch(function () {});
+  } catch (e) { /* static page remains fully usable */ }
+})();
+</script>
+</body>
+</html>

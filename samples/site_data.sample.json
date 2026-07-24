@@ -1,0 +1,1348 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-22T06:57:10.852176+00:00",
+  "guild": {
+    "name": "Skill Issues",
+    "realm": "bleeding-hollow",
+    "region": "us"
+  },
+  "season": {
+    "slug": "season-mn-1",
+    "name": "Midnight Season 1"
+  },
+  "recap_ribbon": {
+    "schema_version": 1,
+    "generated_at": "2026-07-22T06:57:10.852207+00:00",
+    "week_of": "2026-07-14",
+    "based_on": "2026-07-20T12:14:49+00:00",
+    "beats": [
+      {
+        "kind": "biggest_key",
+        "headline": "+21 Skyreach",
+        "detail": "Amrevenge timed the guild's biggest key as Beast Mastery Hunter",
+        "subject": "Amrevenge",
+        "value": 21,
+        "emphasis": "record",
+        "is_new": true
+      },
+      {
+        "kind": "best_dps_parse",
+        "headline": "99% on Chimaerus the Undreamt God",
+        "detail": "Amrevenge set the guild's top DPS parse (BeastMastery Hunter)",
+        "subject": "Amrevenge",
+        "value": 99,
+        "emphasis": "record",
+        "is_new": true
+      },
+      {
+        "kind": "best_hps_parse",
+        "headline": "96% on Imperator Averzian",
+        "detail": "Phyrthepali set the guild's top HPS parse (Holy Paladin)",
+        "subject": "Phyrthepali",
+        "value": 96,
+        "emphasis": "normal",
+        "is_new": false
+      },
+      {
+        "kind": "biggest_climber",
+        "headline": "+30.9 score",
+        "detail": "Rakdisc climbed the most this week",
+        "subject": "Rakdisc",
+        "value": 30.9,
+        "emphasis": "normal",
+        "is_new": false
+      },
+      {
+        "kind": "new_on_ladder",
+        "headline": "Newrecruit joined the ladder",
+        "detail": "Newrecruit",
+        "subject": "Newrecruit",
+        "value": 1,
+        "emphasis": "normal",
+        "is_new": true
+      },
+      {
+        "kind": "standing_move",
+        "headline": "World #6,840",
+        "detail": "The guild climbed 15 world ranks",
+        "subject": "Skill Issues",
+        "value": 15,
+        "emphasis": "normal",
+        "is_new": false
+      }
+    ],
+    "beat_count": 7
+  },
+  "records_leaderboard": {
+    "schema_version": 1,
+    "generated_at": "2026-07-22T06:57:10.852222+00:00",
+    "based_on": "2026-07-20T12:14:49+00:00",
+    "standing": {
+      "realm": 49,
+      "region": 2219,
+      "world": 6840
+    },
+    "headline_records": [
+      {
+        "id": "highest_timed_key",
+        "label": "Biggest Timed Key",
+        "holder": "Amrevenge",
+        "value": 21,
+        "unit": "key_level",
+        "context": "Skyreach",
+        "spec": "Beast Mastery Hunter",
+        "is_new": true
+      },
+      {
+        "id": "best_dps_parse",
+        "label": "Best DPS Parse",
+        "holder": "Amrevenge",
+        "value": 99,
+        "unit": "percentile",
+        "context": "Chimaerus the Undreamt God",
+        "spec": "BeastMastery Hunter",
+        "is_new": true
+      },
+      {
+        "id": "best_hps_parse",
+        "label": "Best HPS Parse",
+        "holder": "Phyrthepali",
+        "value": 96,
+        "unit": "percentile",
+        "context": "Imperator Averzian",
+        "spec": "Holy Paladin",
+        "is_new": false
+      }
+    ],
+    "ladder": [
+      {
+        "rank": 1,
+        "name": "Amrevenge",
+        "key": "amrevenge",
+        "score": 3921.4,
+        "delta_week": 13.3,
+        "streak_weeks": 2,
+        "is_new": false
+      },
+      {
+        "rank": 2,
+        "name": "Shadoxii",
+        "key": "shadoxii",
+        "score": 3692.2,
+        "delta_week": 0.0,
+        "streak_weeks": 0,
+        "is_new": false
+      },
+      {
+        "rank": 3,
+        "name": "Tommybravoo",
+        "key": "tommybravoo",
+        "score": 3686.3,
+        "delta_week": 18.6,
+        "streak_weeks": 3,
+        "is_new": false
+      },
+      {
+        "rank": 4,
+        "name": "Rakdisc",
+        "key": "rakdisc",
+        "score": 3560.1,
+        "delta_week": 30.9,
+        "streak_weeks": 1,
+        "is_new": false
+      },
+      {
+        "rank": 5,
+        "name": "Floofwall",
+        "key": "floofwall",
+        "score": 3484.3,
+        "delta_week": 0.0,
+        "streak_weeks": 0,
+        "is_new": false
+      },
+      {
+        "rank": 6,
+        "name": "Newrecruit",
+        "key": "newrecruit",
+        "score": 1802.0,
+        "delta_week": 0.0,
+        "streak_weeks": 0,
+        "is_new": true
+      }
+    ],
+    "ladder_size": 6,
+    "sortable_by": [
+      "score",
+      "delta_week",
+      "streak_weeks",
+      "rank"
+    ]
+  },
+  "guild_achievements": {
+    "schema_version": 1,
+    "generated_at": "2026-07-22T06:57:10.852230+00:00",
+    "available": true,
+    "status": "ok",
+    "source": "/data/wow/guild/{realm}/{name}/achievements",
+    "total_points": 1655,
+    "trophy_count": 3,
+    "trophies": [
+      {
+        "id": 15001,
+        "name": "Ahead of the Curve: Imperator Averzian",
+        "completed_at": "2026-03-03T01:06:40+00:00",
+        "criteria": {
+          "is_completed": true,
+          "child_count": 2
+        }
+      },
+      {
+        "id": 15002,
+        "name": "Cutting Edge: Fallen-King Salhadaar",
+        "completed_at": "2026-03-22T17:20:00+00:00",
+        "criteria": {
+          "is_completed": true,
+          "child_count": 0
+        }
+      },
+      {
+        "id": 15010,
+        "name": "Midnight Keystone Master: Season One",
+        "completed_at": "2026-03-31T23:33:20+00:00",
+        "criteria": {
+          "is_completed": true,
+          "child_count": 8
+        }
+      }
+    ]
+  },
+  "island_completion": {
+    "schema_version": 1,
+    "generated_at": "2026-07-22T06:57:10.852243+00:00",
+    "season_slug": "season-mn-1",
+    "season_name": "Midnight Season 1",
+    "dungeons": {
+      "islands": [
+        {
+          "id": "algethar-academy",
+          "name": "Algeth'ar Academy",
+          "kind": "dungeon",
+          "challenge_mode_id": 402,
+          "status": "conquered",
+          "best_level": 21,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "magisters-terrace",
+          "name": "Magisters' Terrace",
+          "kind": "dungeon",
+          "challenge_mode_id": 558,
+          "status": "conquered",
+          "best_level": 20,
+          "timed": true,
+          "held_by": "Shadoxii"
+        },
+        {
+          "id": "maisara-caverns",
+          "name": "Maisara Caverns",
+          "kind": "dungeon",
+          "challenge_mode_id": 560,
+          "status": "conquered",
+          "best_level": 19,
+          "timed": true,
+          "held_by": "Tommybravoo"
+        },
+        {
+          "id": "nexuspoint-xenas",
+          "name": "Nexus-Point Xenas",
+          "kind": "dungeon",
+          "challenge_mode_id": 559,
+          "status": "conquered",
+          "best_level": 18,
+          "timed": true,
+          "held_by": "Rakdisc"
+        },
+        {
+          "id": "pit-of-saron",
+          "name": "Pit of Saron",
+          "kind": "dungeon",
+          "challenge_mode_id": 556,
+          "status": "conquered",
+          "best_level": 21,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "seat-of-the-triumvirate",
+          "name": "Seat of the Triumvirate",
+          "kind": "dungeon",
+          "challenge_mode_id": 239,
+          "status": "conquered",
+          "best_level": 17,
+          "timed": true,
+          "held_by": "Floofwall"
+        },
+        {
+          "id": "skyreach",
+          "name": "Skyreach",
+          "kind": "dungeon",
+          "challenge_mode_id": 161,
+          "status": "attempted",
+          "best_level": 16,
+          "timed": false,
+          "held_by": "Healyeah"
+        },
+        {
+          "id": "windrunner-spire",
+          "name": "Windrunner Spire",
+          "kind": "dungeon",
+          "challenge_mode_id": 557,
+          "status": "locked",
+          "best_level": null,
+          "timed": false,
+          "held_by": null
+        }
+      ],
+      "conquered": 6,
+      "total": 8
+    },
+    "raid": {
+      "slug": "tier-mn-1",
+      "display_name": "Voidspire Sanctum",
+      "summary": "3/9 M",
+      "bosses_killed": 5,
+      "killed_by_difficulty": {
+        "normal": 0,
+        "heroic": 5,
+        "mythic": 3
+      },
+      "total_bosses": 9,
+      "islands": [
+        {
+          "id": "imperator-averzian",
+          "name": "Imperator Averzian",
+          "kind": "raid_boss",
+          "order": 1,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-03-03T01:06:40+00:00"
+        },
+        {
+          "id": "vorasius",
+          "name": "Vorasius",
+          "kind": "raid_boss",
+          "order": 2,
+          "status": "locked",
+          "kill_confirmed": false,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        },
+        {
+          "id": "fallenking-salhadaar",
+          "name": "Fallen-King Salhadaar",
+          "kind": "raid_boss",
+          "order": 3,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-03-22T17:20:00+00:00"
+        },
+        {
+          "id": "vaelgor-ezzorak",
+          "name": "Vaelgor & Ezzorak",
+          "kind": "raid_boss",
+          "order": 4,
+          "status": "locked",
+          "kill_confirmed": false,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        },
+        {
+          "id": "lightblinded-vanguard",
+          "name": "Lightblinded Vanguard",
+          "kind": "raid_boss",
+          "order": 5,
+          "status": "locked",
+          "kill_confirmed": false,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        },
+        {
+          "id": "crown-of-the-cosmos",
+          "name": "Crown of the Cosmos",
+          "kind": "raid_boss",
+          "order": 6,
+          "status": "locked",
+          "kill_confirmed": false,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        },
+        {
+          "id": "chimaerus-the-undreamt-god",
+          "name": "Chimaerus the Undreamt God",
+          "kind": "raid_boss",
+          "order": 7,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        },
+        {
+          "id": "beloren-child-of-alar",
+          "name": "Belo'ren, Child of Al'ar",
+          "kind": "raid_boss",
+          "order": 8,
+          "status": "locked",
+          "kill_confirmed": false,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        },
+        {
+          "id": "midnight-falls",
+          "name": "Midnight Falls",
+          "kind": "raid_boss",
+          "order": 9,
+          "status": "locked",
+          "kill_confirmed": false,
+          "inferred_from_progress": false,
+          "first_kill_at": null
+        }
+      ],
+      "detail_source": "guild_achievements"
+    }
+  },
+  "transmog_changes": {
+    "schema_version": 1,
+    "generated_at": "2026-07-22T06:57:10.852146+00:00",
+    "is_first_run": false,
+    "changed": [
+      {
+        "slug": "rakdisc-proudmoore",
+        "name": "Rakdisc",
+        "class": "Priest",
+        "spec": "Discipline",
+        "render_url": "https://render.worldofwarcraft.com/us/character/proudmoore/239/243420911-main-raw.png",
+        "before_fingerprint": "OLD_FP_ZZZ",
+        "after_fingerprint": "NEW_FP_AAA"
+      }
+    ],
+    "changed_count": 1,
+    "new_characters": [],
+    "snapshot": {
+      "rakdisc-proudmoore": "NEW_FP_AAA",
+      "floofwall-queldorei": "SAME_FP_BBB",
+      "healyeah-queldorei": "SAME_FP_CCC"
+    }
+  },
+  "guild_pulse": {
+    "schema_version": 1,
+    "generated_at": "2026-07-22T06:57:10.852248+00:00",
+    "available": true,
+    "status": "ok",
+    "source": "read-only Discord bot, allowlisted guild-public channels",
+    "items": [
+      {
+        "author": "Tommybravoo",
+        "snippet": "we timed the +21 with 4 seconds left, @Amrevenge literally soloed the last boss",
+        "channel": "general",
+        "kind": "chat",
+        "timestamp": "2026-07-20T02:14:00+00:00",
+        "reactions": [
+          {
+            "emoji": "🔥",
+            "count": 12
+          },
+          {
+            "emoji": "😭",
+            "count": 3
+          }
+        ],
+        "media": [],
+        "has_media": false
+      },
+      {
+        "author": "Rakdisc",
+        "snippet": "healer pov of that pull",
+        "channel": "clip-dump",
+        "kind": "memes",
+        "timestamp": "2026-07-19T23:40:00+00:00",
+        "reactions": [
+          {
+            "emoji": "💀",
+            "count": 8
+          }
+        ],
+        "media": [
+          {
+            "url": "https://cdn.discordapp.com/attachments/…/clip.mp4",
+            "content_type": "video/mp4",
+            "width": 1280,
+            "height": 720,
+            "is_image": false,
+            "filename": "clip.mp4"
+          }
+        ],
+        "has_media": true
+      },
+      {
+        "author": "Floofwall",
+        "snippet": "lost 40k gold in the guild casino tonight, no notes",
+        "channel": "bully-corner",
+        "kind": "gambling",
+        "timestamp": "2026-07-19T20:05:00+00:00",
+        "reactions": [
+          {
+            "emoji": "🎰",
+            "count": 6
+          },
+          {
+            "emoji": "😂",
+            "count": 9
+          }
+        ],
+        "media": [],
+        "has_media": false
+      },
+      {
+        "author": "Healyeah",
+        "snippet": "made this for the raid team",
+        "channel": "memes",
+        "kind": "memes",
+        "timestamp": "2026-07-18T15:22:00+00:00",
+        "reactions": [
+          {
+            "emoji": "🤣",
+            "count": 21
+          },
+          {
+            "emoji": ":kekw:",
+            "count": 14
+          }
+        ],
+        "media": [
+          {
+            "url": "https://cdn.discordapp.com/attachments/…/meme.png",
+            "content_type": "image/png",
+            "width": 800,
+            "height": 600,
+            "is_image": true,
+            "filename": "meme.png"
+          }
+        ],
+        "has_media": true
+      }
+    ],
+    "item_count": 4,
+    "by_kind": {
+      "chat": 1,
+      "memes": 2,
+      "gambling": 1
+    },
+    "media_note": "Discord CDN urls may expire; refresh the feed rather than hotlinking indefinitely."
+  },
+  "competition": {
+    "schema_version": 1,
+    "available": true,
+    "season": {
+      "slug": "season-mn-1",
+      "name": "Midnight Season 1"
+    },
+    "based_on": "2026-07-20T12:14:49+00:00",
+    "character_count": 7,
+    "ranked_count": 7,
+    "unranked_count": 0,
+    "characters": [
+      {
+        "name": "Amrevenge",
+        "realm": "stormrage",
+        "key": "amrevenge-stormrage",
+        "class": "Hunter",
+        "spec": "Beast Mastery Hunter",
+        "role": "DPS",
+        "score": 3908.1,
+        "scores_by_role": {
+          "dps": 3908.1,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 20,
+            "timed": true,
+            "upgrades": 1,
+            "score": 492.2,
+            "clear_ms": 1456281,
+            "par_ms": 1800999
+          }
+        ],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "delta_day": 6.1,
+        "is_new": false,
+        "parse": {
+          "best": 99,
+          "boss": "Chimaerus the Undreamt God",
+          "source": "board_state"
+        },
+        "rank": 1,
+        "top5": true
+      },
+      {
+        "name": "Tommybravoo",
+        "realm": "bleeding-hollow",
+        "key": "tommybravoo-bleeding-hollow",
+        "class": "DK",
+        "spec": "Unholy DK",
+        "role": "DPS",
+        "score": 3753.4,
+        "scores_by_role": {
+          "dps": 3753.4,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 85.7,
+        "delta_day": 53.4,
+        "is_new": false,
+        "parse": null,
+        "rank": 2,
+        "top5": true
+      },
+      {
+        "name": "Shadoxii",
+        "realm": "illidan",
+        "key": "shadoxii-illidan",
+        "class": "Monk",
+        "spec": "Mistweaver Monk",
+        "role": "Healer",
+        "score": 3692.2,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 3692.2,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "delta_day": null,
+        "is_new": false,
+        "parse": null,
+        "rank": 3,
+        "top5": true
+      },
+      {
+        "name": "Brewzleeh",
+        "realm": "tichondrius",
+        "key": "brewzleeh-tichondrius",
+        "class": "Monk",
+        "spec": "Brewmaster Monk",
+        "role": "Tank",
+        "score": 3685.8,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 3685.8
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": null,
+        "delta_day": null,
+        "is_new": true,
+        "parse": null,
+        "rank": 4,
+        "top5": true
+      },
+      {
+        "name": "Rakdisc",
+        "realm": "proudmoore",
+        "key": "rakdisc-proudmoore",
+        "class": "Priest",
+        "spec": "Discipline Priest",
+        "role": "Healer",
+        "score": 3529.2,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 3529.2,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "delta_day": null,
+        "is_new": false,
+        "parse": null,
+        "rank": 5,
+        "top5": true
+      },
+      {
+        "name": "Floofwall",
+        "realm": "queldorei",
+        "key": "floofwall-queldorei",
+        "class": "Monk",
+        "spec": "Brewmaster Monk",
+        "role": "Tank",
+        "score": 3484.3,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 3484.3
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": 0.0,
+        "delta_day": null,
+        "is_new": false,
+        "parse": null,
+        "rank": 6,
+        "top5": false
+      },
+      {
+        "name": "Newrecruit",
+        "realm": "area-52",
+        "key": "newrecruit-area-52",
+        "class": "Mage",
+        "spec": "Frost Mage",
+        "role": "DPS",
+        "score": 1802.0,
+        "scores_by_role": {
+          "dps": 1802.0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "ranks": {
+          "realm_overall": 800,
+          "realm_class": 20
+        },
+        "delta_week": null,
+        "delta_day": null,
+        "is_new": true,
+        "parse": null,
+        "rank": 7,
+        "top5": false
+      }
+    ],
+    "unranked": [],
+    "key_records": {
+      "highest_overall": {
+        "dungeon": "Pit of Saron",
+        "level": 20,
+        "name": "Amrevenge",
+        "key": "amrevenge-stormrage"
+      },
+      "by_dungeon": [
+        {
+          "dungeon": "Algeth'ar Academy",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Magisters' Terrace",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Maisara Caverns",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Nexus-Point Xenas",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Pit of Saron",
+          "level": 20,
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "score": 492.2
+        },
+        {
+          "dungeon": "Seat of the Triumvirate",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Skyreach",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        },
+        {
+          "dungeon": "Windrunner Spire",
+          "level": null,
+          "name": null,
+          "key": null,
+          "score": null
+        }
+      ],
+      "dungeons_timed": 1,
+      "dungeon_total": 8
+    },
+    "rankings": {
+      "overall": [
+        {
+          "rank": 1,
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "score": 3908.1,
+          "class": "Hunter",
+          "spec": "Beast Mastery Hunter",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 0.0,
+          "delta_day": 6.1,
+          "is_new": false
+        },
+        {
+          "rank": 2,
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "score": 3753.4,
+          "class": "DK",
+          "spec": "Unholy DK",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 85.7,
+          "delta_day": 53.4,
+          "is_new": false
+        },
+        {
+          "rank": 3,
+          "name": "Shadoxii",
+          "key": "shadoxii-illidan",
+          "score": 3692.2,
+          "class": "Monk",
+          "spec": "Mistweaver Monk",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "delta_day": null,
+          "is_new": false
+        },
+        {
+          "rank": 4,
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "score": 3685.8,
+          "class": "Monk",
+          "spec": "Brewmaster Monk",
+          "role": "Tank",
+          "top5": true,
+          "delta_week": null,
+          "delta_day": null,
+          "is_new": true
+        },
+        {
+          "rank": 5,
+          "name": "Rakdisc",
+          "key": "rakdisc-proudmoore",
+          "score": 3529.2,
+          "class": "Priest",
+          "spec": "Discipline Priest",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "delta_day": null,
+          "is_new": false
+        },
+        {
+          "rank": 6,
+          "name": "Floofwall",
+          "key": "floofwall-queldorei",
+          "score": 3484.3,
+          "class": "Monk",
+          "spec": "Brewmaster Monk",
+          "role": "Tank",
+          "top5": false,
+          "delta_week": 0.0,
+          "delta_day": null,
+          "is_new": false
+        },
+        {
+          "rank": 7,
+          "name": "Newrecruit",
+          "key": "newrecruit-area-52",
+          "score": 1802.0,
+          "class": "Mage",
+          "spec": "Frost Mage",
+          "role": "DPS",
+          "top5": false,
+          "delta_week": null,
+          "delta_day": null,
+          "is_new": true
+        }
+      ],
+      "by_role": {
+        "Tank": [
+          {
+            "rank": 1,
+            "name": "Brewzleeh",
+            "key": "brewzleeh-tichondrius",
+            "score": 3685.8,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": true,
+            "delta_week": null,
+            "delta_day": null,
+            "is_new": true
+          },
+          {
+            "rank": 2,
+            "name": "Floofwall",
+            "key": "floofwall-queldorei",
+            "score": 3484.3,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": false,
+            "delta_week": 0.0,
+            "delta_day": null,
+            "is_new": false
+          }
+        ],
+        "Healer": [
+          {
+            "rank": 1,
+            "name": "Shadoxii",
+            "key": "shadoxii-illidan",
+            "score": 3692.2,
+            "class": "Monk",
+            "spec": "Mistweaver Monk",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "delta_day": null,
+            "is_new": false
+          },
+          {
+            "rank": 2,
+            "name": "Rakdisc",
+            "key": "rakdisc-proudmoore",
+            "score": 3529.2,
+            "class": "Priest",
+            "spec": "Discipline Priest",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "delta_day": null,
+            "is_new": false
+          }
+        ],
+        "DPS": [
+          {
+            "rank": 1,
+            "name": "Amrevenge",
+            "key": "amrevenge-stormrage",
+            "score": 3908.1,
+            "class": "Hunter",
+            "spec": "Beast Mastery Hunter",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 0.0,
+            "delta_day": 6.1,
+            "is_new": false
+          },
+          {
+            "rank": 2,
+            "name": "Tommybravoo",
+            "key": "tommybravoo-bleeding-hollow",
+            "score": 3753.4,
+            "class": "DK",
+            "spec": "Unholy DK",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 85.7,
+            "delta_day": 53.4,
+            "is_new": false
+          },
+          {
+            "rank": 3,
+            "name": "Newrecruit",
+            "key": "newrecruit-area-52",
+            "score": 1802.0,
+            "class": "Mage",
+            "spec": "Frost Mage",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": null,
+            "delta_day": null,
+            "is_new": true
+          }
+        ]
+      },
+      "by_class": {
+        "DK": [
+          {
+            "rank": 1,
+            "name": "Tommybravoo",
+            "key": "tommybravoo-bleeding-hollow",
+            "score": 3753.4,
+            "class": "DK",
+            "spec": "Unholy DK",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 85.7,
+            "delta_day": 53.4,
+            "is_new": false
+          }
+        ],
+        "Hunter": [
+          {
+            "rank": 1,
+            "name": "Amrevenge",
+            "key": "amrevenge-stormrage",
+            "score": 3908.1,
+            "class": "Hunter",
+            "spec": "Beast Mastery Hunter",
+            "role": "DPS",
+            "top5": true,
+            "delta_week": 0.0,
+            "delta_day": 6.1,
+            "is_new": false
+          }
+        ],
+        "Mage": [
+          {
+            "rank": 1,
+            "name": "Newrecruit",
+            "key": "newrecruit-area-52",
+            "score": 1802.0,
+            "class": "Mage",
+            "spec": "Frost Mage",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": null,
+            "delta_day": null,
+            "is_new": true
+          }
+        ],
+        "Monk": [
+          {
+            "rank": 1,
+            "name": "Shadoxii",
+            "key": "shadoxii-illidan",
+            "score": 3692.2,
+            "class": "Monk",
+            "spec": "Mistweaver Monk",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "delta_day": null,
+            "is_new": false
+          },
+          {
+            "rank": 2,
+            "name": "Brewzleeh",
+            "key": "brewzleeh-tichondrius",
+            "score": 3685.8,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": true,
+            "delta_week": null,
+            "delta_day": null,
+            "is_new": true
+          },
+          {
+            "rank": 3,
+            "name": "Floofwall",
+            "key": "floofwall-queldorei",
+            "score": 3484.3,
+            "class": "Monk",
+            "spec": "Brewmaster Monk",
+            "role": "Tank",
+            "top5": false,
+            "delta_week": 0.0,
+            "delta_day": null,
+            "is_new": false
+          }
+        ],
+        "Priest": [
+          {
+            "rank": 1,
+            "name": "Rakdisc",
+            "key": "rakdisc-proudmoore",
+            "score": 3529.2,
+            "class": "Priest",
+            "spec": "Discipline Priest",
+            "role": "Healer",
+            "top5": true,
+            "delta_week": 0.0,
+            "delta_day": null,
+            "is_new": false
+          }
+        ]
+      },
+      "top5": [
+        {
+          "rank": 1,
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "score": 3908.1,
+          "class": "Hunter",
+          "spec": "Beast Mastery Hunter",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 0.0,
+          "delta_day": 6.1,
+          "is_new": false
+        },
+        {
+          "rank": 2,
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "score": 3753.4,
+          "class": "DK",
+          "spec": "Unholy DK",
+          "role": "DPS",
+          "top5": true,
+          "delta_week": 85.7,
+          "delta_day": 53.4,
+          "is_new": false
+        },
+        {
+          "rank": 3,
+          "name": "Shadoxii",
+          "key": "shadoxii-illidan",
+          "score": 3692.2,
+          "class": "Monk",
+          "spec": "Mistweaver Monk",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "delta_day": null,
+          "is_new": false
+        },
+        {
+          "rank": 4,
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "score": 3685.8,
+          "class": "Monk",
+          "spec": "Brewmaster Monk",
+          "role": "Tank",
+          "top5": true,
+          "delta_week": null,
+          "delta_day": null,
+          "is_new": true
+        },
+        {
+          "rank": 5,
+          "name": "Rakdisc",
+          "key": "rakdisc-proudmoore",
+          "score": 3529.2,
+          "class": "Priest",
+          "spec": "Discipline Priest",
+          "role": "Healer",
+          "top5": true,
+          "delta_week": 0.0,
+          "delta_day": null,
+          "is_new": false
+        }
+      ]
+    },
+    "movement": {
+      "climbers": [
+        {
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "delta_week": 85.7
+        }
+      ],
+      "climbers_today": [
+        {
+          "name": "Tommybravoo",
+          "key": "tommybravoo-bleeding-hollow",
+          "delta_day": 53.4
+        },
+        {
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "delta_day": 6.1
+        }
+      ],
+      "new_to_board": [
+        {
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "score": 3685.8
+        },
+        {
+          "name": "Newrecruit",
+          "key": "newrecruit-area-52",
+          "score": 1802.0
+        }
+      ],
+      "biggest_gain": {
+        "name": "Tommybravoo",
+        "key": "tommybravoo-bleeding-hollow",
+        "delta_week": 85.7
+      },
+      "biggest_gain_today": {
+        "name": "Tommybravoo",
+        "key": "tommybravoo-bleeding-hollow",
+        "delta_day": 53.4
+      }
+    },
+    "parses": {
+      "available": "partial",
+      "source": "board_state records (Warcraft Logs enrichment pending WCL_CLIENT_ID/SECRET; Raider.io does not expose parses)",
+      "leaders": [
+        {
+          "name": "Amrevenge",
+          "parse": 99,
+          "boss": "Chimaerus the Undreamt God",
+          "role": "DPS",
+          "spec": "BeastMastery Hunter"
+        },
+        {
+          "name": "Phyrthepali",
+          "parse": 96,
+          "boss": "Imperator Averzian",
+          "role": "Healer",
+          "spec": "Holy Paladin"
+        }
+      ]
+    }
+  },
+  "parity": {
+    "schema_version": 1,
+    "summary": {
+      "live": 8,
+      "partial": 3,
+      "pending": 4,
+      "total": 15
+    },
+    "fields": [
+      {
+        "field": "guild_announcement",
+        "served_by": "records_leaderboard/guild_pulse",
+        "state": "pending",
+        "note": "Discord announcement channel (needs DISCORD_BOT_TOKEN)"
+      },
+      {
+        "field": "guild_standing",
+        "served_by": "records_leaderboard.standing",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "overall_realm_rank",
+        "served_by": "records_leaderboard.standing",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "mplus_weekly_keys",
+        "served_by": "competition.key_records",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "mplus_season_scores",
+        "served_by": "competition.rankings",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "mplus_season_parses",
+        "served_by": "competition.characters[].best_runs",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "top_dps_parses",
+        "served_by": "competition.parses.leaders",
+        "state": "partial",
+        "note": "full weekly list needs WCL_CLIENT_ID/SECRET"
+      },
+      {
+        "field": "top_healing_parses",
+        "served_by": "competition.parses.leaders",
+        "state": "partial",
+        "note": "full weekly list needs WCL creds"
+      },
+      {
+        "field": "top_tank_parses",
+        "served_by": "competition.parses",
+        "state": "partial",
+        "note": "needs WCL creds"
+      },
+      {
+        "field": "weekly_raid_boss_ranks",
+        "served_by": "island_completion.raid",
+        "state": "pending",
+        "note": "WCL realm/region ranks need WCL creds"
+      },
+      {
+        "field": "raid_progression",
+        "served_by": "island_completion.raid",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "most_deaths",
+        "served_by": "competition (pending)",
+        "state": "pending",
+        "note": "needs WCL creds"
+      },
+      {
+        "field": "most_improved",
+        "served_by": "competition.movement",
+        "state": "live",
+        "note": null
+      },
+      {
+        "field": "roast_of_the_week",
+        "served_by": "guild_pulse (pending)",
+        "state": "pending",
+        "note": "needs DISCORD_BOT_TOKEN"
+      },
+      {
+        "field": "guild_achievements",
+        "served_by": "guild_achievements",
+        "state": "live",
+        "note": "needs BLIZZARD creds"
+      }
+    ]
+  },
+  "_sample": true,
+  "_note": "Illustrative values, production shapes. Generated by scripts/build_sample_site_data.py through the real guild_board.web_data producers."
+}
