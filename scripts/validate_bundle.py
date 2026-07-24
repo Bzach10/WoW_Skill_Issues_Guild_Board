@@ -133,19 +133,33 @@ def check_competition_internal(bundle, report):
     comp = bundle.get("competition")
     if not comp or not comp.get("available"):
         return  # honest empty state -- nothing to cross-check
+    # `characters` is EVERYONE browsable: ranked rows first (rank 1..N),
+    # then the deliberate unscored bucket (rank None). `unranked` is the
+    # summary list of that bucket; `rankings.overall` ladders the ranked.
     characters = comp.get("characters") or []
     unranked = comp.get("unranked") or []
-    if comp.get("ranked_count") != len(characters):
-        report.error("competition", "ranked_count %s != characters rows %s"
-                     % (comp.get("ranked_count"), len(characters)))
+    ranked_rows = [c for c in characters if c.get("rank") is not None]
+    if comp.get("character_count") != len(characters):
+        report.error("competition", "character_count %s != characters rows %s"
+                     % (comp.get("character_count"), len(characters)))
+    if comp.get("ranked_count") != len(ranked_rows):
+        report.error("competition", "ranked_count %s != ranked characters %s"
+                     % (comp.get("ranked_count"), len(ranked_rows)))
     if comp.get("unranked_count") != len(unranked):
         report.error("competition", "unranked_count %s != unranked rows %s"
                      % (comp.get("unranked_count"), len(unranked)))
     by_key = {c.get("key"): c for c in characters}
+    for u in unranked:
+        c = by_key.get(u.get("key"))
+        if c is None:
+            report.error("competition", "unranked names unknown key %s" % u.get("key"))
+        elif c.get("rank") is not None:
+            report.error("competition", "unranked key %s carries a rank in characters"
+                         % u.get("key"))
     overall = (comp.get("rankings") or {}).get("overall") or []
-    if len(overall) != len(characters):
-        report.error("competition", "rankings.overall has %s rows, expected %s"
-                     % (len(overall), len(characters)))
+    if len(overall) != len(ranked_rows):
+        report.error("competition", "rankings.overall has %s rows, expected %s ranked"
+                     % (len(overall), len(ranked_rows)))
     for i, entry in enumerate(overall):
         if entry.get("rank") != i + 1:
             report.error("competition",
