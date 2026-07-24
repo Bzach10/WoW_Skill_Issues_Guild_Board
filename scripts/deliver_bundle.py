@@ -1,0 +1,127 @@
+"""Deliver the built web-data bundle to a consumer -- complete or not at all.
+
+Why this exists
+---------------
+The 2026-07-23 split-brain was not produced by the pipeline; it was produced
+by a HAND-COPY of one file (competition.json) into a consumer's source
+directory while the sibling digests stayed a day old. This script is the
+only sanctioned way to hand the bundle to a consumer:
+
+  1. the source bundle must pass scripts/validate_bundle.py first;
+  2. the consumer receives the ENTIRE delivered set or nothing;
+  3. consumer-local files (the redesign's roster_supplement.json, its
+     evidence-based membership record) are never touched;
+  4. a DELIVERY.json manifest records what was delivered, from where, when.
+
+Default consumer: the redesign's contract inputs at
+C:/dev/wipefest-redesign/data/source. Its own build (build_contract.py)
+re-verifies everything on its side, so a bad delivery cannot silently ship
+even if this script is bypassed -- but don't bypass it.
+
+Usage:
+    python scripts/deliver_bundle.py [--from DIR] [--to DIR] [--dry-run]
+
+Exit 0 on delivery, 1 on refusal. Console output is ASCII-safe.
+"""
+
+import argparse
+import json
+import os
+import shutil
+import sys
+import tempfile
+from datetime import datetime, timezone
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.join(ROOT, "scripts"))
+
+from validate_bundle import validate_bundle  # noqa: E402
+
+# Exactly the files the redesign's build_contract.py loads from data/source,
+# minus its consumer-local ones (roster_supplement.json -- evidence-based
+# membership the pipeline knows nothing about and must never overwrite).
+DELIVERED = ("competition.json", "records_leaderboard.json",
+             "recap_ribbon.json", "island_completion.json",
+             "guild_achievements.json", "site_data.json")
+
+DEFAULT_TO = "C:/dev/wipefest-redesign/data/source"
+
+
+def _say(msg):
+    print(msg.encode("ascii", "backslashreplace").decode("ascii"))
+
+
+def _default_from():
+    """Prefer the cloud-committed bundle when present, else local output."""
+    for name in ("web_data_public", "web_data"):
+        d = os.path.join(ROOT, name)
+        if os.path.isdir(d) and os.path.exists(os.path.join(d, "site_data.json")):
+            return d
+    return os.path.join(ROOT, "web_data")
+
+
+def deliver(src_dir, dest_dir, dry_run=False):
+    # Gate 1: never deliver a bundle that doesn't validate.
+    report = validate_bundle(src_dir)
+    report.dump()
+    if report.errors:
+        _say(f"DELIVERY REFUSED: source bundle failed validation ({src_dir})")
+        return 1
+
+    missing = [f for f in DELIVERED if not os.path.exists(os.path.join(src_dir, f))]
+    if missing:
+        _say("DELIVERY REFUSED: source bundle incomplete, missing: " + ", ".join(missing))
+        return 1
+    if not os.path.isdir(dest_dir):
+        _say(f"DELIVERY REFUSED: destination does not exist: {dest_dir}")
+        return 1
+
+    if dry_run:
+        _say(f"dry run: would deliver {len(DELIVERED)} files "
+             f"{src_dir} -> {dest_dir}")
+        return 0
+
+    manifest = {
+        "delivered_at": datetime.now(timezone.utc).isoformat(),
+        "delivered_from": os.path.abspath(src_dir),
+        "delivered_by": "wipefest-board/scripts/deliver_bundle.py",
+        "files": list(DELIVERED),
+        "note": ("Complete-set delivery. roster_supplement.json is "
+                 "consumer-local and never delivered or touched."),
+    }
+
+    # Stage the complete set (plus manifest) on the destination volume first,
+    # so the final step is a short same-volume swap, not a long copy that can
+    # die halfway through a file.
+    staging = tempfile.mkdtemp(prefix=".delivery-", dir=os.path.dirname(dest_dir.rstrip("/\\")) or ".")
+    try:
+        for f in DELIVERED:
+            shutil.copy2(os.path.join(src_dir, f), os.path.join(staging, f))
+        with open(os.path.join(staging, "DELIVERY.json"), "w", encoding="utf-8") as fh:
+            json.dump(manifest, fh, ensure_ascii=False, indent=1)
+        for f in DELIVERED + ("DELIVERY.json",):
+            os.replace(os.path.join(staging, f), os.path.join(dest_dir, f))
+    finally:
+        shutil.rmtree(staging, ignore_errors=True)
+
+    _say(f"delivered {len(DELIVERED)} files + DELIVERY.json -> {dest_dir}")
+    _say("next: python data/build_contract.py in the consumer repo "
+         "(its own guard re-verifies the delivery)")
+    return 0
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--from", dest="src", default=None,
+                        help="bundle directory (default: web_data_public if "
+                             "present, else web_data)")
+    parser.add_argument("--to", dest="dest", default=DEFAULT_TO,
+                        help=f"consumer source directory (default: {DEFAULT_TO})")
+    parser.add_argument("--dry-run", action="store_true",
+                        help="validate and report without copying")
+    args = parser.parse_args(argv)
+    return deliver(args.src or _default_from(), args.dest, dry_run=args.dry_run)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

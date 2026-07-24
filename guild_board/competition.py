@@ -278,7 +278,14 @@ def build_competition(fetched=None, board_state=None, season=None,
         "schema_version": 1,
         "available": len(detail) > 0,
         "season": {"slug": season["slug"], "name": season["name"]},
-        "based_on": board_state.get("last_updated"),
+        # based_on must name the pull that produced THESE scores -- the daily
+        # cache's own timestamp. Stamping the weekly board_state time on daily
+        # data is how the 2026-07-23 split-brain bundle hid itself: fresh
+        # scores wearing a week-old stamp, divergence invisible.
+        # week_baseline_from names the weekly snapshot delta_week is measured
+        # against, so both cadences stay visible and truthful.
+        "based_on": fetched.get("last_updated") or board_state.get("last_updated"),
+        "week_baseline_from": board_state.get("last_updated"),
         "character_count": len(detail),
         "ranked_count": len(ranked),
         "unranked_count": len(unranked),
