@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-07-24T23:47:34.568864+00:00",
+  "season_slug": "season-mn-1",
+  "season_name": "Midnight Season 1",
+  "dungeons": {
+    "islands": [
+      {
+        "id": "algethar-academy",
+        "name": "Algeth'ar Academy",
+        "kind": "dungeon",
+        "challenge_mode_id": 402,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "magisters-terrace",
+        "name": "Magisters' Terrace",
+        "kind": "dungeon",
+        "challenge_mode_id": 558,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "maisara-caverns",
+        "name": "Maisara Caverns",
+        "kind": "dungeon",
+        "challenge_mode_id": 560,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "nexuspoint-xenas",
+        "name": "Nexus-Point Xenas",
+        "kind": "dungeon",
+        "challenge_mode_id": 559,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "pit-of-saron",
+        "name": "Pit of Saron",
+        "kind": "dungeon",
+        "challenge_mode_id": 556,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "seat-of-the-triumvirate",
+        "name": "Seat of the Triumvirate",
+        "kind": "dungeon",
+        "challenge_mode_id": 239,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "skyreach",
+        "name": "Skyreach",
+        "kind": "dungeon",
+        "challenge_mode_id": 161,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      },
+      {
+        "id": "windrunner-spire",
+        "name": "Windrunner Spire",
+        "kind": "dungeon",
+        "challenge_mode_id": 557,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
+      }
+    ],
+    "conquered": 0,
+    "total": 8
+  },
+  "raid": {
+    "slug": "tier-mn-1",
+    "display_name": "Voidspire Sanctum",
+    "summary": "4/9 M",
+    "bosses_killed": 9,
+    "killed_by_difficulty": {
+      "normal": 0,
+      "heroic": 9,
+      "mythic": 4
+    },
+    "total_bosses": 9,
+    "islands": [
+      {
+        "id": "imperator-averzian",
+        "name": "Imperator Averzian",
+        "kind": "raid_boss",
+        "order": 1,
+        "status": "conquered",
+        "kill_confirmed": true,
+        "inferred_from_progress": false,
+        "first_kill_at": null
+      },
+      {
+        "id": "vorasius",
+        "name": "Vorasius",
+        "kind": "raid_boss",
+        "order": 2,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      },
+      {
+        "id": "fallenking-salhadaar",
+        "name": "Fallen-King Salhadaar",
+        "kind": "raid_boss",
+        "order": 3,
+        "status": "conquered",
+        "kill_confirmed": true,
+        "inferred_from_progress": false,
+        "first_kill_at": null
+      },
+      {
+        "id": "vaelgor-ezzorak",
+        "name": "Vaelgor & Ezzorak",
+        "kind": "raid_boss",
+        "order": 4,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      },
+      {
+        "id": "lightblinded-vanguard",
+        "name": "Lightblinded Vanguard",
+        "kind": "raid_boss",
+        "order": 5,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      },
+      {
+        "id": "crown-of-the-cosmos",
+        "name": "Crown of the Cosmos",
+        "kind": "raid_boss",
+        "order": 6,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      },
+      {
+        "id": "chimaerus-the-undreamt-god",
+        "name": "Chimaerus the Undreamt God",
+        "kind": "raid_boss",
+        "order": 7,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      },
+      {
+        "id": "beloren-child-of-alar",
+        "name": "Belo'ren, Child of Al'ar",
+        "kind": "raid_boss",
+        "order": 8,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      },
+      {
+        "id": "midnight-falls",
+        "name": "Midnight Falls",
+        "kind": "raid_boss",
+        "order": 9,
+        "status": "conquered",
+        "kill_confirmed": false,
+        "inferred_from_progress": true,
+        "first_kill_at": null
+      }
+    ],
+    "detail_source": "raid_progression_count"
+  }
+}
