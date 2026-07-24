@@ -158,13 +158,20 @@ def record_style_result(manifest, slug, style_name, board_path, forms=None,
             "replaced_at": _now_iso(),
         })
 
-    char["styles"][style_name] = {
+    # Replace only the keys this writer owns. Keys written by other
+    # producers -- the art pipeline's v2 payload (`layers`, `canvas`), or
+    # anything future -- must survive a regen: this writer produces a new
+    # board image, not a new layered export, and destroying data it did not
+    # produce is how the paper-doll silently died to flat cut-outs.
+    entry = dict(existing) if existing else {}
+    entry.update({
         "board": board_path,
         "forms": forms or {},
         "version": next_version,
         "generated_at": _now_iso(),
-        "source_render": source_render or existing.get("source_render", "") if existing else (source_render or ""),
-    }
+        "source_render": source_render or (existing.get("source_render", "") if existing else ""),
+    })
+    char["styles"][style_name] = entry
     if transmog_fingerprint is not None:
         char["transmog_fingerprint"] = transmog_fingerprint
 

@@ -197,3 +197,26 @@ def test_character_slugs_needing_refresh_no_change_when_fingerprint_matches():
         manifest, blizzard_characters, fingerprint_fn=lambda p: "same-url")
 
     assert changed == []
+
+
+def test_record_style_result_preserves_keys_it_does_not_own():
+    # Regression: the art pipeline writes a v2 payload (layers + canvas)
+    # into the style entry. A later regen through record_style_result used
+    # to rebuild the entry from scratch and silently destroy both -- the
+    # paper-doll degraded to flat cut-outs with no error.
+    manifest = cm.load_manifest("nope.json")
+    cm.add_character(manifest, "rakdisc-proudmoore", _profile())
+    cm.record_style_result(manifest, "rakdisc-proudmoore", "one_piece", "v1.png")
+
+    entry = manifest["characters"]["rakdisc-proudmoore"]["styles"]["one_piece"]
+    entry["layers"] = [{"name": f"layer{i}", "file": f"layer{i}.png"}
+                      for i in range(5)]
+    entry["canvas"] = {"width": 1024, "height": 1024}
+
+    cm.record_style_result(manifest, "rakdisc-proudmoore", "one_piece", "v2.png")
+
+    regen = manifest["characters"]["rakdisc-proudmoore"]["styles"]["one_piece"]
+    assert regen["board"] == "v2.png"
+    assert regen["version"] == 2
+    assert len(regen["layers"]) == 5, "regen destroyed the art pipeline's layers"
+    assert regen["canvas"] == {"width": 1024, "height": 1024}
