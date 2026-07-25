@@ -271,9 +271,12 @@ def build_guild_achievements(achievements=None, season=None):
             "available": False,
             "status": "pending_credentials",
             "source": "/data/wow/guild/{realm}/{name}/achievements",
-            "detail": "Blizzard guild-achievements API returned no data — "
-                      "run scripts/refresh_blizzard_profiles.py with "
-                      "BLIZZARD_CLIENT_ID/SECRET set, then rebuild.",
+            # Member-facing copy: name the script, never the credential
+            # env vars — the sweep in test_no_credentials_in_output.py
+            # fails the build on credential names in shipped output.
+            "detail": "No guild-achievements data yet — the credentialed "
+                      "Action (scripts/refresh_blizzard_profiles.py) has "
+                      "not run. Blizzard's guild API fills this layer.",
             "total_points": 0,
             "trophies": [],
         }
@@ -603,6 +606,7 @@ def build_guild_pulse(pulse_items=None, max_items=60):
 
 # WCL difficulty ids -> the names config.yml's parses.difficulty_scale uses.
 _DIFFICULTY_NAMES = {5: "mythic", 4: "heroic", 3: "normal", 1: "lfr"}
+_DIFFICULTY_IDS = {name: did for did, name in _DIFFICULTY_NAMES.items()}
 
 
 def _scale_factors(difficulty_scale):
@@ -681,25 +685,61 @@ def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
     tier = fetched.get("tier") or {}
     out_chars = {}
     for key, entry in characters.items():
-        e = dict(entry)
-        e.setdefault("key", key)
-        # Every entry names the tier it was measured in, so a row copied out
-        # of this file stays self-describing across season boundaries.
-        e.setdefault("tier", tier)
+        # The sweep fetches EVERY enabled difficulty per character (the site
+        # shows mythic and heroic side by side), nested under by_difficulty.
+        # A pre-rework cache entry is flat (one difficulty at top level);
+        # normalize it into the same nest so one code path serves both until
+        # the next credentialed refresh rewrites the cache.
+        bd = entry.get("by_difficulty")
+        if not bd:
+            legacy_name = _DIFFICULTY_NAMES.get(entry.get("difficulty"), "")
+            sub = {k: entry[k] for k in
+                   ("best_perf_avg", "median_perf_avg", "by_role") if k in entry}
+            bd = {legacy_name: sub} if legacy_name and sub else {}
+
         # The difficulty discount: raw stays raw, rankings read the scaled
         # value. Percentiles live on 0-100, so the scaled value is capped
         # there (a factor > 1 can reward mythic but never mint a 101).
-        # A factor of 0 means the difficulty is EXCLUDED: the character is
-        # dropped from the layer entirely ("no logs yet" on the site, never
-        # a 0.0% row), and sweep_difficulties() stops the fetch querying it.
-        # The raw cache keeps them, so re-enabling later is loss-free.
-        factor = factors.get(_DIFFICULTY_NAMES.get(e.get("difficulty"), ""), 1.0)
-        if factor <= 0:
+        # A factor of 0 means the difficulty is EXCLUDED: its sub-entry is
+        # dropped ("no logs yet" on the site, never a 0.0% row), and
+        # sweep_difficulties() stops the fetch querying it. The raw cache
+        # keeps everything, so re-enabling later is loss-free.
+        scaled_bd = {}
+        for diff_name, sub in bd.items():
+            factor = factors.get(diff_name, 1.0)
+            raw = (sub or {}).get("best_perf_avg")
+            if factor <= 0 or raw is None:
+                continue
+            s = dict(sub)
+            s["scaled_perf_avg"] = round(min(raw * factor, 100.0), 1)
+            s["difficulty_scale"] = factor
+            scaled_bd[diff_name] = s
+        if not scaled_bd:
             continue
-        raw = e.get("best_perf_avg")
-        if raw is not None:
-            e["scaled_perf_avg"] = round(min(raw * factor, 100.0), 1)
-            e["difficulty_scale"] = factor
+
+        # Headline = the difficulty with the best SCALED value (that is the
+        # whole point of the factors: a heroic 95 at x0.8 loses to a mythic
+        # 80). Raw + scaled + difficulty stay one coherent triple from the
+        # same sub-entry; per-difficulty detail rides along in by_difficulty.
+        best_name, best_sub = max(scaled_bd.items(),
+                                  key=lambda kv: kv[1]["scaled_perf_avg"])
+        e = {
+            "name": entry.get("name") or "",
+            "key": key,
+            "class": entry.get("class") or "",
+            "best_perf_avg": best_sub["best_perf_avg"],
+            "scaled_perf_avg": best_sub["scaled_perf_avg"],
+            "difficulty": _DIFFICULTY_IDS.get(best_name),
+            "difficulty_scale": best_sub["difficulty_scale"],
+            "by_role": best_sub.get("by_role") or {},
+            "by_difficulty": scaled_bd,
+            # Every entry names the tier it was measured in, so a row copied
+            # out of this file stays self-describing across season boundaries.
+            "tier": entry.get("tier") or tier,
+            "sourced_at": entry.get("sourced_at"),
+        }
+        if best_sub.get("median_perf_avg") is not None:
+            e["median_perf_avg"] = best_sub["median_perf_avg"]
         out_chars[key] = e
 
     return {

@@ -43,6 +43,12 @@ SCAN_GLOBS = (
     "web_stats.json", "site_data.json", "roster.json",
     "board_state.json", "voyage_data.json", "competition.json",
     "data/*.json",
+    # The parse products: the browsable bundle layers the site serves, the
+    # committed sample fallbacks the front-end degrades to, and the raw WCL
+    # sweep cache they are all built from.
+    "web_data/*.json",
+    "samples/*.json",
+    "parses_cache.json",
 )
 
 # --------------------------------------------------------- rule 1: variable names

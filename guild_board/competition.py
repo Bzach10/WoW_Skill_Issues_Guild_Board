@@ -88,7 +88,10 @@ def _normalize_character(entry_key, data, region="us"):
         "name": name,
         "realm": realm,
         "realm_slug": realm_slug,
-        "key": entry_key.lower(),
+        # Verbatim, not re-lowercased: casing is folded once at roster
+        # ingestion (config.normalize_roster_entry), and this key must stay
+        # byte-identical to the ones the WCL parse sweep and web_data key by.
+        "key": entry_key,
         "raiderio_url": f"https://raider.io/characters/{(region or 'us')}/{realm_slug}/{name_slug}",
         "warcraftlogs_url": f"https://www.warcraftlogs.com/character/{(region or 'us')}/{realm_slug}/{name_slug}",
         "class": data.get("class") or "",
@@ -283,12 +286,16 @@ def build_competition(fetched=None, board_state=None, season=None,
         w = wcl_chars.get(r["key"])
         if w:
             r["parse"] = {
+                # Headline = the difficulty with the best SCALED value; the
+                # full per-difficulty split rides along so the site can show
+                # mythic and heroic columns from this file alone.
                 "best": w.get("best_perf_avg"),
                 # The difficulty-discounted value rankings consume (config.yml
                 # parses.difficulty_scale); equals `best` when the factor is 1.
                 "scaled": w.get("scaled_perf_avg", w.get("best_perf_avg")),
                 "by_role": w.get("by_role") or {},
                 "difficulty": w.get("difficulty"),
+                "by_difficulty": w.get("by_difficulty") or {},
                 "source": "wcl_zone_rankings",
             }
             continue

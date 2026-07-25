@@ -105,4 +105,6 @@ def test_fetch_dungeon_island_data_uses_roster_and_public_raiderio(monkeypatch, 
     assert result["level"] == 12
     # Still the public, credential-free Raider.io profile endpoint.
     assert captured["url"] == "https://raider.io/api/v1/characters/profile"
-    assert captured["params"]["realm"] == "Proudmoore"
+    # The cache entry above is mixed-case on purpose: casing folds to the
+    # canonical slug at roster ingestion (config.normalize_roster_entry).
+    assert captured["params"]["realm"] == "proudmoore"

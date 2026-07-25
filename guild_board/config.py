@@ -115,6 +115,22 @@ def split_name_realm(entry, default_realm=None):
     return name.strip(), realm.strip()
 
 
+def normalize_roster_entry(entry):
+    """Canonical form for a roster entry: stripped, lowercased.
+
+    Every data layer keys per-character records by the full name-realm
+    entry ("amrevenge-stormrage") and merges across layers on
+    byte-identical keys — competition.py, wcl.py's parse sweep and
+    web_data.py all rely on it. Casing is folded HERE, where a roster
+    enters the system (config.yml manual override, roster cache
+    read/write, WCL auto-fetch), never per-layer: competition once
+    lowercased its copy of a manual "Rakell-Proudmoore" entry while the
+    parse sweep kept it verbatim, so that character's WCL parses
+    silently failed to merge. Unicode is preserved; only case folds.
+    """
+    return (entry or "").strip().lower()
+
+
 def clean_spec_name(spec, class_name=""):
     """Return a clean 'Spec Class' display name from Raider.io/WCL spec data."""
     if isinstance(spec, dict):
@@ -180,7 +196,8 @@ def load_roster_cache(cfg):
     try:
         with open(path, encoding="utf-8") as f:
             data = json.load(f)
-        return data.get("members", []), data.get("last_updated")
+        members = [normalize_roster_entry(m) for m in data.get("members", [])]
+        return members, data.get("last_updated")
     except (FileNotFoundError, json.JSONDecodeError):
         return [], None
 
@@ -189,7 +206,7 @@ def save_roster_cache(cfg, members):
     path = get_roster_cache_path(cfg)
     data = {
         "last_updated": datetime.now(timezone.utc).isoformat(),
-        "members": sorted(set(members)),
+        "members": sorted({normalize_roster_entry(m) for m in members}),
     }
     with open(path, "w", encoding="utf-8") as f:
         json.dump(data, f, indent=2)
@@ -207,6 +224,9 @@ def resolve_roster(cfg, token=None, section_name="mplus"):
         mplus_cfg = cfg.get("mplus", {})
 
     roster = mplus_cfg.get("roster", []) if mplus_cfg else []
+    # The documented config.yml format is mixed-case ("Rakell-Proudmoore");
+    # fold to the canonical key form on the way in.
+    roster = [normalize_roster_entry(r) for r in roster]
     auto_fetch = mplus_cfg.get("auto_fetch_roster", False) if mplus_cfg else False
     cache_cfg = cfg.get("roster_cache", {})
     cache_enabled = cache_cfg.get("enabled", True)
@@ -236,7 +256,8 @@ def resolve_roster(cfg, token=None, section_name="mplus"):
         try:
             guild_roster = fetch_guild_member_roster(token, cfg)
             if guild_roster:
-                fetched = [f"{name}-{realm}" for name, realm in guild_roster]
+                fetched = [normalize_roster_entry(f"{name}-{realm}")
+                           for name, realm in guild_roster]
                 if cache_enabled:
                     # Union with the old cache: WCL rosters drift, and a
                     # member who's temporarily missing shouldn't vanish.

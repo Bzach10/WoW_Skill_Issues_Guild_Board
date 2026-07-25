@@ -13,8 +13,9 @@ import os
 import subprocess
 import sys
 
+from guild_board import config as gb_config
 from guild_board import wcl
-from guild_board.competition import build_competition
+from guild_board.competition import build_competition, fetch_competition
 from guild_board.web_data import build_parses, build_site_data
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -103,8 +104,10 @@ def test_fetch_keys_by_full_name_realm_never_bare_name(monkeypatch):
 
     out = wcl.fetch_character_parses("tok", CFG, roster, zone_id=46)
     assert set(out) == set(roster)
-    assert out["violënce-bleeding-hollow"]["best_perf_avg"] == 90.0
-    assert out["violënce-area-52"]["best_perf_avg"] == 30.0
+    bh = out["violënce-bleeding-hollow"]["by_difficulty"]
+    a52 = out["violënce-area-52"]["by_difficulty"]
+    assert bh["mythic"]["best_perf_avg"] == 90.0
+    assert a52["mythic"]["best_perf_avg"] == 30.0
     # The exact-Unicode name and the full realm slug reached the API.
     assert {c["name"] for c in calls} == {"violënce"}
     assert {c["slug"] for c in calls} == {"bleeding-hollow", "area-52"}
@@ -119,8 +122,31 @@ def test_fetch_splits_multiword_realms_on_first_hyphen(monkeypatch):
     assert calls[0]["slug"] == "area-52"
 
 
-def test_fetch_walks_difficulties_and_labels_the_hit(monkeypatch):
-    # Nothing at mythic (empty blobs), heroic answers -> difficulty 4 kept.
+def test_fetch_collects_every_enabled_difficulty(monkeypatch):
+    # The website shows mythic and heroic side by side, so BOTH are
+    # fetched — a mythic answer must never stop the heroic query.
+    char_mythic = {"name": "Aiime", "classID": 4, "overall": _blob(80.0),
+                   "dps": _blob(80.0, kills=5)}
+    char_heroic = {"name": "Aiime", "classID": 4, "overall": _blob(95.5),
+                   "dps": _blob(95.5, kills=9)}
+    answers = {("aiime", 5): char_mythic, ("aiime", 4): char_heroic}
+    calls = []
+    monkeypatch.setattr(wcl, "gql", _fake_gql(answers, calls))
+    monkeypatch.setattr(wcl.time, "sleep", lambda s: None)
+
+    out = wcl.fetch_character_parses("tok", CFG, ["aiime-bleeding-hollow"],
+                                     zone_id=46, difficulties=(5, 4))
+    entry = out["aiime-bleeding-hollow"]
+    assert entry["key"] == "aiime-bleeding-hollow"
+    assert entry["name"] == "Aiime"
+    assert entry["sourced_at"]
+    assert entry["by_difficulty"]["mythic"]["best_perf_avg"] == 80.0
+    assert entry["by_difficulty"]["heroic"]["best_perf_avg"] == 95.5
+    assert [c["difficulty"] for c in calls] == [5, 4]  # both queried
+
+
+def test_fetch_keeps_heroic_only_raiders(monkeypatch):
+    # Empty at mythic (character exists, no rankings) -> heroic still lands.
     char_empty = {"name": "Aiime", "classID": 4, "overall": _blob(None)}
     char_heroic = {"name": "Aiime", "classID": 4, "overall": _blob(65.5),
                    "dps": _blob(65.5, kills=3)}
@@ -129,13 +155,11 @@ def test_fetch_walks_difficulties_and_labels_the_hit(monkeypatch):
     monkeypatch.setattr(wcl, "gql", _fake_gql(answers, calls))
     monkeypatch.setattr(wcl.time, "sleep", lambda s: None)
 
-    out = wcl.fetch_character_parses("tok", CFG, ["aiime-bleeding-hollow"], zone_id=46)
+    out = wcl.fetch_character_parses("tok", CFG, ["aiime-bleeding-hollow"],
+                                     zone_id=46, difficulties=(5, 4))
     entry = out["aiime-bleeding-hollow"]
-    assert entry["difficulty"] == 4
-    assert entry["best_perf_avg"] == 65.5
-    assert entry["key"] == "aiime-bleeding-hollow"
-    assert entry["sourced_at"]
-    assert [c["difficulty"] for c in calls] == [5, 4]  # stopped at the hit
+    assert set(entry["by_difficulty"]) == {"heroic"}
+    assert entry["by_difficulty"]["heroic"]["best_perf_avg"] == 65.5
 
 
 def test_fetch_unknown_character_skips_lower_difficulties(monkeypatch):
@@ -233,6 +257,50 @@ def test_build_parses_zero_factor_excludes_not_zeroes():
     assert layer["difficulty_scale"]["normal"] == 0.0  # provenance still records it
 
 
+def test_build_parses_headline_is_best_scaled_across_difficulties():
+    # A heroic 95 at x0.8 (76) loses to a mythic 80 — the headline triple
+    # (best/scaled/difficulty) must all come from the WINNING sub-entry,
+    # and both difficulties stay browsable in by_difficulty.
+    scale = {"mythic": 1.0, "heroic": 0.8, "normal": 0.0}
+    layer = build_parses({
+        "last_updated": "x", "tier": {"zone_id": 46},
+        "characters": {"aiime-bleeding-hollow": {
+            "name": "Aiime", "class": "Mage", "key": "aiime-bleeding-hollow",
+            "sourced_at": "x",
+            "by_difficulty": {
+                "mythic": {"best_perf_avg": 80.0,
+                           "by_role": {"DPS": {"best_perf_avg": 80.0}}},
+                "heroic": {"best_perf_avg": 95.0,
+                           "by_role": {"DPS": {"best_perf_avg": 95.0}}},
+            }}}}, difficulty_scale=scale)
+    e = layer["characters"]["aiime-bleeding-hollow"]
+    assert e["best_perf_avg"] == 80.0
+    assert e["scaled_perf_avg"] == 80.0
+    assert e["difficulty"] == 5
+    assert e["by_difficulty"]["heroic"]["scaled_perf_avg"] == 76.0
+    assert e["by_difficulty"]["mythic"]["scaled_perf_avg"] == 80.0
+
+
+def test_build_parses_drops_zero_factor_difficulty_but_keeps_the_rest():
+    # normal: 0.0 removes the normal sub-entry; a character with ONLY
+    # normal data disappears entirely (the "not available" state).
+    scale = {"mythic": 1.0, "heroic": 0.8, "normal": 0.0}
+    layer = build_parses({
+        "last_updated": "x", "tier": {},
+        "characters": {
+            "both-bleeding-hollow": {
+                "name": "Both", "sourced_at": "x",
+                "by_difficulty": {"heroic": {"best_perf_avg": 70.0},
+                                  "normal": {"best_perf_avg": 99.0}}},
+            "normonly-bleeding-hollow": {
+                "name": "Normonly", "sourced_at": "x",
+                "by_difficulty": {"normal": {"best_perf_avg": 95.0}}},
+        }}, difficulty_scale=scale)
+    chars = layer["characters"]
+    assert set(chars) == {"both-bleeding-hollow"}
+    assert set(chars["both-bleeding-hollow"]["by_difficulty"]) == {"heroic"}
+
+
 def test_sweep_difficulties_follows_the_scale_knob():
     from guild_board.web_data import sweep_difficulties
     assert sweep_difficulties(None) == (5, 4, 3)                  # unconfigured
@@ -296,9 +364,11 @@ def test_competition_merges_wcl_parse_by_key_not_name():
     # Same bare name, two realms, two different parses — never collapsed.
     assert by_key["violënce-bleeding-hollow"]["parse"]["best"] == 90.0
     assert by_key["violënce-area-52"]["parse"]["best"] == 30.0
-    # The competition merge carries the discounted value for rankings.
+    # The competition merge carries the discounted value for rankings and
+    # the per-difficulty split for the site's mythic/heroic columns.
     assert by_key["violënce-bleeding-hollow"]["parse"]["scaled"] == 90.0
     assert by_key["violënce-area-52"]["parse"]["scaled"] == 18.0  # 30 * 0.6
+    assert "mythic" in by_key["violënce-bleeding-hollow"]["parse"]["by_difficulty"]
     assert by_key["violënce-area-52"]["parse"]["source"] == "wcl_zone_rankings"
     # No WCL entry -> board_state record fallback still applies.
     assert by_key["amrevenge-stormrage"]["parse"]["source"] == "board_state"
@@ -312,6 +382,100 @@ def test_competition_parse_block_stays_partial_without_wcl():
         "name": "Amrevenge", "parse": 96, "boss": "Fallen-King Salhadaar"}}}
     comp = build_competition(fetched, board_state)
     assert comp["parses"]["available"] == "partial"
+
+
+def test_mixed_case_manual_roster_entry_still_merges_parses(monkeypatch):
+    """Regression: config.yml's documented manual roster format is mixed-case
+    ("Rakell-Proudmoore"). Casing is folded once at roster ingestion
+    (config.normalize_roster_entry), so the competition record and the WCL
+    parse sweep key the character identically and the merge holds. Before
+    the fold, competition lowercased its copy of the key while the sweep
+    kept the entry verbatim — the parse silently failed to merge for
+    exactly this kind of entry.
+    """
+    cfg = {
+        "guild": {"name": "Skill Issues", "realm_slug": "bleeding-hollow",
+                  "region": "us"},
+        "sections": {"mplus": {"roster": ["Rakell-Proudmoore"]}},
+    }
+    # Ingestion: the manual override comes out canonical...
+    roster, _ = gb_config.resolve_roster(cfg)
+    assert roster == ["rakell-proudmoore"]
+
+    # ...and the SAME list feeds both fetch paths, as the pipeline does.
+    class Resp:
+        status_code = 200
+
+        @staticmethod
+        def json():
+            return {"name": "Rakell", "realm": "Proudmoore",
+                    "class": "Paladin", "active_spec_name": "Holy",
+                    "active_spec_role": "HEALING",
+                    "mythic_plus_scores_by_season": [
+                        {"scores": {"all": 2800.0, "healer": 2800.0}}]}
+
+    monkeypatch.setattr("guild_board.raiderio._rio_get",
+                        lambda params=None, timeout=None: Resp())
+    fetched = fetch_competition(cfg, roster=roster)
+    assert [c["key"] for c in fetched["characters"]] == ["rakell-proudmoore"]
+
+    answers = {("rakell", 5): {"name": "Rakell", "classID": 6,
+                               "overall": _blob(77.0),
+                               "healer": _blob(77.0, kills=4)}}
+    calls = []
+    monkeypatch.setattr(wcl, "gql", _fake_gql(answers, calls))
+    monkeypatch.setattr(wcl.time, "sleep", lambda s: None)
+    parses = wcl.fetch_character_parses("tok", CFG, roster, zone_id=46)
+    assert set(parses) == {"rakell-proudmoore"}
+
+    wcl_parses = build_parses({"last_updated": "x", "tier": {"zone_id": 46},
+                               "characters": parses})
+    comp = build_competition(fetched, {}, wcl_parses=wcl_parses)
+    by_key = {c["key"]: c for c in comp["characters"]}
+    assert by_key["rakell-proudmoore"]["parse"]["source"] == "wcl_zone_rankings"
+    assert by_key["rakell-proudmoore"]["parse"]["best"] == 77.0
+
+
+# ---------------------------------------------------------------------------
+# activity gate — who the sweep spends queries on
+# ---------------------------------------------------------------------------
+
+def test_fetch_active_raiders_reads_report_rankings(monkeypatch):
+    reports = [{"code": "AAA"}, {"code": "BBB"}]
+
+    def fake_detail(token, code, difficulty):
+        if code == "AAA" and difficulty == 5:
+            return {"dps": {"data": [{"roles": {
+                "dps": {"characters": [
+                    {"name": "Violënce", "server": "Bleeding Hollow"}]},
+                "tanks": {"characters": [{"name": "Floofwall",
+                                          "server": "Quel'dorei"}]},
+            }}]}}
+        if code == "BBB" and difficulty == 4:
+            return {"hps": {"data": [{"roles": {
+                "healers": {"characters": [{"name": "Rakdisc", "server": None}]},
+            }}]}}
+        return {}
+
+    monkeypatch.setattr(wcl, "fetch_report_detail", fake_detail)
+    active = wcl.fetch_active_raiders("tok", CFG, reports, difficulties=(5, 4))
+    assert active["violënce"] == "bleeding-hollow"
+    assert active["floofwall"] == "queldorei"   # apostrophe slugified away
+    assert "rakdisc" in active                   # slugless still counts
+
+
+def test_select_active_roster_gates_on_logs_and_cache():
+    roster = ["violënce-bleeding-hollow",   # active, realm matches
+              "violënce-area-52",           # same name, wrong realm -> out
+              "rakdisc-proudmoore",         # active with no slug -> name-only in
+              "oldtimer-bleeding-hollow",   # inactive but cached -> stays
+              "ghost-bleeding-hollow"]      # inactive, uncached -> out
+    active = {"violënce": "bleeding-hollow", "rakdisc": None}
+    picked = wcl.select_active_roster(
+        roster, active, cached_keys={"oldtimer-bleeding-hollow"},
+        default_realm="bleeding-hollow")
+    assert picked == ["violënce-bleeding-hollow", "rakdisc-proudmoore",
+                      "oldtimer-bleeding-hollow"]
 
 
 # ---------------------------------------------------------------------------

@@ -431,14 +431,29 @@ Actions; the script is inert locally).
   "characters": {
     "amrevenge-stormrage": {
       "name": "Amrevenge", "key": "amrevenge-stormrage", "class": "Hunter",
+
+      // EVERY enabled difficulty, side by side — render mythic and heroic
+      // columns straight from this map. Keys are difficulty names.
+      "by_difficulty": {
+        "mythic": {"best_perf_avg": 92.4, "median_perf_avg": 81.0,
+                   "by_role": {"DPS": {"best_perf_avg": 92.4, "kills": 7}},
+                   "scaled_perf_avg": 92.4, "difficulty_scale": 1.0},
+        "heroic": {"best_perf_avg": 96.8, "median_perf_avg": 90.2,
+                   "by_role": {"DPS": {"best_perf_avg": 96.8, "kills": 11}},
+                   "scaled_perf_avg": 77.4, "difficulty_scale": 0.8}
+      },
+
+      // HEADLINE = the difficulty with the best SCALED value (here mythic:
+      // 92.4 beats heroic's 96.8 x 0.8 = 77.4). best/scaled/difficulty are
+      // one coherent triple from that same winning difficulty.
       "best_perf_avg": 92.4,          // RAW 0-100 percentile average (display)
       "scaled_perf_avg": 92.4,        // raw x difficulty factor — the Emperor axis
+      "difficulty": 5,                // winning difficulty (5=M, 4=H, 3=N)
       "difficulty_scale": 1.0,        // the factor that was applied
-      "median_perf_avg": 81.0,        // optional
-      "by_role": {                    // only roles with real rankings (raw values)
+      "median_perf_avg": 81.0,        // optional, from the winning difficulty
+      "by_role": {                    // winning difficulty's roles (raw values)
         "DPS": {"best_perf_avg": 92.4, "kills": 7}
       },
-      "difficulty": 5,                // WCL difficulty the data comes from (5=M, 4=H, 3=N)
       "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
       "sourced_at": "2026-07-24T13:30:00+00:00"
     }
@@ -466,10 +481,16 @@ Actions; the script is inert locally).
   uses, so joining is a dict lookup. Never join on bare names: same-named
   characters exist on different realms.
 - Only characters with real rankings appear; a member with no logged kills
-  at any difficulty is simply absent (render "no logs yet", not 0%).
-- Per-character `difficulty` matters: parses are only comparable within one
-  difficulty. Each character carries the highest difficulty they have data
-  for (mythic → heroic → normal walk).
+  at any enabled difficulty is simply absent (render "no logs yet", not 0%).
+  The sweep is also ACTIVE-GATED (config `parses.sweep`): daily runs query
+  recent-log participants plus everyone already cached, with a full-roster
+  discovery sweep every `parses.discovery_days` — so a member's very first
+  appearance can lag up to that many days; after that they refresh daily.
+- **Both mythic and heroic are fetched for every swept character** — use
+  `by_difficulty` for side-by-side columns; parses are only comparable
+  within one difficulty. The top-level fields are the headline (best
+  SCALED difficulty), so sorting by `scaled_perf_avg` is fair across
+  mixed-difficulty raiders.
 - Also merged into `competition.characters[].parse` as
   `{"best", "scaled", "by_role", "difficulty", "source": "wcl_zone_rankings"}`
   — and `competition.parses.available` becomes `"full"` when this layer is

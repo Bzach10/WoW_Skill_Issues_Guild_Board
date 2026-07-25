@@ -1,5 +1,6 @@
 """Refresh the per-character Warcraft Logs parse cache -- current-tier
-best-performance averages (overall + per-role) for the whole roster.
+best-performance averages (overall + per-role, EVERY enabled difficulty)
+for the guild's active raiders.
 
 This is the credentialed input for the website's parse surfaces (the Four
 Emperors ranking's second axis, standings parse columns, the newspaper's
@@ -8,6 +9,13 @@ raid sections). Warcraft Logs credentials exist ONLY in GitHub Actions, so:
   * INERT without credentials: exits 0 with a note and touches nothing.
     Local runs stay offline by design; the pull runs in
     .github/workflows/wcl-parse-refresh.yml.
+  * ACTIVE-GATED (config.yml -> parses.sweep): by default only characters
+    seen in recent guild logs, plus anyone already cached, are queried --
+    most of the roster never raids. A full-roster discovery sweep runs
+    every parses.discovery_days so newly active members are found.
+  * BOTH mythic and heroic are fetched for every swept character (any
+    difficulty whose parses.difficulty_scale factor is > 0) -- the website
+    shows them side by side, so one must never shadow the other.
   * FAIL-OPEN like refresh_competition.py: if the fresh sweep resolves far
     fewer characters than the cache already holds (a bad WCL day), the old
     cache is kept rather than blanking every parse on the site.
@@ -19,7 +27,7 @@ same-named characters on different realms must stay distinct.
 Console output is ASCII-safe (names carry accents; CI logs and Windows
 consoles must both survive them).
 
-Usage: python scripts/refresh_parses.py [--min-fraction 0.5]
+Usage: python scripts/refresh_parses.py [--min-fraction 0.5] [--full]
 """
 
 import argparse
@@ -37,9 +45,11 @@ from guild_board.config import load_config, load_roster_cache  # noqa: E402
 from guild_board.wcl import (  # noqa: E402
     IMPROVEMENT_MAX_DAYS,
     detect_zone,
+    fetch_active_raiders,
     fetch_character_parses,
     fetch_guild_reports,
     get_wcl_token,
+    select_active_roster,
 )
 from guild_board.web_data import sweep_difficulties  # noqa: E402
 
@@ -59,18 +69,17 @@ def _load_cache():
         return {}
 
 
-def _detect_tier(token, cfg):
-    """The current raid zone: config override if set, else detected from the
-    guild's recent reports (same skip-the-M+-season-zones rule the weekly
-    board uses). Returns (zone_id, zone_name) -- (None, None) if no reports."""
-    override = int((cfg.get("rankings") or {}).get("zone_id", 0) or 0)
-    if override > 0:
-        return override, None
-    now = datetime.now(timezone.utc)
-    end_ms = int(now.timestamp() * 1000)
-    start_ms = int((now - timedelta(days=IMPROVEMENT_MAX_DAYS)).timestamp() * 1000)
-    reports = fetch_guild_reports(token, cfg, start_ms, end_ms, limit=50)
-    return detect_zone(cfg, reports)
+def _discovery_due(old, discovery_days):
+    """A full-roster discovery sweep is due when the cache has never had
+    one, or the last one is older than discovery_days."""
+    stamp = old.get("last_full_sweep")
+    if not stamp:
+        return True
+    try:
+        last = datetime.fromisoformat(stamp)
+    except ValueError:
+        return True
+    return datetime.now(timezone.utc) - last >= timedelta(days=discovery_days)
 
 
 def main(argv=None):
@@ -78,6 +87,8 @@ def main(argv=None):
     parser.add_argument("--min-fraction", type=float, default=0.5,
                         help="keep the old cache if the fresh sweep resolves "
                              "fewer than this fraction of last run's count")
+    parser.add_argument("--full", action="store_true",
+                        help="force a full-roster discovery sweep this run")
     args = parser.parse_args(argv)
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -97,9 +108,27 @@ def main(argv=None):
         _say("roster_cache.json is empty -- run the weekly board once first.")
         return 0
 
+    parses_cfg = cfg.get("parses") or {}
+    difficulties = sweep_difficulties(parses_cfg.get("difficulty_scale"))
+    if not difficulties:
+        _say("All difficulties are scaled to 0 in config.yml "
+             "(parses.difficulty_scale) -- nothing to sweep; keeping the "
+             "existing cache.")
+        return 0
+
     token = get_wcl_token(client_id, client_secret)
 
-    zone_id, zone_name = _detect_tier(token, cfg)
+    # One report sweep serves both zone detection and the activity gate.
+    now = datetime.now(timezone.utc)
+    end_ms = int(now.timestamp() * 1000)
+    start_ms = int((now - timedelta(days=IMPROVEMENT_MAX_DAYS)).timestamp() * 1000)
+    reports = fetch_guild_reports(token, cfg, start_ms, end_ms, limit=50)
+
+    override = int((cfg.get("rankings") or {}).get("zone_id", 0) or 0)
+    if override > 0:
+        zone_id, zone_name = override, None
+    else:
+        zone_id, zone_name = detect_zone(cfg, reports)
     if not zone_id:
         _say("No raid zone found (no recent guild reports and no "
              "rankings.zone_id override) -- keeping the existing cache.")
@@ -110,22 +139,43 @@ def main(argv=None):
     _say(f"Current tier: {tier['name']} (WCL zone {tier['zone_id']})")
 
     old = _load_cache()
-    old_count = len(old.get("characters") or {})
+    old_chars = old.get("characters") or {}
+    old_count = len(old_chars)
 
-    # One knob controls policy AND fetch: a difficulty scaled to 0 in
-    # config.yml (parses.difficulty_scale) is excluded from the sweep too,
-    # so the Action never spends queries on data the build would drop.
-    difficulties = sweep_difficulties(
-        (cfg.get("parses") or {}).get("difficulty_scale"))
-    if not difficulties:
-        _say("All difficulties are scaled to 0 in config.yml "
-             "(parses.difficulty_scale) -- nothing to sweep; keeping the "
-             "existing cache.")
-        return 0
-    _say(f"Sweeping WCL parse averages for {len(roster)} roster members "
-         f"(difficulties {list(difficulties)})...")
+    # The activity gate: whole-roster sweeps only on discovery days; daily
+    # runs query recent-log participants + everyone already cached.
+    sweep_mode = str(parses_cfg.get("sweep", "active")).strip().lower()
+    active_days = int(parses_cfg.get("active_days", 21) or 21)
+    discovery_days = int(parses_cfg.get("discovery_days", 7) or 7)
+    full_sweep = (args.full or sweep_mode == "full"
+                  or _discovery_due(old, discovery_days))
+    if full_sweep:
+        sweep_roster = list(roster)
+        _say(f"Full-roster sweep ({len(sweep_roster)} members): "
+             + ("forced/configured." if (args.full or sweep_mode == "full")
+                else "discovery sweep due."))
+    else:
+        cutoff_ms = int((now - timedelta(days=active_days)).timestamp() * 1000)
+        recent = [r for r in reports
+                  if (r.get("startTime") or 0) >= cutoff_ms
+                  and (not zone_id or (r.get("zone") or {}).get("id") == zone_id)]
+        active = fetch_active_raiders(token, cfg, recent, difficulties)
+        sweep_roster = select_active_roster(
+            roster, active, old_chars.keys(),
+            default_realm=cfg["guild"]["realm_slug"])
+        _say(f"Active sweep: {len(sweep_roster)} of {len(roster)} roster "
+             f"members ({len(active)} names in the last {active_days}d of "
+             f"logs across {len(recent)} report(s), {old_count} already "
+             "cached). Full discovery runs every "
+             f"{discovery_days}d.")
+        if not sweep_roster:
+            _say("Nobody active and nothing cached -- keeping the existing "
+                 "cache untouched.")
+            return 0
+
+    _say(f"Sweeping WCL parse averages (difficulties {list(difficulties)})...")
     t = time.perf_counter()
-    characters = fetch_character_parses(token, cfg, roster, zone_id,
+    characters = fetch_character_parses(token, cfg, sweep_roster, zone_id,
                                         difficulties=difficulties)
     elapsed = time.perf_counter() - t
     _say(f"  {len(characters)} characters with rankings in {elapsed:.0f}s")
@@ -138,7 +188,11 @@ def main(argv=None):
         return 0
 
     payload = {
-        "last_updated": datetime.now(timezone.utc).isoformat(),
+        "last_updated": now.isoformat(),
+        "last_full_sweep": (now.isoformat() if full_sweep
+                            else old.get("last_full_sweep")),
+        "sweep_mode": "full" if full_sweep else "active",
+        "swept_count": len(sweep_roster),
         "tier": tier,
         "season_slug": season["slug"],
         "count": len(characters),
@@ -148,13 +202,17 @@ def main(argv=None):
         json.dump(payload, f, indent=2, ensure_ascii=False)
     _say(f"  wrote {CACHE_PATH}")
 
-    top = sorted(characters.values(),
-                 key=lambda c: c.get("best_perf_avg") or 0, reverse=True)[:5]
+    def _best(c):
+        return max((s.get("best_perf_avg") or 0)
+                   for s in (c.get("by_difficulty") or {"": {}}).values())
+
+    top = sorted(characters.values(), key=_best, reverse=True)[:5]
     if top:
-        _say("  top 5 by best-performance average:")
+        _say("  top 5 by best-performance average (any difficulty):")
         for i, c in enumerate(top, 1):
-            _say(f"    {i}. {c.get('name') or c.get('key'):20} "
-                 f"{c.get('best_perf_avg'):>5} (difficulty {c.get('difficulty')})")
+            diffs = ", ".join(f"{d} {s.get('best_perf_avg')}"
+                              for d, s in (c.get("by_difficulty") or {}).items())
+            _say(f"    {i}. {c.get('name') or c.get('key'):20} {diffs}")
     return 0
 
 

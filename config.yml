@@ -297,11 +297,24 @@ parses:
   # the parses layer ("no logs yet" on the site) and the refresh sweep
   # stops querying it. The RAW averages always stay in the cache, so
   # flipping a factor back on later is loss-free.
+  # Every ENABLED difficulty is fetched for every swept character (the
+  # website shows mythic and heroic side by side).
   # See docs/PARSES_CONFIG_GUIDE.html.
   difficulty_scale:
     mythic: 1.0
     heroic: 0.8
     normal: 0.0    # excluded — normal-difficulty parses don't count
+
+  # Who gets swept. "active" (recommended): only characters seen in the
+  # guild's Warcraft Logs reports in the last active_days, plus anyone
+  # already in the parse cache — most of the roster never raids, and
+  # querying all 135 members every run wastes the API budget. A FULL
+  # roster discovery sweep still runs every discovery_days so newly
+  # active members (including pug raiders) are picked up. "full" sweeps
+  # the whole roster every run.
+  sweep: active
+  active_days: 21      # how far back guild logs count as "active"
+  discovery_days: 7    # full-roster discovery sweep at most this often
 
 # ------------------------------------------------------------
 #  RAID SETTINGS

@@ -697,11 +697,16 @@ query ($name: String!, $slug: String!, $region: String!, $zoneId: Int!, $difficu
 }
 """
 
-# Parses only exist at difficulties the character actually logged, and
-# zoneRankings answers one difficulty at a time — so walk mythic -> heroic
-# -> normal and keep the first difficulty with data (same order the weekly
-# board's fallback uses).
+# zoneRankings answers one difficulty at a time, and the website shows
+# difficulties SIDE BY SIDE (mythic and heroic columns) — so the sweep
+# queries every difficulty here for every character; one difficulty must
+# never shadow another. Which of these actually run is governed by
+# config.yml's parses.difficulty_scale (a 0 factor drops one) via
+# web_data.sweep_difficulties.
 PARSE_SWEEP_DIFFICULTIES = (5, 4, 3)
+
+# WCL difficulty id -> the name used in config.yml and in by_difficulty keys.
+PARSE_DIFFICULTY_NAMES = {v: k for k, v in DIFFICULTY_MAP.items()}
 
 
 def _perf_avg(blob):
@@ -762,22 +767,32 @@ def normalize_character_parses(char_blob):
 
 def fetch_character_parses(token, cfg, roster, zone_id,
                            difficulties=PARSE_SWEEP_DIFFICULTIES):
-    """Current-tier parse averages for every roster member, from WCL
-    character zoneRankings.
+    """Current-tier parse averages per roster member, from WCL character
+    zoneRankings.
 
     roster: name-realm entries exactly as roster_cache.json keeps them
-    ("amrevenge-stormrage", Unicode preserved). The result is keyed by that
-    SAME full name-realm key — never the bare name. board_state's bare-name
+    ("amrevenge-stormrage", Unicode preserved, lowercased once at roster
+    ingestion by config.normalize_roster_entry). The result is keyed by
+    that SAME full name-realm key — never the bare name. board_state's bare-name
     season_scores keying already destroyed data for same-named characters
     on different realms; this layer must not repeat it.
 
-    Per character: walk `difficulties` in order and keep the first with
-    data. A character WCL has never seen (character: null) is skipped
-    without trying lower difficulties — no logs at mythic means no
-    character page at all, not "try heroic".
+    EVERY difficulty in `difficulties` is queried for every character —
+    the website renders difficulties side by side (mythic and heroic
+    columns), so one difficulty's data must never shadow another's.
+    Results nest per difficulty, keyed by difficulty NAME:
 
-    Fail-soft per character: one bad lookup is logged and skipped, never
-    aborts the sweep.
+        {"amrevenge-stormrage": {
+            "name": "Amrevenge", "class": "Hunter",
+            "key": "amrevenge-stormrage", "sourced_at": "...",
+            "by_difficulty": {
+                "mythic": {"best_perf_avg": 88.2, "by_role": {...}},
+                "heroic": {"best_perf_avg": 95.1, "by_role": {...}}}}}
+
+    A character WCL has never seen (character: null) is skipped without
+    spending queries on the remaining difficulties — no character page
+    means no logs at any difficulty. Fail-soft per lookup: one bad query
+    is logged and skipped, never aborts the sweep.
     """
     region = cfg["guild"]["region"]
     default_realm = cfg["guild"]["realm_slug"]
@@ -788,6 +803,8 @@ def fetch_character_parses(token, cfg, roster, zone_id,
         name, realm = split_name_realm(entry_key, default_realm)
         if not name:
             continue
+        char_name, char_class = "", ""
+        by_difficulty = {}
         for difficulty in difficulties:
             try:
                 data = gql(token, CHARACTER_PARSES_QUERY, {
@@ -805,13 +822,79 @@ def fetch_character_parses(token, cfg, roster, zone_id,
             char = (data.get("characterData") or {}).get("character")
             if char is None:
                 break
-            entry = normalize_character_parses(char)
-            if entry:
-                entry["key"] = entry_key
-                entry["difficulty"] = difficulty
-                entry["sourced_at"] = sourced_at
-                out[entry_key] = entry
-                break
+            sub = normalize_character_parses(char)
+            if not sub:
+                continue
+            char_name = char_name or sub.pop("name", "")
+            char_class = char_class or sub.pop("class", "")
+            sub.pop("name", None)
+            sub.pop("class", None)
+            diff_name = PARSE_DIFFICULTY_NAMES.get(difficulty, str(difficulty))
+            by_difficulty[diff_name] = sub
+        if by_difficulty:
+            out[entry_key] = {
+                "name": char_name,
+                "class": char_class,
+                "key": entry_key,
+                "sourced_at": sourced_at,
+                "by_difficulty": by_difficulty,
+            }
+    return out
+
+
+def fetch_active_raiders(token, cfg, reports, difficulties=PARSE_SWEEP_DIFFICULTIES):
+    """Who actually raided recently: everyone named in the given guild
+    reports' rankings at any of the given difficulties.
+
+    Returns {name_lower: realm_slug_or_None}. Built on the memoized
+    fetch_report_detail, so re-scanning reports another pass already read
+    costs no extra API calls. This is the parse sweep's activity gate —
+    querying zoneRankings for 100+ roster members who never raid wastes
+    the API budget the sweep runs on.
+    """
+    participants = {}
+    for report in reports or []:
+        code = report.get("code")
+        if not code:
+            continue
+        for difficulty in difficulties:
+            try:
+                rep = fetch_report_detail(token, code, difficulty)
+            except (RuntimeError, requests.RequestException) as exc:
+                logger.warning("Active-raider scan: skipping %s at difficulty %s: %s",
+                               code, difficulty, exc)
+                continue
+            collect_participants(rep.get("dps"), participants)
+            collect_participants(rep.get("hps"), participants)
+    return {name.strip().lower(): slug
+            for name, slug in participants.items() if name and name.strip()}
+
+
+def select_active_roster(roster, active, cached_keys=None, default_realm=None):
+    """Filter roster entries down to the parse sweep's active set: anyone
+    seen in recent guild logs (`active`, from fetch_active_raiders) plus
+    anyone already in the parse cache (`cached_keys` — once a character
+    has rankings, keep refreshing them even through a quiet week).
+
+    Matching is name+realm when the log carried a realm slug, and name-only
+    when it didn't. Over-inclusion is fine (one wasted query); exclusion
+    would silently hide a raider, so ties break toward keeping the entry.
+    Pure — unit-testable offline.
+    """
+    active = active or {}
+    cached = set(cached_keys or ())
+    out = []
+    for entry in roster:
+        if entry in cached:
+            out.append(entry)
+            continue
+        name, realm = split_name_realm(entry, default_realm)
+        lname = name.strip().lower()
+        if lname not in active:
+            continue
+        slug = active[lname]
+        if slug is None or slug == (realm or "").strip().lower():
+            out.append(entry)
     return out
 
 
@@ -838,7 +921,9 @@ def fetch_guild_member_roster(token, cfg):
             key = f"{name.strip().lower()}-{realm.lower()}"
             if key not in seen:
                 seen.add(key)
-                roster.append((name.strip().lower(), realm))
+                # realm lowered to match the dedup key — a mixed-case
+                # realm_slug in config.yml must not leak into roster keys.
+                roster.append((name.strip().lower(), realm.lower()))
         if not members.get("has_more_pages"):
             break
         page += 1

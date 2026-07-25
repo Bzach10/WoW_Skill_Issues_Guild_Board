@@ -162,9 +162,11 @@ cosmetics see <code>theme.yml</code> + <code>CUSTOMIZING.md</code>; for the fron
   <div class="step ci"><div class="n">1</div><div>
     <b class="t">WCL Parse Refresh <span class="tag ci">CI only · daily 13:30 UTC</span></b>
     <small><code>.github/workflows/wcl-parse-refresh.yml</code> runs <code>scripts/refresh_parses.py</code> with the
-    <code>WCL_CLIENT_ID</code>/<code>WCL_CLIENT_SECRET</code> repo secrets. Sweeps every roster member's
-    current-tier rankings (mythic → heroic → normal, first hit wins). On your PC the same script
-    prints a note and exits — no credentials exist locally, on purpose.</small>
+    <code>WCL_CLIENT_ID</code>/<code>WCL_CLIENT_SECRET</code> repo secrets. It sweeps the ACTIVE raiders —
+    anyone in the guild's logs in the last <code>active_days</code>, plus everyone already cached — and
+    fetches <b>every enabled difficulty (mythic AND heroic) for each of them</b>, so the site can show both
+    side by side. A full-roster discovery sweep runs every <code>discovery_days</code> to find newly active
+    members. On your PC the same script prints a note and exits — no credentials exist locally, on purpose.</small>
   </div></div>
   <div class="arrow">▼</div>
   <div class="step"><div class="n">2</div><div>
@@ -224,8 +226,10 @@ skips querying that difficulty, saving API budget. The raw numbers stay in the c
 <code>normal</code> back to, say, <code>0.5</code> later restores everyone on the next rebuild —
 nothing is lost.</div>
 
-<p>Every character keeps <b>both</b> numbers: <code>best_perf_avg</code> (raw — show this on cards,
-labeled with the difficulty) and <code>scaled_perf_avg</code> (discounted — rankings use this).
+<p>Every character carries <b>every enabled difficulty separately</b> (<code>by_difficulty.mythic</code> /
+<code>by_difficulty.heroic</code>, each with raw + scaled values), plus headline fields for ranking:
+the difficulty whose <i>scaled</i> value is best. So a mythic 80 headlines over that same player's
+heroic 95 (× 0.8 = 76), while both numbers stay visible for the website's side-by-side columns.
 The bundle also records which factors were applied, so an old bundle can't lie about its tuning.</p>
 
 <div class="callout ok"><b>When does a change take effect?</b> On the next bundle rebuild — the
@@ -262,6 +266,10 @@ and scaled values cap at 100 even if you set mythic above 1.0.</div>
   <div class="recipe"><b>…adjust the "bad WCL day" safety net?</b>
     <ol><li>The refresh keeps the old cache if a sweep resolves &lt; 50% of last run's characters</li>
     <li>Change it: add <code>--min-fraction 0.3</code> to the refresh step in the workflow</li></ol></div>
+  <div class="recipe"><b>…control who gets swept (API budget)?</b>
+    <ol><li><code>config.yml</code> → <code>parses.sweep</code>: <code>active</code> (recent-log raiders + cached; recommended) or <code>full</code> (all 135 every run)</li>
+    <li><code>active_days</code> = how far back logs count; <code>discovery_days</code> = how often the full roster is re-checked for new raiders</li>
+    <li>One-off full sweep now: run the Action after adding <code>--full</code> to the refresh step, or wait for the next discovery day</li></ol></div>
   <div class="recipe"><b>…rotate the WCL credentials?</b>
     <ol><li>warcraftlogs.com → your client at <code>/api/clients</code> → regenerate secret</li>
     <li>GitHub → Settings → Secrets and variables → Actions → update <code>WCL_CLIENT_ID</code> / <code>WCL_CLIENT_SECRET</code></li>

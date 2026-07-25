@@ -76,7 +76,9 @@ def test_roster_cache(tmp_path):
     cfg = {"roster_cache": {"enabled": True, "file": str(tmp_path / "roster.json")}}
     gb_config.save_roster_cache(cfg, ["Rakell-Area52", "Bud-BleedingHollow"])
     members, _ = gb_config.load_roster_cache(cfg)
-    assert members == ["Bud-BleedingHollow", "Rakell-Area52"]
+    # Entries round-trip in canonical form: sorted and case-folded
+    # (config.normalize_roster_entry) — never verbatim mixed case.
+    assert members == ["bud-bleedinghollow", "rakell-area52"]
 
 
 def test_apply_roster_filters(tmp_path):
@@ -335,6 +337,19 @@ def test_name_filter_unions_live_and_cached_roster(tmp_path):
         assert not keep("Randompug")
     finally:
         filters.fetch_guild_member_names = original
+
+
+def test_roster_cache_round_trip_normalizes_casing(tmp_path):
+    # Casing folds at ingestion (config.normalize_roster_entry): a
+    # mixed-case entry written by any producer comes back canonical, and
+    # save dedups entries that differ only by case.
+    cache_file = tmp_path / "roster.json"
+    cfg = {"roster_cache": {"enabled": True, "file": str(cache_file)}}
+    gb_config.save_roster_cache(cfg, ["Rakdisc-Proudmoore",
+                                      "rakdisc-proudmoore",
+                                      "violënce-bleeding-hollow"])
+    members, _ = gb_config.load_roster_cache(cfg)
+    assert members == ["rakdisc-proudmoore", "violënce-bleeding-hollow"]
 
 
 def test_resolve_roster_refreshes_stale_cache(tmp_path, monkeypatch):

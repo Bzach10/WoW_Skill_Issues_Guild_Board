@@ -53,6 +53,32 @@
           }
         },
         "difficulty": 5,
+        "by_difficulty": {
+          "mythic": {
+            "best_perf_avg": 92.4,
+            "median_perf_avg": 81.0,
+            "by_role": {
+              "DPS": {
+                "best_perf_avg": 92.4,
+                "kills": 7
+              }
+            },
+            "scaled_perf_avg": 92.4,
+            "difficulty_scale": 1.0
+          },
+          "heroic": {
+            "best_perf_avg": 96.8,
+            "median_perf_avg": 90.2,
+            "by_role": {
+              "DPS": {
+                "best_perf_avg": 96.8,
+                "kills": 11
+              }
+            },
+            "scaled_perf_avg": 77.4,
+            "difficulty_scale": 0.8
+          }
+        },
         "source": "wcl_zone_rankings"
       },
       "rank": 1,
@@ -168,6 +194,36 @@
           }
         },
         "difficulty": 5,
+        "by_difficulty": {
+          "mythic": {
+            "best_perf_avg": 88.1,
+            "median_perf_avg": 74.5,
+            "by_role": {
+              "Healer": {
+                "best_perf_avg": 88.1,
+                "kills": 6
+              },
+              "DPS": {
+                "best_perf_avg": 41.2,
+                "kills": 2
+              }
+            },
+            "scaled_perf_avg": 88.1,
+            "difficulty_scale": 1.0
+          },
+          "heroic": {
+            "best_perf_avg": 93.0,
+            "median_perf_avg": 85.1,
+            "by_role": {
+              "Healer": {
+                "best_perf_avg": 93.0,
+                "kills": 9
+              }
+            },
+            "scaled_perf_avg": 74.4,
+            "difficulty_scale": 0.8
+          }
+        },
         "source": "wcl_zone_rankings"
       },
       "rank": 5,
@@ -204,6 +260,19 @@
           }
         },
         "difficulty": 4,
+        "by_difficulty": {
+          "heroic": {
+            "best_perf_avg": 71.9,
+            "by_role": {
+              "Tank": {
+                "best_perf_avg": 71.9,
+                "kills": 5
+              }
+            },
+            "scaled_perf_avg": 57.5,
+            "difficulty_scale": 0.8
+          }
+        },
         "source": "wcl_zone_rankings"
       },
       "rank": 6,

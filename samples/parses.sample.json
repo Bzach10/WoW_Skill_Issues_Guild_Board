@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T01:49:17.826060+00:00",
+  "generated_at": "2026-07-25T02:29:31.773453+00:00",
   "available": true,
   "status": "ok",
   "source": "Warcraft Logs character zoneRankings",
@@ -25,28 +25,56 @@
       "key": "amrevenge-stormrage",
       "class": "Hunter",
       "best_perf_avg": 92.4,
-      "median_perf_avg": 81.0,
+      "scaled_perf_avg": 92.4,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 92.4,
           "kills": 7
         }
       },
-      "difficulty": 5,
-      "sourced_at": "2026-07-20T13:30:00+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 92.4,
+          "median_perf_avg": 81.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 92.4,
+              "kills": 7
+            }
+          },
+          "scaled_perf_avg": 92.4,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 96.8,
+          "median_perf_avg": 90.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 96.8,
+              "kills": 11
+            }
+          },
+          "scaled_perf_avg": 77.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "Voidspire Sanctum"
       },
-      "scaled_perf_avg": 92.4,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-20T13:30:00+00:00",
+      "median_perf_avg": 81.0
     },
     "rakdisc-proudmoore": {
       "name": "Rakdisc",
       "key": "rakdisc-proudmoore",
       "class": "Priest",
       "best_perf_avg": 88.1,
-      "median_perf_avg": 74.5,
+      "scaled_perf_avg": 88.1,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "Healer": {
           "best_perf_avg": 88.1,
@@ -57,34 +85,75 @@
           "kills": 2
         }
       },
-      "difficulty": 5,
-      "sourced_at": "2026-07-20T13:30:00+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 88.1,
+          "median_perf_avg": 74.5,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 88.1,
+              "kills": 6
+            },
+            "DPS": {
+              "best_perf_avg": 41.2,
+              "kills": 2
+            }
+          },
+          "scaled_perf_avg": 88.1,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 93.0,
+          "median_perf_avg": 85.1,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 93.0,
+              "kills": 9
+            }
+          },
+          "scaled_perf_avg": 74.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "Voidspire Sanctum"
       },
-      "scaled_perf_avg": 88.1,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-20T13:30:00+00:00",
+      "median_perf_avg": 74.5
     },
     "floofwall-queldorei": {
       "name": "Floofwall",
       "key": "floofwall-queldorei",
       "class": "Monk",
       "best_perf_avg": 71.9,
+      "scaled_perf_avg": 57.5,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
           "best_perf_avg": 71.9,
           "kills": 5
         }
       },
-      "difficulty": 4,
-      "sourced_at": "2026-07-20T13:30:00+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 71.9,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 71.9,
+              "kills": 5
+            }
+          },
+          "scaled_perf_avg": 57.5,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "Voidspire Sanctum"
       },
-      "scaled_perf_avg": 57.5,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-20T13:30:00+00:00"
     }
   },
   "character_count": 3,

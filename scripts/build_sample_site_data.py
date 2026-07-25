@@ -177,27 +177,41 @@ COMPETITION_FETCHED = {"prev_day_scores": {
 # The credentialed WCL parse sweep (real parses_cache.json shape) so the
 # Four Emperors ranking, standings parse columns and newspaper raid sections
 # all render populated. Keyed by the FULL name-realm key, exactly like the
-# live cache — never bare names.
+# live cache — never bare names. Every enabled difficulty is fetched per
+# character (mythic AND heroic), nested under by_difficulty; Amrevenge shows
+# the headline rule (heroic 96.8 x 0.8 = 77.4 loses to mythic 92.4).
 PARSES_FETCHED = {
     "last_updated": "2026-07-20T13:30:00+00:00",
+    "last_full_sweep": "2026-07-20T13:30:00+00:00",
+    "sweep_mode": "active",
     "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
     "characters": {
         "amrevenge-stormrage": {
             "name": "Amrevenge", "key": "amrevenge-stormrage",
-            "class": "Hunter", "best_perf_avg": 92.4, "median_perf_avg": 81.0,
-            "by_role": {"DPS": {"best_perf_avg": 92.4, "kills": 7}},
-            "difficulty": 5, "sourced_at": "2026-07-20T13:30:00+00:00"},
+            "class": "Hunter", "sourced_at": "2026-07-20T13:30:00+00:00",
+            "by_difficulty": {
+                "mythic": {"best_perf_avg": 92.4, "median_perf_avg": 81.0,
+                           "by_role": {"DPS": {"best_perf_avg": 92.4, "kills": 7}}},
+                "heroic": {"best_perf_avg": 96.8, "median_perf_avg": 90.2,
+                           "by_role": {"DPS": {"best_perf_avg": 96.8, "kills": 11}}},
+            }},
         "rakdisc-proudmoore": {
             "name": "Rakdisc", "key": "rakdisc-proudmoore",
-            "class": "Priest", "best_perf_avg": 88.1, "median_perf_avg": 74.5,
-            "by_role": {"Healer": {"best_perf_avg": 88.1, "kills": 6},
-                        "DPS": {"best_perf_avg": 41.2, "kills": 2}},
-            "difficulty": 5, "sourced_at": "2026-07-20T13:30:00+00:00"},
+            "class": "Priest", "sourced_at": "2026-07-20T13:30:00+00:00",
+            "by_difficulty": {
+                "mythic": {"best_perf_avg": 88.1, "median_perf_avg": 74.5,
+                           "by_role": {"Healer": {"best_perf_avg": 88.1, "kills": 6},
+                                       "DPS": {"best_perf_avg": 41.2, "kills": 2}}},
+                "heroic": {"best_perf_avg": 93.0, "median_perf_avg": 85.1,
+                           "by_role": {"Healer": {"best_perf_avg": 93.0, "kills": 9}}},
+            }},
         "floofwall-queldorei": {
             "name": "Floofwall", "key": "floofwall-queldorei",
-            "class": "Monk", "best_perf_avg": 71.9,
-            "by_role": {"Tank": {"best_perf_avg": 71.9, "kills": 5}},
-            "difficulty": 4, "sourced_at": "2026-07-20T13:30:00+00:00"},
+            "class": "Monk", "sourced_at": "2026-07-20T13:30:00+00:00",
+            "by_difficulty": {
+                "heroic": {"best_perf_avg": 71.9,
+                           "by_role": {"Tank": {"best_perf_avg": 71.9, "kills": 5}}},
+            }},
     },
 }
 
