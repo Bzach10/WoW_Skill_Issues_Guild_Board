@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-24T23:47:34.568416+00:00",
+  "generated_at": "2026-07-25T02:23:04.524349+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:47:34.568551+00:00",
+    "generated_at": "2026-07-25T02:23:04.524431+00:00",
     "week_of": "2026-07-21",
     "based_on": "2026-07-21T18:04:28.385705+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:47:34.568813+00:00",
+    "generated_at": "2026-07-25T02:23:04.524526+00:00",
     "based_on": "2026-07-21T18:04:28.385705+00:00",
     "standing": {
       "realm": 49,
@@ -963,7 +963,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:47:34.568823+00:00",
+    "generated_at": "2026-07-25T02:23:04.524530+00:00",
     "available": false,
     "status": "pending_credentials",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -973,7 +973,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:47:34.568864+00:00",
+    "generated_at": "2026-07-25T02:23:04.524553+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -1170,7 +1170,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:47:34.568382+00:00",
+    "generated_at": "2026-07-25T02:23:04.524177+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -1179,7 +1179,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:47:34.568873+00:00",
+    "generated_at": "2026-07-25T02:23:04.524557+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -1307,9 +1307,15 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 96,
-          "boss": "Fallen-King Salhadaar",
-          "source": "board_state"
+          "best": 41.9,
+          "scaled": 41.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.9
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
         },
         "rank": 1,
         "top5": true
@@ -1420,7 +1426,17 @@
         "delta_week": 67.1,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 54.8,
+          "scaled": 54.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 54.8
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 2,
         "top5": true
       },
@@ -1530,7 +1546,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 3.2,
+          "scaled": 3.2,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 9.9
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 3,
         "top5": true
       },
@@ -1640,7 +1666,20 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 75.3,
+          "scaled": 75.3,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 19.2
+            },
+            "Tank": {
+              "best_perf_avg": 75.3
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 4,
         "top5": true
       },
@@ -1750,7 +1789,17 @@
         "delta_week": 171.2,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 71.5,
+          "scaled": 71.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 71.5
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 5,
         "top5": true
       },
@@ -1860,7 +1909,20 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 62.1,
+          "scaled": 62.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 68.1
+            },
+            "Healer": {
+              "best_perf_avg": 62.1
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 6,
         "top5": false
       },
@@ -1970,7 +2032,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 54.5,
+          "scaled": 54.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 54.5
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 7,
         "top5": false
       },
@@ -2080,7 +2152,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 60.1,
+          "scaled": 60.1,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 60.1
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 8,
         "top5": false
       },
@@ -2190,7 +2272,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 43.6,
+          "scaled": 43.6,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 43.6
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 9,
         "top5": false
       },
@@ -2300,7 +2392,20 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 72.8,
+          "scaled": 72.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 72.8
+            },
+            "Tank": {
+              "best_perf_avg": 18.9
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 10,
         "top5": false
       },
@@ -2410,7 +2515,17 @@
         "delta_week": 0,
         "delta_day": 0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 54.3,
+          "scaled": 43.4,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 54.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 11,
         "top5": false
       },
@@ -2520,7 +2635,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 84.0,
+          "scaled": 84.0,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 19.9
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 12,
         "top5": false
       },
@@ -2630,7 +2755,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 78.7,
+          "scaled": 63.0,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 78.7
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 13,
         "top5": false
       },
@@ -2740,7 +2875,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 52.8,
+          "scaled": 42.2,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 69.5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 14,
         "top5": false
       },
@@ -2850,7 +2995,17 @@
         "delta_week": 120.3,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 23.8,
+          "scaled": 23.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.8
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 15,
         "top5": false
       },
@@ -2960,7 +3115,17 @@
         "delta_week": 0,
         "delta_day": 0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 58.3,
+          "scaled": 58.3,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 58.3
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 16,
         "top5": false
       },
@@ -3070,7 +3235,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 63.3,
+          "scaled": 50.6,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 63.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 17,
         "top5": false
       },
@@ -3180,7 +3355,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 36.4,
+          "scaled": 29.1,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 53.5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 18,
         "top5": false
       },
@@ -3290,7 +3475,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 30.3,
+          "scaled": 30.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 30.3
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 19,
         "top5": false
       },
@@ -3400,7 +3595,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 34.4,
+          "scaled": 34.4,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 34.4
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 20,
         "top5": false
       },
@@ -3510,7 +3715,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 39.1,
+          "scaled": 39.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 39.1
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 21,
         "top5": false
       },
@@ -3620,7 +3835,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 58.0,
+          "scaled": 58.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 58.0
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 22,
         "top5": false
       },
@@ -3730,7 +3955,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 44.9,
+          "scaled": 35.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 44.9
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 23,
         "top5": false
       },
@@ -3840,7 +4075,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 39.2,
+          "scaled": 31.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 39.2
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 24,
         "top5": false
       },
@@ -3950,7 +4195,17 @@
         "delta_week": 1061.2,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 29.6,
+          "scaled": 29.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 29.6
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 25,
         "top5": false
       },
@@ -4170,7 +4425,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 34.3,
+          "scaled": 34.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 34.3
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 27,
         "top5": false
       },
@@ -4280,7 +4545,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 8.1,
+          "scaled": 8.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 8.1
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 28,
         "top5": false
       },
@@ -4390,7 +4665,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 18.4,
+          "scaled": 18.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 18.4
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 29,
         "top5": false
       },
@@ -4500,7 +4785,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 11.2,
+          "scaled": 11.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 11.2
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 30,
         "top5": false
       },
@@ -4610,7 +4905,17 @@
         "delta_week": 15.9,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 21.0,
+          "scaled": 16.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 21.0
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 31,
         "top5": false
       },
@@ -4720,7 +5025,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 47.7,
+          "scaled": 47.7,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 47.7
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 32,
         "top5": false
       },
@@ -4830,7 +5145,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 31.7,
+          "scaled": 31.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 31.7
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 33,
         "top5": false
       },
@@ -4940,7 +5265,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 5.6,
+          "scaled": 5.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 5.6
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 34,
         "top5": false
       },
@@ -5050,7 +5385,17 @@
         "delta_week": 23.2,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 41.5,
+          "scaled": 41.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.5
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 35,
         "top5": false
       },
@@ -5160,7 +5505,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 50.7,
+          "scaled": 50.7,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 50.7
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 36,
         "top5": false
       },
@@ -5270,7 +5625,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 37.4,
+          "scaled": 37.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 37.4
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 37,
         "top5": false
       },
@@ -5380,7 +5745,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 18.9,
+          "scaled": 15.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 18.9
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 38,
         "top5": false
       },
@@ -5490,7 +5865,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 14.1,
+          "scaled": 14.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 14.1
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 39,
         "top5": false
       },
@@ -5710,7 +6095,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 45.6,
+          "scaled": 36.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 45.6
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 41,
         "top5": false
       },
@@ -5820,7 +6215,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 12.8,
+          "scaled": 12.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 9.4
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 42,
         "top5": false
       },
@@ -6040,7 +6445,20 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 14.8,
+          "scaled": 14.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 14.8
+            },
+            "Tank": {
+              "best_perf_avg": 12.0
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 44,
         "top5": false
       },
@@ -6150,7 +6568,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 20.9,
+          "scaled": 16.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 20.9
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 45,
         "top5": false
       },
@@ -6260,7 +6688,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 44.2,
+          "scaled": 35.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 44.2
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 46,
         "top5": false
       },
@@ -6370,7 +6808,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 41.0,
+          "scaled": 41.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.0
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 47,
         "top5": false
       },
@@ -6590,7 +7038,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 27.8,
+          "scaled": 22.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 27.8
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 49,
         "top5": false
       },
@@ -6810,7 +7268,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 15.6,
+          "scaled": 15.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 15.6
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 51,
         "top5": false
       },
@@ -7030,7 +7498,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 7.7,
+          "scaled": 7.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 7.7
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 53,
         "top5": false
       },
@@ -7140,7 +7618,17 @@
         "delta_week": 33.9,
         "delta_day": 0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 22.8,
+          "scaled": 22.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 22.8
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 54,
         "top5": false
       },
@@ -7250,7 +7738,17 @@
         "delta_week": 45.5,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 54.5,
+          "scaled": 43.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 54.5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 55,
         "top5": false
       },
@@ -7360,7 +7858,17 @@
         "delta_week": 770.6,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 49.3,
+          "scaled": 39.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 49.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 56,
         "top5": false
       },
@@ -7580,7 +8088,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 23.3,
+          "scaled": 18.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 58,
         "top5": false
       },
@@ -7690,7 +8208,17 @@
         "delta_week": 42.4,
         "delta_day": 0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 23.5,
+          "scaled": 18.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 59,
         "top5": false
       },
@@ -8130,7 +8658,20 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 12.5,
+          "scaled": 10.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 8.1
+            },
+            "Tank": {
+              "best_perf_avg": 30.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 63,
         "top5": false
       },
@@ -8240,7 +8781,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 57.9,
+          "scaled": 46.3,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 20.0
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 64,
         "top5": false
       },
@@ -8460,7 +9011,20 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 23.3,
+          "scaled": 18.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 11.6
+            },
+            "Tank": {
+              "best_perf_avg": 23.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 66,
         "top5": false
       },
@@ -8570,7 +9134,17 @@
         "delta_week": 0,
         "delta_day": 0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 31.4,
+          "scaled": 25.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 31.4
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 67,
         "top5": false
       },
@@ -8790,7 +9364,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 23.6,
+          "scaled": 18.9,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 23.6
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 69,
         "top5": false
       },
@@ -8900,7 +9484,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 15.4,
+          "scaled": 12.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 15.4
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 70,
         "top5": false
       },
@@ -9120,7 +9714,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 17.5,
+          "scaled": 14.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 17.5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 72,
         "top5": false
       },
@@ -9339,7 +9943,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 24.9,
+          "scaled": 19.9,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 50.9
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 75,
         "top5": false
       },
@@ -9439,7 +10053,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 21.3,
+          "scaled": 17.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 21.3
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 76,
         "top5": false
       },
@@ -9639,7 +10263,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 15.1,
+          "scaled": 12.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 15.1
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 78,
         "top5": false
       },
@@ -10109,7 +10743,17 @@
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
-        "parse": null,
+        "parse": {
+          "best": 58.6,
+          "scaled": 46.9,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 35.4
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 84,
         "top5": false
       },
@@ -10269,7 +10913,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 3.5,
+          "scaled": 2.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 3.5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 86,
         "top5": false
       },
@@ -10589,7 +11243,17 @@
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 4.6,
+          "scaled": 3.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 4.6
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 91,
         "top5": false
       },
@@ -16241,8 +16905,9 @@
       }
     },
     "parses": {
-      "available": "partial",
-      "source": "board_state records (Warcraft Logs enrichment not yet enabled; Raider.io does not expose parses)",
+      "available": "full",
+      "source": "Warcraft Logs character zoneRankings (per-character averages on characters[].parse; see the parses layer for the full detail) + board_state record holders",
+      "characters_with_parses": 66,
       "leaders": [
         {
           "name": "Amrevenge",
@@ -16261,11 +16926,1374 @@
       ]
     }
   },
+  "parses": {
+    "schema_version": 1,
+    "generated_at": "2026-07-25T02:23:04.524345+00:00",
+    "available": true,
+    "status": "ok",
+    "source": "Warcraft Logs character zoneRankings",
+    "season": {
+      "slug": "season-mn-1",
+      "name": "Midnight Season 1"
+    },
+    "tier": {
+      "zone_id": 46,
+      "name": "VS / DR / MQD"
+    },
+    "sourced_at": "2026-07-25T02:23:03.997855+00:00",
+    "difficulty_scale": {
+      "mythic": 1.0,
+      "heroic": 0.8,
+      "normal": 0.0,
+      "lfr": 1.0
+    },
+    "characters": {
+      "aime-bleeding-hollow": {
+        "name": "Aime",
+        "class": "Druid",
+        "best_perf_avg": 15.4,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 15.4
+          }
+        },
+        "median_perf_avg": 15.4,
+        "key": "aime-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 12.3,
+        "difficulty_scale": 0.8
+      },
+      "amrevenge-stormrage": {
+        "name": "Amrevenge",
+        "class": "Hunter",
+        "best_perf_avg": 41.9,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 41.9
+          }
+        },
+        "median_perf_avg": 41.9,
+        "key": "amrevenge-stormrage",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 41.9,
+        "difficulty_scale": 1.0
+      },
+      "anbux-bleeding-hollow": {
+        "name": "Anbux",
+        "class": "Warlock",
+        "best_perf_avg": 21.3,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 21.3
+          }
+        },
+        "median_perf_avg": 21.3,
+        "key": "anbux-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 17.0,
+        "difficulty_scale": 0.8
+      },
+      "arfas-queldorei": {
+        "name": "Arfas",
+        "class": "Death Knight",
+        "best_perf_avg": 11.2,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 11.2
+          }
+        },
+        "median_perf_avg": 11.2,
+        "key": "arfas-queldorei",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 11.2,
+        "difficulty_scale": 1.0
+      },
+      "autable-gurubashi": {
+        "name": "Autable",
+        "class": "Demon Hunter",
+        "best_perf_avg": 20.9,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 20.9
+          }
+        },
+        "median_perf_avg": 19.5,
+        "key": "autable-gurubashi",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 16.7,
+        "difficulty_scale": 0.8
+      },
+      "azell-bleeding-hollow": {
+        "name": "Azell",
+        "class": "Monk",
+        "best_perf_avg": 12.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 8.1
+          },
+          "Tank": {
+            "best_perf_avg": 30.3
+          }
+        },
+        "median_perf_avg": 12.5,
+        "key": "azell-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 10.0,
+        "difficulty_scale": 0.8
+      },
+      "beastfriend-thrall": {
+        "name": "Beastfriend",
+        "class": "Hunter",
+        "best_perf_avg": 31.7,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 31.7
+          }
+        },
+        "median_perf_avg": 31.7,
+        "key": "beastfriend-thrall",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 31.7,
+        "difficulty_scale": 1.0
+      },
+      "beroben-emerald-dream": {
+        "name": "Beroben",
+        "class": "Mage",
+        "best_perf_avg": 49.3,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 49.3
+          }
+        },
+        "median_perf_avg": 49.3,
+        "key": "beroben-emerald-dream",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 39.4,
+        "difficulty_scale": 0.8
+      },
+      "boondocka-hydraxis": {
+        "name": "Boondocka",
+        "class": "Hunter",
+        "best_perf_avg": 34.3,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 34.3
+          }
+        },
+        "median_perf_avg": 32.7,
+        "key": "boondocka-hydraxis",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 34.3,
+        "difficulty_scale": 1.0
+      },
+      "breakdruid-area-52": {
+        "name": "Breakdruid",
+        "class": "Druid",
+        "best_perf_avg": 3.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 3.5
+          }
+        },
+        "median_perf_avg": 3.5,
+        "key": "breakdruid-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 2.8,
+        "difficulty_scale": 0.8
+      },
+      "brewzleeh-tichondrius": {
+        "name": "Brewzleeh",
+        "class": "Monk",
+        "best_perf_avg": 75.3,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 19.2
+          },
+          "Tank": {
+            "best_perf_avg": 75.3
+          }
+        },
+        "median_perf_avg": 63.3,
+        "key": "brewzleeh-tichondrius",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 75.3,
+        "difficulty_scale": 1.0
+      },
+      "buchalter-area-52": {
+        "name": "Buchalter",
+        "class": "Mage",
+        "best_perf_avg": 58.0,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 58.0
+          }
+        },
+        "median_perf_avg": 41.4,
+        "key": "buchalter-area-52",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 58.0,
+        "difficulty_scale": 1.0
+      },
+      "chokalock-sargeras": {
+        "name": "Chokalock",
+        "class": "Warlock",
+        "best_perf_avg": 15.6,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 15.6
+          }
+        },
+        "median_perf_avg": 13.2,
+        "key": "chokalock-sargeras",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 15.6,
+        "difficulty_scale": 1.0
+      },
+      "coned-azgalor": {
+        "name": "Coned",
+        "class": "Warrior",
+        "best_perf_avg": 23.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 23.5
+          }
+        },
+        "median_perf_avg": 22.0,
+        "key": "coned-azgalor",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 18.8,
+        "difficulty_scale": 0.8
+      },
+      "delusionz-icecrown": {
+        "name": "Delusionz",
+        "class": "Priest",
+        "best_perf_avg": 50.7,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 50.7
+          }
+        },
+        "median_perf_avg": 41.8,
+        "key": "delusionz-icecrown",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 50.7,
+        "difficulty_scale": 1.0
+      },
+      "digglio-area-52": {
+        "name": "Digglio",
+        "class": "Warlock",
+        "best_perf_avg": 75.1,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 75.1
+          }
+        },
+        "median_perf_avg": 46.8,
+        "key": "digglio-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 60.1,
+        "difficulty_scale": 0.8
+      },
+      "dragoonx-bleeding-hollow": {
+        "name": "Dragoonx",
+        "class": "Evoker",
+        "best_perf_avg": 27.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 27.8
+          }
+        },
+        "median_perf_avg": 17.3,
+        "key": "dragoonx-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 22.2,
+        "difficulty_scale": 0.8
+      },
+      "ellebasi-malganis": {
+        "name": "Ellebasi",
+        "class": "Druid",
+        "best_perf_avg": 43.6,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 43.6
+          }
+        },
+        "median_perf_avg": 25.2,
+        "key": "ellebasi-malganis",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 43.6,
+        "difficulty_scale": 1.0
+      },
+      "enyò-area-52": {
+        "name": "Enyò",
+        "class": "Demon Hunter",
+        "best_perf_avg": 71.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 71.5
+          }
+        },
+        "median_perf_avg": 61.1,
+        "key": "enyò-area-52",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 71.5,
+        "difficulty_scale": 1.0
+      },
+      "eponax-bleeding-hollow": {
+        "name": "Eponax",
+        "class": "Demon Hunter",
+        "best_perf_avg": 23.3,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 11.6
+          },
+          "Tank": {
+            "best_perf_avg": 23.3
+          }
+        },
+        "median_perf_avg": 23.3,
+        "key": "eponax-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 18.6,
+        "difficulty_scale": 0.8
+      },
+      "flemel-area-52": {
+        "name": "Flemel",
+        "class": "Warlock",
+        "best_perf_avg": 44.2,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 44.2
+          }
+        },
+        "median_perf_avg": 41.9,
+        "key": "flemel-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 35.4,
+        "difficulty_scale": 0.8
+      },
+      "flogeron-area-52": {
+        "name": "Flogeron",
+        "class": "Warrior",
+        "best_perf_avg": 63.3,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 63.3
+          }
+        },
+        "median_perf_avg": 44.9,
+        "key": "flogeron-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 50.6,
+        "difficulty_scale": 0.8
+      },
+      "floofwall-queldorei": {
+        "name": "Floofwall",
+        "class": "Monk",
+        "best_perf_avg": 60.1,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 60.1
+          }
+        },
+        "median_perf_avg": 50.6,
+        "key": "floofwall-queldorei",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 60.1,
+        "difficulty_scale": 1.0
+      },
+      "fugaku-icecrown": {
+        "name": "Fugaku",
+        "class": "Evoker",
+        "best_perf_avg": 24.9,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 50.9
+          }
+        },
+        "median_perf_avg": 24.9,
+        "key": "fugaku-icecrown",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 19.9,
+        "difficulty_scale": 0.8
+      },
+      "gandamar-azgalor": {
+        "name": "Gandamar",
+        "class": "Warlock",
+        "best_perf_avg": 18.9,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 18.9
+          }
+        },
+        "median_perf_avg": 12.6,
+        "key": "gandamar-azgalor",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 15.1,
+        "difficulty_scale": 0.8
+      },
+      "glinkz-wyrmrest-accord": {
+        "name": "Glinkz",
+        "class": "Mage",
+        "best_perf_avg": 41.0,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 41.0
+          }
+        },
+        "median_perf_avg": 32.3,
+        "key": "glinkz-wyrmrest-accord",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 41.0,
+        "difficulty_scale": 1.0
+      },
+      "healmates-korgath": {
+        "name": "Healmates",
+        "class": "Priest",
+        "best_perf_avg": 58.3,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 58.3
+          }
+        },
+        "median_perf_avg": 35.2,
+        "key": "healmates-korgath",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 58.3,
+        "difficulty_scale": 1.0
+      },
+      "healyeah-queldorei": {
+        "name": "Healyeah",
+        "class": "Evoker",
+        "best_perf_avg": 23.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 23.8
+          }
+        },
+        "median_perf_avg": 16.3,
+        "key": "healyeah-queldorei",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 23.8,
+        "difficulty_scale": 1.0
+      },
+      "hellful-lightnings-blade": {
+        "name": "Hellful",
+        "class": "Shaman",
+        "best_perf_avg": 84.0,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 19.9
+          }
+        },
+        "median_perf_avg": 74.9,
+        "key": "hellful-lightnings-blade",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 84.0,
+        "difficulty_scale": 1.0
+      },
+      "heximal-hydraxis": {
+        "name": "Heximal",
+        "class": "Druid",
+        "best_perf_avg": 22.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 22.8
+          }
+        },
+        "median_perf_avg": 22.8,
+        "key": "heximal-hydraxis",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 22.8,
+        "difficulty_scale": 1.0
+      },
+      "holyx-bleeding-hollow": {
+        "name": "Holyx",
+        "class": "Paladin",
+        "best_perf_avg": 29.6,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 29.6
+          }
+        },
+        "median_perf_avg": 21.2,
+        "key": "holyx-bleeding-hollow",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 29.6,
+        "difficulty_scale": 1.0
+      },
+      "huntlowx-bleeding-hollow": {
+        "name": "Huntlowx",
+        "class": "Hunter",
+        "best_perf_avg": 31.4,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 31.4
+          }
+        },
+        "median_perf_avg": 25.1,
+        "key": "huntlowx-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 25.1,
+        "difficulty_scale": 0.8
+      },
+      "icyx-bleeding-hollow": {
+        "name": "Icyx",
+        "class": "Mage",
+        "best_perf_avg": 23.3,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 23.3
+          }
+        },
+        "median_perf_avg": 18.0,
+        "key": "icyx-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 18.6,
+        "difficulty_scale": 0.8
+      },
+      "impkiller-tichondrius": {
+        "name": "Impkiller",
+        "class": "Warlock",
+        "best_perf_avg": 30.3,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 30.3
+          }
+        },
+        "median_perf_avg": 26.4,
+        "key": "impkiller-tichondrius",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 30.3,
+        "difficulty_scale": 1.0
+      },
+      "jovala-stormrage": {
+        "name": "Jovala",
+        "class": "Druid",
+        "best_perf_avg": 54.3,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 54.3
+          }
+        },
+        "median_perf_avg": 54.3,
+        "key": "jovala-stormrage",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 43.4,
+        "difficulty_scale": 0.8
+      },
+      "kegsmashroll-stormrage": {
+        "name": "Kegsmashroll",
+        "class": "Monk",
+        "best_perf_avg": 78.7,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 78.7
+          }
+        },
+        "median_perf_avg": 71.3,
+        "key": "kegsmashroll-stormrage",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 63.0,
+        "difficulty_scale": 0.8
+      },
+      "kelova-stormrage": {
+        "name": "Kelova",
+        "class": "Monk",
+        "best_perf_avg": 44.9,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 44.9
+          }
+        },
+        "median_perf_avg": 44.9,
+        "key": "kelova-stormrage",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 35.9,
+        "difficulty_scale": 0.8
+      },
+      "kirrá-aggramar": {
+        "name": "Kirrá",
+        "class": "Warlock",
+        "best_perf_avg": 8.1,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 8.1
+          }
+        },
+        "median_perf_avg": 8.1,
+        "key": "kirrá-aggramar",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 8.1,
+        "difficulty_scale": 1.0
+      },
+      "kitez-cenarion-circle": {
+        "name": "Kitez",
+        "class": "Mage",
+        "best_perf_avg": 15.1,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 15.1
+          }
+        },
+        "median_perf_avg": 15.1,
+        "key": "kitez-cenarion-circle",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 12.1,
+        "difficulty_scale": 0.8
+      },
+      "maillo-area-52": {
+        "name": "Maillo",
+        "class": "Hunter",
+        "best_perf_avg": 41.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 41.5
+          }
+        },
+        "median_perf_avg": 27.2,
+        "key": "maillo-area-52",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 41.5,
+        "difficulty_scale": 1.0
+      },
+      "martylol-illidan": {
+        "name": "Martylol",
+        "class": "Mage",
+        "best_perf_avg": 18.4,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 18.4
+          }
+        },
+        "median_perf_avg": 18.4,
+        "key": "martylol-illidan",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 18.4,
+        "difficulty_scale": 1.0
+      },
+      "marvinah-queldorei": {
+        "name": "Marvinah",
+        "class": "Hunter",
+        "best_perf_avg": 21.0,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 21.0
+          }
+        },
+        "median_perf_avg": 11.7,
+        "key": "marvinah-queldorei",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 16.8,
+        "difficulty_scale": 0.8
+      },
+      "nivella-dawnbringer": {
+        "name": "Nivella",
+        "class": "Warlock",
+        "best_perf_avg": 17.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 17.5
+          }
+        },
+        "median_perf_avg": 12.7,
+        "key": "nivella-dawnbringer",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 14.0,
+        "difficulty_scale": 0.8
+      },
+      "nokori-proudmoore": {
+        "name": "Nokori",
+        "class": "Shaman",
+        "best_perf_avg": 5.6,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 5.6
+          }
+        },
+        "median_perf_avg": 5.6,
+        "key": "nokori-proudmoore",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 5.6,
+        "difficulty_scale": 1.0
+      },
+      "ohnomyais-area-52": {
+        "name": "Ohnomyais",
+        "class": "Warrior",
+        "best_perf_avg": 39.2,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 39.2
+          }
+        },
+        "median_perf_avg": 26.5,
+        "key": "ohnomyais-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 31.4,
+        "difficulty_scale": 0.8
+      },
+      "onessarain-area-52": {
+        "name": "Onessarain",
+        "class": "Shaman",
+        "best_perf_avg": 52.8,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 69.5
+          }
+        },
+        "median_perf_avg": 45.7,
+        "key": "onessarain-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 42.2,
+        "difficulty_scale": 0.8
+      },
+      "onetruemorty-area-52": {
+        "name": "Onetruemorty",
+        "class": "Warrior",
+        "best_perf_avg": 54.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 54.5
+          }
+        },
+        "median_perf_avg": 46.8,
+        "key": "onetruemorty-area-52",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 43.6,
+        "difficulty_scale": 0.8
+      },
+      "rakdisc-proudmoore": {
+        "name": "Rakdisc",
+        "class": "Priest",
+        "best_perf_avg": 62.1,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 68.1
+          },
+          "Healer": {
+            "best_perf_avg": 62.1
+          }
+        },
+        "median_perf_avg": 42.1,
+        "key": "rakdisc-proudmoore",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 62.1,
+        "difficulty_scale": 1.0
+      },
+      "rakell-proudmoore": {
+        "name": "Rakell",
+        "class": "Death Knight",
+        "best_perf_avg": 14.1,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 14.1
+          }
+        },
+        "median_perf_avg": 13.3,
+        "key": "rakell-proudmoore",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 14.1,
+        "difficulty_scale": 1.0
+      },
+      "rexxhavocc-area-52": {
+        "name": "Rexxhavocc",
+        "class": "Hunter",
+        "best_perf_avg": 39.1,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 39.1
+          }
+        },
+        "median_perf_avg": 31.9,
+        "key": "rexxhavocc-area-52",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 39.1,
+        "difficulty_scale": 1.0
+      },
+      "rhansìk-area-52": {
+        "name": "Rhansìk",
+        "class": "Hunter",
+        "best_perf_avg": 54.5,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 54.5
+          }
+        },
+        "median_perf_avg": 47.0,
+        "key": "rhansìk-area-52",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 54.5,
+        "difficulty_scale": 1.0
+      },
+      "scounddrel-maelstrom": {
+        "name": "Scounddrel",
+        "class": "Hunter",
+        "best_perf_avg": 37.4,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 37.4
+          }
+        },
+        "median_perf_avg": 23.8,
+        "key": "scounddrel-maelstrom",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 37.4,
+        "difficulty_scale": 1.0
+      },
+      "shadoxi-illidan": {
+        "name": "Shadoxi",
+        "class": "Druid",
+        "best_perf_avg": 36.4,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 53.5
+          }
+        },
+        "median_perf_avg": 36.0,
+        "key": "shadoxi-illidan",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 29.1,
+        "difficulty_scale": 0.8
+      },
+      "shadoxii-illidan": {
+        "name": "Shadoxii",
+        "class": "Monk",
+        "best_perf_avg": 3.2,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 9.9
+          }
+        },
+        "median_perf_avg": 3.2,
+        "key": "shadoxii-illidan",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 3.2,
+        "difficulty_scale": 1.0
+      },
+      "skoala-frostwolf": {
+        "name": "Skoala",
+        "class": "Death Knight",
+        "best_perf_avg": 7.7,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 7.7
+          }
+        },
+        "median_perf_avg": 7.7,
+        "key": "skoala-frostwolf",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 7.7,
+        "difficulty_scale": 1.0
+      },
+      "slicerdicer-bleeding-hollow": {
+        "name": "Slicerdicer",
+        "class": "Demon Hunter",
+        "best_perf_avg": 45.6,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 45.6
+          }
+        },
+        "median_perf_avg": 35.4,
+        "key": "slicerdicer-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 36.5,
+        "difficulty_scale": 0.8
+      },
+      "thiccat-illidan": {
+        "name": "Thiccat",
+        "class": "Druid",
+        "best_perf_avg": 23.6,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 23.6
+          }
+        },
+        "median_perf_avg": 23.6,
+        "key": "thiccat-illidan",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 18.9,
+        "difficulty_scale": 0.8
+      },
+      "tinyx-bleeding-hollow": {
+        "name": "Tinyx",
+        "class": "Druid",
+        "best_perf_avg": 47.7,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 47.7
+          }
+        },
+        "median_perf_avg": 39.2,
+        "key": "tinyx-bleeding-hollow",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 47.7,
+        "difficulty_scale": 1.0
+      },
+      "tommybravo-bleeding-hollow": {
+        "name": "Tommybravo",
+        "class": "Priest",
+        "best_perf_avg": 12.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 9.4
+          }
+        },
+        "median_perf_avg": 12.8,
+        "key": "tommybravo-bleeding-hollow",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 12.8,
+        "difficulty_scale": 1.0
+      },
+      "tommybravoo-bleeding-hollow": {
+        "name": "Tommybravoo",
+        "class": "Death Knight",
+        "best_perf_avg": 54.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 54.8
+          }
+        },
+        "median_perf_avg": 34.8,
+        "key": "tommybravoo-bleeding-hollow",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 54.8,
+        "difficulty_scale": 1.0
+      },
+      "tommybravox-bleeding-hollow": {
+        "name": "Tommybravox",
+        "class": "Demon Hunter",
+        "best_perf_avg": 72.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 72.8
+          },
+          "Tank": {
+            "best_perf_avg": 18.9
+          }
+        },
+        "median_perf_avg": 52.7,
+        "key": "tommybravox-bleeding-hollow",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 72.8,
+        "difficulty_scale": 1.0
+      },
+      "viôlence-bleeding-hollow": {
+        "name": "Viôlence",
+        "class": "Druid",
+        "best_perf_avg": 57.9,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 20.0
+          }
+        },
+        "median_perf_avg": 42.2,
+        "key": "viôlence-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 46.3,
+        "difficulty_scale": 0.8
+      },
+      "widowx-bleeding-hollow": {
+        "name": "Widowx",
+        "class": "Monk",
+        "best_perf_avg": 14.8,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 14.8
+          },
+          "Tank": {
+            "best_perf_avg": 12.0
+          }
+        },
+        "median_perf_avg": 14.8,
+        "key": "widowx-bleeding-hollow",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 14.8,
+        "difficulty_scale": 1.0
+      },
+      "wolfx-bleeding-hollow": {
+        "name": "Wolfx",
+        "class": "Shaman",
+        "best_perf_avg": 58.6,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 35.4
+          }
+        },
+        "median_perf_avg": 58.6,
+        "key": "wolfx-bleeding-hollow",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 46.9,
+        "difficulty_scale": 0.8
+      },
+      "yur-whisperwind": {
+        "name": "Yur",
+        "class": "Demon Hunter",
+        "best_perf_avg": 34.4,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 34.4
+          }
+        },
+        "median_perf_avg": 32.6,
+        "key": "yur-whisperwind",
+        "difficulty": 5,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 34.4,
+        "difficulty_scale": 1.0
+      },
+      "zackoh-bloodhoof": {
+        "name": "Zackoh",
+        "class": "Hunter",
+        "best_perf_avg": 4.6,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 4.6
+          }
+        },
+        "median_perf_avg": 4.6,
+        "key": "zackoh-bloodhoof",
+        "difficulty": 4,
+        "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "VS / DR / MQD"
+        },
+        "scaled_perf_avg": 3.7,
+        "difficulty_scale": 0.8
+      }
+    },
+    "character_count": 66
+  },
   "parity": {
     "schema_version": 1,
     "summary": {
-      "live": 7,
-      "partial": 3,
+      "live": 10,
+      "partial": 0,
       "pending": 5,
       "total": 15
     },
@@ -16309,19 +18337,19 @@
       {
         "field": "top_dps_parses",
         "served_by": "competition.parses.leaders",
-        "state": "partial",
+        "state": "live",
         "note": "full weekly list needs Warcraft Logs enrichment"
       },
       {
         "field": "top_healing_parses",
         "served_by": "competition.parses.leaders",
-        "state": "partial",
+        "state": "live",
         "note": "full weekly list needs WCL creds"
       },
       {
         "field": "top_tank_parses",
         "served_by": "competition.parses",
-        "state": "partial",
+        "state": "live",
         "note": "needs WCL creds"
       },
       {

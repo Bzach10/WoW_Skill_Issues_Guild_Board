@@ -1,0 +1,953 @@
+{
+  "last_updated": "2026-07-25T02:23:03.997855+00:00",
+  "tier": {
+    "zone_id": 46,
+    "name": "VS / DR / MQD"
+  },
+  "season_slug": "season-mn-1",
+  "count": 66,
+  "characters": {
+    "aime-bleeding-hollow": {
+      "name": "Aime",
+      "class": "Druid",
+      "best_perf_avg": 15.4,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 15.4
+        }
+      },
+      "median_perf_avg": 15.4,
+      "key": "aime-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "amrevenge-stormrage": {
+      "name": "Amrevenge",
+      "class": "Hunter",
+      "best_perf_avg": 41.9,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 41.9
+        }
+      },
+      "median_perf_avg": 41.9,
+      "key": "amrevenge-stormrage",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "anbux-bleeding-hollow": {
+      "name": "Anbux",
+      "class": "Warlock",
+      "best_perf_avg": 21.3,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 21.3
+        }
+      },
+      "median_perf_avg": 21.3,
+      "key": "anbux-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "arfas-queldorei": {
+      "name": "Arfas",
+      "class": "Death Knight",
+      "best_perf_avg": 11.2,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 11.2
+        }
+      },
+      "median_perf_avg": 11.2,
+      "key": "arfas-queldorei",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "autable-gurubashi": {
+      "name": "Autable",
+      "class": "Demon Hunter",
+      "best_perf_avg": 20.9,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 20.9
+        }
+      },
+      "median_perf_avg": 19.5,
+      "key": "autable-gurubashi",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "azell-bleeding-hollow": {
+      "name": "Azell",
+      "class": "Monk",
+      "best_perf_avg": 12.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 8.1
+        },
+        "Tank": {
+          "best_perf_avg": 30.3
+        }
+      },
+      "median_perf_avg": 12.5,
+      "key": "azell-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "beastfriend-thrall": {
+      "name": "Beastfriend",
+      "class": "Hunter",
+      "best_perf_avg": 31.7,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 31.7
+        }
+      },
+      "median_perf_avg": 31.7,
+      "key": "beastfriend-thrall",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "beroben-emerald-dream": {
+      "name": "Beroben",
+      "class": "Mage",
+      "best_perf_avg": 49.3,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 49.3
+        }
+      },
+      "median_perf_avg": 49.3,
+      "key": "beroben-emerald-dream",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "boondocka-hydraxis": {
+      "name": "Boondocka",
+      "class": "Hunter",
+      "best_perf_avg": 34.3,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 34.3
+        }
+      },
+      "median_perf_avg": 32.7,
+      "key": "boondocka-hydraxis",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "breakdruid-area-52": {
+      "name": "Breakdruid",
+      "class": "Druid",
+      "best_perf_avg": 3.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 3.5
+        }
+      },
+      "median_perf_avg": 3.5,
+      "key": "breakdruid-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "brewzleeh-tichondrius": {
+      "name": "Brewzleeh",
+      "class": "Monk",
+      "best_perf_avg": 75.3,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 19.2
+        },
+        "Tank": {
+          "best_perf_avg": 75.3
+        }
+      },
+      "median_perf_avg": 63.3,
+      "key": "brewzleeh-tichondrius",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "buchalter-area-52": {
+      "name": "Buchalter",
+      "class": "Mage",
+      "best_perf_avg": 58.0,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 58.0
+        }
+      },
+      "median_perf_avg": 41.4,
+      "key": "buchalter-area-52",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "chokalock-sargeras": {
+      "name": "Chokalock",
+      "class": "Warlock",
+      "best_perf_avg": 15.6,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 15.6
+        }
+      },
+      "median_perf_avg": 13.2,
+      "key": "chokalock-sargeras",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "coned-azgalor": {
+      "name": "Coned",
+      "class": "Warrior",
+      "best_perf_avg": 23.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 23.5
+        }
+      },
+      "median_perf_avg": 22.0,
+      "key": "coned-azgalor",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "delusionz-icecrown": {
+      "name": "Delusionz",
+      "class": "Priest",
+      "best_perf_avg": 50.7,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 50.7
+        }
+      },
+      "median_perf_avg": 41.8,
+      "key": "delusionz-icecrown",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "digglio-area-52": {
+      "name": "Digglio",
+      "class": "Warlock",
+      "best_perf_avg": 75.1,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 75.1
+        }
+      },
+      "median_perf_avg": 46.8,
+      "key": "digglio-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "dragoonx-bleeding-hollow": {
+      "name": "Dragoonx",
+      "class": "Evoker",
+      "best_perf_avg": 27.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 27.8
+        }
+      },
+      "median_perf_avg": 17.3,
+      "key": "dragoonx-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "ellebasi-malganis": {
+      "name": "Ellebasi",
+      "class": "Druid",
+      "best_perf_avg": 43.6,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 43.6
+        }
+      },
+      "median_perf_avg": 25.2,
+      "key": "ellebasi-malganis",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "enyò-area-52": {
+      "name": "Enyò",
+      "class": "Demon Hunter",
+      "best_perf_avg": 71.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 71.5
+        }
+      },
+      "median_perf_avg": 61.1,
+      "key": "enyò-area-52",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "eponax-bleeding-hollow": {
+      "name": "Eponax",
+      "class": "Demon Hunter",
+      "best_perf_avg": 23.3,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 11.6
+        },
+        "Tank": {
+          "best_perf_avg": 23.3
+        }
+      },
+      "median_perf_avg": 23.3,
+      "key": "eponax-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "flemel-area-52": {
+      "name": "Flemel",
+      "class": "Warlock",
+      "best_perf_avg": 44.2,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 44.2
+        }
+      },
+      "median_perf_avg": 41.9,
+      "key": "flemel-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "flogeron-area-52": {
+      "name": "Flogeron",
+      "class": "Warrior",
+      "best_perf_avg": 63.3,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 63.3
+        }
+      },
+      "median_perf_avg": 44.9,
+      "key": "flogeron-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "floofwall-queldorei": {
+      "name": "Floofwall",
+      "class": "Monk",
+      "best_perf_avg": 60.1,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 60.1
+        }
+      },
+      "median_perf_avg": 50.6,
+      "key": "floofwall-queldorei",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "fugaku-icecrown": {
+      "name": "Fugaku",
+      "class": "Evoker",
+      "best_perf_avg": 24.9,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 50.9
+        }
+      },
+      "median_perf_avg": 24.9,
+      "key": "fugaku-icecrown",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "gandamar-azgalor": {
+      "name": "Gandamar",
+      "class": "Warlock",
+      "best_perf_avg": 18.9,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 18.9
+        }
+      },
+      "median_perf_avg": 12.6,
+      "key": "gandamar-azgalor",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "glinkz-wyrmrest-accord": {
+      "name": "Glinkz",
+      "class": "Mage",
+      "best_perf_avg": 41.0,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 41.0
+        }
+      },
+      "median_perf_avg": 32.3,
+      "key": "glinkz-wyrmrest-accord",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "healmates-korgath": {
+      "name": "Healmates",
+      "class": "Priest",
+      "best_perf_avg": 58.3,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 58.3
+        }
+      },
+      "median_perf_avg": 35.2,
+      "key": "healmates-korgath",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "healyeah-queldorei": {
+      "name": "Healyeah",
+      "class": "Evoker",
+      "best_perf_avg": 23.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 23.8
+        }
+      },
+      "median_perf_avg": 16.3,
+      "key": "healyeah-queldorei",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "hellful-lightnings-blade": {
+      "name": "Hellful",
+      "class": "Shaman",
+      "best_perf_avg": 84.0,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 19.9
+        }
+      },
+      "median_perf_avg": 74.9,
+      "key": "hellful-lightnings-blade",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "heximal-hydraxis": {
+      "name": "Heximal",
+      "class": "Druid",
+      "best_perf_avg": 22.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 22.8
+        }
+      },
+      "median_perf_avg": 22.8,
+      "key": "heximal-hydraxis",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "holyx-bleeding-hollow": {
+      "name": "Holyx",
+      "class": "Paladin",
+      "best_perf_avg": 29.6,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 29.6
+        }
+      },
+      "median_perf_avg": 21.2,
+      "key": "holyx-bleeding-hollow",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "huntlowx-bleeding-hollow": {
+      "name": "Huntlowx",
+      "class": "Hunter",
+      "best_perf_avg": 31.4,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 31.4
+        }
+      },
+      "median_perf_avg": 25.1,
+      "key": "huntlowx-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "icyx-bleeding-hollow": {
+      "name": "Icyx",
+      "class": "Mage",
+      "best_perf_avg": 23.3,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 23.3
+        }
+      },
+      "median_perf_avg": 18.0,
+      "key": "icyx-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "impkiller-tichondrius": {
+      "name": "Impkiller",
+      "class": "Warlock",
+      "best_perf_avg": 30.3,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 30.3
+        }
+      },
+      "median_perf_avg": 26.4,
+      "key": "impkiller-tichondrius",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "jovala-stormrage": {
+      "name": "Jovala",
+      "class": "Druid",
+      "best_perf_avg": 54.3,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 54.3
+        }
+      },
+      "median_perf_avg": 54.3,
+      "key": "jovala-stormrage",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "kegsmashroll-stormrage": {
+      "name": "Kegsmashroll",
+      "class": "Monk",
+      "best_perf_avg": 78.7,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 78.7
+        }
+      },
+      "median_perf_avg": 71.3,
+      "key": "kegsmashroll-stormrage",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "kelova-stormrage": {
+      "name": "Kelova",
+      "class": "Monk",
+      "best_perf_avg": 44.9,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 44.9
+        }
+      },
+      "median_perf_avg": 44.9,
+      "key": "kelova-stormrage",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "kirrá-aggramar": {
+      "name": "Kirrá",
+      "class": "Warlock",
+      "best_perf_avg": 8.1,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 8.1
+        }
+      },
+      "median_perf_avg": 8.1,
+      "key": "kirrá-aggramar",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "kitez-cenarion-circle": {
+      "name": "Kitez",
+      "class": "Mage",
+      "best_perf_avg": 15.1,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 15.1
+        }
+      },
+      "median_perf_avg": 15.1,
+      "key": "kitez-cenarion-circle",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "maillo-area-52": {
+      "name": "Maillo",
+      "class": "Hunter",
+      "best_perf_avg": 41.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 41.5
+        }
+      },
+      "median_perf_avg": 27.2,
+      "key": "maillo-area-52",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "martylol-illidan": {
+      "name": "Martylol",
+      "class": "Mage",
+      "best_perf_avg": 18.4,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 18.4
+        }
+      },
+      "median_perf_avg": 18.4,
+      "key": "martylol-illidan",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "marvinah-queldorei": {
+      "name": "Marvinah",
+      "class": "Hunter",
+      "best_perf_avg": 21.0,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 21.0
+        }
+      },
+      "median_perf_avg": 11.7,
+      "key": "marvinah-queldorei",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "nivella-dawnbringer": {
+      "name": "Nivella",
+      "class": "Warlock",
+      "best_perf_avg": 17.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 17.5
+        }
+      },
+      "median_perf_avg": 12.7,
+      "key": "nivella-dawnbringer",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "nokori-proudmoore": {
+      "name": "Nokori",
+      "class": "Shaman",
+      "best_perf_avg": 5.6,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 5.6
+        }
+      },
+      "median_perf_avg": 5.6,
+      "key": "nokori-proudmoore",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "ohnomyais-area-52": {
+      "name": "Ohnomyais",
+      "class": "Warrior",
+      "best_perf_avg": 39.2,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 39.2
+        }
+      },
+      "median_perf_avg": 26.5,
+      "key": "ohnomyais-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "onessarain-area-52": {
+      "name": "Onessarain",
+      "class": "Shaman",
+      "best_perf_avg": 52.8,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 69.5
+        }
+      },
+      "median_perf_avg": 45.7,
+      "key": "onessarain-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "onetruemorty-area-52": {
+      "name": "Onetruemorty",
+      "class": "Warrior",
+      "best_perf_avg": 54.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 54.5
+        }
+      },
+      "median_perf_avg": 46.8,
+      "key": "onetruemorty-area-52",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "rakdisc-proudmoore": {
+      "name": "Rakdisc",
+      "class": "Priest",
+      "best_perf_avg": 62.1,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 68.1
+        },
+        "Healer": {
+          "best_perf_avg": 62.1
+        }
+      },
+      "median_perf_avg": 42.1,
+      "key": "rakdisc-proudmoore",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "rakell-proudmoore": {
+      "name": "Rakell",
+      "class": "Death Knight",
+      "best_perf_avg": 14.1,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 14.1
+        }
+      },
+      "median_perf_avg": 13.3,
+      "key": "rakell-proudmoore",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "rexxhavocc-area-52": {
+      "name": "Rexxhavocc",
+      "class": "Hunter",
+      "best_perf_avg": 39.1,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 39.1
+        }
+      },
+      "median_perf_avg": 31.9,
+      "key": "rexxhavocc-area-52",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "rhansìk-area-52": {
+      "name": "Rhansìk",
+      "class": "Hunter",
+      "best_perf_avg": 54.5,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 54.5
+        }
+      },
+      "median_perf_avg": 47.0,
+      "key": "rhansìk-area-52",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "scounddrel-maelstrom": {
+      "name": "Scounddrel",
+      "class": "Hunter",
+      "best_perf_avg": 37.4,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 37.4
+        }
+      },
+      "median_perf_avg": 23.8,
+      "key": "scounddrel-maelstrom",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "shadoxi-illidan": {
+      "name": "Shadoxi",
+      "class": "Druid",
+      "best_perf_avg": 36.4,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 53.5
+        }
+      },
+      "median_perf_avg": 36.0,
+      "key": "shadoxi-illidan",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "shadoxii-illidan": {
+      "name": "Shadoxii",
+      "class": "Monk",
+      "best_perf_avg": 3.2,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 9.9
+        }
+      },
+      "median_perf_avg": 3.2,
+      "key": "shadoxii-illidan",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "skoala-frostwolf": {
+      "name": "Skoala",
+      "class": "Death Knight",
+      "best_perf_avg": 7.7,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 7.7
+        }
+      },
+      "median_perf_avg": 7.7,
+      "key": "skoala-frostwolf",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "slicerdicer-bleeding-hollow": {
+      "name": "Slicerdicer",
+      "class": "Demon Hunter",
+      "best_perf_avg": 45.6,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 45.6
+        }
+      },
+      "median_perf_avg": 35.4,
+      "key": "slicerdicer-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "thiccat-illidan": {
+      "name": "Thiccat",
+      "class": "Druid",
+      "best_perf_avg": 23.6,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 23.6
+        }
+      },
+      "median_perf_avg": 23.6,
+      "key": "thiccat-illidan",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "tinyx-bleeding-hollow": {
+      "name": "Tinyx",
+      "class": "Druid",
+      "best_perf_avg": 47.7,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 47.7
+        }
+      },
+      "median_perf_avg": 39.2,
+      "key": "tinyx-bleeding-hollow",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "tommybravo-bleeding-hollow": {
+      "name": "Tommybravo",
+      "class": "Priest",
+      "best_perf_avg": 12.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 9.4
+        }
+      },
+      "median_perf_avg": 12.8,
+      "key": "tommybravo-bleeding-hollow",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "tommybravoo-bleeding-hollow": {
+      "name": "Tommybravoo",
+      "class": "Death Knight",
+      "best_perf_avg": 54.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 54.8
+        }
+      },
+      "median_perf_avg": 34.8,
+      "key": "tommybravoo-bleeding-hollow",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "tommybravox-bleeding-hollow": {
+      "name": "Tommybravox",
+      "class": "Demon Hunter",
+      "best_perf_avg": 72.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 72.8
+        },
+        "Tank": {
+          "best_perf_avg": 18.9
+        }
+      },
+      "median_perf_avg": 52.7,
+      "key": "tommybravox-bleeding-hollow",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "viôlence-bleeding-hollow": {
+      "name": "Viôlence",
+      "class": "Druid",
+      "best_perf_avg": 57.9,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 20.0
+        }
+      },
+      "median_perf_avg": 42.2,
+      "key": "viôlence-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "widowx-bleeding-hollow": {
+      "name": "Widowx",
+      "class": "Monk",
+      "best_perf_avg": 14.8,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 14.8
+        },
+        "Tank": {
+          "best_perf_avg": 12.0
+        }
+      },
+      "median_perf_avg": 14.8,
+      "key": "widowx-bleeding-hollow",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "wolfx-bleeding-hollow": {
+      "name": "Wolfx",
+      "class": "Shaman",
+      "best_perf_avg": 58.6,
+      "by_role": {
+        "Healer": {
+          "best_perf_avg": 35.4
+        }
+      },
+      "median_perf_avg": 58.6,
+      "key": "wolfx-bleeding-hollow",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "yur-whisperwind": {
+      "name": "Yur",
+      "class": "Demon Hunter",
+      "best_perf_avg": 34.4,
+      "by_role": {
+        "Tank": {
+          "best_perf_avg": 34.4
+        }
+      },
+      "median_perf_avg": 32.6,
+      "key": "yur-whisperwind",
+      "difficulty": 5,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    },
+    "zackoh-bloodhoof": {
+      "name": "Zackoh",
+      "class": "Hunter",
+      "best_perf_avg": 4.6,
+      "by_role": {
+        "DPS": {
+          "best_perf_avg": 4.6
+        }
+      },
+      "median_perf_avg": 4.6,
+      "key": "zackoh-bloodhoof",
+      "difficulty": 4,
+      "sourced_at": "2026-07-25T02:20:22.804616+00:00"
+    }
+  }
+}
