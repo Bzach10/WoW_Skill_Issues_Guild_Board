@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T02:29:31.773456+00:00",
+  "generated_at": "2026-07-25T03:01:18.390192+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773487+00:00",
+    "generated_at": "2026-07-25T03:01:18.390397+00:00",
     "week_of": "2026-07-14",
     "based_on": "2026-07-20T12:14:49+00:00",
     "beats": [
@@ -75,7 +75,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773500+00:00",
+    "generated_at": "2026-07-25T03:01:18.390424+00:00",
     "based_on": "2026-07-20T12:14:49+00:00",
     "standing": {
       "realm": 49,
@@ -180,7 +180,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773508+00:00",
+    "generated_at": "2026-07-25T03:01:18.390436+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -218,7 +218,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773528+00:00",
+    "generated_at": "2026-07-25T03:01:18.390453+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -415,7 +415,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773402+00:00",
+    "generated_at": "2026-07-25T03:01:18.390115+00:00",
     "is_first_run": false,
     "changed": [
       {
@@ -438,7 +438,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773532+00:00",
+    "generated_at": "2026-07-25T03:01:18.390458+00:00",
     "available": true,
     "status": "ok",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -1348,7 +1348,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-07-25T02:29:31.773453+00:00",
+    "generated_at": "2026-07-25T03:01:18.390189+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
@@ -1504,7 +1504,82 @@
         "sourced_at": "2026-07-20T13:30:00+00:00"
       }
     },
-    "character_count": 3
+    "character_count": 3,
+    "extra_zones": {
+      "sporefall": {
+        "zone_id": 47,
+        "name": "Sporefall",
+        "characters": {
+          "amrevenge-stormrage": {
+            "name": "Amrevenge",
+            "key": "amrevenge-stormrage",
+            "class": "Hunter",
+            "best_perf_avg": 82.3,
+            "scaled_perf_avg": 65.8,
+            "difficulty": 4,
+            "difficulty_scale": 0.8,
+            "by_role": {
+              "DPS": {
+                "best_perf_avg": 82.3,
+                "kills": 2
+              }
+            },
+            "by_difficulty": {
+              "heroic": {
+                "best_perf_avg": 82.3,
+                "by_role": {
+                  "DPS": {
+                    "best_perf_avg": 82.3,
+                    "kills": 2
+                  }
+                },
+                "scaled_perf_avg": 65.8,
+                "difficulty_scale": 0.8
+              }
+            },
+            "tier": {
+              "zone_id": 47,
+              "name": "Sporefall"
+            },
+            "sourced_at": "2026-07-20T13:30:00+00:00"
+          },
+          "healyeah-queldorei": {
+            "name": "Healyeah",
+            "key": "healyeah-queldorei",
+            "class": "Evoker",
+            "best_perf_avg": 64.0,
+            "scaled_perf_avg": 51.2,
+            "difficulty": 4,
+            "difficulty_scale": 0.8,
+            "by_role": {
+              "Healer": {
+                "best_perf_avg": 64.0,
+                "kills": 1
+              }
+            },
+            "by_difficulty": {
+              "heroic": {
+                "best_perf_avg": 64.0,
+                "by_role": {
+                  "Healer": {
+                    "best_perf_avg": 64.0,
+                    "kills": 1
+                  }
+                },
+                "scaled_perf_avg": 51.2,
+                "difficulty_scale": 0.8
+              }
+            },
+            "tier": {
+              "zone_id": 47,
+              "name": "Sporefall"
+            },
+            "sourced_at": "2026-07-20T13:30:00+00:00"
+          }
+        },
+        "character_count": 2
+      }
+    }
   },
   "parity": {
     "schema_version": 1,

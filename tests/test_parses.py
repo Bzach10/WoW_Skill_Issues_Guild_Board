@@ -437,6 +437,67 @@ def test_mixed_case_manual_roster_entry_still_merges_parses(monkeypatch):
 
 
 # ---------------------------------------------------------------------------
+# zone pinning + extra zones (bonus raids like Sporefall/Rotmire)
+# ---------------------------------------------------------------------------
+
+def test_resolve_zone_id_matches_exact_then_containment():
+    zones = [{"id": 44, "name": "Old Tier"},
+             {"id": 46, "name": "VS / DR / MQD"},
+             {"id": 47, "name": "Sporefall"}]
+    # Exact (case-insensitive).
+    assert wcl.resolve_zone_id(zones, "sporefall") == 47
+    # WCL's short tier name is contained in Raider.io's api_name.
+    assert wcl.resolve_zone_id(zones, "MN Tier 1 (VS / DR / MQD)") == 46
+    # No match -> None, never a guess.
+    assert wcl.resolve_zone_id(zones, "The Venomous Abyss") is None
+    assert wcl.resolve_zone_id(zones, "") is None
+    assert wcl.resolve_zone_id([], "Sporefall") is None
+
+
+def test_build_parses_extra_zones_scaled_but_never_merged():
+    scale = {"mythic": 1.0, "heroic": 0.8, "normal": 0.0}
+    layer = build_parses({
+        "last_updated": "x",
+        "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
+        "characters": {"amrevenge-stormrage": {
+            "name": "Amrevenge", "sourced_at": "x",
+            "by_difficulty": {"mythic": {"best_perf_avg": 92.4}}}},
+        "extra_zones": {"sporefall": {
+            "zone_id": 47, "name": "Sporefall",
+            "characters": {
+                "amrevenge-stormrage": {
+                    "name": "Amrevenge", "sourced_at": "x",
+                    "by_difficulty": {"heroic": {"best_perf_avg": 82.3}}},
+                "rotonly-bleeding-hollow": {
+                    "name": "Rotonly", "sourced_at": "x",
+                    "by_difficulty": {"heroic": {"best_perf_avg": 64.0}}},
+            }}},
+    }, difficulty_scale=scale)
+    # The bonus raid never bleeds into the tier map (Emperor axis purity)...
+    assert set(layer["characters"]) == {"amrevenge-stormrage"}
+    sf = layer["extra_zones"]["sporefall"]
+    assert sf["name"] == "Sporefall"
+    assert sf["character_count"] == 2
+    # ...but gets the identical scaling + headline treatment, tagged with
+    # its own tier, and keeps Rotmire-only raiders visible.
+    amr = sf["characters"]["amrevenge-stormrage"]
+    assert amr["scaled_perf_avg"] == 65.8  # 82.3 * 0.8
+    assert amr["tier"] == {"zone_id": 47, "name": "Sporefall"}
+    assert "rotonly-bleeding-hollow" in sf["characters"]
+
+
+def test_build_parses_extra_zones_absent_is_empty_dict():
+    assert build_parses(None)["extra_zones"] == {}
+    assert build_parses(_fetched_one())["extra_zones"] == {}
+
+
+def test_season_lists_sporefall_as_extra_raid():
+    from guild_board import season as season_mod
+    extras = {r["slug"]: r for r in season_mod.CURRENT_SEASON["extra_raids"]}
+    assert extras["sporefall"]["bosses"][0]["name"] == "Rotmire"
+
+
+# ---------------------------------------------------------------------------
 # activity gate — who the sweep spends queries on
 # ---------------------------------------------------------------------------
 

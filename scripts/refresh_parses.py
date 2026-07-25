@@ -40,6 +40,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+import requests  # noqa: E402
+
 from guild_board import season as season_mod  # noqa: E402
 from guild_board.config import load_config, load_roster_cache  # noqa: E402
 from guild_board.wcl import (  # noqa: E402
@@ -48,7 +50,9 @@ from guild_board.wcl import (  # noqa: E402
     fetch_active_raiders,
     fetch_character_parses,
     fetch_guild_reports,
+    fetch_zone_directory,
     get_wcl_token,
+    resolve_zone_id,
     select_active_roster,
 )
 from guild_board.web_data import sweep_difficulties  # noqa: E402
@@ -117,26 +121,57 @@ def main(argv=None):
         return 0
 
     token = get_wcl_token(client_id, client_secret)
+    season = season_mod.CURRENT_SEASON
 
-    # One report sweep serves both zone detection and the activity gate.
+    # Zones are pinned BY NAME from WCL's zone directory, so a stray
+    # bonus-raid upload can never flip the sweep off the tier (the old
+    # detect-from-newest-report wobble). detect_zone stays as a fallback
+    # when the directory is unavailable or the name match fails.
+    try:
+        zone_dir = fetch_zone_directory(token)
+    except (RuntimeError, requests.RequestException) as exc:
+        _say(f"Zone directory lookup failed ({exc}) -- falling back to "
+             "report-based detection.")
+        zone_dir = []
+
+    # One report sweep serves both zone fallback and the activity gate.
     now = datetime.now(timezone.utc)
     end_ms = int(now.timestamp() * 1000)
     start_ms = int((now - timedelta(days=IMPROVEMENT_MAX_DAYS)).timestamp() * 1000)
     reports = fetch_guild_reports(token, cfg, start_ms, end_ms, limit=50)
 
     override = int((cfg.get("rankings") or {}).get("zone_id", 0) or 0)
+    main_raid = season["raid"]
     if override > 0:
-        zone_id, zone_name = override, None
+        zone_id, tier_name = override, main_raid["display_name"]
     else:
-        zone_id, zone_name = detect_zone(cfg, reports)
+        zone_id = resolve_zone_id(
+            zone_dir, main_raid.get("api_name") or main_raid["display_name"])
+        tier_name = main_raid["display_name"]
+        if not zone_id:
+            zone_id, zone_name = detect_zone(cfg, reports)
+            tier_name = zone_name or main_raid["display_name"]
     if not zone_id:
-        _say("No raid zone found (no recent guild reports and no "
-             "rankings.zone_id override) -- keeping the existing cache.")
+        _say("No raid zone found (no zone-directory match, no recent guild "
+             "reports, no rankings.zone_id override) -- keeping the "
+             "existing cache.")
         return 0
-    season = season_mod.CURRENT_SEASON
-    tier = {"zone_id": int(zone_id),
-            "name": zone_name or season["raid"]["display_name"]}
+    tier = {"zone_id": int(zone_id), "name": tier_name}
     _say(f"Current tier: {tier['name']} (WCL zone {tier['zone_id']})")
+
+    # Bonus raids running alongside the tier (season.py extra_raids, e.g.
+    # Sporefall/Rotmire) -- resolved the same way; unresolved ones are
+    # skipped with a note, never fatal.
+    extra_zones = []
+    for raid in season.get("extra_raids") or []:
+        zid = resolve_zone_id(zone_dir, raid["display_name"])
+        if zid:
+            extra_zones.append({"slug": raid["slug"], "zone_id": int(zid),
+                                "name": raid["display_name"]})
+            _say(f"Extra zone: {raid['display_name']} (WCL zone {zid})")
+        else:
+            _say(f"Extra zone {raid['display_name']}: no WCL zone matched "
+                 "by name -- skipped this run.")
 
     old = _load_cache()
     old_chars = old.get("characters") or {}
@@ -149,6 +184,12 @@ def main(argv=None):
     discovery_days = int(parses_cfg.get("discovery_days", 7) or 7)
     full_sweep = (args.full or sweep_mode == "full"
                   or _discovery_due(old, discovery_days))
+    # A character cached in ANY swept zone stays in the active set — a
+    # Rotmire-only raider must keep refreshing through a quiet tier week.
+    cached_keys = set(old_chars)
+    for zone in (old.get("extra_zones") or {}).values():
+        cached_keys.update((zone or {}).get("characters") or {})
+
     if full_sweep:
         sweep_roster = list(roster)
         _say(f"Full-roster sweep ({len(sweep_roster)} members): "
@@ -156,17 +197,18 @@ def main(argv=None):
                 else "discovery sweep due."))
     else:
         cutoff_ms = int((now - timedelta(days=active_days)).timestamp() * 1000)
+        swept_zone_ids = {zone_id} | {z["zone_id"] for z in extra_zones}
         recent = [r for r in reports
                   if (r.get("startTime") or 0) >= cutoff_ms
-                  and (not zone_id or (r.get("zone") or {}).get("id") == zone_id)]
+                  and (r.get("zone") or {}).get("id") in swept_zone_ids]
         active = fetch_active_raiders(token, cfg, recent, difficulties)
         sweep_roster = select_active_roster(
-            roster, active, old_chars.keys(),
+            roster, active, cached_keys,
             default_realm=cfg["guild"]["realm_slug"])
         _say(f"Active sweep: {len(sweep_roster)} of {len(roster)} roster "
              f"members ({len(active)} names in the last {active_days}d of "
-             f"logs across {len(recent)} report(s), {old_count} already "
-             "cached). Full discovery runs every "
+             f"logs across {len(recent)} report(s), {len(cached_keys)} "
+             "already cached). Full discovery runs every "
              f"{discovery_days}d.")
         if not sweep_roster:
             _say("Nobody active and nothing cached -- keeping the existing "
@@ -179,6 +221,21 @@ def main(argv=None):
                                         difficulties=difficulties)
     elapsed = time.perf_counter() - t
     _say(f"  {len(characters)} characters with rankings in {elapsed:.0f}s")
+
+    # Bonus raids: same roster, same difficulties, their own block — never
+    # merged into the tier data (the Emperor Index is tier-only).
+    extra_data = {}
+    for zone in extra_zones:
+        _say(f"Sweeping {zone['name']} (WCL zone {zone['zone_id']})...")
+        t = time.perf_counter()
+        zchars = fetch_character_parses(token, cfg, sweep_roster,
+                                        zone["zone_id"],
+                                        difficulties=difficulties)
+        _say(f"  {len(zchars)} characters with {zone['name']} rankings "
+             f"in {time.perf_counter() - t:.0f}s")
+        extra_data[zone["slug"]] = {"zone_id": zone["zone_id"],
+                                    "name": zone["name"],
+                                    "characters": zchars}
 
     # FAIL-OPEN: a bad API day must not blank every parse on the site.
     if old_count and len(characters) < old_count * args.min_fraction:
@@ -197,6 +254,7 @@ def main(argv=None):
         "season_slug": season["slug"],
         "count": len(characters),
         "characters": characters,
+        "extra_zones": extra_data,
     }
     with open(CACHE_PATH, "w", encoding="utf-8") as f:
         json.dump(payload, f, indent=2, ensure_ascii=False)

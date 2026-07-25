@@ -635,6 +635,73 @@ def sweep_difficulties(difficulty_scale, candidates=(5, 4, 3)):
                  if factors.get(_DIFFICULTY_NAMES.get(d, ""), 1.0) > 0)
 
 
+def _scale_zone_characters(characters, factors, default_tier):
+    """One zone's raw character map -> the scaled, headline-carrying map the
+    layer ships. Shared by the main tier and every extra zone (bonus raids
+    like Sporefall), so all zones obey identical rules:
+
+    * The sweep fetches EVERY enabled difficulty per character (the site
+      shows mythic and heroic side by side), nested under by_difficulty.
+      A pre-rework cache entry is flat (one difficulty at top level); it
+      is normalized into the same nest so one code path serves both until
+      the next credentialed refresh rewrites the cache.
+    * The difficulty discount: raw stays raw, rankings read the scaled
+      value. Percentiles live on 0-100, so the scaled value is capped
+      there (a factor > 1 can reward mythic but never mint a 101). A
+      factor of 0 EXCLUDES the difficulty: its sub-entry is dropped ("no
+      logs yet" on the site, never a 0.0% row) and sweep_difficulties()
+      stops the fetch querying it. The raw cache keeps everything, so
+      re-enabling later is loss-free.
+    * Headline = the difficulty with the best SCALED value (the whole
+      point of the factors: a heroic 95 at x0.8 loses to a mythic 80).
+      Raw + scaled + difficulty stay one coherent triple from the same
+      winning sub-entry.
+    """
+    out = {}
+    for key, entry in (characters or {}).items():
+        bd = entry.get("by_difficulty")
+        if not bd:
+            legacy_name = _DIFFICULTY_NAMES.get(entry.get("difficulty"), "")
+            sub = {k: entry[k] for k in
+                   ("best_perf_avg", "median_perf_avg", "by_role") if k in entry}
+            bd = {legacy_name: sub} if legacy_name and sub else {}
+
+        scaled_bd = {}
+        for diff_name, sub in bd.items():
+            factor = factors.get(diff_name, 1.0)
+            raw = (sub or {}).get("best_perf_avg")
+            if factor <= 0 or raw is None:
+                continue
+            s = dict(sub)
+            s["scaled_perf_avg"] = round(min(raw * factor, 100.0), 1)
+            s["difficulty_scale"] = factor
+            scaled_bd[diff_name] = s
+        if not scaled_bd:
+            continue
+
+        best_name, best_sub = max(scaled_bd.items(),
+                                  key=lambda kv: kv[1]["scaled_perf_avg"])
+        e = {
+            "name": entry.get("name") or "",
+            "key": key,
+            "class": entry.get("class") or "",
+            "best_perf_avg": best_sub["best_perf_avg"],
+            "scaled_perf_avg": best_sub["scaled_perf_avg"],
+            "difficulty": _DIFFICULTY_IDS.get(best_name),
+            "difficulty_scale": best_sub["difficulty_scale"],
+            "by_role": best_sub.get("by_role") or {},
+            "by_difficulty": scaled_bd,
+            # Every entry names the tier it was measured in, so a row copied
+            # out of this file stays self-describing across season boundaries.
+            "tier": entry.get("tier") or default_tier,
+            "sourced_at": entry.get("sourced_at"),
+        }
+        if best_sub.get("median_perf_avg") is not None:
+            e["median_perf_avg"] = best_sub["median_perf_avg"]
+        out[key] = e
+    return out
+
+
 def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
     """Per-character current-tier Warcraft Logs parse data — the axis the
     Four Emperors ranking, standings parse columns and the newspaper's raid
@@ -680,67 +747,28 @@ def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
             "sourced_at": None,
             "characters": {},
             "character_count": 0,
+            "extra_zones": {},
         }
 
     tier = fetched.get("tier") or {}
-    out_chars = {}
-    for key, entry in characters.items():
-        # The sweep fetches EVERY enabled difficulty per character (the site
-        # shows mythic and heroic side by side), nested under by_difficulty.
-        # A pre-rework cache entry is flat (one difficulty at top level);
-        # normalize it into the same nest so one code path serves both until
-        # the next credentialed refresh rewrites the cache.
-        bd = entry.get("by_difficulty")
-        if not bd:
-            legacy_name = _DIFFICULTY_NAMES.get(entry.get("difficulty"), "")
-            sub = {k: entry[k] for k in
-                   ("best_perf_avg", "median_perf_avg", "by_role") if k in entry}
-            bd = {legacy_name: sub} if legacy_name and sub else {}
+    out_chars = _scale_zone_characters(characters, factors, tier)
 
-        # The difficulty discount: raw stays raw, rankings read the scaled
-        # value. Percentiles live on 0-100, so the scaled value is capped
-        # there (a factor > 1 can reward mythic but never mint a 101).
-        # A factor of 0 means the difficulty is EXCLUDED: its sub-entry is
-        # dropped ("no logs yet" on the site, never a 0.0% row), and
-        # sweep_difficulties() stops the fetch querying it. The raw cache
-        # keeps everything, so re-enabling later is loss-free.
-        scaled_bd = {}
-        for diff_name, sub in bd.items():
-            factor = factors.get(diff_name, 1.0)
-            raw = (sub or {}).get("best_perf_avg")
-            if factor <= 0 or raw is None:
-                continue
-            s = dict(sub)
-            s["scaled_perf_avg"] = round(min(raw * factor, 100.0), 1)
-            s["difficulty_scale"] = factor
-            scaled_bd[diff_name] = s
-        if not scaled_bd:
-            continue
-
-        # Headline = the difficulty with the best SCALED value (that is the
-        # whole point of the factors: a heroic 95 at x0.8 loses to a mythic
-        # 80). Raw + scaled + difficulty stay one coherent triple from the
-        # same sub-entry; per-difficulty detail rides along in by_difficulty.
-        best_name, best_sub = max(scaled_bd.items(),
-                                  key=lambda kv: kv[1]["scaled_perf_avg"])
-        e = {
-            "name": entry.get("name") or "",
-            "key": key,
-            "class": entry.get("class") or "",
-            "best_perf_avg": best_sub["best_perf_avg"],
-            "scaled_perf_avg": best_sub["scaled_perf_avg"],
-            "difficulty": _DIFFICULTY_IDS.get(best_name),
-            "difficulty_scale": best_sub["difficulty_scale"],
-            "by_role": best_sub.get("by_role") or {},
-            "by_difficulty": scaled_bd,
-            # Every entry names the tier it was measured in, so a row copied
-            # out of this file stays self-describing across season boundaries.
-            "tier": entry.get("tier") or tier,
-            "sourced_at": entry.get("sourced_at"),
+    # Bonus raids swept alongside the tier (season.py extra_raids — e.g.
+    # Sporefall/Rotmire). Same scaling, own block: these must never bleed
+    # into the main characters map, because the Emperor Index and every
+    # main-layer sort are current-tier stats.
+    extra_out = {}
+    for slug, zone in (fetched.get("extra_zones") or {}).items():
+        zone_tier = {"zone_id": (zone or {}).get("zone_id"),
+                     "name": (zone or {}).get("name")}
+        zchars = _scale_zone_characters((zone or {}).get("characters"),
+                                        factors, zone_tier)
+        extra_out[slug] = {
+            "zone_id": zone_tier["zone_id"],
+            "name": zone_tier["name"],
+            "characters": zchars,
+            "character_count": len(zchars),
         }
-        if best_sub.get("median_perf_avg") is not None:
-            e["median_perf_avg"] = best_sub["median_perf_avg"]
-        out_chars[key] = e
 
     return {
         "schema_version": SCHEMA_VERSION,
@@ -757,6 +785,10 @@ def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
         "difficulty_scale": factors,
         "characters": out_chars,
         "character_count": len(out_chars),
+        # Bonus raids (season.py extra_raids), each its own character map —
+        # e.g. extra_zones.sporefall for the Rotmire newspaper section.
+        # Never merged into `characters`: the Emperor Index is tier-only.
+        "extra_zones": extra_out,
     }
 
 

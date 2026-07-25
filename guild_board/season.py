@@ -64,6 +64,14 @@ CURRENT_SEASON = {
             {"order": 9, "name": "Midnight Falls", "slug": "midnight-falls"},
         ],
     },
+    # Bonus raid running ALONGSIDE the tier — verified live 2026-07-24
+    # against the same raiding static-data endpoint. The parse sweep
+    # captures each of these as an extra WCL zone (see refresh_parses);
+    # they never feed the Emperor Index, which is a current-tier stat.
+    "extra_raids": [
+        {"slug": "sporefall", "raid_id": 8062, "display_name": "Sporefall",
+         "bosses": [{"order": 1, "name": "Rotmire", "slug": "rotmire"}]},
+    ],
 }
 
 

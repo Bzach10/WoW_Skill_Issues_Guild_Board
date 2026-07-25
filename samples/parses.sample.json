@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T02:29:31.773453+00:00",
+  "generated_at": "2026-07-25T03:01:18.390189+00:00",
   "available": true,
   "status": "ok",
   "source": "Warcraft Logs character zoneRankings",
@@ -157,5 +157,80 @@
     }
   },
   "character_count": 3,
+  "extra_zones": {
+    "sporefall": {
+      "zone_id": 47,
+      "name": "Sporefall",
+      "characters": {
+        "amrevenge-stormrage": {
+          "name": "Amrevenge",
+          "key": "amrevenge-stormrage",
+          "class": "Hunter",
+          "best_perf_avg": 82.3,
+          "scaled_perf_avg": 65.8,
+          "difficulty": 4,
+          "difficulty_scale": 0.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 82.3,
+              "kills": 2
+            }
+          },
+          "by_difficulty": {
+            "heroic": {
+              "best_perf_avg": 82.3,
+              "by_role": {
+                "DPS": {
+                  "best_perf_avg": 82.3,
+                  "kills": 2
+                }
+              },
+              "scaled_perf_avg": 65.8,
+              "difficulty_scale": 0.8
+            }
+          },
+          "tier": {
+            "zone_id": 47,
+            "name": "Sporefall"
+          },
+          "sourced_at": "2026-07-20T13:30:00+00:00"
+        },
+        "healyeah-queldorei": {
+          "name": "Healyeah",
+          "key": "healyeah-queldorei",
+          "class": "Evoker",
+          "best_perf_avg": 64.0,
+          "scaled_perf_avg": 51.2,
+          "difficulty": 4,
+          "difficulty_scale": 0.8,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 64.0,
+              "kills": 1
+            }
+          },
+          "by_difficulty": {
+            "heroic": {
+              "best_perf_avg": 64.0,
+              "by_role": {
+                "Healer": {
+                  "best_perf_avg": 64.0,
+                  "kills": 1
+                }
+              },
+              "scaled_perf_avg": 51.2,
+              "difficulty_scale": 0.8
+            }
+          },
+          "tier": {
+            "zone_id": 47,
+            "name": "Sporefall"
+          },
+          "sourced_at": "2026-07-20T13:30:00+00:00"
+        }
+      },
+      "character_count": 2
+    }
+  },
   "_sample": true
 }

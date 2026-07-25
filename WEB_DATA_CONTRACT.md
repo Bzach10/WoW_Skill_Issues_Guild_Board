@@ -457,6 +457,18 @@ Actions; the script is inert locally).
       "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
       "sourced_at": "2026-07-24T13:30:00+00:00"
     }
+  },
+
+  // Bonus raids swept alongside the tier (season.py extra_raids) — today
+  // that's the one-boss Sporefall raid (Rotmire). Identical per-character
+  // shape as `characters`, but its OWN map: never merged into the tier
+  // data, so Emperor/standings sorts stay pure current-tier. A character
+  // can appear here and not in `characters` (Rotmire-only raider).
+  "extra_zones": {
+    "sporefall": {
+      "zone_id": 47, "name": "Sporefall", "character_count": 12,
+      "characters": { "amrevenge-stormrage": { "...same shape as above": 1 } }
+    }
   }
 }
 ```

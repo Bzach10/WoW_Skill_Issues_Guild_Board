@@ -213,6 +213,29 @@ PARSES_FETCHED = {
                            "by_role": {"Tank": {"best_perf_avg": 71.9, "kills": 5}}},
             }},
     },
+    # Bonus raid swept alongside the tier (season.py extra_raids): the
+    # one-boss Sporefall raid (Rotmire). Healyeah is Sporefall-only, so
+    # the sample shows a character who exists ONLY in an extra zone.
+    "extra_zones": {
+        "sporefall": {
+            "zone_id": 47, "name": "Sporefall",
+            "characters": {
+                "amrevenge-stormrage": {
+                    "name": "Amrevenge", "key": "amrevenge-stormrage",
+                    "class": "Hunter", "sourced_at": "2026-07-20T13:30:00+00:00",
+                    "by_difficulty": {
+                        "heroic": {"best_perf_avg": 82.3,
+                                   "by_role": {"DPS": {"best_perf_avg": 82.3,
+                                                       "kills": 2}}}}},
+                "healyeah-queldorei": {
+                    "name": "Healyeah", "key": "healyeah-queldorei",
+                    "class": "Evoker", "sourced_at": "2026-07-20T13:30:00+00:00",
+                    "by_difficulty": {
+                        "heroic": {"best_perf_avg": 64.0,
+                                   "by_role": {"Healer": {"best_perf_avg": 64.0,
+                                                          "kills": 1}}}}},
+            }},
+    },
 }
 
 

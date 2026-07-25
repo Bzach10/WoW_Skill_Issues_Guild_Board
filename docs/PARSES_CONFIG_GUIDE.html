@@ -266,6 +266,9 @@ and scaled values cap at 100 even if you set mythic above 1.0.</div>
   <div class="recipe"><b>…adjust the "bad WCL day" safety net?</b>
     <ol><li>The refresh keeps the old cache if a sweep resolves &lt; 50% of last run's characters</li>
     <li>Change it: add <code>--min-fraction 0.3</code> to the refresh step in the workflow</li></ol></div>
+  <div class="recipe"><b>…add or remove a bonus raid (e.g. Sporefall)?</b>
+    <ol><li><code>guild_board/season.py</code> → <code>CURRENT_SEASON["extra_raids"]</code> — each entry is swept as its own WCL zone (resolved by name) and lands in <code>parses.json → extra_zones.&lt;slug&gt;</code></li>
+    <li>Rotmire lives here: Sporefall is a separate raid from the tier, so it's an extra zone, never mixed into the Emperor Index</li></ol></div>
   <div class="recipe"><b>…control who gets swept (API budget)?</b>
     <ol><li><code>config.yml</code> → <code>parses.sweep</code>: <code>active</code> (recent-log raiders + cached; recommended) or <code>full</code> (all 135 every run)</li>
     <li><code>active_days</code> = how far back logs count; <code>discovery_days</code> = how often the full roster is re-checked for new raiders</li>

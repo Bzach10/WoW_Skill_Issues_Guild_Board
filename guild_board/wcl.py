@@ -842,6 +842,44 @@ def fetch_character_parses(token, cfg, roster, zone_id,
     return out
 
 
+ZONES_QUERY = """
+query {
+  worldData {
+    zones {
+      id
+      name
+    }
+  }
+}
+"""
+
+
+def fetch_zone_directory(token):
+    """Every WCL zone (id + name), one query. The parse sweep resolves its
+    zones by NAME from this directory instead of trusting whichever zone
+    the guild's newest report happens to be in — a stray Sporefall upload
+    must never flip the whole sweep off the tier."""
+    data = gql(token, ZONES_QUERY, {})
+    return ((data.get("worldData") or {}).get("zones")) or []
+
+
+def resolve_zone_id(zones, wanted_name):
+    """A WCL zone id by name: exact match (case-insensitive) first, then
+    containment either way — WCL names the tier zone "VS / DR / MQD" while
+    Raider.io's api_name is "MN Tier 1 (VS / DR / MQD)". Ambiguity breaks
+    toward the highest id (newest zone). None when nothing matches."""
+    wanted = (wanted_name or "").strip().lower()
+    if not wanted:
+        return None
+    named = [(z.get("id"), (z.get("name") or "").strip().lower())
+             for z in zones or [] if z.get("id") and z.get("name")]
+    exact = [zid for zid, name in named if name == wanted]
+    if exact:
+        return max(exact)
+    partial = [zid for zid, name in named if name in wanted or wanted in name]
+    return max(partial) if partial else None
+
+
 def fetch_active_raiders(token, cfg, reports, difficulties=PARSE_SWEEP_DIFFICULTIES):
     """Who actually raided recently: everyone named in the given guild
     reports' rankings at any of the given difficulties.
