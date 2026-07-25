@@ -1,10 +1,10 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T02:23:04.524530+00:00",
+  "generated_at": "2026-07-25T02:35:26.532397+00:00",
   "available": false,
   "status": "pending_credentials",
   "source": "/data/wow/guild/{realm}/{name}/achievements",
-  "detail": "Blizzard guild-achievements API returned no data — run scripts/refresh_blizzard_profiles.py with BLIZZARD_CLIENT_ID/SECRET set, then rebuild.",
+  "detail": "No guild-achievements data yet — the credentialed Action (scripts/refresh_blizzard_profiles.py) has not run. Blizzard's guild API fills this layer.",
   "total_points": 0,
   "trophies": []
 }

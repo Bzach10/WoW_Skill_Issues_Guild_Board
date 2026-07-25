@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-25T02:23:04.524345+00:00",
+  "generated_at": "2026-07-25T02:35:26.531987+00:00",
   "available": true,
   "status": "ok",
   "source": "Warcraft Logs character zoneRankings",
@@ -12,7 +12,7 @@
     "zone_id": 46,
     "name": "VS / DR / MQD"
   },
-  "sourced_at": "2026-07-25T02:23:03.997855+00:00",
+  "sourced_at": "2026-07-25T02:32:40.627585+00:00",
   "difficulty_scale": {
     "mythic": 1.0,
     "heroic": 0.8,
@@ -22,108 +22,205 @@
   "characters": {
     "aime-bleeding-hollow": {
       "name": "Aime",
+      "key": "aime-bleeding-hollow",
       "class": "Druid",
       "best_perf_avg": 15.4,
+      "scaled_perf_avg": 12.3,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 15.4
         }
       },
-      "median_perf_avg": 15.4,
-      "key": "aime-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 15.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 15.4
+            }
+          },
+          "median_perf_avg": 15.4,
+          "scaled_perf_avg": 12.3,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 12.3,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 15.4
     },
     "amrevenge-stormrage": {
       "name": "Amrevenge",
+      "key": "amrevenge-stormrage",
       "class": "Hunter",
-      "best_perf_avg": 41.9,
+      "best_perf_avg": 89.6,
+      "scaled_perf_avg": 71.7,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 41.9
+          "best_perf_avg": 89.6
         }
       },
-      "median_perf_avg": 41.9,
-      "key": "amrevenge-stormrage",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 41.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.9
+            }
+          },
+          "median_perf_avg": 41.9,
+          "scaled_perf_avg": 41.9,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 89.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 89.6
+            }
+          },
+          "median_perf_avg": 82.1,
+          "scaled_perf_avg": 71.7,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 41.9,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 82.1
     },
     "anbux-bleeding-hollow": {
       "name": "Anbux",
+      "key": "anbux-bleeding-hollow",
       "class": "Warlock",
       "best_perf_avg": 21.3,
+      "scaled_perf_avg": 17.0,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 21.3
         }
       },
-      "median_perf_avg": 21.3,
-      "key": "anbux-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 21.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 21.3
+            }
+          },
+          "median_perf_avg": 21.3,
+          "scaled_perf_avg": 17.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 17.0,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 21.3
     },
     "arfas-queldorei": {
       "name": "Arfas",
+      "key": "arfas-queldorei",
       "class": "Death Knight",
-      "best_perf_avg": 11.2,
+      "best_perf_avg": 52.7,
+      "scaled_perf_avg": 42.2,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 11.2
+          "best_perf_avg": 67.1
+        },
+        "Tank": {
+          "best_perf_avg": 22.9
         }
       },
-      "median_perf_avg": 11.2,
-      "key": "arfas-queldorei",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 11.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 11.2
+            }
+          },
+          "median_perf_avg": 11.2,
+          "scaled_perf_avg": 11.2,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 52.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 67.1
+            },
+            "Tank": {
+              "best_perf_avg": 22.9
+            }
+          },
+          "median_perf_avg": 45.7,
+          "scaled_perf_avg": 42.2,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 11.2,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 45.7
     },
     "autable-gurubashi": {
       "name": "Autable",
+      "key": "autable-gurubashi",
       "class": "Demon Hunter",
       "best_perf_avg": 20.9,
+      "scaled_perf_avg": 16.7,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 20.9
         }
       },
-      "median_perf_avg": 19.5,
-      "key": "autable-gurubashi",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 20.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 20.9
+            }
+          },
+          "median_perf_avg": 19.5,
+          "scaled_perf_avg": 16.7,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 16.7,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 19.5
     },
     "azell-bleeding-hollow": {
       "name": "Azell",
+      "key": "azell-bleeding-hollow",
       "class": "Monk",
       "best_perf_avg": 12.5,
+      "scaled_perf_avg": 10.0,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 8.1
@@ -132,284 +229,572 @@
           "best_perf_avg": 30.3
         }
       },
-      "median_perf_avg": 12.5,
-      "key": "azell-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 12.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 8.1
+            },
+            "Tank": {
+              "best_perf_avg": 30.3
+            }
+          },
+          "median_perf_avg": 12.5,
+          "scaled_perf_avg": 10.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 10.0,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 12.5
     },
     "beastfriend-thrall": {
       "name": "Beastfriend",
+      "key": "beastfriend-thrall",
       "class": "Hunter",
-      "best_perf_avg": 31.7,
+      "best_perf_avg": 66.0,
+      "scaled_perf_avg": 52.8,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 31.7
+          "best_perf_avg": 66.0
         }
       },
-      "median_perf_avg": 31.7,
-      "key": "beastfriend-thrall",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 31.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 31.7
+            }
+          },
+          "median_perf_avg": 31.7,
+          "scaled_perf_avg": 31.7,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 66.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 66.0
+            }
+          },
+          "median_perf_avg": 51.3,
+          "scaled_perf_avg": 52.8,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 31.7,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 51.3
     },
     "beroben-emerald-dream": {
       "name": "Beroben",
+      "key": "beroben-emerald-dream",
       "class": "Mage",
       "best_perf_avg": 49.3,
+      "scaled_perf_avg": 39.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 49.3
         }
       },
-      "median_perf_avg": 49.3,
-      "key": "beroben-emerald-dream",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 49.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 49.3
+            }
+          },
+          "median_perf_avg": 49.3,
+          "scaled_perf_avg": 39.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 39.4,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 49.3
     },
     "boondocka-hydraxis": {
       "name": "Boondocka",
+      "key": "boondocka-hydraxis",
       "class": "Hunter",
-      "best_perf_avg": 34.3,
+      "best_perf_avg": 72.1,
+      "scaled_perf_avg": 57.7,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 34.3
+          "best_perf_avg": 72.1
         }
       },
-      "median_perf_avg": 32.7,
-      "key": "boondocka-hydraxis",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 34.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 34.3
+            }
+          },
+          "median_perf_avg": 32.7,
+          "scaled_perf_avg": 34.3,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 72.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 72.1
+            }
+          },
+          "median_perf_avg": 48.1,
+          "scaled_perf_avg": 57.7,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 34.3,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 48.1
     },
     "breakdruid-area-52": {
       "name": "Breakdruid",
+      "key": "breakdruid-area-52",
       "class": "Druid",
       "best_perf_avg": 3.5,
+      "scaled_perf_avg": 2.8,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 3.5
         }
       },
-      "median_perf_avg": 3.5,
-      "key": "breakdruid-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 3.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 3.5
+            }
+          },
+          "median_perf_avg": 3.5,
+          "scaled_perf_avg": 2.8,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 2.8,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 3.5
     },
     "brewzleeh-tichondrius": {
       "name": "Brewzleeh",
+      "key": "brewzleeh-tichondrius",
       "class": "Monk",
-      "best_perf_avg": 75.3,
+      "best_perf_avg": 94.2,
+      "scaled_perf_avg": 75.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
+        "DPS": {
+          "best_perf_avg": 73.8
+        },
         "Healer": {
-          "best_perf_avg": 19.2
+          "best_perf_avg": 63.5
         },
         "Tank": {
-          "best_perf_avg": 75.3
+          "best_perf_avg": 92.4
         }
       },
-      "median_perf_avg": 63.3,
-      "key": "brewzleeh-tichondrius",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 75.3,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 19.2
+            },
+            "Tank": {
+              "best_perf_avg": 75.3
+            }
+          },
+          "median_perf_avg": 63.3,
+          "scaled_perf_avg": 75.3,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 94.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 73.8
+            },
+            "Healer": {
+              "best_perf_avg": 63.5
+            },
+            "Tank": {
+              "best_perf_avg": 92.4
+            }
+          },
+          "median_perf_avg": 79.4,
+          "scaled_perf_avg": 75.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 75.3,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 79.4
     },
     "buchalter-area-52": {
       "name": "Buchalter",
+      "key": "buchalter-area-52",
       "class": "Mage",
-      "best_perf_avg": 58.0,
+      "best_perf_avg": 75.6,
+      "scaled_perf_avg": 60.5,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 58.0
+          "best_perf_avg": 75.6
         }
       },
-      "median_perf_avg": 41.4,
-      "key": "buchalter-area-52",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 58.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 58.0
+            }
+          },
+          "median_perf_avg": 41.4,
+          "scaled_perf_avg": 58.0,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 75.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 75.6
+            }
+          },
+          "median_perf_avg": 48.6,
+          "scaled_perf_avg": 60.5,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 58.0,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 48.6
     },
     "chokalock-sargeras": {
       "name": "Chokalock",
+      "key": "chokalock-sargeras",
       "class": "Warlock",
-      "best_perf_avg": 15.6,
+      "best_perf_avg": 40.5,
+      "scaled_perf_avg": 32.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 15.6
+          "best_perf_avg": 40.5
         }
       },
-      "median_perf_avg": 13.2,
-      "key": "chokalock-sargeras",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 15.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 15.6
+            }
+          },
+          "median_perf_avg": 13.2,
+          "scaled_perf_avg": 15.6,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 40.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 40.5
+            }
+          },
+          "median_perf_avg": 30.0,
+          "scaled_perf_avg": 32.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 15.6,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 30.0
     },
     "coned-azgalor": {
       "name": "Coned",
+      "key": "coned-azgalor",
       "class": "Warrior",
       "best_perf_avg": 23.5,
+      "scaled_perf_avg": 18.8,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 23.5
         }
       },
-      "median_perf_avg": 22.0,
-      "key": "coned-azgalor",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 23.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.5
+            }
+          },
+          "median_perf_avg": 22.0,
+          "scaled_perf_avg": 18.8,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 18.8,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 22.0
     },
     "delusionz-icecrown": {
       "name": "Delusionz",
+      "key": "delusionz-icecrown",
       "class": "Priest",
-      "best_perf_avg": 50.7,
+      "best_perf_avg": 69.0,
+      "scaled_perf_avg": 55.2,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
-          "best_perf_avg": 50.7
+          "best_perf_avg": 69.0
         }
       },
-      "median_perf_avg": 41.8,
-      "key": "delusionz-icecrown",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 50.7,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 50.7
+            }
+          },
+          "median_perf_avg": 41.8,
+          "scaled_perf_avg": 50.7,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 69.0,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 69.0
+            }
+          },
+          "median_perf_avg": 60.0,
+          "scaled_perf_avg": 55.2,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 50.7,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 60.0
     },
     "digglio-area-52": {
       "name": "Digglio",
+      "key": "digglio-area-52",
       "class": "Warlock",
       "best_perf_avg": 75.1,
+      "scaled_perf_avg": 60.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 75.1
         }
       },
-      "median_perf_avg": 46.8,
-      "key": "digglio-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 75.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 75.1
+            }
+          },
+          "median_perf_avg": 46.8,
+          "scaled_perf_avg": 60.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 60.1,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 46.8
     },
     "dragoonx-bleeding-hollow": {
       "name": "Dragoonx",
+      "key": "dragoonx-bleeding-hollow",
       "class": "Evoker",
       "best_perf_avg": 27.8,
+      "scaled_perf_avg": 22.2,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 27.8
         }
       },
-      "median_perf_avg": 17.3,
-      "key": "dragoonx-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 27.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 27.8
+            }
+          },
+          "median_perf_avg": 17.3,
+          "scaled_perf_avg": 22.2,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 22.2,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 17.3
     },
     "ellebasi-malganis": {
       "name": "Ellebasi",
+      "key": "ellebasi-malganis",
       "class": "Druid",
-      "best_perf_avg": 43.6,
+      "best_perf_avg": 60.8,
+      "scaled_perf_avg": 48.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
-          "best_perf_avg": 43.6
+          "best_perf_avg": 60.8
         }
       },
-      "median_perf_avg": 25.2,
-      "key": "ellebasi-malganis",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 43.6,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 43.6
+            }
+          },
+          "median_perf_avg": 25.2,
+          "scaled_perf_avg": 43.6,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 60.8,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 60.8
+            }
+          },
+          "median_perf_avg": 60.8,
+          "scaled_perf_avg": 48.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 43.6,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 60.8
     },
     "enyò-area-52": {
       "name": "Enyò",
+      "key": "enyò-area-52",
       "class": "Demon Hunter",
       "best_perf_avg": 71.5,
+      "scaled_perf_avg": 71.5,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 71.5
         }
       },
-      "median_perf_avg": 61.1,
-      "key": "enyò-area-52",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 71.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 71.5
+            }
+          },
+          "median_perf_avg": 61.1,
+          "scaled_perf_avg": 71.5,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 83.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 83.0
+            },
+            "Tank": {
+              "best_perf_avg": 38.1
+            }
+          },
+          "median_perf_avg": 68.0,
+          "scaled_perf_avg": 66.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 71.5,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 61.1
     },
     "eponax-bleeding-hollow": {
       "name": "Eponax",
+      "key": "eponax-bleeding-hollow",
       "class": "Demon Hunter",
       "best_perf_avg": 23.3,
+      "scaled_perf_avg": 18.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 11.6
@@ -418,561 +803,1075 @@
           "best_perf_avg": 23.3
         }
       },
-      "median_perf_avg": 23.3,
-      "key": "eponax-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 23.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 11.6
+            },
+            "Tank": {
+              "best_perf_avg": 23.3
+            }
+          },
+          "median_perf_avg": 23.3,
+          "scaled_perf_avg": 18.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 18.6,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 23.3
     },
     "flemel-area-52": {
       "name": "Flemel",
+      "key": "flemel-area-52",
       "class": "Warlock",
       "best_perf_avg": 44.2,
+      "scaled_perf_avg": 35.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 44.2
         }
       },
-      "median_perf_avg": 41.9,
-      "key": "flemel-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 44.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 44.2
+            }
+          },
+          "median_perf_avg": 41.9,
+          "scaled_perf_avg": 35.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 35.4,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 41.9
     },
     "flogeron-area-52": {
       "name": "Flogeron",
+      "key": "flogeron-area-52",
       "class": "Warrior",
       "best_perf_avg": 63.3,
+      "scaled_perf_avg": 50.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
           "best_perf_avg": 63.3
         }
       },
-      "median_perf_avg": 44.9,
-      "key": "flogeron-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 63.3,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 63.3
+            }
+          },
+          "median_perf_avg": 44.9,
+          "scaled_perf_avg": 50.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 50.6,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 44.9
     },
     "floofwall-queldorei": {
       "name": "Floofwall",
+      "key": "floofwall-queldorei",
       "class": "Monk",
-      "best_perf_avg": 60.1,
+      "best_perf_avg": 81.2,
+      "scaled_perf_avg": 65.0,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
+        "DPS": {
+          "best_perf_avg": 48.1
+        },
         "Tank": {
-          "best_perf_avg": 60.1
+          "best_perf_avg": 81.2
         }
       },
-      "median_perf_avg": 50.6,
-      "key": "floofwall-queldorei",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 60.1,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 60.1
+            }
+          },
+          "median_perf_avg": 50.6,
+          "scaled_perf_avg": 60.1,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 81.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 48.1
+            },
+            "Tank": {
+              "best_perf_avg": 81.2
+            }
+          },
+          "median_perf_avg": 61.2,
+          "scaled_perf_avg": 65.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 60.1,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 61.2
     },
     "fugaku-icecrown": {
       "name": "Fugaku",
+      "key": "fugaku-icecrown",
       "class": "Evoker",
       "best_perf_avg": 24.9,
+      "scaled_perf_avg": 19.9,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
           "best_perf_avg": 50.9
         }
       },
-      "median_perf_avg": 24.9,
-      "key": "fugaku-icecrown",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 24.9,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 50.9
+            }
+          },
+          "median_perf_avg": 24.9,
+          "scaled_perf_avg": 19.9,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 19.9,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 24.9
     },
     "gandamar-azgalor": {
       "name": "Gandamar",
+      "key": "gandamar-azgalor",
       "class": "Warlock",
       "best_perf_avg": 18.9,
+      "scaled_perf_avg": 15.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 18.9
         }
       },
-      "median_perf_avg": 12.6,
-      "key": "gandamar-azgalor",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 18.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 18.9
+            }
+          },
+          "median_perf_avg": 12.6,
+          "scaled_perf_avg": 15.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 15.1,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 12.6
     },
     "glinkz-wyrmrest-accord": {
       "name": "Glinkz",
+      "key": "glinkz-wyrmrest-accord",
       "class": "Mage",
-      "best_perf_avg": 41.0,
+      "best_perf_avg": 79.5,
+      "scaled_perf_avg": 63.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 41.0
+          "best_perf_avg": 79.5
         }
       },
-      "median_perf_avg": 32.3,
-      "key": "glinkz-wyrmrest-accord",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 41.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.0
+            }
+          },
+          "median_perf_avg": 32.3,
+          "scaled_perf_avg": 41.0,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 79.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 79.5
+            }
+          },
+          "median_perf_avg": 63.6,
+          "scaled_perf_avg": 63.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 41.0,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 63.6
     },
     "healmates-korgath": {
       "name": "Healmates",
+      "key": "healmates-korgath",
       "class": "Priest",
       "best_perf_avg": 58.3,
+      "scaled_perf_avg": 58.3,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "Healer": {
           "best_perf_avg": 58.3
         }
       },
-      "median_perf_avg": 35.2,
-      "key": "healmates-korgath",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 58.3,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 58.3
+            }
+          },
+          "median_perf_avg": 35.2,
+          "scaled_perf_avg": 58.3,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 66.1,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 66.1
+            }
+          },
+          "median_perf_avg": 39.6,
+          "scaled_perf_avg": 52.9,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 58.3,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 35.2
     },
     "healyeah-queldorei": {
       "name": "Healyeah",
+      "key": "healyeah-queldorei",
       "class": "Evoker",
       "best_perf_avg": 23.8,
+      "scaled_perf_avg": 23.8,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 23.8
         }
       },
-      "median_perf_avg": 16.3,
-      "key": "healyeah-queldorei",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 23.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.8
+            }
+          },
+          "median_perf_avg": 16.3,
+          "scaled_perf_avg": 23.8,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 4.4,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 4.9
+            }
+          },
+          "median_perf_avg": 4.2,
+          "scaled_perf_avg": 3.5,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 23.8,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 16.3
     },
     "hellful-lightnings-blade": {
       "name": "Hellful",
+      "key": "hellful-lightnings-blade",
       "class": "Shaman",
       "best_perf_avg": 84.0,
+      "scaled_perf_avg": 84.0,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "Healer": {
           "best_perf_avg": 19.9
         }
       },
-      "median_perf_avg": 74.9,
-      "key": "hellful-lightnings-blade",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 84.0,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 19.9
+            }
+          },
+          "median_perf_avg": 74.9,
+          "scaled_perf_avg": 84.0,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 56.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 4.5
+            },
+            "Healer": {
+              "best_perf_avg": 35.5
+            }
+          },
+          "median_perf_avg": 50.9,
+          "scaled_perf_avg": 45.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 84.0,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 74.9
     },
     "heximal-hydraxis": {
       "name": "Heximal",
+      "key": "heximal-hydraxis",
       "class": "Druid",
-      "best_perf_avg": 22.8,
+      "best_perf_avg": 56.9,
+      "scaled_perf_avg": 45.5,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 22.8
+          "best_perf_avg": 56.9
         }
       },
-      "median_perf_avg": 22.8,
-      "key": "heximal-hydraxis",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 22.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 22.8
+            }
+          },
+          "median_perf_avg": 22.8,
+          "scaled_perf_avg": 22.8,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 56.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 56.9
+            }
+          },
+          "median_perf_avg": 51.5,
+          "scaled_perf_avg": 45.5,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 22.8,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 51.5
     },
     "holyx-bleeding-hollow": {
       "name": "Holyx",
+      "key": "holyx-bleeding-hollow",
       "class": "Paladin",
-      "best_perf_avg": 29.6,
+      "best_perf_avg": 87.0,
+      "scaled_perf_avg": 69.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 29.6
+          "best_perf_avg": 87.0
+        },
+        "Tank": {
+          "best_perf_avg": 27.7
         }
       },
-      "median_perf_avg": 21.2,
-      "key": "holyx-bleeding-hollow",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 29.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 29.6
+            }
+          },
+          "median_perf_avg": 21.2,
+          "scaled_perf_avg": 29.6,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 87.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 87.0
+            },
+            "Tank": {
+              "best_perf_avg": 27.7
+            }
+          },
+          "median_perf_avg": 77.7,
+          "scaled_perf_avg": 69.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 29.6,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 77.7
     },
     "huntlowx-bleeding-hollow": {
       "name": "Huntlowx",
+      "key": "huntlowx-bleeding-hollow",
       "class": "Hunter",
       "best_perf_avg": 31.4,
+      "scaled_perf_avg": 25.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 31.4
         }
       },
-      "median_perf_avg": 25.1,
-      "key": "huntlowx-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 31.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 31.4
+            }
+          },
+          "median_perf_avg": 25.1,
+          "scaled_perf_avg": 25.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 25.1,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 25.1
     },
     "icyx-bleeding-hollow": {
       "name": "Icyx",
+      "key": "icyx-bleeding-hollow",
       "class": "Mage",
       "best_perf_avg": 23.3,
+      "scaled_perf_avg": 18.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 23.3
         }
       },
-      "median_perf_avg": 18.0,
-      "key": "icyx-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 23.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.3
+            }
+          },
+          "median_perf_avg": 18.0,
+          "scaled_perf_avg": 18.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 18.6,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 18.0
     },
     "impkiller-tichondrius": {
       "name": "Impkiller",
+      "key": "impkiller-tichondrius",
       "class": "Warlock",
-      "best_perf_avg": 30.3,
+      "best_perf_avg": 60.3,
+      "scaled_perf_avg": 48.2,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 30.3
+          "best_perf_avg": 60.3
         }
       },
-      "median_perf_avg": 26.4,
-      "key": "impkiller-tichondrius",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 30.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 30.3
+            }
+          },
+          "median_perf_avg": 26.4,
+          "scaled_perf_avg": 30.3,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 60.3,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 60.3
+            }
+          },
+          "median_perf_avg": 37.7,
+          "scaled_perf_avg": 48.2,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 30.3,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 37.7
     },
     "jovala-stormrage": {
       "name": "Jovala",
+      "key": "jovala-stormrage",
       "class": "Druid",
       "best_perf_avg": 54.3,
+      "scaled_perf_avg": 43.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
           "best_perf_avg": 54.3
         }
       },
-      "median_perf_avg": 54.3,
-      "key": "jovala-stormrage",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 54.3,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 54.3
+            }
+          },
+          "median_perf_avg": 54.3,
+          "scaled_perf_avg": 43.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 43.4,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 54.3
     },
     "kegsmashroll-stormrage": {
       "name": "Kegsmashroll",
+      "key": "kegsmashroll-stormrage",
       "class": "Monk",
       "best_perf_avg": 78.7,
+      "scaled_perf_avg": 63.0,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
           "best_perf_avg": 78.7
         }
       },
-      "median_perf_avg": 71.3,
-      "key": "kegsmashroll-stormrage",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 78.7,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 78.7
+            }
+          },
+          "median_perf_avg": 71.3,
+          "scaled_perf_avg": 63.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 63.0,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 71.3
     },
     "kelova-stormrage": {
       "name": "Kelova",
+      "key": "kelova-stormrage",
       "class": "Monk",
       "best_perf_avg": 44.9,
+      "scaled_perf_avg": 35.9,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 44.9
         }
       },
-      "median_perf_avg": 44.9,
-      "key": "kelova-stormrage",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 44.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 44.9
+            }
+          },
+          "median_perf_avg": 44.9,
+          "scaled_perf_avg": 35.9,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 35.9,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 44.9
     },
     "kirrá-aggramar": {
       "name": "Kirrá",
+      "key": "kirrá-aggramar",
       "class": "Warlock",
-      "best_perf_avg": 8.1,
+      "best_perf_avg": 41.6,
+      "scaled_perf_avg": 33.3,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 8.1
+          "best_perf_avg": 41.6
         }
       },
-      "median_perf_avg": 8.1,
-      "key": "kirrá-aggramar",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 8.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 8.1
+            }
+          },
+          "median_perf_avg": 8.1,
+          "scaled_perf_avg": 8.1,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 41.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.6
+            }
+          },
+          "median_perf_avg": 41.6,
+          "scaled_perf_avg": 33.3,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 8.1,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 41.6
     },
     "kitez-cenarion-circle": {
       "name": "Kitez",
+      "key": "kitez-cenarion-circle",
       "class": "Mage",
       "best_perf_avg": 15.1,
+      "scaled_perf_avg": 12.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 15.1
         }
       },
-      "median_perf_avg": 15.1,
-      "key": "kitez-cenarion-circle",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 15.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 15.1
+            }
+          },
+          "median_perf_avg": 15.1,
+          "scaled_perf_avg": 12.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 12.1,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 15.1
     },
     "maillo-area-52": {
       "name": "Maillo",
+      "key": "maillo-area-52",
       "class": "Hunter",
-      "best_perf_avg": 41.5,
+      "best_perf_avg": 75.1,
+      "scaled_perf_avg": 60.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 41.5
+          "best_perf_avg": 75.1
         }
       },
-      "median_perf_avg": 27.2,
-      "key": "maillo-area-52",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 41.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 41.5
+            }
+          },
+          "median_perf_avg": 27.2,
+          "scaled_perf_avg": 41.5,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 75.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 75.1
+            }
+          },
+          "median_perf_avg": 67.4,
+          "scaled_perf_avg": 60.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 41.5,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 67.4
     },
     "martylol-illidan": {
       "name": "Martylol",
+      "key": "martylol-illidan",
       "class": "Mage",
-      "best_perf_avg": 18.4,
+      "best_perf_avg": 42.6,
+      "scaled_perf_avg": 34.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 18.4
+          "best_perf_avg": 42.6
         }
       },
-      "median_perf_avg": 18.4,
-      "key": "martylol-illidan",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 18.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 18.4
+            }
+          },
+          "median_perf_avg": 18.4,
+          "scaled_perf_avg": 18.4,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 42.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 42.6
+            }
+          },
+          "median_perf_avg": 23.5,
+          "scaled_perf_avg": 34.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 18.4,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 23.5
     },
     "marvinah-queldorei": {
       "name": "Marvinah",
+      "key": "marvinah-queldorei",
       "class": "Hunter",
-      "best_perf_avg": 21.0,
+      "best_perf_avg": 20.9,
+      "scaled_perf_avg": 16.7,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 21.0
+          "best_perf_avg": 20.9
         }
       },
-      "median_perf_avg": 11.7,
-      "key": "marvinah-queldorei",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 20.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 20.9
+            }
+          },
+          "median_perf_avg": 11.7,
+          "scaled_perf_avg": 16.7,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 16.8,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 11.7
     },
     "nivella-dawnbringer": {
       "name": "Nivella",
+      "key": "nivella-dawnbringer",
       "class": "Warlock",
       "best_perf_avg": 17.5,
+      "scaled_perf_avg": 14.0,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 17.5
         }
       },
-      "median_perf_avg": 12.7,
-      "key": "nivella-dawnbringer",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 17.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 17.5
+            }
+          },
+          "median_perf_avg": 12.7,
+          "scaled_perf_avg": 14.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 14.0,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 12.7
     },
     "nokori-proudmoore": {
       "name": "Nokori",
+      "key": "nokori-proudmoore",
       "class": "Shaman",
-      "best_perf_avg": 5.6,
+      "best_perf_avg": 79.3,
+      "scaled_perf_avg": 63.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
-        "DPS": {
-          "best_perf_avg": 5.6
+        "Healer": {
+          "best_perf_avg": 73.1
         }
       },
-      "median_perf_avg": 5.6,
-      "key": "nokori-proudmoore",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 5.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 5.6
+            }
+          },
+          "median_perf_avg": 5.6,
+          "scaled_perf_avg": 5.6,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 79.3,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 73.1
+            }
+          },
+          "median_perf_avg": 79.3,
+          "scaled_perf_avg": 63.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 5.6,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 79.3
     },
     "ohnomyais-area-52": {
       "name": "Ohnomyais",
+      "key": "ohnomyais-area-52",
       "class": "Warrior",
       "best_perf_avg": 39.2,
+      "scaled_perf_avg": 31.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 39.2
         }
       },
-      "median_perf_avg": 26.5,
-      "key": "ohnomyais-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 39.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 39.2
+            }
+          },
+          "median_perf_avg": 26.5,
+          "scaled_perf_avg": 31.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 31.4,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 26.5
     },
     "onessarain-area-52": {
       "name": "Onessarain",
+      "key": "onessarain-area-52",
       "class": "Shaman",
       "best_perf_avg": 52.8,
+      "scaled_perf_avg": 42.2,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
           "best_perf_avg": 69.5
         }
       },
-      "median_perf_avg": 45.7,
-      "key": "onessarain-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 52.8,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 69.5
+            }
+          },
+          "median_perf_avg": 45.7,
+          "scaled_perf_avg": 42.2,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 42.2,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 45.7
     },
     "onetruemorty-area-52": {
       "name": "Onetruemorty",
+      "key": "onetruemorty-area-52",
       "class": "Warrior",
       "best_perf_avg": 54.5,
+      "scaled_perf_avg": 43.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 54.5
         }
       },
-      "median_perf_avg": 46.8,
-      "key": "onetruemorty-area-52",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 54.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 54.5
+            }
+          },
+          "median_perf_avg": 46.8,
+          "scaled_perf_avg": 43.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 43.6,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 46.8
     },
     "rakdisc-proudmoore": {
       "name": "Rakdisc",
+      "key": "rakdisc-proudmoore",
       "class": "Priest",
       "best_perf_avg": 62.1,
+      "scaled_perf_avg": 62.1,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 68.1
@@ -981,261 +1880,549 @@
           "best_perf_avg": 62.1
         }
       },
-      "median_perf_avg": 42.1,
-      "key": "rakdisc-proudmoore",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 62.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 68.1
+            },
+            "Healer": {
+              "best_perf_avg": 62.1
+            }
+          },
+          "median_perf_avg": 42.1,
+          "scaled_perf_avg": 62.1,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 67.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 72.9
+            },
+            "Healer": {
+              "best_perf_avg": 65.0
+            }
+          },
+          "median_perf_avg": 57.2,
+          "scaled_perf_avg": 54.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 62.1,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 42.1
     },
     "rakell-proudmoore": {
       "name": "Rakell",
+      "key": "rakell-proudmoore",
       "class": "Death Knight",
-      "best_perf_avg": 14.1,
+      "best_perf_avg": 25.0,
+      "scaled_perf_avg": 20.0,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 14.1
+          "best_perf_avg": 25.0
         }
       },
-      "median_perf_avg": 13.3,
-      "key": "rakell-proudmoore",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 14.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 14.1
+            }
+          },
+          "median_perf_avg": 13.3,
+          "scaled_perf_avg": 14.1,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 25.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 25.0
+            }
+          },
+          "median_perf_avg": 25.0,
+          "scaled_perf_avg": 20.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 14.1,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 25.0
     },
     "rexxhavocc-area-52": {
       "name": "Rexxhavocc",
+      "key": "rexxhavocc-area-52",
       "class": "Hunter",
       "best_perf_avg": 39.1,
+      "scaled_perf_avg": 39.1,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 39.1
         }
       },
-      "median_perf_avg": 31.9,
-      "key": "rexxhavocc-area-52",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 39.1,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 39.1
+            }
+          },
+          "median_perf_avg": 31.9,
+          "scaled_perf_avg": 39.1,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 16.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 16.7
+            }
+          },
+          "median_perf_avg": 6.4,
+          "scaled_perf_avg": 13.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 39.1,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 31.9
     },
     "rhansìk-area-52": {
       "name": "Rhansìk",
+      "key": "rhansìk-area-52",
       "class": "Hunter",
       "best_perf_avg": 54.5,
+      "scaled_perf_avg": 54.5,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 54.5
         }
       },
-      "median_perf_avg": 47.0,
-      "key": "rhansìk-area-52",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 54.5,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 54.5
+            }
+          },
+          "median_perf_avg": 47.0,
+          "scaled_perf_avg": 54.5,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 66.2,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 66.2
+            }
+          },
+          "median_perf_avg": 54.7,
+          "scaled_perf_avg": 53.0,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 54.5,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 47.0
     },
     "scounddrel-maelstrom": {
       "name": "Scounddrel",
+      "key": "scounddrel-maelstrom",
       "class": "Hunter",
-      "best_perf_avg": 37.4,
+      "best_perf_avg": 81.6,
+      "scaled_perf_avg": 65.3,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 37.4
+          "best_perf_avg": 81.6
         }
       },
-      "median_perf_avg": 23.8,
-      "key": "scounddrel-maelstrom",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 37.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 37.4
+            }
+          },
+          "median_perf_avg": 23.8,
+          "scaled_perf_avg": 37.4,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 81.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 81.6
+            }
+          },
+          "median_perf_avg": 55.6,
+          "scaled_perf_avg": 65.3,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 37.4,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 55.6
     },
     "shadoxi-illidan": {
       "name": "Shadoxi",
+      "key": "shadoxi-illidan",
       "class": "Druid",
       "best_perf_avg": 36.4,
+      "scaled_perf_avg": 29.1,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
           "best_perf_avg": 53.5
         }
       },
-      "median_perf_avg": 36.0,
-      "key": "shadoxi-illidan",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 36.4,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 53.5
+            }
+          },
+          "median_perf_avg": 36.0,
+          "scaled_perf_avg": 29.1,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 29.1,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 36.0
     },
     "shadoxii-illidan": {
       "name": "Shadoxii",
+      "key": "shadoxii-illidan",
       "class": "Monk",
-      "best_perf_avg": 3.2,
+      "best_perf_avg": 16.7,
+      "scaled_perf_avg": 13.4,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
-          "best_perf_avg": 9.9
+          "best_perf_avg": 53.0
         }
       },
-      "median_perf_avg": 3.2,
-      "key": "shadoxii-illidan",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 3.2,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 9.9
+            }
+          },
+          "median_perf_avg": 3.2,
+          "scaled_perf_avg": 3.2,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 16.7,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 53.0
+            }
+          },
+          "median_perf_avg": 12.1,
+          "scaled_perf_avg": 13.4,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 3.2,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 12.1
     },
     "skoala-frostwolf": {
       "name": "Skoala",
+      "key": "skoala-frostwolf",
       "class": "Death Knight",
-      "best_perf_avg": 7.7,
+      "best_perf_avg": 19.0,
+      "scaled_perf_avg": 15.2,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 7.7
+          "best_perf_avg": 19.0
         }
       },
-      "median_perf_avg": 7.7,
-      "key": "skoala-frostwolf",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 7.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 7.7
+            }
+          },
+          "median_perf_avg": 7.7,
+          "scaled_perf_avg": 7.7,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 19.0,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 19.0
+            }
+          },
+          "median_perf_avg": 13.8,
+          "scaled_perf_avg": 15.2,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 7.7,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 13.8
     },
     "slicerdicer-bleeding-hollow": {
       "name": "Slicerdicer",
+      "key": "slicerdicer-bleeding-hollow",
       "class": "Demon Hunter",
       "best_perf_avg": 45.6,
+      "scaled_perf_avg": 36.5,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 45.6
         }
       },
-      "median_perf_avg": 35.4,
-      "key": "slicerdicer-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 45.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 45.6
+            }
+          },
+          "median_perf_avg": 35.4,
+          "scaled_perf_avg": 36.5,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 36.5,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 35.4
     },
     "thiccat-illidan": {
       "name": "Thiccat",
+      "key": "thiccat-illidan",
       "class": "Druid",
       "best_perf_avg": 23.6,
+      "scaled_perf_avg": 18.9,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
           "best_perf_avg": 23.6
         }
       },
-      "median_perf_avg": 23.6,
-      "key": "thiccat-illidan",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 23.6,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 23.6
+            }
+          },
+          "median_perf_avg": 23.6,
+          "scaled_perf_avg": 18.9,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 18.9,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 23.6
     },
     "tinyx-bleeding-hollow": {
       "name": "Tinyx",
+      "key": "tinyx-bleeding-hollow",
       "class": "Druid",
       "best_perf_avg": 47.7,
+      "scaled_perf_avg": 47.7,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "Tank": {
           "best_perf_avg": 47.7
         }
       },
-      "median_perf_avg": 39.2,
-      "key": "tinyx-bleeding-hollow",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 47.7,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 47.7
+            }
+          },
+          "median_perf_avg": 39.2,
+          "scaled_perf_avg": 47.7,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 54.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 9.7
+            },
+            "Tank": {
+              "best_perf_avg": 54.7
+            }
+          },
+          "median_perf_avg": 50.4,
+          "scaled_perf_avg": 43.8,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 47.7,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 39.2
     },
     "tommybravo-bleeding-hollow": {
       "name": "Tommybravo",
+      "key": "tommybravo-bleeding-hollow",
       "class": "Priest",
-      "best_perf_avg": 12.8,
+      "best_perf_avg": 54.8,
+      "scaled_perf_avg": 43.8,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 9.4
+          "best_perf_avg": 59.4
         }
       },
-      "median_perf_avg": 12.8,
-      "key": "tommybravo-bleeding-hollow",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 12.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 9.4
+            }
+          },
+          "median_perf_avg": 12.8,
+          "scaled_perf_avg": 12.8,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 54.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 59.4
+            }
+          },
+          "median_perf_avg": 39.5,
+          "scaled_perf_avg": 43.8,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 12.8,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 39.5
     },
     "tommybravoo-bleeding-hollow": {
       "name": "Tommybravoo",
+      "key": "tommybravoo-bleeding-hollow",
       "class": "Death Knight",
-      "best_perf_avg": 54.8,
+      "best_perf_avg": 90.8,
+      "scaled_perf_avg": 72.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 54.8
+          "best_perf_avg": 90.8
         }
       },
-      "median_perf_avg": 34.8,
-      "key": "tommybravoo-bleeding-hollow",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 54.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 54.8
+            }
+          },
+          "median_perf_avg": 34.8,
+          "scaled_perf_avg": 54.8,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 90.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 90.8
+            }
+          },
+          "median_perf_avg": 81.6,
+          "scaled_perf_avg": 72.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 54.8,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 81.6
     },
     "tommybravox-bleeding-hollow": {
       "name": "Tommybravox",
+      "key": "tommybravox-bleeding-hollow",
       "class": "Demon Hunter",
       "best_perf_avg": 72.8,
+      "scaled_perf_avg": 72.8,
+      "difficulty": 5,
+      "difficulty_scale": 1.0,
       "by_role": {
         "DPS": {
           "best_perf_avg": 72.8
@@ -1244,119 +2431,238 @@
           "best_perf_avg": 18.9
         }
       },
-      "median_perf_avg": 52.7,
-      "key": "tommybravox-bleeding-hollow",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 72.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 72.8
+            },
+            "Tank": {
+              "best_perf_avg": 18.9
+            }
+          },
+          "median_perf_avg": 52.7,
+          "scaled_perf_avg": 72.8,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 82.9,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 82.6
+            },
+            "Tank": {
+              "best_perf_avg": 49.0
+            }
+          },
+          "median_perf_avg": 69.2,
+          "scaled_perf_avg": 66.3,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 72.8,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 52.7
     },
     "viôlence-bleeding-hollow": {
       "name": "Viôlence",
+      "key": "viôlence-bleeding-hollow",
       "class": "Druid",
       "best_perf_avg": 57.9,
+      "scaled_perf_avg": 46.3,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
           "best_perf_avg": 20.0
         }
       },
-      "median_perf_avg": 42.2,
-      "key": "viôlence-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 57.9,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 20.0
+            }
+          },
+          "median_perf_avg": 42.2,
+          "scaled_perf_avg": 46.3,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 46.3,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 42.2
     },
     "widowx-bleeding-hollow": {
       "name": "Widowx",
+      "key": "widowx-bleeding-hollow",
       "class": "Monk",
-      "best_perf_avg": 14.8,
+      "best_perf_avg": 45.7,
+      "scaled_perf_avg": 36.6,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
-          "best_perf_avg": 14.8
+          "best_perf_avg": 36.6
         },
         "Tank": {
-          "best_perf_avg": 12.0
+          "best_perf_avg": 47.5
         }
       },
-      "median_perf_avg": 14.8,
-      "key": "widowx-bleeding-hollow",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 14.8,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 14.8
+            },
+            "Tank": {
+              "best_perf_avg": 12.0
+            }
+          },
+          "median_perf_avg": 14.8,
+          "scaled_perf_avg": 14.8,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 45.7,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 36.6
+            },
+            "Tank": {
+              "best_perf_avg": 47.5
+            }
+          },
+          "median_perf_avg": 35.8,
+          "scaled_perf_avg": 36.6,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 14.8,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 35.8
     },
     "wolfx-bleeding-hollow": {
       "name": "Wolfx",
+      "key": "wolfx-bleeding-hollow",
       "class": "Shaman",
       "best_perf_avg": 58.6,
+      "scaled_perf_avg": 46.9,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Healer": {
           "best_perf_avg": 35.4
         }
       },
-      "median_perf_avg": 58.6,
-      "key": "wolfx-bleeding-hollow",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 58.6,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 35.4
+            }
+          },
+          "median_perf_avg": 58.6,
+          "scaled_perf_avg": 46.9,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 46.9,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 58.6
     },
     "yur-whisperwind": {
       "name": "Yur",
+      "key": "yur-whisperwind",
       "class": "Demon Hunter",
-      "best_perf_avg": 34.4,
+      "best_perf_avg": 67.2,
+      "scaled_perf_avg": 53.8,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "Tank": {
-          "best_perf_avg": 34.4
+          "best_perf_avg": 67.2
         }
       },
-      "median_perf_avg": 32.6,
-      "key": "yur-whisperwind",
-      "difficulty": 5,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "mythic": {
+          "best_perf_avg": 34.4,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 34.4
+            }
+          },
+          "median_perf_avg": 32.6,
+          "scaled_perf_avg": 34.4,
+          "difficulty_scale": 1.0
+        },
+        "heroic": {
+          "best_perf_avg": 67.2,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 67.2
+            }
+          },
+          "median_perf_avg": 47.8,
+          "scaled_perf_avg": 53.8,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 34.4,
-      "difficulty_scale": 1.0
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 47.8
     },
     "zackoh-bloodhoof": {
       "name": "Zackoh",
+      "key": "zackoh-bloodhoof",
       "class": "Hunter",
       "best_perf_avg": 4.6,
+      "scaled_perf_avg": 3.7,
+      "difficulty": 4,
+      "difficulty_scale": 0.8,
       "by_role": {
         "DPS": {
           "best_perf_avg": 4.6
         }
       },
-      "median_perf_avg": 4.6,
-      "key": "zackoh-bloodhoof",
-      "difficulty": 4,
-      "sourced_at": "2026-07-25T02:20:22.804616+00:00",
+      "by_difficulty": {
+        "heroic": {
+          "best_perf_avg": 4.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 4.6
+            }
+          },
+          "median_perf_avg": 4.6,
+          "scaled_perf_avg": 3.7,
+          "difficulty_scale": 0.8
+        }
+      },
       "tier": {
         "zone_id": 46,
         "name": "VS / DR / MQD"
       },
-      "scaled_perf_avg": 3.7,
-      "difficulty_scale": 0.8
+      "sourced_at": "2026-07-25T02:32:40.828491+00:00",
+      "median_perf_avg": 4.6
     }
   },
   "character_count": 66
