@@ -122,7 +122,7 @@ def load_style(name, styles_dir=None):
     styles_dir = styles_dir or STYLES_DIR
     path = os.path.join(styles_dir, f"{name}.yaml")
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             override = yaml.safe_load(f) or {}
     except (FileNotFoundError, yaml.YAMLError):
         override = {}

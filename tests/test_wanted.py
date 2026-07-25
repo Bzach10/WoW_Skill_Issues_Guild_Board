@@ -2,7 +2,6 @@
 
 from guild_board import wanted
 
-
 CREW = [
     {"slug": "amrevenge", "name": "Amrevenge", "role": "dps", "cls": "Hunter",
      "spec": "Beast Mastery", "score": 3908.1, "art": {"src": "a.jpg"}},

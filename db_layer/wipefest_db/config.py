@@ -27,9 +27,9 @@ def load_config(path: str = _DEFAULT_CONFIG) -> dict:
             raise RuntimeError(
                 "YAML config requested but PyYAML is not installed; use the .json config"
             ) from exc
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             return yaml.safe_load(fh)
-    with open(path, "r", encoding="utf-8") as fh:
+    with open(path, encoding="utf-8") as fh:
         return json.load(fh)
 
 

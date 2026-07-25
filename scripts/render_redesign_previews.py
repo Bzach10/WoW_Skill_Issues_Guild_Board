@@ -69,7 +69,7 @@ def discover(kind):
 def real_state():
     """The guild's committed state, shaped for build_context."""
     import json
-    with open(ROOT / "board_state.json", "r", encoding="utf-8") as f:
+    with open(ROOT / "board_state.json", encoding="utf-8") as f:
         state = json.load(f)
     scores = state.get("season_scores") or {}
     ranked = sorted(scores.items(), key=lambda kv: kv[1], reverse=True)[:5]
@@ -92,7 +92,7 @@ def real_state():
 
 def real_cfg():
     """The guild's real config, forced to the HTML renderer."""
-    with open(ROOT / "config.yml", "r", encoding="utf-8") as f:
+    with open(ROOT / "config.yml", encoding="utf-8") as f:
         cfg = yaml.safe_load(f) or {}
     cfg.setdefault("display", {})["renderer"] = "html"
     return cfg

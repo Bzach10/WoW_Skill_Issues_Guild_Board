@@ -5,7 +5,6 @@ tests pin the contract we build against, and — just as important — that
 every way it can be incomplete degrades instead of breaking the board.
 """
 
-import json
 
 import pytest
 

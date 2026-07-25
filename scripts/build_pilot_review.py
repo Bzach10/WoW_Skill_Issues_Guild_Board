@@ -6,7 +6,6 @@ Usage: python scripts/build_pilot_review.py [slug ...]
        (defaults to the 3 pilots if no slugs given)
 """
 
-import os
 import sys
 from pathlib import Path
 

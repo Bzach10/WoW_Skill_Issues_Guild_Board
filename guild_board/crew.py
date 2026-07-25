@@ -251,7 +251,7 @@ def _light_art(slug):
 def load_manifest(path=CAST_MANIFEST):
     """The art pipeline's cast manifest, or {} until it lands."""
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
     except (OSError, ValueError) as exc:
         logger.info("No cast manifest yet (%s); falling back to derived crew.", exc)
@@ -359,7 +359,7 @@ def load_profiles(path=PROFILE_CACHE):
     """The Blizzard profile cache the art pipeline writes, or {} if it
     has not landed yet."""
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             return (json.load(fh) or {}).get("characters") or {}
     except (OSError, ValueError) as exc:
         logger.info("No Blizzard profile cache yet (%s); using derived crew.", exc)
@@ -376,7 +376,7 @@ def load_crew_roster(path=CREW_ROSTER):
     legacy candidate sources — fail open, never fail the render.
     """
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             data = json.load(fh) or {}
     except (OSError, ValueError) as exc:
         logger.info("No %s (%s); crew falls back to legacy sources.", path, exc)

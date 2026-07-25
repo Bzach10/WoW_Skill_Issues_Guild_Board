@@ -189,7 +189,7 @@ def load_theme(path=THEME_FILE):
     """
     theme = copy.deepcopy(DEFAULT_THEME)
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             user = yaml.safe_load(f)
         if isinstance(user, dict):
             theme = _deep_merge(theme, user)

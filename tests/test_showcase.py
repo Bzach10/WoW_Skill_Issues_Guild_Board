@@ -9,7 +9,6 @@ import pytest
 
 from guild_board import showcase
 
-
 LEGACY = [
     "cast/rakdisc-proudmoore/one_piece/body.png",
     "cast/rakdisc-proudmoore/one_piece/face.png",

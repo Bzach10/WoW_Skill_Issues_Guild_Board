@@ -95,7 +95,7 @@ def find_violations():
     for path in _iter_files():
         rel = os.path.relpath(path, ROOT)
         try:
-            with open(path, "r", encoding="utf-8", errors="replace") as fh:
+            with open(path, encoding="utf-8", errors="replace") as fh:
                 lines = fh.readlines()
         except OSError:
             continue
@@ -104,18 +104,18 @@ def find_violations():
                 continue
             for name in FORBIDDEN_NAMES:
                 if name in line:
-                    violations.append((rel, lineno, "credential variable name %r "
-                                       "in shipped output" % name))
+                    violations.append((rel, lineno, f"credential variable name {name!r} "
+                                       "in shipped output"))
             for kind, pattern in VALUE_PATTERNS:
                 if pattern.search(line):
                     violations.append((rel, lineno,
-                                       "credential-shaped value (%s)" % kind))
+                                       f"credential-shaped value ({kind})"))
     return violations
 
 
 def _format(violations):
-    lines = ["%d credential violation(s) in shipped output:" % len(violations)]
-    lines += ["  %s:%d — %s" % v for v in violations]
+    lines = [f"{len(violations)} credential violation(s) in shipped output:"]
+    lines += [f"  {rel}:{lineno} — {msg}" for rel, lineno, msg in violations]
     lines.append("")
     lines.append("Operator-facing text belongs in the build log and "
                  "docs/RUNBOOK.md, never in rendered copy.")

@@ -9,7 +9,6 @@ on true collision); crew.py consumes its rows verbatim.
 
 from guild_board import crew, wanted
 
-
 ROWS = [
     {"name": "Amrevenge", "realm": "Stormrage", "realm_slug": "stormrage",
      "key": "amrevenge-stormrage", "slug": "amrevenge", "class": "Hunter",

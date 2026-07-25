@@ -444,7 +444,7 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
 
     fields = []
     sorted_sections = sorted(section_items, key=lambda x: x[1].get("order", 999))
-    for section_name, section_cfg in sorted_sections:
+    for section_name, _section_cfg in sorted_sections:
         formatter = SECTION_FORMATTERS.get(section_name)
         if not formatter:
             continue

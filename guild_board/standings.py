@@ -14,8 +14,6 @@ Nothing here is hand-kept; a daily refresh carries straight through.
 
 import logging
 
-from .showcase import slugify
-
 logger = logging.getLogger(__name__)
 
 

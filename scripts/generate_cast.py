@@ -34,7 +34,11 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from guild_board.blizzard import load_profile_cache  # noqa: E402
-from guild_board.cast_art import build_ipadapter_graph, build_prompt, opted_in_characters  # noqa: E402
+from guild_board.cast_art import (  # noqa: E402
+    build_ipadapter_graph,
+    build_prompt,
+    opted_in_characters,
+)
 from guild_board.config import load_config  # noqa: E402
 
 COMFY = "http://127.0.0.1:8188"

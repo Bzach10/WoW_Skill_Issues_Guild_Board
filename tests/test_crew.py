@@ -1,11 +1,9 @@
 """The crew/front-end layer's contracts — above all, that it fails open."""
 
-import json
 
 import pytest
 
 from guild_board import crew
-
 
 # ---------------------------------------------------------------- roles
 
@@ -156,6 +154,7 @@ def test_islands_have_the_shape_the_template_expects():
 def test_sample_islands_used_when_voyage_module_is_absent(monkeypatch):
     """The map still renders on a branch that has no voyage.py yet."""
     import sys
+
     import guild_board
     # A None entry in sys.modules makes `import` raise ImportError; the
     # attribute has to go too, since `from pkg import mod` will happily

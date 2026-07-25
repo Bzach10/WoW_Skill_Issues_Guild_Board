@@ -52,7 +52,7 @@ def connect(path: str = ":memory:") -> sqlite3.Connection:
 
 
 def init_db(conn: sqlite3.Connection) -> None:
-    with open(_SCHEMA_PATH, "r", encoding="utf-8") as fh:
+    with open(_SCHEMA_PATH, encoding="utf-8") as fh:
         conn.executescript(fh.read())
     conn.commit()
 

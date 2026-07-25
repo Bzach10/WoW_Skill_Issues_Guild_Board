@@ -649,7 +649,7 @@ def _closest_races(season_scores, count=3):
         return []
     ladder = season_scores[:8]
     races = []
-    for (s1, n1, _), (s2, n2, _) in zip(ladder, ladder[1:]):
+    for (s1, n1, _), (s2, n2, _) in zip(ladder, ladder[1:], strict=False):
         races.append((s1 - s2, n1, n2))
     races.sort(key=lambda r: r[0])
     out = []

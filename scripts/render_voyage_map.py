@@ -30,7 +30,7 @@ from guild_board.html_board import render_html  # noqa: E402
 
 def _load_board_state(path="board_state.json"):
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}

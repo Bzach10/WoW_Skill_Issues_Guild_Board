@@ -216,13 +216,11 @@ def fetch_blizzard_guild_roster(cfg, token=None, timeout=30):
             "recording this one as unavailable.")
         return None
 
-    url = "{host}/data/wow/guild/{realm}/{guild}/roster".format(
-        host=BLIZZARD_API_HOST.format(region=region),
-        realm=realm_slug, guild=guild_slug)
+    url = f"{BLIZZARD_API_HOST.format(region=region)}/data/wow/guild/{realm_slug}/{guild_slug}/roster"
     resp = requests.get(
         url, timeout=timeout,
-        headers={"Authorization": "Bearer %s" % token},
-        params={"namespace": "profile-%s" % region, "locale": "en_US"},
+        headers={"Authorization": f"Bearer {token}"},
+        params={"namespace": f"profile-{region}", "locale": "en_US"},
     )
     resp.raise_for_status()
     payload = resp.json() or {}
@@ -271,7 +269,7 @@ def load_supplement(path=None):
     candidates = [path] if path else SUPPLEMENT_PATHS
     for candidate in candidates:
         try:
-            with open(candidate, "r", encoding="utf-8") as f:
+            with open(candidate, encoding="utf-8") as f:
                 data = json.load(f)
         except (FileNotFoundError, json.JSONDecodeError):
             continue

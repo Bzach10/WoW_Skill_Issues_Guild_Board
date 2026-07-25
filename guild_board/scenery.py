@@ -61,7 +61,7 @@ def load_rotation(path=ROTATION_FILE, cfg=None):
     raw = override if isinstance(override, dict) else None
     if raw is None:
         try:
-            with open(path, "r", encoding="utf-8") as fh:
+            with open(path, encoding="utf-8") as fh:
                 raw = (json.load(fh) or {}).get("months")
         except (OSError, ValueError) as exc:
             logger.info("No scene rotation (%s); the board renders without a scene.", exc)

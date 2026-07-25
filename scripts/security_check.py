@@ -23,7 +23,6 @@ the script stays useful on a machine that only has the stdlib.
 import argparse
 import base64
 import re
-import shutil
 import subprocess
 import sys
 from pathlib import Path

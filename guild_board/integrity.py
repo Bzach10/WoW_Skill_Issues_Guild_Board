@@ -182,7 +182,7 @@ def main():
     """Standalone check of the committed board state (caretaker entry point)."""
     logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
     try:
-        with open("board_state.json", "r", encoding="utf-8") as f:
+        with open("board_state.json", encoding="utf-8") as f:
             state = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError) as exc:
         print(f"board_state.json unreadable: {exc}")

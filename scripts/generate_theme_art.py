@@ -46,7 +46,7 @@ DEFAULT_SERVER = "http://127.0.0.1:8199"
 
 
 def load_spec(path=SPEC_FILE):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return yaml.safe_load(f) or {}
 
 

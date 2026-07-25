@@ -2,7 +2,6 @@
 
 from guild_board import standings
 
-
 BOARD = {
     "standing": {"realm": 49, "region": 2219, "world": 6855},
     "season_scores": {"amrevenge": 3908.1, "tommybravoo": 3686.3, "buchalter": 3207.9},

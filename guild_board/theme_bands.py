@@ -126,10 +126,10 @@ def _vgrad(w, h, stops):
     img = Image.new("RGB", (1, max(h, 1)))
     for yy in range(h):
         t = yy / max(h - 1, 1)
-        for (t0, c0), (t1, c1) in zip(stops, stops[1:]):
+        for (t0, c0), (t1, c1) in zip(stops, stops[1:], strict=False):
             if t0 <= t <= t1:
                 f = (t - t0) / max(t1 - t0, 1e-6)
-                img.putpixel((0, yy), tuple(int(a + (b - a) * f) for a, b in zip(c0, c1)))
+                img.putpixel((0, yy), tuple(int(a + (b - a) * f) for a, b in zip(c0, c1, strict=False)))
                 break
         else:
             img.putpixel((0, yy), stops[-1][1])
@@ -221,7 +221,8 @@ def _fetch_icon(name, size):
     """Wowhead CDN icon with disk cache; fails open to None (slot stays empty)."""
     try:
         import requests
-        cache = Path(".icon_cache"); cache.mkdir(exist_ok=True)
+        cache = Path(".icon_cache")
+        cache.mkdir(exist_ok=True)
         p = cache / f"{name}.jpg"
         if not p.exists():
             r = requests.get(f"https://wow.zamimg.com/images/wow/icons/large/{name}.jpg", timeout=10)

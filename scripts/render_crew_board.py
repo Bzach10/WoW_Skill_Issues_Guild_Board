@@ -31,18 +31,18 @@ import jinja2  # noqa: E402
 
 from guild_board import crew as crew_mod  # noqa: E402
 from guild_board import featured as featured_mod  # noqa: E402
+from guild_board import html_board  # noqa: E402
 from guild_board import links as links_mod  # noqa: E402
 from guild_board import manga as manga_mod  # noqa: E402
 from guild_board import profiles as profiles_mod  # noqa: E402
 from guild_board import recap as recap_mod  # noqa: E402
 from guild_board import scenery as scenery_mod  # noqa: E402
 from guild_board import ship as ship_mod  # noqa: E402
-from guild_board import standings as standings_mod  # noqa: E402
 from guild_board import showcase as showcase_mod  # noqa: E402
 from guild_board import site_data as site_data_mod  # noqa: E402
-from guild_board import wanted as wanted_mod  # noqa: E402
+from guild_board import standings as standings_mod  # noqa: E402
 from guild_board import theme as theme_mod  # noqa: E402
-from guild_board import html_board  # noqa: E402
+from guild_board import wanted as wanted_mod  # noqa: E402
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")
 logger = logging.getLogger("render_crew_board")
@@ -61,7 +61,7 @@ FONT_CSS_URL = (
 
 def _load_json(path, default):
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             return json.load(fh)
     except (OSError, ValueError) as exc:
         logger.info("%s unavailable (%s); continuing without it.", path, exc)
@@ -71,7 +71,7 @@ def _load_json(path, default):
 def _load_cfg(path="config.yml"):
     try:
         import yaml
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             return yaml.safe_load(fh) or {}
     except Exception as exc:  # noqa: BLE001
         logger.warning("config.yml unreadable (%s); using defaults.", exc)
@@ -436,7 +436,8 @@ def main():
                 cameo["have_feed"], cameo["never_count"], cameo["cast_size"])
 
     # ---- S.S. Wipe Fest: the ship's rooms (HANGOUT_DESIGN Phase 0) ----
-    from datetime import datetime as _dt, timezone as _tz
+    from datetime import datetime as _dt
+    from datetime import timezone as _tz
     week_index = _dt.now(_tz.utc).isocalendar()[1]
     wanted_board = wanted_mod.board(ctx["crew"], board_state, cfg)
     ship_ports = scenery_mod.ports(cfg)
@@ -513,8 +514,8 @@ def main():
             m.get("cls"), m.get("spec"), m.get("role")) if f}),
         "year_plan": scenery_mod.year_plan(cfg),
         "cards": cards,
-        "trial_status": ("%d characters drawn so far · %d still in the queue"
-                         % (len(cards), max(len(ctx["crew"]) - len(cards), 0))),
+        "trial_status": (f"{len(cards)} characters drawn so far · "
+                         f"{max(len(ctx['crew']) - len(cards), 0)} still in the queue"),
         "placeholder_count": max(len(ctx["crew"]) - len(cards), 0),
         "board_href": out.name,
         "roster_size": len(index),
@@ -591,7 +592,7 @@ def main():
     # letting warnings scroll past.
     try:
         sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-        from tests.test_no_credentials_in_output import find_violations, _format
+        from tests.test_no_credentials_in_output import _format, find_violations
     except Exception as exc:  # noqa: BLE001
         logger.warning("Credential guard could not be loaded (%s). The build "
                        "is NOT verified clean — run "

@@ -13,7 +13,6 @@ from pathlib import Path
 
 from .showcase import slugify
 
-
 # The art pipeline bakes a finished 900×1350 WebP bounty poster per slug
 # (gold "MOST WANTED" for the top 5, standard, or "BOUNTY UNCONFIRMED" for
 # the scoreless). When present we ship the baked bill instead of the live

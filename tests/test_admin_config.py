@@ -3,6 +3,7 @@
 The panel is a LOCAL tool; these pin that it edits only its own keys and
 never corrupts the rest of config.yml."""
 import yaml
+
 from guild_board import admin_config
 
 

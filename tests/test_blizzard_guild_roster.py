@@ -12,8 +12,12 @@ no credentials and no egress were available. The first real run is the test of
 that half.
 """
 
-import os, sys, types, json
+import os
+import sys
+import types
+
 import requests
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ['BLIZZARD_CLIENT_ID']='test-id'
 os.environ['BLIZZARD_CLIENT_SECRET']='test-secret'
@@ -22,9 +26,12 @@ import guild_board.guild_roster as gr
 
 calls = {}
 class Resp:
-    def __init__(self, payload, code=200): self._p=payload; self.status_code=code
+    def __init__(self, payload, code=200):
+        self._p = payload
+        self.status_code = code
     def raise_for_status(self):
-        if self.status_code>=400: raise RuntimeError("HTTP %s"%self.status_code)
+        if self.status_code >= 400:
+            raise RuntimeError(f"HTTP {self.status_code}")
     def json(self): return self._p
 
 def fake_post(url, auth=None, data=None, timeout=None):
@@ -53,7 +60,8 @@ members = gr.fetch_blizzard_guild_roster(cfg)
 ok=True
 def check(label, cond):
     global ok
-    print(("  PASS  " if cond else "  FAIL  ")+label); ok = ok and cond
+    print(("  PASS  " if cond else "  FAIL  ")+label)
+    ok = ok and cond
 
 print("=== request shape ===")
 print("  POST url:", calls['post']['url'])
@@ -83,7 +91,8 @@ check("exact display name preserved", members["viôlence-bleeding-hollow"]["name
 
 print()
 print("=== no-credentials path ===")
-del os.environ['BLIZZARD_CLIENT_ID']; del os.environ['BLIZZARD_CLIENT_SECRET']
+del os.environ['BLIZZARD_CLIENT_ID']
+del os.environ['BLIZZARD_CLIENT_SECRET']
 check("returns None, does not raise", gr.fetch_blizzard_guild_roster(cfg) is None)
 
 # Restore the real module: this stub is process-wide (gr.requests, not a

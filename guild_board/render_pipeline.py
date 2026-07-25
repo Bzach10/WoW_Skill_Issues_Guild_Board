@@ -85,7 +85,6 @@ def build_img2img_graph(style, src_image_filename, seed):
     ComfyUI's input dir -> the ComfyUI API graph dict. No network calls —
     easy to unit test the wiring without a running server.
     """
-    canvas = (style["canvas"]["width"], style["canvas"]["height"])
     graph = {
         "1": {"class_type": "CheckpointLoaderSimple",
               "inputs": {"ckpt_name": style["model"]["checkpoint"]}},
@@ -93,7 +92,6 @@ def build_img2img_graph(style, src_image_filename, seed):
 
     # Chain every LoRA in the preset onto the checkpoint's model/clip.
     model_link, clip_link = ["1", 0], ["1", 1]
-    last_lora_node = "1"
     for i, lora in enumerate(style.get("loras", [])):
         node_id = f"lora{i}"
         graph[node_id] = {
@@ -104,7 +102,6 @@ def build_img2img_graph(style, src_image_filename, seed):
                        "strength_clip": lora["strength"]},
         }
         model_link, clip_link = [node_id, 0], [node_id, 1]
-        last_lora_node = node_id
 
     graph["10"] = {"class_type": "CLIPSetLastLayer",
                    "inputs": {"clip": clip_link, "stop_at_clip_layer": -style["model"]["clip_skip"]}}

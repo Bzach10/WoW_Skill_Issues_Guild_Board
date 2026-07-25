@@ -48,7 +48,7 @@ def baselines_view(state):
 
 def load_board_state(path=STATE_FILE):
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}

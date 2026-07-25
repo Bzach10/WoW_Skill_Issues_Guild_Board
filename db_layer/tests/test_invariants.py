@@ -21,9 +21,9 @@ if _DB_LAYER not in sys.path:
     sys.path.insert(0, _DB_LAYER)
 
 from wipefest_db import db  # noqa: E402
+from wipefest_db import ingest_blizzard as ing  # noqa: E402
 from wipefest_db.config import seed_field_authority  # noqa: E402
 from wipefest_db.migrate_current import migrate  # noqa: E402
-from wipefest_db import ingest_blizzard as ing  # noqa: E402
 
 DATA_DIR = os.environ.get(
     "WIPEFEST_DATA_DIR", os.path.join(os.path.dirname(_DB_LAYER), "data")
@@ -209,7 +209,7 @@ class UnitInvariantTests(unittest.TestCase):
             ("Beta", "bleeding-hollow", 222, 5),
         ]))
         # failed pull: Beta must NOT be closed
-        ing.run_roster_ingest(conn, fetcher=lambda: (_ for _ in ()).throw(IOError("x")))
+        ing.run_roster_ingest(conn, fetcher=lambda: (_ for _ in ()).throw(OSError("x")))
         self.assertEqual(conn.execute(
             "SELECT COUNT(*) FROM membership_interval WHERE observed_to IS NOT NULL"
         ).fetchone()[0], 0)

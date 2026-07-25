@@ -2,7 +2,6 @@
 
 from guild_board import manga
 
-
 BOARD = {
     "records": {
         "highest_timed_key": {"name": "amrevenge", "level": 20, "dungeon": "Pit of Saron"},

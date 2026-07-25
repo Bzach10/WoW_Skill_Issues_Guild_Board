@@ -139,7 +139,7 @@ def _class_lookup(stats, leaders, mplus_results, season_scores, season_parses,
     for item in mplus_results or []:
         if len(item) >= 5:
             learn(item[2], None, item[3])
-    for score, name, spec in season_scores or []:
+    for _score, name, spec in season_scores or []:
         learn(name, None, spec)
     for item in season_parses or []:
         if len(item) >= 4:

@@ -193,7 +193,7 @@ def main():
     # ---- sync staging -> live, in place -------------------------------
     out, staging = build_target, out
     if live:
-        print(f"     syncing into the live folder (kept in place)")
+        print("     syncing into the live folder (kept in place)")
     out.mkdir(parents=True, exist_ok=True)
     written = set()
     for src in staging.rglob("*"):

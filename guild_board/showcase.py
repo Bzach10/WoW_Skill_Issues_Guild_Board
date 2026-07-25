@@ -121,7 +121,7 @@ def flagged_cutouts(cfg=None):
     Those fall back to the full scene rather than showing a bad cutout."""
     path = roster_root(cfg) / "cast" / "_rnd_img2img" / "roster_progress.json"
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             flagged = (json.load(fh) or {}).get("flagged_cutouts") or []
         return {str(k).lower() for k in flagged} if isinstance(flagged, list) else set()
     except (OSError, ValueError):

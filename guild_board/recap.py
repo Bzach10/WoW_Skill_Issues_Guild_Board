@@ -9,7 +9,6 @@ player and a real number, or it is not written.
 
 import json
 import logging
-from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +18,7 @@ RECAP_FEED = "recap.json"
 def _load_feed(path=RECAP_FEED):
     """The backend's recap, if it has been produced."""
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             data = json.load(fh)
     except (OSError, ValueError):
         return None

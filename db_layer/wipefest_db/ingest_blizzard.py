@@ -22,8 +22,8 @@ import json
 import os
 import urllib.parse
 import urllib.request
-from dataclasses import dataclass, field
-from typing import Callable, Optional
+from collections.abc import Callable
+from dataclasses import dataclass
 
 from . import db
 
@@ -44,10 +44,10 @@ class BlizzardClient:
         self.client_secret = client_secret
         self.region = region
         self.timeout = timeout
-        self._token: Optional[str] = None
+        self._token: str | None = None
 
     @classmethod
-    def from_env(cls, region: str = "us") -> "BlizzardClient":
+    def from_env(cls, region: str = "us") -> BlizzardClient:
         return cls(
             os.environ.get("BLIZZARD_CLIENT_ID", ""),
             os.environ.get("BLIZZARD_CLIENT_SECRET", ""),
@@ -123,7 +123,7 @@ class IngestResult:
     surrogates_created: int = 0
     intervals_opened: int = 0
     intervals_closed: int = 0
-    error: Optional[str] = None
+    error: str | None = None
 
 
 def run_roster_ingest(conn, *, fetcher: Callable[[], dict],
@@ -132,7 +132,7 @@ def run_roster_ingest(conn, *, fetcher: Callable[[], dict],
                       guild_name_slug: str = "skill-issues",
                       guild_display_name: str = "Skill Issues",
                       complete_pull: bool = True,
-                      now: Optional[str] = None) -> IngestResult:
+                      now: str | None = None) -> IngestResult:
     """Ingest one guild-roster pull.
 
     `fetcher()` returns the raw Blizzard roster payload (or raises). On any

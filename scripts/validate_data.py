@@ -184,9 +184,9 @@ def _check_equipment(characters, report):
 
     if not with_equipment:
         report.warn("equipment",
-                    f"no character has per-slot equipment — art will fall back "
-                    f"to a generic kit. Re-run refresh_blizzard_profiles.py "
-                    f"with a build that includes the /equipment fetch.")
+                    "no character has per-slot equipment — art will fall back "
+                    "to a generic kit. Re-run refresh_blizzard_profiles.py "
+                    "with a build that includes the /equipment fetch.")
         return
 
     if without:

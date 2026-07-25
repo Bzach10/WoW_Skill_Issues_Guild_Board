@@ -373,7 +373,8 @@ def test_fill_missing_parses_applies_roster_filter():
         return {}, {"Pughealer": {"parse": 80, "difficulty": difficulty},
                     "Guildhealer": {"parse": 60, "difficulty": difficulty}}
 
-    keep = lambda name: name.lower() == "guildhealer"
+    def keep(name):
+        return name.lower() == "guildhealer"
     out = wcl.fill_missing_parses(None, {}, [], stats, collector=collector, keep=keep)
     assert set(out["best_hps"]) == {"Guildhealer"}
 
@@ -1153,8 +1154,8 @@ def test_mobile_template_renders():
 def test_tldr_lines():
     from guild_board.formatters import tldr_lines
     lines = tldr_lines(_image_board_stats(), {"realm": 49})
-    assert any("Top DPS" in l and "Rakell" in l for l in lines)
-    assert any("#49" in l for l in lines)
+    assert any("Top DPS" in line and "Rakell" in line for line in lines)
+    assert any("#49" in line for line in lines)
     assert tldr_lines(None, None) == []
 
 
@@ -1249,10 +1250,10 @@ def test_link_buttons_include_web_board():
            "display": {"web_board": {"url": "https://example.github.io/board/"}}}
     rows = gb_discord._build_link_buttons(cfg)
     labels = [b["label"] for b in rows[0]["components"]]
-    assert any("Web Board" in l for l in labels)
+    assert any("Web Board" in label for label in labels)
     cfg["display"] = {}
     labels = [b["label"] for b in gb_discord._build_link_buttons(cfg)[0]["components"]]
-    assert not any("Web Board" in l for l in labels)
+    assert not any("Web Board" in label for label in labels)
 
 
 def test_tldr_matches_rendered_rows():
@@ -1266,9 +1267,9 @@ def test_tldr_matches_rendered_rows():
         _image_board_cfg(), stats, {"realm": 49}, None, "Voidspire",
         None, None, None, now - timedelta(days=7), now)
     tldr = html_board.LAST_TLDR
-    assert any("Rakell" in l and "94%" in l for l in tldr)      # top DPS row verbatim
-    assert any("Top tank" in l and "Brewz" in l and "88%" in l for l in tldr)
-    assert any("#49" in l for l in tldr)
+    assert any("Rakell" in line and "94%" in line for line in tldr)   # top DPS row verbatim
+    assert any("Top tank" in line and "Brewz" in line and "88%" in line for line in tldr)
+    assert any("#49" in line for line in tldr)
     assert ctx["tldr"] == tldr
 
 
@@ -1630,8 +1631,10 @@ def test_webhook_multifile_and_429_retry(tmp_path, monkeypatch):
     monkeypatch.setattr(gb_discord.requests, "post",
                         lambda url, **kw: (calls.append((url, kw)), Resp(429 if len(calls) == 1 else 200))[1])
     monkeypatch.setattr(gb_discord.time, "sleep", lambda s: None)
-    board = tmp_path / "board.gif"; board.write_bytes(b"gif")
-    mobile = tmp_path / "mobile.png"; mobile.write_bytes(b"png")
+    board = tmp_path / "board.gif"
+    board.write_bytes(b"gif")
+    mobile = tmp_path / "mobile.png"
+    mobile.write_bytes(b"png")
     gb_discord.post_to_discord("https://discord.test/hook", {"title": "t"},
                                image_path=str(board), extra_image_paths=[str(mobile)])
     assert len(calls) == 2                                  # 429, then success

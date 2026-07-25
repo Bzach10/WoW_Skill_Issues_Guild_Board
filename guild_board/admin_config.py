@@ -33,7 +33,7 @@ SECTION_LABELS = {
 
 def load(path=CONFIG_FILE):
     try:
-        with open(path, "r", encoding="utf-8") as fh:
+        with open(path, encoding="utf-8") as fh:
             return yaml.safe_load(fh) or {}
     except (OSError, yaml.YAMLError) as exc:
         logger.warning("config.yml unreadable (%s); starting from empty.", exc)
@@ -44,7 +44,6 @@ def current_settings(cfg=None):
     """The subset of config the panel edits, with sensible defaults."""
     cfg = load() if cfg is None else cfg
     scenery = cfg.get("scenery") or {}
-    display = cfg.get("display") or {}
     panel = cfg.get("panel") or {}
     return {
         "theme": (cfg.get("crew") or {}).get("default_theme") or "codex",

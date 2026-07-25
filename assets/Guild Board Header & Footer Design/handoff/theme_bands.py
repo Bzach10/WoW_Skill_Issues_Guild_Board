@@ -124,7 +124,8 @@ def _fetch_icon(name, size):
     """Wowhead CDN icon with disk cache; fails open to None (slot stays empty)."""
     try:
         import requests
-        cache = Path(".icon_cache"); cache.mkdir(exist_ok=True)
+        cache = Path(".icon_cache")
+        cache.mkdir(exist_ok=True)
         p = cache / f"{name}.jpg"
         if not p.exists():
             r = requests.get(f"https://wow.zamimg.com/images/wow/icons/large/{name}.jpg", timeout=10)

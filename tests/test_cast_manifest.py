@@ -1,7 +1,6 @@
 """Offline tests for guild_board.cast_manifest: the character storage
 contract (add/remove, versioned style results, rollback, refresh diff)."""
 
-import json
 
 import pytest
 

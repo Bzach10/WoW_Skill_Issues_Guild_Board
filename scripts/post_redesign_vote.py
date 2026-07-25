@@ -124,17 +124,17 @@ def vote_cards(options, width=1100, max_ratio=1.9):
 def _post_webhook(webhook, content, paths):
     """Multipart post with ?wait=true so Discord returns the message
     object (we need its id + channel_id to seed reactions)."""
-    boundary = "----guildboard{}".format(int(time.time() * 1000))
+    boundary = f"----guildboard{int(time.time() * 1000)}"
     parts, body = [], b""
     payload = json.dumps({"content": content,
                           "allowed_mentions": {"parse": []}})
-    parts.append((b'Content-Disposition: form-data; name="payload_json"\r\n'
+    parts.append(b'Content-Disposition: form-data; name="payload_json"\r\n'
                   b"Content-Type: application/json\r\n\r\n"
-                  + payload.encode("utf-8")))
+                  + payload.encode("utf-8"))
     for i, p in enumerate(paths):
         data = Path(p).read_bytes()
-        head = ('Content-Disposition: form-data; name="files[{}]"; filename="{}"\r\n'
-                "Content-Type: image/png\r\n\r\n").format(i, Path(p).name)
+        head = (f'Content-Disposition: form-data; name="files[{i}]"; filename="{Path(p).name}"\r\n'
+                "Content-Type: image/png\r\n\r\n")
         parts.append(head.encode("utf-8") + data)
     for part in parts:
         body += ("--" + boundary + "\r\n").encode() + part + b"\r\n"

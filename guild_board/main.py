@@ -12,7 +12,11 @@ from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roas
 from guild_board.filters import apply_roster_filters, make_name_filter
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
-from guild_board.raiderio import collect_mplus, collect_mplus_season_parses, collect_mplus_season_scores
+from guild_board.raiderio import (
+    collect_mplus,
+    collect_mplus_season_parses,
+    collect_mplus_season_scores,
+)
 from guild_board.state import (
     baselines_view,
     load_board_state,
@@ -22,13 +26,6 @@ from guild_board.state import (
     streaks_from_attendance,
     update_records,
 )
-from guild_board.web_stats import dump_web_stats
-
-
-def _sample_week(sample):
-    """Raid-week label for one season-history sample (ts in ms)."""
-    return raid_week_label(datetime.fromtimestamp((sample.get("ts") or 0) / 1000,
-                                                  tz=timezone.utc))
 from guild_board.wcl import (
     IMPROVEMENT_DIFFICULTIES,
     MPLUS_DIFFICULTY,
@@ -46,6 +43,14 @@ from guild_board.wcl import (
     merge_improvement,
     try_difficulties,
 )
+from guild_board.web_stats import dump_web_stats
+
+
+def _sample_week(sample):
+    """Raid-week label for one season-history sample (ts in ms)."""
+    return raid_week_label(datetime.fromtimestamp((sample.get("ts") or 0) / 1000,
+                                                  tz=timezone.utc))
+
 
 logger = logging.getLogger(__name__)
 
@@ -53,7 +58,7 @@ logger = logging.getLogger(__name__)
 def _load_weekly_state(path="weekly_state.json"):
     """Load volatile weekly state (roast, roster overrides) if it exists."""
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, encoding="utf-8") as f:
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}

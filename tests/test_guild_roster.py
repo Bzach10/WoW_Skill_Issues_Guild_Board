@@ -6,8 +6,13 @@ log uploads rather than a guild roster, and a member missing from it
 vanished from the site with no signal at all.
 """
 
-from guild_board.guild_roster import (build_report, member_key, merge_sources,
-                                      resolve, roster_keys, wcl_roster_entries)
+from guild_board.guild_roster import (
+    member_key,
+    merge_sources,
+    resolve,
+    roster_keys,
+    wcl_roster_entries,
+)
 
 
 def _rio():

@@ -4,7 +4,6 @@ import json
 
 from guild_board import featured
 
-
 BOARD = {"records": {
     "highest_timed_key": {"name": "Amrevenge"},
     "best_dps_parse": {"name": "Amrevenge"},
