@@ -491,6 +491,30 @@ def test_build_parses_extra_zones_absent_is_empty_dict():
     assert build_parses(_fetched_one())["extra_zones"] == {}
 
 
+def test_resolve_raid_zone_falls_back_to_boss_names():
+    # WCL may name a world-raid zone after its lone encounter ("Rotmire")
+    # rather than the raid ("Sporefall") — resolution must catch both, and
+    # report WHICH name matched so the run log can say so.
+    raid = {"slug": "sporefall", "display_name": "Sporefall",
+            "bosses": [{"order": 1, "name": "Rotmire", "slug": "rotmire"}]}
+    by_raid_name = [{"id": 47, "name": "Sporefall"}]
+    by_boss_name = [{"id": 47, "name": "Rotmire"}]
+    assert wcl.resolve_raid_zone(by_raid_name, raid) == (47, "Sporefall")
+    assert wcl.resolve_raid_zone(by_boss_name, raid) == (47, "Rotmire")
+    assert wcl.resolve_raid_zone([{"id": 46, "name": "VS / DR / MQD"}],
+                                 raid) == (None, None)
+
+
+def test_build_parses_passes_zones_swept_provenance_through():
+    fetched = _fetched_one()
+    fetched["zones_swept"] = [
+        {"slug": "tier-mn-1", "zone_id": 46, "name": "Voidspire Sanctum"},
+        {"slug": "sporefall", "zone_id": 47, "name": "Sporefall"}]
+    layer = build_parses(fetched)
+    assert [z["slug"] for z in layer["zones_swept"]] == ["tier-mn-1", "sporefall"]
+    assert build_parses(None)["zones_swept"] == []
+
+
 def test_season_lists_sporefall_as_extra_raid():
     from guild_board import season as season_mod
     extras = {r["slug"]: r for r in season_mod.CURRENT_SEASON["extra_raids"]}

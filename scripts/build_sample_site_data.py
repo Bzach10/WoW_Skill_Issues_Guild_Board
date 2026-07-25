@@ -185,6 +185,10 @@ PARSES_FETCHED = {
     "last_full_sweep": "2026-07-20T13:30:00+00:00",
     "sweep_mode": "active",
     "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
+    "zones_swept": [
+        {"slug": "tier-mn-1", "zone_id": 46, "name": "Voidspire Sanctum"},
+        {"slug": "sporefall", "zone_id": 47, "name": "Sporefall"},
+    ],
     "characters": {
         "amrevenge-stormrage": {
             "name": "Amrevenge", "key": "amrevenge-stormrage",

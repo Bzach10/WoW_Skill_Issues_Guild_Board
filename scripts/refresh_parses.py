@@ -52,6 +52,7 @@ from guild_board.wcl import (  # noqa: E402
     fetch_guild_reports,
     fetch_zone_directory,
     get_wcl_token,
+    resolve_raid_zone,
     resolve_zone_id,
     select_active_roster,
 )
@@ -160,18 +161,28 @@ def main(argv=None):
     _say(f"Current tier: {tier['name']} (WCL zone {tier['zone_id']})")
 
     # Bonus raids running alongside the tier (season.py extra_raids, e.g.
-    # Sporefall/Rotmire) -- resolved the same way; unresolved ones are
-    # skipped with a note, never fatal.
+    # Sporefall/Rotmire). Resolution tries the raid name, then each boss
+    # name -- WCL may call the world-raid zone "Rotmire" rather than
+    # "Sporefall". Unresolved zones are skipped WITH A NOTE, never fatal
+    # and never silent.
     extra_zones = []
     for raid in season.get("extra_raids") or []:
-        zid = resolve_zone_id(zone_dir, raid["display_name"])
+        zid, matched = resolve_raid_zone(zone_dir, raid)
         if zid:
             extra_zones.append({"slug": raid["slug"], "zone_id": int(zid),
                                 "name": raid["display_name"]})
-            _say(f"Extra zone: {raid['display_name']} (WCL zone {zid})")
+            _say(f"Extra zone: {raid['display_name']} (WCL zone {zid}, "
+                 f"matched by name '{matched}')")
         else:
+            tried = ", ".join([raid["display_name"]]
+                              + [b["name"] for b in raid.get("bosses") or []])
             _say(f"Extra zone {raid['display_name']}: no WCL zone matched "
-                 "by name -- skipped this run.")
+                 f"any of [{tried}] -- skipped this run.")
+
+    zones_swept = ([{"slug": main_raid["slug"], "zone_id": tier["zone_id"],
+                     "name": tier["name"]}] + extra_zones)
+    _say("Zones swept this run: "
+         + "; ".join(f"{z['name']} (zone {z['zone_id']})" for z in zones_swept))
 
     old = _load_cache()
     old_chars = old.get("characters") or {}
@@ -252,6 +263,10 @@ def main(argv=None):
         "swept_count": len(sweep_roster),
         "tier": tier,
         "season_slug": season["slug"],
+        # Run provenance: exactly which WCL zones this sweep covered, so a
+        # missing raid downstream is always diagnosable from the data
+        # itself (zones are skipped only with a logged note, never silently).
+        "zones_swept": zones_swept,
         "count": len(characters),
         "characters": characters,
         "extra_zones": extra_data,

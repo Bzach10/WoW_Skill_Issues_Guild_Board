@@ -880,6 +880,22 @@ def resolve_zone_id(zones, wanted_name):
     return max(partial) if partial else None
 
 
+def resolve_raid_zone(zones, raid):
+    """Resolve a season raid entry ({display_name, bosses: [{name}, ...]})
+    to a WCL zone id. WCL sometimes names a world-raid zone after its lone
+    encounter rather than the raid (e.g. a "Rotmire" zone for the Sporefall
+    raid), so the raid name is tried first, then each boss name. Returns
+    (zone_id_or_None, matched_name_or_None) — the caller logs the match so
+    no zone is ever dropped silently."""
+    candidates = [raid.get("display_name") or ""]
+    candidates += [b.get("name") or "" for b in raid.get("bosses") or []]
+    for candidate in candidates:
+        zone_id = resolve_zone_id(zones, candidate)
+        if zone_id:
+            return zone_id, candidate
+    return None, None
+
+
 def fetch_active_raiders(token, cfg, reports, difficulties=PARSE_SWEEP_DIFFICULTIES):
     """Who actually raided recently: everyone named in the given guild
     reports' rankings at any of the given difficulties.

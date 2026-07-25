@@ -748,6 +748,7 @@ def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
             "characters": {},
             "character_count": 0,
             "extra_zones": {},
+            "zones_swept": [],
         }
 
     tier = fetched.get("tier") or {}
@@ -789,6 +790,10 @@ def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
         # e.g. extra_zones.sporefall for the Rotmire newspaper section.
         # Never merged into `characters`: the Emperor Index is tier-only.
         "extra_zones": extra_out,
+        # Which WCL zones the sweep actually covered (run provenance, from
+        # the refresh script) — a raid missing downstream is diagnosable
+        # from the data itself.
+        "zones_swept": fetched.get("zones_swept") or [],
     }
 
 
