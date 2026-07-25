@@ -141,6 +141,13 @@ def main(argv=None):
     competition_fetched = _load_json(
         os.path.join(REPO_ROOT, "competition_cache.json"), None)
 
+    # Per-character WCL parses — written by scripts/refresh_parses.py in the
+    # credentialed Action (Warcraft Logs creds exist only in CI). Absent
+    # until that refresh runs; the layer degrades to available:false and
+    # competition falls back to board_state's record holders.
+    parses_fetched = _load_json(
+        os.path.join(REPO_ROOT, "parses_cache.json"), None)
+
     dungeon_cache = os.path.join(args.out, "dungeon_bests.json")
     if args.live_dungeons:
         print("Fetching per-dungeon bests from Raider.io (full roster)…")
@@ -159,6 +166,11 @@ def main(argv=None):
         dungeon_bests=dungeon_bests, raid_progression=raid_progression,
         guild_achievements=guild_ach, transmog_snapshot=snapshot,
         pulse_items=pulse_items, competition_fetched=competition_fetched,
+        parses_fetched=parses_fetched,
+        # Officer-tunable difficulty discount for the parse axis; applied
+        # at build time, so a config change takes effect on the next
+        # rebuild with no WCL re-pull. See docs/PARSES_CONFIG_GUIDE.html.
+        difficulty_scale=(cfg.get("parses") or {}).get("difficulty_scale"),
         guild={"name": cfg["guild"]["name"], "realm": cfg["guild"]["realm_slug"],
                "region": cfg["guild"]["region"]},
         season=season)
@@ -169,12 +181,13 @@ def main(argv=None):
 
     # Combined envelope + one file per layer.
     _write(os.path.join(args.out, "site_data.json"), site)
-    for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes", "guild_pulse",
-                  "competition"):
+    layers = ("recap_ribbon", "records_leaderboard", "guild_achievements",
+              "island_completion", "transmog_changes", "guild_pulse",
+              "competition", "parses")
+    for layer in layers:
         _write(os.path.join(args.out, f"{layer}.json"), site[layer])
 
-    print(f"\nWrote {args.out}/site_data.json (+ 5 per-layer files)")
+    print(f"\nWrote {args.out}/site_data.json (+ {len(layers)} per-layer files)")
     print(f"  recap beats     : {site['recap_ribbon']['beat_count']}")
     print(f"  ladder rows     : {site['records_leaderboard']['ladder_size']}")
     print(f"  achievements    : {'available' if site['guild_achievements']['available'] else site['guild_achievements']['status']}")
@@ -191,6 +204,9 @@ def main(argv=None):
     comp = site["competition"]
     print(f"  competition     : {comp['character_count']} characters ranked"
           f"{'' if comp['available'] else ' (empty — run refresh_competition.py)'}")
+    par = site["parses"]
+    print(f"  parses          : {par['character_count']} characters with WCL averages"
+          f"{'' if par['available'] else ' (' + par['status'] + ' — runs in the credentialed Action)'}")
     return 0
 
 

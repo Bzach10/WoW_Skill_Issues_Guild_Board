@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 
 import requests
 
-from guild_board.config import slugify_server
+from guild_board.config import slugify_server, split_name_realm
 from guild_board.dedup import FightDeduper, report_sort_key
 
 logger = logging.getLogger(__name__)
@@ -450,7 +450,7 @@ def fill_missing_parses(token, cfg, reports, stats, collector=None, keep=None):
 
 def _enrich_parse_links(best_parses, report_codes):
     """Best-effort: attach the first known report code to each parse entry."""
-    for name, info in best_parses.items():
+    for info in best_parses.values():
         if report_codes:
             info["report_code"] = next(iter(report_codes))
 
@@ -502,7 +502,8 @@ def collect_improvement_history(token, cfg, zone_id, difficulty, end_ms, max_rep
         season = season[:half] + season[-half:]
 
     logger.info("Most Improved: scanning %s season report(s)", len(season))
-    from guild_board.state import raid_week_label  # here (not module top) to keep wcl importable without state
+    # Imported here (not module top) to keep wcl importable without state.
+    from guild_board.state import raid_week_label
 
     def week_of(ms):
         return raid_week_label(datetime.fromtimestamp((ms or 0) / 1000, tz=timezone.utc))
@@ -672,6 +673,146 @@ def fetch_realm_rank_leaders(token, cfg, participants, zone_id, difficulty):
 
     leaders.sort(key=lambda entry: entry["realm_rank"])
     return leaders
+
+
+# ---------------------------------------------------------------------------
+# Per-character current-tier parse averages (website enrichment)
+# ---------------------------------------------------------------------------
+
+# One query per character: the overall zoneRankings blob plus one aliased
+# blob per role. Metrics mirror the weekly board's convention (healers in
+# the hps bracket; tanks ranked within the dps metric's tank bracket).
+CHARACTER_PARSES_QUERY = """
+query ($name: String!, $slug: String!, $region: String!, $zoneId: Int!, $difficulty: Int!) {
+  characterData {
+    character(name: $name, serverSlug: $slug, serverRegion: $region) {
+      name
+      classID
+      overall: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: default)
+      dps: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: dps, role: DPS)
+      healer: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: hps, role: Healer)
+      tank: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: dps, role: Tank)
+    }
+  }
+}
+"""
+
+# Parses only exist at difficulties the character actually logged, and
+# zoneRankings answers one difficulty at a time — so walk mythic -> heroic
+# -> normal and keep the first difficulty with data (same order the weekly
+# board's fallback uses).
+PARSE_SWEEP_DIFFICULTIES = (5, 4, 3)
+
+
+def _perf_avg(blob):
+    """A zoneRankings performance average as a rounded float, or None.
+
+    WCL returns null when the character has no rankings for the asked
+    zone/difficulty/role combination.
+    """
+    if not isinstance(blob, dict):
+        return None
+    avg = blob.get("bestPerformanceAverage")
+    if avg is None:
+        return None
+    return round(float(avg), 1)
+
+
+def normalize_character_parses(char_blob):
+    """One CHARACTER_PARSES_QUERY character -> a per-character parse entry,
+    or None when the character has no rankings at this difficulty.
+
+    Pure (no I/O), so tests can feed it fixture blobs offline. The caller
+    owns keying: entries must be stored under the full name-realm key,
+    never the bare name.
+    """
+    if not char_blob:
+        return None
+    overall = char_blob.get("overall") or {}
+    best = _perf_avg(overall)
+
+    by_role = {}
+    for role, alias in (("DPS", "dps"), ("Healer", "healer"), ("Tank", "tank")):
+        blob = char_blob.get(alias) or {}
+        avg = _perf_avg(blob)
+        if avg is None:
+            continue
+        role_entry = {"best_perf_avg": avg}
+        if blob.get("totalKills"):
+            role_entry["kills"] = blob["totalKills"]
+        by_role[role] = role_entry
+
+    if best is None and not by_role:
+        return None
+    if best is None:
+        # Overall blob empty but a role blob answered — still real data.
+        best = max(r["best_perf_avg"] for r in by_role.values())
+
+    entry = {
+        "name": char_blob.get("name") or "",
+        "class": WCL_CLASS_IDS.get(char_blob.get("classID"), ""),
+        "best_perf_avg": best,
+        "by_role": by_role,
+    }
+    median = overall.get("medianPerformanceAverage")
+    if median is not None:
+        entry["median_perf_avg"] = round(float(median), 1)
+    return entry
+
+
+def fetch_character_parses(token, cfg, roster, zone_id,
+                           difficulties=PARSE_SWEEP_DIFFICULTIES):
+    """Current-tier parse averages for every roster member, from WCL
+    character zoneRankings.
+
+    roster: name-realm entries exactly as roster_cache.json keeps them
+    ("amrevenge-stormrage", Unicode preserved). The result is keyed by that
+    SAME full name-realm key — never the bare name. board_state's bare-name
+    season_scores keying already destroyed data for same-named characters
+    on different realms; this layer must not repeat it.
+
+    Per character: walk `difficulties` in order and keep the first with
+    data. A character WCL has never seen (character: null) is skipped
+    without trying lower difficulties — no logs at mythic means no
+    character page at all, not "try heroic".
+
+    Fail-soft per character: one bad lookup is logged and skipped, never
+    aborts the sweep.
+    """
+    region = cfg["guild"]["region"]
+    default_realm = cfg["guild"]["realm_slug"]
+    sourced_at = datetime.now(timezone.utc).isoformat()
+
+    out = {}
+    for entry_key in roster:
+        name, realm = split_name_realm(entry_key, default_realm)
+        if not name:
+            continue
+        for difficulty in difficulties:
+            try:
+                data = gql(token, CHARACTER_PARSES_QUERY, {
+                    "name": name,
+                    "slug": realm or default_realm,
+                    "region": region,
+                    "zoneId": int(zone_id),
+                    "difficulty": int(difficulty),
+                })
+            except (RuntimeError, requests.RequestException) as exc:
+                logger.warning("Parse sweep: skipping %s at difficulty %s: %s",
+                               entry_key, difficulty, exc)
+                continue
+            time.sleep(0.3)
+            char = (data.get("characterData") or {}).get("character")
+            if char is None:
+                break
+            entry = normalize_character_parses(char)
+            if entry:
+                entry["key"] = entry_key
+                entry["difficulty"] = difficulty
+                entry["sourced_at"] = sourced_at
+                out[entry_key] = entry
+                break
+    return out
 
 
 def fetch_guild_member_roster(token, cfg):

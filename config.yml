@@ -283,6 +283,27 @@ blizzard:
   cache_file: "blizzard_profile_cache.json"
 
 # ------------------------------------------------------------
+#  PARSES — per-character Warcraft Logs averages for the website
+#  (the Four Emperors ranking's parse axis, standings parse
+#  columns, newspaper raid sections). Data is pulled by the
+#  "WCL Parse Refresh" Action; these knobs shape how it's SCORED,
+#  and take effect on the next bundle rebuild — no re-pull needed.
+# ------------------------------------------------------------
+parses:
+  # Scale factor applied to a character's best-performance average when
+  # their parses come from a lower difficulty (a heroic 95 shouldn't
+  # outrank a mythic 80 on the Emperor Index). 1.0 = no discount.
+  # 0 = that difficulty is EXCLUDED entirely: its characters drop out of
+  # the parses layer ("no logs yet" on the site) and the refresh sweep
+  # stops querying it. The RAW averages always stay in the cache, so
+  # flipping a factor back on later is loss-free.
+  # See docs/PARSES_CONFIG_GUIDE.html.
+  difficulty_scale:
+    mythic: 1.0
+    heroic: 0.8
+    normal: 0.0    # excluded — normal-difficulty parses don't count
+
+# ------------------------------------------------------------
 #  RAID SETTINGS
 # ------------------------------------------------------------
 raid:

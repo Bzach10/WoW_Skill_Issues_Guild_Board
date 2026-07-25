@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-24T23:29:22.586559+00:00",
+  "generated_at": "2026-07-25T01:49:17.826064+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:29:22.586613+00:00",
+    "generated_at": "2026-07-25T01:49:17.826104+00:00",
     "week_of": "2026-07-14",
     "based_on": "2026-07-20T12:14:49+00:00",
     "beats": [
@@ -75,7 +75,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:29:22.586641+00:00",
+    "generated_at": "2026-07-25T01:49:17.826127+00:00",
     "based_on": "2026-07-20T12:14:49+00:00",
     "standing": {
       "realm": 49,
@@ -180,7 +180,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:29:22.586656+00:00",
+    "generated_at": "2026-07-25T01:49:17.826140+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -218,7 +218,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:29:22.586678+00:00",
+    "generated_at": "2026-07-25T01:49:17.826161+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -415,7 +415,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:29:22.586510+00:00",
+    "generated_at": "2026-07-25T01:49:17.825996+00:00",
     "is_first_run": false,
     "changed": [
       {
@@ -438,7 +438,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-24T23:29:22.586684+00:00",
+    "generated_at": "2026-07-25T01:49:17.826166+00:00",
     "available": true,
     "status": "ok",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -588,9 +588,16 @@
         "delta_day": 6.1,
         "is_new": false,
         "parse": {
-          "best": 99,
-          "boss": "Chimaerus the Undreamt God",
-          "source": "board_state"
+          "best": 92.4,
+          "scaled": 92.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 92.4,
+              "kills": 7
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
         },
         "rank": 1,
         "top5": true
@@ -691,7 +698,22 @@
         "delta_week": 0.0,
         "delta_day": null,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 88.1,
+          "scaled": 88.1,
+          "by_role": {
+            "Healer": {
+              "best_perf_avg": 88.1,
+              "kills": 6
+            },
+            "DPS": {
+              "best_perf_avg": 41.2,
+              "kills": 2
+            }
+          },
+          "difficulty": 5,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 5,
         "top5": true
       },
@@ -716,7 +738,18 @@
         "delta_week": 0.0,
         "delta_day": null,
         "is_new": false,
-        "parse": null,
+        "parse": {
+          "best": 71.9,
+          "scaled": 57.5,
+          "by_role": {
+            "Tank": {
+              "best_perf_avg": 71.9,
+              "kills": 5
+            }
+          },
+          "difficulty": 4,
+          "source": "wcl_zone_rankings"
+        },
         "rank": 6,
         "top5": false
       },
@@ -1223,8 +1256,9 @@
       }
     },
     "parses": {
-      "available": "partial",
-      "source": "board_state records (Warcraft Logs enrichment not yet enabled; Raider.io does not expose parses)",
+      "available": "full",
+      "source": "Warcraft Logs character zoneRankings (per-character averages on characters[].parse; see the parses layer for the full detail) + board_state record holders",
+      "characters_with_parses": 3,
       "leaders": [
         {
           "name": "Amrevenge",
@@ -1243,11 +1277,102 @@
       ]
     }
   },
+  "parses": {
+    "schema_version": 1,
+    "generated_at": "2026-07-25T01:49:17.826060+00:00",
+    "available": true,
+    "status": "ok",
+    "source": "Warcraft Logs character zoneRankings",
+    "season": {
+      "slug": "season-mn-1",
+      "name": "Midnight Season 1"
+    },
+    "tier": {
+      "zone_id": 46,
+      "name": "Voidspire Sanctum"
+    },
+    "sourced_at": "2026-07-20T13:30:00+00:00",
+    "difficulty_scale": {
+      "mythic": 1.0,
+      "heroic": 0.8,
+      "normal": 0.0,
+      "lfr": 1.0
+    },
+    "characters": {
+      "amrevenge-stormrage": {
+        "name": "Amrevenge",
+        "key": "amrevenge-stormrage",
+        "class": "Hunter",
+        "best_perf_avg": 92.4,
+        "median_perf_avg": 81.0,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 92.4,
+            "kills": 7
+          }
+        },
+        "difficulty": 5,
+        "sourced_at": "2026-07-20T13:30:00+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "Voidspire Sanctum"
+        },
+        "scaled_perf_avg": 92.4,
+        "difficulty_scale": 1.0
+      },
+      "rakdisc-proudmoore": {
+        "name": "Rakdisc",
+        "key": "rakdisc-proudmoore",
+        "class": "Priest",
+        "best_perf_avg": 88.1,
+        "median_perf_avg": 74.5,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 88.1,
+            "kills": 6
+          },
+          "DPS": {
+            "best_perf_avg": 41.2,
+            "kills": 2
+          }
+        },
+        "difficulty": 5,
+        "sourced_at": "2026-07-20T13:30:00+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "Voidspire Sanctum"
+        },
+        "scaled_perf_avg": 88.1,
+        "difficulty_scale": 1.0
+      },
+      "floofwall-queldorei": {
+        "name": "Floofwall",
+        "key": "floofwall-queldorei",
+        "class": "Monk",
+        "best_perf_avg": 71.9,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 71.9,
+            "kills": 5
+          }
+        },
+        "difficulty": 4,
+        "sourced_at": "2026-07-20T13:30:00+00:00",
+        "tier": {
+          "zone_id": 46,
+          "name": "Voidspire Sanctum"
+        },
+        "scaled_perf_avg": 57.5,
+        "difficulty_scale": 0.8
+      }
+    },
+    "character_count": 3
+  },
   "parity": {
     "schema_version": 1,
     "summary": {
-      "live": 8,
-      "partial": 3,
+      "live": 11,
+      "partial": 0,
       "pending": 4,
       "total": 15
     },
@@ -1291,19 +1416,19 @@
       {
         "field": "top_dps_parses",
         "served_by": "competition.parses.leaders",
-        "state": "partial",
+        "state": "live",
         "note": "full weekly list needs Warcraft Logs enrichment"
       },
       {
         "field": "top_healing_parses",
         "served_by": "competition.parses.leaders",
-        "state": "partial",
+        "state": "live",
         "note": "full weekly list needs WCL creds"
       },
       {
         "field": "top_tank_parses",
         "served_by": "competition.parses",
-        "state": "partial",
+        "state": "live",
         "note": "needs WCL creds"
       },
       {

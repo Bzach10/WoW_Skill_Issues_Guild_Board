@@ -48,7 +48,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # site_data.json. Every one must exist and byte-match its embedded copy.
 LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
           "island_completion", "transmog_changes", "guild_pulse",
-          "competition")
+          "competition", "parses")
 
 SCORE_TOLERANCE = 0.05  # scores are one-decimal floats; anything past
                         # rounding noise is real drift
@@ -140,26 +140,21 @@ def check_competition_internal(bundle, report):
     unranked = comp.get("unranked") or []
     ranked_rows = [c for c in characters if c.get("rank") is not None]
     if comp.get("character_count") != len(characters):
-        report.error("competition", "character_count %s != characters rows %s"
-                     % (comp.get("character_count"), len(characters)))
+        report.error("competition", "character_count {} != characters rows {}".format(comp.get("character_count"), len(characters)))
     if comp.get("ranked_count") != len(ranked_rows):
-        report.error("competition", "ranked_count %s != ranked characters %s"
-                     % (comp.get("ranked_count"), len(ranked_rows)))
+        report.error("competition", "ranked_count {} != ranked characters {}".format(comp.get("ranked_count"), len(ranked_rows)))
     if comp.get("unranked_count") != len(unranked):
-        report.error("competition", "unranked_count %s != unranked rows %s"
-                     % (comp.get("unranked_count"), len(unranked)))
+        report.error("competition", "unranked_count {} != unranked rows {}".format(comp.get("unranked_count"), len(unranked)))
     by_key = {c.get("key"): c for c in characters}
     for u in unranked:
         c = by_key.get(u.get("key"))
         if c is None:
-            report.error("competition", "unranked names unknown key %s" % u.get("key"))
+            report.error("competition", "unranked names unknown key {}".format(u.get("key")))
         elif c.get("rank") is not None:
-            report.error("competition", "unranked key %s carries a rank in characters"
-                         % u.get("key"))
+            report.error("competition", "unranked key {} carries a rank in characters".format(u.get("key")))
     overall = (comp.get("rankings") or {}).get("overall") or []
     if len(overall) != len(ranked_rows):
-        report.error("competition", "rankings.overall has %s rows, expected %s ranked"
-                     % (len(overall), len(ranked_rows)))
+        report.error("competition", f"rankings.overall has {len(overall)} rows, expected {len(ranked_rows)} ranked")
     for i, entry in enumerate(overall):
         if entry.get("rank") != i + 1:
             report.error("competition",
@@ -168,11 +163,9 @@ def check_competition_internal(bundle, report):
     for entry in overall:
         c = by_key.get(entry.get("key"))
         if c is None:
-            report.error("competition", "rankings.overall names unknown key %s"
-                         % entry.get("key"))
+            report.error("competition", "rankings.overall names unknown key {}".format(entry.get("key")))
         elif abs((c.get("score") or 0) - (entry.get("score") or 0)) > SCORE_TOLERANCE:
-            report.error("competition", "score drift for %s: rankings %s vs characters %s"
-                         % (entry.get("key"), entry.get("score"), c.get("score")))
+            report.error("competition", "score drift for {}: rankings {} vs characters {}".format(entry.get("key"), entry.get("score"), c.get("score")))
 
 
 def check_weekly_coherence(bundle, report):
@@ -187,17 +180,16 @@ def check_weekly_coherence(bundle, report):
                         "best_hps_parse": "best_hps_parse"}
 
     if records.get("ladder_size") != len(ladder):
-        report.error("weekly", "ladder_size %s != ladder rows %s"
-                     % (records.get("ladder_size"), len(ladder)))
+        report.error("weekly", "ladder_size {} != ladder rows {}".format(records.get("ladder_size"), len(ladder)))
 
     for beat in recap.get("beats") or []:
         kind = beat.get("kind")
         if kind in beat_to_headline:
             rec = headline.get(beat_to_headline[kind])
             if rec is None:
-                report.error("weekly", "recap beat %s has no matching headline record" % kind)
+                report.error("weekly", f"recap beat {kind} has no matching headline record")
             elif rec.get("holder") != beat.get("subject") or rec.get("value") != beat.get("value"):
-                report.error("weekly", "recap beat %s disagrees with headline_records" % kind)
+                report.error("weekly", f"recap beat {kind} disagrees with headline_records")
         elif kind == "biggest_climber":
             if ladder:
                 top = max(ladder, key=lambda r: r.get("delta_week") or 0)
@@ -205,9 +197,8 @@ def check_weekly_coherence(bundle, report):
                         or abs((top.get("delta_week") or 0) - (beat.get("value") or 0)) > SCORE_TOLERANCE):
                     report.error(
                         "weekly",
-                        "recap biggest_climber (%s %+g) disagrees with the ladder's "
-                        "own delta_week column (%s %+g)"
-                        % (beat.get("subject"), beat.get("value") or 0,
+                        "recap biggest_climber ({} {:+g}) disagrees with the ladder's "
+                        "own delta_week column ({} {:+g})".format(beat.get("subject"), beat.get("value") or 0,
                            top.get("name"), top.get("delta_week") or 0))
 
 
@@ -225,8 +216,7 @@ def check_stamps(bundle, report):
 
     weekly = {recap.get("based_on"), records.get("based_on")}
     if len(weekly) > 1:
-        report.error("stamps", "weekly layers carry different based_on stamps: %s"
-                     % sorted(str(s) for s in weekly))
+        report.error("stamps", f"weekly layers carry different based_on stamps: {sorted(str(s) for s in weekly)}")
     weekly_stamp = next(iter(weekly), None)
 
     if comp.get("available"):
@@ -234,15 +224,15 @@ def check_stamps(bundle, report):
         if weekly_stamp and baseline and baseline != weekly_stamp:
             report.error(
                 "stamps",
-                "competition.week_baseline_from (%s) != weekly layers' based_on "
-                "(%s) -- delta_week is measured against a different snapshot "
-                "than the ladder shows" % (baseline, weekly_stamp))
+                f"competition.week_baseline_from ({baseline}) != weekly layers' based_on "
+                f"({weekly_stamp}) -- delta_week is measured against a different snapshot "
+                "than the ladder shows")
         daily = comp.get("based_on")
         if daily and weekly_stamp and daily < weekly_stamp:
             report.warn(
                 "stamps",
-                "competition based_on (%s) predates the weekly snapshot (%s) -- "
-                "is the daily refresh actually running?" % (daily, weekly_stamp))
+                f"competition based_on ({daily}) predates the weekly snapshot ({weekly_stamp}) -- "
+                "is the daily refresh actually running?")
 
 
 def validate_bundle(bundle_dir):

@@ -23,8 +23,8 @@ field-name/shape disagreements here before building against them.**
 Fetch strategy: `site_data.json` is the whole bundle; each layer is also a
 standalone file (`competition.json`, `recap_ribbon.json`,
 `records_leaderboard.json`, `guild_achievements.json`,
-`island_completion.json`, `transmog_changes.json`, `guild_pulse.json`) so a
-view can load just what it needs.
+`island_completion.json`, `transmog_changes.json`, `guild_pulse.json`,
+`parses.json`) so a view can load just what it needs.
 
 ---
 
@@ -407,6 +407,79 @@ no new permissions.**
 The front-end does not need to enforce any of this — it arrives clean. But
 worth a line in the UI ("react 🙈 to hide a message from the site") so
 members know the opt-out exists.
+
+## 7. `parses` — per-character WCL parse averages (credential-gated)
+
+Current-tier Warcraft Logs **best-performance averages** per character —
+the second axis of the Four Emperors ranking (Emperor Index = equal blend
+of M+ score/top-score and parse-avg/100), the standings parse columns, and
+the newspaper's raid sections. Refreshed by `scripts/refresh_parses.py` →
+`.github/workflows/wcl-parse-refresh.yml` (WCL credentials exist only in
+Actions; the script is inert locally).
+
+```json
+{
+  "schema_version": 1,
+  "available": true,
+  "status": "ok",
+  "source": "Warcraft Logs character zoneRankings",
+  "season": {"slug": "season-mn-1", "name": "Midnight Season 1"},
+  "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
+  "sourced_at": "2026-07-24T13:30:00+00:00",
+  "difficulty_scale": {"mythic": 1.0, "heroic": 0.8, "normal": 0.0, "lfr": 1.0},
+  "character_count": 27,
+  "characters": {
+    "amrevenge-stormrage": {
+      "name": "Amrevenge", "key": "amrevenge-stormrage", "class": "Hunter",
+      "best_perf_avg": 92.4,          // RAW 0-100 percentile average (display)
+      "scaled_perf_avg": 92.4,        // raw x difficulty factor — the Emperor axis
+      "difficulty_scale": 1.0,        // the factor that was applied
+      "median_perf_avg": 81.0,        // optional
+      "by_role": {                    // only roles with real rankings (raw values)
+        "DPS": {"best_perf_avg": 92.4, "kills": 7}
+      },
+      "difficulty": 5,                // WCL difficulty the data comes from (5=M, 4=H, 3=N)
+      "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
+      "sourced_at": "2026-07-24T13:30:00+00:00"
+    }
+  }
+}
+```
+
+- **Rankings (Emperor Index) consume `scaled_perf_avg`; displays show
+  `best_perf_avg`** (label it with `difficulty`, e.g. "92.4 · Mythic").
+  The factors live in config.yml → `parses.difficulty_scale` (officer
+  editable), are applied at BUILD time (retuning needs only a bundle
+  rebuild, no WCL re-pull), and the envelope's `difficulty_scale` records
+  what was applied. Scaled values are capped at 100. `by_role` values are
+  raw; multiply by the character's `difficulty_scale` if you need them
+  discounted (all of a character's blobs come from the same difficulty).
+- **A factor of `0` means that difficulty is EXCLUDED**, not zeroed:
+  its characters never appear in `characters` at all (render your normal
+  "no logs yet" state) and the refresh sweep skips the difficulty
+  entirely. Live config currently excludes `normal`. You will therefore
+  never see a `difficulty: 3` entry, or a `scaled_perf_avg` of exactly 0
+  from scaling, in a bundle built with that config.
+
+- **⚠️ Keyed by the FULL `name-realm` key, exact Unicode**
+  (`"violënce-bleeding-hollow"`) — the same `key` the competition layer
+  uses, so joining is a dict lookup. Never join on bare names: same-named
+  characters exist on different realms.
+- Only characters with real rankings appear; a member with no logged kills
+  at any difficulty is simply absent (render "no logs yet", not 0%).
+- Per-character `difficulty` matters: parses are only comparable within one
+  difficulty. Each character carries the highest difficulty they have data
+  for (mythic → heroic → normal walk).
+- Also merged into `competition.characters[].parse` as
+  `{"best", "scaled", "by_role", "difficulty", "source": "wcl_zone_rankings"}`
+  — and `competition.parses.available` becomes `"full"` when this layer is
+  populated. Characters the sweep missed keep the old
+  `{"best", "boss", "source": "board_state"}` fallback shape, so gate on
+  `parse.source` if you need to distinguish an average from a single-boss
+  record.
+- **Degraded state:** `available: false`, `status: "pending_credentials"`,
+  `characters: {}` until the credentialed Action has run. Gate on
+  `available`.
 
 ---
 

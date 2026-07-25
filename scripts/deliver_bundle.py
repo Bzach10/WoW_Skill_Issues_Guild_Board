@@ -42,7 +42,7 @@ from validate_bundle import validate_bundle  # noqa: E402
 # membership the pipeline knows nothing about and must never overwrite).
 DELIVERED = ("competition.json", "records_leaderboard.json",
              "recap_ribbon.json", "island_completion.json",
-             "guild_achievements.json", "site_data.json")
+             "guild_achievements.json", "parses.json", "site_data.json")
 
 DEFAULT_TO = "C:/dev/wipefest-redesign/data/source"
 

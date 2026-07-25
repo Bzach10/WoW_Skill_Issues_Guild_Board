@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Parses Pipeline — Config Guide</title>
+<style>
+  :root {
+    --paper: #f6efe2;
+    --paper-2: #efe5d0;
+    --ink: #2c2318;
+    --ink-soft: #5a4c3a;
+    --accent: #8a2f1f;      /* wax-seal red */
+    --accent-2: #1f5c4d;    /* deep board green */
+    --gold: #a67c2e;
+    --card: #fffaf0;
+    --line: #d8c9a8;
+    --code-bg: #2c2318;
+    --code-ink: #f0e6d2;
+    --ok: #2e7d4f;
+    --warn: #b3541e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    background: var(--paper);
+    background-image: radial-gradient(ellipse at top left, #fbf6ea 0%, var(--paper) 55%, var(--paper-2) 100%);
+    color: var(--ink);
+    font: 16px/1.6 Georgia, "Times New Roman", serif;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
+
+  header.masthead {
+    text-align: center; border-bottom: 3px double var(--gold);
+    padding-bottom: 18px; margin-bottom: 30px;
+  }
+  .masthead .kicker {
+    font: 700 12px/1 Verdana, sans-serif; letter-spacing: .25em;
+    text-transform: uppercase; color: var(--accent);
+  }
+  .masthead h1 {
+    font-size: 40px; margin: 8px 0 6px; letter-spacing: .5px;
+  }
+  .masthead .sub { color: var(--ink-soft); font-style: italic; }
+
+  h2 {
+    font-size: 24px; margin: 44px 0 6px;
+    border-bottom: 1px solid var(--line); padding-bottom: 6px;
+  }
+  h2 .no {
+    display: inline-block; background: var(--accent); color: #fff;
+    font: 700 14px/1 Verdana, sans-serif; border-radius: 50%;
+    width: 26px; height: 26px; text-align: center; line-height: 26px;
+    margin-right: 10px; vertical-align: 2px;
+  }
+  h3 { margin: 22px 0 6px; font-size: 18px; }
+  p.lede { color: var(--ink-soft); margin-top: 0; }
+
+  /* ---- pipeline flow ---- */
+  .flow { margin: 24px 0; }
+  .step {
+    display: grid; grid-template-columns: 44px 1fr; gap: 14px;
+    background: var(--card); border: 1px solid var(--line);
+    border-radius: 10px; padding: 14px 16px; margin: 0 0 4px;
+    box-shadow: 0 1px 3px rgba(60,40,10,.08);
+  }
+  .step .n {
+    background: var(--accent-2); color: #fff; border-radius: 8px;
+    font: 700 16px/44px Verdana, sans-serif; text-align: center; height: 44px;
+  }
+  .step.ci .n { background: var(--accent); }
+  .step b.t { font-family: Verdana, sans-serif; font-size: 14px; }
+  .step small { color: var(--ink-soft); display: block; }
+  .arrow { text-align: center; color: var(--gold); font-size: 20px; line-height: 1.1; margin: 2px 0 6px; }
+  .tag {
+    display: inline-block; font: 700 10px/1 Verdana, sans-serif;
+    letter-spacing: .08em; text-transform: uppercase; border-radius: 4px;
+    padding: 3px 7px; margin-left: 8px; vertical-align: 2px;
+  }
+  .tag.ci   { background: #f6ddd6; color: var(--accent); }
+  .tag.loc  { background: #dcefe7; color: var(--accent-2); }
+  .tag.own  { background: #f0e2bd; color: #7a5a14; }
+
+  code, pre {
+    font: 13px/1.5 Consolas, "Courier New", monospace;
+  }
+  code { background: #eee3cc; border-radius: 4px; padding: 1px 6px; }
+  pre {
+    background: var(--code-bg); color: var(--code-ink);
+    border-radius: 10px; padding: 14px 16px; overflow-x: auto;
+  }
+  pre .c { color: #9c8f74; }        /* comment */
+  pre .k { color: #e8c26a; }        /* key */
+  pre .v { color: #8fd0b0; }        /* value */
+
+  table {
+    width: 100%; border-collapse: collapse; background: var(--card);
+    border: 1px solid var(--line); font-size: 14.5px; margin: 14px 0;
+  }
+  th, td { padding: 9px 12px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th {
+    background: var(--paper-2); font: 700 12px/1.3 Verdana, sans-serif;
+    letter-spacing: .05em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  tr:last-child td { border-bottom: none; }
+  td code { white-space: nowrap; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin: 16px 0; }
+  .recipe {
+    background: var(--card); border: 1px solid var(--line); border-left: 5px solid var(--accent-2);
+    border-radius: 8px; padding: 14px 16px;
+  }
+  .recipe b { font-family: Verdana, sans-serif; font-size: 13.5px; }
+  .recipe ol { margin: 8px 0 0; padding-left: 20px; }
+  .recipe li { margin: 3px 0; font-size: 14.5px; }
+
+  .callout {
+    border-radius: 8px; padding: 12px 16px; margin: 16px 0;
+    border: 1px solid var(--line); background: var(--card); font-size: 15px;
+  }
+  .callout.warn { border-left: 5px solid var(--warn); }
+  .callout.ok   { border-left: 5px solid var(--ok); }
+  .callout.law  { border-left: 5px solid var(--accent); background: #fbf2ee; }
+
+  .example {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 10px; margin: 14px 0;
+  }
+  .ex {
+    background: var(--card); border: 1px solid var(--line); border-radius: 8px;
+    text-align: center; padding: 12px;
+  }
+  .ex .who { font: 700 13px Verdana, sans-serif; }
+  .ex .raw { font-size: 26px; font-weight: 700; margin: 4px 0 0; }
+  .ex .math { color: var(--ink-soft); font-size: 13px; }
+  .ex .scaled { font-size: 22px; font-weight: 700; color: var(--accent-2); }
+  .ex.winner { outline: 2px solid var(--gold); }
+  .ex .crown { font-size: 18px; }
+
+  footer {
+    margin-top: 56px; border-top: 3px double var(--gold); padding-top: 14px;
+    text-align: center; color: var(--ink-soft); font-size: 13.5px; font-style: italic;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="masthead">
+  <div class="kicker">Skill Issues Guild Board · Operator's Manual</div>
+  <h1>The Parses Pipeline</h1>
+  <div class="sub">How per-character Warcraft Logs data reaches the website — and every knob you can turn, in one page.</div>
+</header>
+
+<p class="lede">This guide covers the <b>per-character parse pipeline</b> added 2026-07-24: what runs where,
+which files you may edit, and exact steps for the changes you're most likely to want. For board
+cosmetics see <code>theme.yml</code> + <code>CUSTOMIZING.md</code>; for the front-end data shapes see
+<code>WEB_DATA_CONTRACT.md</code> (section 7, "parses").</p>
+
+<h2><span class="no">1</span>The pipeline at a glance</h2>
+<div class="flow">
+  <div class="step ci"><div class="n">1</div><div>
+    <b class="t">WCL Parse Refresh <span class="tag ci">CI only · daily 13:30 UTC</span></b>
+    <small><code>.github/workflows/wcl-parse-refresh.yml</code> runs <code>scripts/refresh_parses.py</code> with the
+    <code>WCL_CLIENT_ID</code>/<code>WCL_CLIENT_SECRET</code> repo secrets. Sweeps every roster member's
+    current-tier rankings (mythic → heroic → normal, first hit wins). On your PC the same script
+    prints a note and exits — no credentials exist locally, on purpose.</small>
+  </div></div>
+  <div class="arrow">▼</div>
+  <div class="step"><div class="n">2</div><div>
+    <b class="t">parses_cache.json <span class="tag own">CI-owned — never hand-edit</span></b>
+    <small>RAW truth: each character's best-performance average, per-role averages, difficulty, tier,
+    timestamp — keyed <code>name-realm</code> (exact Unicode, e.g. <code>violënce-bleeding-hollow</code>).
+    Fail-open: a bad WCL day keeps yesterday's cache instead of blanking the site.</small>
+  </div></div>
+  <div class="arrow">▼</div>
+  <div class="step"><div class="n">3</div><div>
+    <b class="t">Bundle build <span class="tag loc">runs anywhere</span></b>
+    <small><code>scripts/build_site_data.py</code> reads the cache <b>plus your scale factors from
+    <code>config.yml</code></b> and emits <code>parses.json</code> + merges each character's parse into
+    <code>competition.json</code>. Scaling happens HERE, at build time — retuning a factor never
+    requires re-pulling Warcraft Logs.</small>
+  </div></div>
+  <div class="arrow">▼</div>
+  <div class="step"><div class="n">4</div><div>
+    <b class="t">Validate, then deliver — all or nothing</b>
+    <small><code>scripts/validate_bundle.py</code> refuses any bundle whose layers disagree;
+    <code>scripts/deliver_bundle.py</code> hands the complete 7-file set to
+    <code>C:\dev\wipefest-redesign\data\source</code> with a <code>DELIVERY.json</code> receipt.
+    No step ever copies one file by hand — that caused the 2026-07-23 split-brain.</small>
+  </div></div>
+  <div class="arrow">▼</div>
+  <div class="step"><div class="n">5</div><div>
+    <b class="t">The website</b>
+    <small>Four Emperors ranking (Emperor Index = equal blend of M+ score/top-score and
+    <b>scaled</b> parse-avg/100), standings parse columns, newspaper raid sections.</small>
+  </div></div>
+</div>
+
+<h2><span class="no">2</span>The knob you'll touch most: difficulty scale factors</h2>
+<p>A heroic 95 shouldn't outrank a mythic 80 on the Emperor Index. Each character's average is
+multiplied by the factor for the difficulty their logs come from. In <code>config.yml</code>:</p>
+
+<pre><span class="c"># config.yml — safe to edit right on GitHub (pencil icon), then commit.</span>
+<span class="k">parses:</span>
+  <span class="k">difficulty_scale:</span>
+    <span class="k">mythic:</span> <span class="v">1.0</span>   <span class="c"># full credit</span>
+    <span class="k">heroic:</span> <span class="v">0.8</span>   <span class="c"># heroic averages count 80%</span>
+    <span class="k">normal:</span> <span class="v">0.0</span>   <span class="c"># 0 = EXCLUDED — normal parses don't appear at all</span></pre>
+
+<div class="example">
+  <div class="ex winner"><div class="crown">👑</div><div class="who">Mythic raider</div>
+    <div class="raw">80.0</div><div class="math">× 1.0</div><div class="scaled">= 80.0</div></div>
+  <div class="ex"><div class="crown">&nbsp;</div><div class="who">Heroic raider</div>
+    <div class="raw">95.0</div><div class="math">× 0.8</div><div class="scaled">= 76.0</div></div>
+  <div class="ex"><div class="crown">&nbsp;</div><div class="who">Normal raider</div>
+    <div class="raw">95.0</div><div class="math">× 0.0</div><div class="scaled">not listed</div></div>
+</div>
+
+<div class="callout law"><b>0 means "not available", not "0%".</b> A difficulty scaled to
+<code>0</code> is excluded end-to-end: its characters drop out of the parses layer (the site shows
+its normal "no logs yet" state — never an embarrassing 0.0% row) <i>and</i> the refresh Action
+skips querying that difficulty, saving API budget. The raw numbers stay in the cache, so flipping
+<code>normal</code> back to, say, <code>0.5</code> later restores everyone on the next rebuild —
+nothing is lost.</div>
+
+<p>Every character keeps <b>both</b> numbers: <code>best_perf_avg</code> (raw — show this on cards,
+labeled with the difficulty) and <code>scaled_perf_avg</code> (discounted — rankings use this).
+The bundle also records which factors were applied, so an old bundle can't lie about its tuning.</p>
+
+<div class="callout ok"><b>When does a change take effect?</b> On the next bundle rebuild — the
+13:30 UTC parse Action, the 14:00 UTC competition Action, or a manual run (recipes below). No
+Warcraft Logs re-pull needed; the cache stays raw.</div>
+
+<div class="callout warn"><b>Guardrails already built in:</b> factors are forgiving (a typo like
+<code>heroic: banana</code> falls back to 1.0; negatives clamp to 0, which counts as excluded),
+and scaled values cap at 100 even if you set mythic above 1.0.</div>
+
+<h2><span class="no">3</span>Recipes — "how do I…"</h2>
+<div class="cards">
+  <div class="recipe"><b>…soften or harden the heroic discount?</b>
+    <ol><li>Edit <code>config.yml</code> → <code>parses.difficulty_scale.heroic</code> (e.g. <code>0.9</code> softer, <code>0.7</code> harder)</li>
+    <li>Commit to <code>main</code></li>
+    <li>Wait for the next scheduled Action, or trigger one (next recipe)</li></ol></div>
+  <div class="recipe"><b>…bring normal parses back, or go mythic-only?</b>
+    <ol><li>Back on: set <code>normal:</code> to any factor &gt; 0 (e.g. <code>0.5</code>) — everyone reappears on the next rebuild, nothing was lost</li>
+    <li>Mythic-only: set <code>heroic: 0.0</code> too</li></ol></div>
+  <div class="recipe"><b>…apply a config change right now?</b>
+    <ol><li>GitHub → <b>Actions</b> → <b>WCL Parse Refresh</b> → <b>Run workflow</b></li>
+    <li>It refreshes, rebuilds, validates, commits — done in a few minutes</li></ol></div>
+  <div class="recipe"><b>…run the cycle on my PC?</b>
+    <ol><li><code>python scripts/build_site_data.py</code></li>
+    <li><code>python scripts/validate_bundle.py web_data</code></li>
+    <li><code>python scripts/deliver_bundle.py --from web_data</code></li>
+    <li>(<code>refresh_parses.py</code> is a no-op locally — data comes from the committed cache)</li></ol></div>
+  <div class="recipe"><b>…change how often parses refresh?</b>
+    <ol><li>Edit the <code>cron:</code> line in <code>.github/workflows/wcl-parse-refresh.yml</code></li>
+    <li>Currently <code>30 13 * * *</code> = daily 13:30 UTC; <code>30 13 * * 3,6</code> = Wed + Sat only</li></ol></div>
+  <div class="recipe"><b>…pin the raid tier manually?</b>
+    <ol><li><code>config.yml</code> → <code>rankings.zone_id</code> (0 = auto-detect from recent logs)</li>
+    <li>Set the WCL zone id to force a specific tier (useful at season boundaries)</li></ol></div>
+  <div class="recipe"><b>…adjust the "bad WCL day" safety net?</b>
+    <ol><li>The refresh keeps the old cache if a sweep resolves &lt; 50% of last run's characters</li>
+    <li>Change it: add <code>--min-fraction 0.3</code> to the refresh step in the workflow</li></ol></div>
+  <div class="recipe"><b>…rotate the WCL credentials?</b>
+    <ol><li>warcraftlogs.com → your client at <code>/api/clients</code> → regenerate secret</li>
+    <li>GitHub → Settings → Secrets and variables → Actions → update <code>WCL_CLIENT_ID</code> / <code>WCL_CLIENT_SECRET</code></li>
+    <li>Secrets never exist locally, and no output file ever contains them (a test enforces this)</li></ol></div>
+  <div class="recipe"><b>…check why someone shows "no logs yet"?</b>
+    <ol><li>They're absent from <code>parses_cache.json</code> = WCL has no ranked kills for them this tier at any difficulty</li>
+    <li>They must appear in uploaded logs — check their page on warcraftlogs.com</li></ol></div>
+</div>
+
+<h2><span class="no">4</span>File map — what you may touch</h2>
+<table>
+  <tr><th>File</th><th>What it is</th><th>May I edit it?</th></tr>
+  <tr><td><code>config.yml</code></td><td>All behavior knobs incl. <code>parses.difficulty_scale</code>, <code>rankings.zone_id</code></td><td><b style="color:var(--ok)">Yes</b> — designed for it</td></tr>
+  <tr><td><code>.github/workflows/wcl-parse-refresh.yml</code></td><td>Schedule + safety-net args for the parse pull</td><td><b style="color:var(--ok)">Yes</b> — cron & args</td></tr>
+  <tr><td><code>theme.yml</code></td><td>Board cosmetics (colors, art, gag text)</td><td><b style="color:var(--ok)">Yes</b></td></tr>
+  <tr><td><code>parses_cache.json</code></td><td>Raw WCL sweep results (CI commits it)</td><td><b style="color:var(--accent)">No</b> — regenerated by the Action</td></tr>
+  <tr><td><code>web_data_public/</code>, <code>competition_cache.json</code>, <code>board_state.json</code>, <code>roster_cache.json</code></td><td>CI-owned data outputs</td><td><b style="color:var(--accent)">No</b> — change the producing code instead</td></tr>
+  <tr><td><code>samples/*.sample.json</code></td><td>Committed sample bundle for the front-end</td><td>Via <code>python scripts/build_sample_site_data.py</code> only</td></tr>
+</table>
+
+<h2><span class="no">5</span>The laws of this pipeline</h2>
+<div class="callout law"><b>Keys are always <code>name-realm</code>, exact Unicode.</b>
+Two characters can share a name across realms (<code>violënce-bleeding-hollow</code> ≠
+<code>violënce-area-52</code>). Bare-name keying already destroyed data once
+(board_state's <code>season_scores</code>); every parse structure keys the full pair, and tests enforce it.</div>
+<div class="callout law"><b>The bundle ships whole or not at all.</b> The validator refuses
+mixed builds; the deliverer copies the complete 7-file set or nothing. Never hand-copy one JSON
+into the redesign repo.</div>
+<div class="callout law"><b>Raw is sacred; scaling is presentation.</b> Scale factors are applied
+at build time and recorded in the output. The cache always holds the untouched WCL numbers, so any
+future re-tuning is loss-free.</div>
+<div class="callout law"><b>Local = credential-free.</b> Anything needing WCL/Blizzard/Discord
+secrets runs only in Actions. Local scripts are inert or degrade gracefully — if something demands
+a credential on your PC, that's a bug.</div>
+
+<footer>Skill Issues · wipefest-board · written 2026-07-24 · lives at <code>docs/PARSES_CONFIG_GUIDE.html</code> — update it when the knobs change.</footer>
+
+</div>
+</body>
+</html>

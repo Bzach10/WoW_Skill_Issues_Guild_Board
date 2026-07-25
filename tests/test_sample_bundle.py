@@ -18,7 +18,8 @@ from guild_board import web_data
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = REPO / "samples"
 LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
-          "island_completion", "transmog_changes", "guild_pulse", "competition")
+          "island_completion", "transmog_changes", "guild_pulse", "competition",
+          "parses")
 
 
 def _load(name):
@@ -67,7 +68,9 @@ def test_sample_is_regenerable_from_current_producers():
         dungeon_bests=gen.DUNGEON_BESTS, raid_progression=gen.RAID_PROGRESSION,
         guild_achievements=gen.GUILD_ACHIEVEMENTS,
         transmog_snapshot=gen.TRANSMOG_SNAPSHOT, pulse_items=gen.PULSE_ITEMS,
-        competition_fetched=gen.COMPETITION_FETCHED)
+        competition_fetched=gen.COMPETITION_FETCHED,
+        parses_fetched=gen.PARSES_FETCHED,
+        difficulty_scale=gen.PARSES_DIFFICULTY_SCALE)
     committed = _load("site_data.sample.json")
 
     for layer in LAYERS:
@@ -99,3 +102,12 @@ def test_sample_exercises_populated_states():
     assert comp["rankings"]["top5"][0]["rank"] == 1
     # All three role buckets present and healers actually bucketed.
     assert comp["rankings"]["by_role"]["Healer"]
+    # Parses populated and merged into competition by full name-realm key.
+    parses = site["parses"]
+    assert parses["available"] is True
+    assert parses["character_count"] >= 1
+    assert all("-" in key for key in parses["characters"])  # never bare names
+    merged = {c["key"]: c for c in comp["characters"]}
+    for key in parses["characters"]:
+        assert merged[key]["parse"]["source"] == "wcl_zone_rankings"
+        assert merged[key]["parse"]["best"] == parses["characters"][key]["best_perf_avg"]

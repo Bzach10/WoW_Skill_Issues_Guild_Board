@@ -158,13 +158,18 @@ def _rank_within(rows):
 
 
 def build_competition(fetched=None, board_state=None, season=None,
-                      top_n=5):
+                      top_n=5, wcl_parses=None):
     """Assemble the browsable competition envelope from fetched M+ detail.
 
     fetched: the dict from fetch_competition (or {"characters": [...]}).
     board_state: for week-over-week deltas (baseline.season_scores) and the
                  real parse records. board_state keys names lowercased with
                  no realm, so deltas match on that convention.
+    wcl_parses: the envelope from web_data.build_parses (per-character
+                current-tier WCL best-performance averages, keyed by the
+                full name-realm key). When available it fills each
+                character's `parse` field; board_state records remain the
+                fallback for anyone the sweep missed.
     """
     season = season or season_mod.CURRENT_SEASON
     fetched = fetched or {}
@@ -266,10 +271,27 @@ def build_competition(fetched=None, board_state=None, season=None,
                  "spec": r["spec"], "role": r["role"]}
                 for r in unscored]
 
-    # Parses — real records only; never invented.
-    parses = _build_parse_block(board_state, ranked)
+    # Parses — real records only; never invented. WCL zoneRankings data
+    # (when the credentialed sweep has run) fills per-character averages;
+    # board_state's single record holders remain the fallback.
+    parses = _build_parse_block(board_state, ranked, wcl_parses)
     parse_by_name = {p["name"].lower(): p for p in parses["leaders"]}
+    # Matched on the FULL name-realm key, never bare name — two same-named
+    # characters on different realms must each get their own parse.
+    wcl_chars = (wcl_parses or {}).get("characters") or {}
     for r in characters:
+        w = wcl_chars.get(r["key"])
+        if w:
+            r["parse"] = {
+                "best": w.get("best_perf_avg"),
+                # The difficulty-discounted value rankings consume (config.yml
+                # parses.difficulty_scale); equals `best` when the factor is 1.
+                "scaled": w.get("scaled_perf_avg", w.get("best_perf_avg")),
+                "by_role": w.get("by_role") or {},
+                "difficulty": w.get("difficulty"),
+                "source": "wcl_zone_rankings",
+            }
+            continue
         p = parse_by_name.get((r["name"] or "").lower())
         if p:
             r["parse"] = {"best": p["parse"], "boss": p["boss"], "source": "board_state"}
@@ -353,10 +375,14 @@ def _build_key_records(chars, season):
             "dungeons_timed": len(by_dungeon), "dungeon_total": len(wanted)}
 
 
-def _build_parse_block(board_state, ranked):
-    """Real parse leaders from board_state records. Marked partial because
-    full per-boss/average parse data needs Warcraft Logs credentials, which
-    Raider.io cannot supply."""
+def _build_parse_block(board_state, ranked, wcl_parses=None):
+    """Real parse leaders from board_state records, upgraded to "full" when
+    the credentialed WCL sweep has populated per-character averages.
+
+    The leaders stay the true single-boss record holders (a 99 on one boss
+    is a different fact from a 92 average); the WCL envelope's coverage is
+    reported alongside so the front-end knows the per-character `parse`
+    fields are populated."""
     records = board_state.get("records") or {}
     leaders = []
     for rec_id in ("best_dps_parse", "best_hps_parse"):
@@ -369,6 +395,16 @@ def _build_parse_block(board_state, ranked):
                 "role": "DPS" if rec_id == "best_dps_parse" else "Healer",
                 "spec": f"{rec.get('spec', '')} {rec.get('cls', '')}".strip(),
             })
+    wcl_chars = (wcl_parses or {}).get("characters") or {}
+    if wcl_chars:
+        return {
+            "available": "full",
+            "source": "Warcraft Logs character zoneRankings (per-character "
+                      "averages on characters[].parse; see the parses layer "
+                      "for the full detail) + board_state record holders",
+            "characters_with_parses": len(wcl_chars),
+            "leaders": leaders,
+        }
     return {
         "available": "partial" if leaders else "none",
         "source": "board_state records (Warcraft Logs enrichment not yet "

@@ -50,6 +50,14 @@ in one commit. A validation failure stops the run; nothing partial is ever
 committed. Requires no credentials for the refresh itself (Raider.io is
 public); `DISCORD_WEBHOOK_URL` only gates the optional post step.
 
+`.github/workflows/wcl-parse-refresh.yml`, cron `30 13 * * *` UTC +
+`workflow_dispatch`, is the credentialed sibling: `refresh_parses.py` pulls
+per-character current-tier parse averages from Warcraft Logs into
+`parses_cache.json` (the `parses` layer + `competition.characters[].parse`),
+then the same rebuild → validate → commit chain. It needs `WCL_CLIENT_ID` /
+`WCL_CLIENT_SECRET` (Actions secrets only); locally the script is inert and
+the layer degrades to `available: false`.
+
 ## Manual run (Windows host)
 
 ```

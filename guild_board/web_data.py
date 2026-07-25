@@ -18,6 +18,8 @@ Five layers, each independently emittable so the front-end can lazy-load:
   build_guild_achievements  Midnight progress (credential-gated — degrades)
   build_island_completion   per-island conquered/timed status
   build_transmog_changes    before/after transmog diff
+  build_parses              per-character WCL parse averages (credential-
+                            gated — degrades; keyed name-realm, never bare)
 
 build_site_data() assembles all five into one envelope.
 """
@@ -596,13 +598,137 @@ def build_guild_pulse(pulse_items=None, max_items=60):
 
 
 # ---------------------------------------------------------------------------
+# 7. Per-character parses — current-tier WCL best-performance averages
+# ---------------------------------------------------------------------------
+
+# WCL difficulty ids -> the names config.yml's parses.difficulty_scale uses.
+_DIFFICULTY_NAMES = {5: "mythic", 4: "heroic", 3: "normal", 1: "lfr"}
+
+
+def _scale_factors(difficulty_scale):
+    """config.yml's name-keyed factors as clean floats, defaulting to 1.0.
+
+    Forgiving on purpose — this file is officer-edited YAML. A missing or
+    non-numeric factor becomes the identity rather than blowing up the
+    build; negatives clamp to 0 (= excluded, same as an explicit 0)."""
+    factors = {}
+    for name in ("mythic", "heroic", "normal", "lfr"):
+        raw = (difficulty_scale or {}).get(name, 1.0)
+        try:
+            factors[name] = max(0.0, float(raw))
+        except (TypeError, ValueError):
+            factors[name] = 1.0
+    return factors
+
+
+def sweep_difficulties(difficulty_scale, candidates=(5, 4, 3)):
+    """The WCL difficulty ids the parse sweep should walk, given config.yml's
+    parses.difficulty_scale: a factor of 0 excludes that difficulty from the
+    fetch as well as the build, so one knob controls both policy and API
+    spend. Order (highest first) is preserved."""
+    factors = _scale_factors(difficulty_scale)
+    return tuple(d for d in candidates
+                 if factors.get(_DIFFICULTY_NAMES.get(d, ""), 1.0) > 0)
+
+
+def build_parses(parses_fetched=None, season=None, difficulty_scale=None):
+    """Per-character current-tier Warcraft Logs parse data — the axis the
+    Four Emperors ranking, standings parse columns and the newspaper's raid
+    sections read.
+
+    parses_fetched: the dict from parses_cache.json (written by
+    scripts/refresh_parses.py in the credentialed Action), or None. Warcraft
+    Logs credentials exist only in CI, so locally this degrades to a stable
+    empty shape with available:false — the front-end can build every parse
+    surface against it and it fills the moment the credentialed refresh runs.
+
+    difficulty_scale: config.yml's parses.difficulty_scale ({"mythic": 1.0,
+    "heroic": 0.8, ...}), or None for no scaling. Each character keeps their
+    RAW best_perf_avg and gains scaled_perf_avg = raw x the factor for the
+    difficulty their parses came from (capped at 100). Rankings consume the
+    scaled value; displays can show the raw one. Applied here at build time
+    — never at fetch time — so retuning a factor in config.yml only needs a
+    bundle rebuild, not a re-pull, and the cache stays raw truth.
+
+    Characters are keyed by the FULL name-realm key ("amrevenge-stormrage",
+    exact Unicode). Never bare names: board_state's bare-name season_scores
+    keying is a documented data-destroying bug for same-named characters on
+    different realms, and this layer must not repeat it.
+    """
+    season = season or season_mod.CURRENT_SEASON
+    fetched = parses_fetched or {}
+    characters = fetched.get("characters") or {}
+    factors = _scale_factors(difficulty_scale)
+
+    if not characters:
+        return {
+            "schema_version": SCHEMA_VERSION,
+            "generated_at": _now_iso(),
+            "available": False,
+            "status": "pending_credentials",
+            "source": "Warcraft Logs character zoneRankings",
+            "detail": "No parse cache yet — the credentialed Action "
+                      "(scripts/refresh_parses.py) has not run. Raider.io "
+                      "does not expose parse percentiles, so this layer "
+                      "fills only from Warcraft Logs.",
+            "season": {"slug": season["slug"], "name": season["name"]},
+            "tier": None,
+            "sourced_at": None,
+            "characters": {},
+            "character_count": 0,
+        }
+
+    tier = fetched.get("tier") or {}
+    out_chars = {}
+    for key, entry in characters.items():
+        e = dict(entry)
+        e.setdefault("key", key)
+        # Every entry names the tier it was measured in, so a row copied out
+        # of this file stays self-describing across season boundaries.
+        e.setdefault("tier", tier)
+        # The difficulty discount: raw stays raw, rankings read the scaled
+        # value. Percentiles live on 0-100, so the scaled value is capped
+        # there (a factor > 1 can reward mythic but never mint a 101).
+        # A factor of 0 means the difficulty is EXCLUDED: the character is
+        # dropped from the layer entirely ("no logs yet" on the site, never
+        # a 0.0% row), and sweep_difficulties() stops the fetch querying it.
+        # The raw cache keeps them, so re-enabling later is loss-free.
+        factor = factors.get(_DIFFICULTY_NAMES.get(e.get("difficulty"), ""), 1.0)
+        if factor <= 0:
+            continue
+        raw = e.get("best_perf_avg")
+        if raw is not None:
+            e["scaled_perf_avg"] = round(min(raw * factor, 100.0), 1)
+            e["difficulty_scale"] = factor
+        out_chars[key] = e
+
+    return {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at": _now_iso(),
+        "available": True,
+        "status": "ok",
+        "source": "Warcraft Logs character zoneRankings",
+        "season": {"slug": season["slug"], "name": season["name"]},
+        "tier": tier,
+        "sourced_at": fetched.get("last_updated"),
+        # Provenance: the factors this build applied (config.yml ->
+        # parses.difficulty_scale), so a reader can tell a tuned bundle
+        # from an unscaled one without diffing configs.
+        "difficulty_scale": factors,
+        "characters": out_chars,
+        "character_count": len(out_chars),
+    }
+
+
+# ---------------------------------------------------------------------------
 # Assembler
 # ---------------------------------------------------------------------------
 
 def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
                     raid_progression=None, guild_achievements=None,
                     transmog_snapshot=None, pulse_items=None,
-                    competition_fetched=None, guild=None, season=None):
+                    competition_fetched=None, parses_fetched=None,
+                    difficulty_scale=None, guild=None, season=None):
     """Assemble every layer into one envelope for the front-end.
 
     Any input may be omitted; the corresponding layer degrades to its
@@ -615,6 +741,10 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
     # Guild achievements feed BOTH layer 3 (trophy hall) and layer 4 (the
     # authoritative per-boss raid kills), so extract the boss kills once here.
     confirmed_boss_kills = extract_raid_boss_kills(guild_achievements, season=season)
+    # Parses feed their own layer AND the competition characters' parse
+    # field (the Emperor Index's second axis), so build the envelope once.
+    parses = build_parses(parses_fetched, season=season,
+                          difficulty_scale=difficulty_scale)
     site = {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
@@ -630,7 +760,9 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
             confirmed_boss_kills=confirmed_boss_kills),
         "transmog_changes": transmog,
         "guild_pulse": build_guild_pulse(pulse_items),
-        "competition": build_competition(competition_fetched, board_state, season=season),
+        "competition": build_competition(competition_fetched, board_state,
+                                         season=season, wcl_parses=parses),
+        "parses": parses,
     }
     site["parity"] = build_parity_map(site)
     return site
@@ -680,6 +812,8 @@ def build_parity_map(site):
         if field == "raid_progression":
             return "live" if raid.get("total_bosses") else "pending"
         if field in ("top_dps_parses", "top_healing_parses", "top_tank_parses"):
+            if parses.get("available") == "full":
+                return "live"
             return "partial" if parses.get("leaders") else "pending"
         if field == "guild_achievements":
             return "live" if ach.get("available") else "pending"

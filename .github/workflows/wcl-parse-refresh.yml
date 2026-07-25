@@ -1,0 +1,70 @@
+name: WCL Parse Refresh
+
+# Per-character Warcraft Logs parse averages for the website -- the Four
+# Emperors ranking's second axis, standings parse columns and the
+# newspaper's raid sections. Runs here (not locally) because the WCL
+# credentials exist only as Actions secrets; scripts/refresh_parses.py is
+# inert without them by design.
+#
+# Idempotent + FAIL-OPEN: refresh_parses.py keeps the previous cache if a
+# bad WCL day resolves too few characters, so parse surfaces never blank.
+
+on:
+  schedule:
+    # Daily at 13:30 UTC: after the weekly board's Tuesday 13:00 run, and
+    # before the 14:00 daily competition refresh rebuilds the bundle again.
+    - cron: "30 13 * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh-parses:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Refresh per-character WCL parses
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: python scripts/refresh_parses.py
+
+      - name: Rebuild the site data bundle
+        # Reuses the committed caches; the parses layer is the point here.
+        run: python scripts/build_site_data.py --out web_data_public
+
+      - name: Validate the bundle (cross-layer consistency gate)
+        run: python scripts/validate_bundle.py web_data_public
+
+      - name: Commit refreshed parse data + bundle
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Branch names may contain shell metacharacters; bind, don't splice.
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add parses_cache.json web_data_public
+          if git diff --cached --quiet; then
+            echo "No parse changes to commit."
+          else
+            git commit -m "Refresh WCL parse data [skip ci]"
+            if git pull --rebase origin "$REF_NAME"; then
+              git push
+            else
+              git checkout --ours parses_cache.json web_data_public
+              git add parses_cache.json web_data_public
+              git rebase --continue
+              git push
+            fi
+          fi

@@ -44,9 +44,16 @@
       "delta_day": 6.1,
       "is_new": false,
       "parse": {
-        "best": 99,
-        "boss": "Chimaerus the Undreamt God",
-        "source": "board_state"
+        "best": 92.4,
+        "scaled": 92.4,
+        "by_role": {
+          "DPS": {
+            "best_perf_avg": 92.4,
+            "kills": 7
+          }
+        },
+        "difficulty": 5,
+        "source": "wcl_zone_rankings"
       },
       "rank": 1,
       "top5": true
@@ -147,7 +154,22 @@
       "delta_week": 0.0,
       "delta_day": null,
       "is_new": false,
-      "parse": null,
+      "parse": {
+        "best": 88.1,
+        "scaled": 88.1,
+        "by_role": {
+          "Healer": {
+            "best_perf_avg": 88.1,
+            "kills": 6
+          },
+          "DPS": {
+            "best_perf_avg": 41.2,
+            "kills": 2
+          }
+        },
+        "difficulty": 5,
+        "source": "wcl_zone_rankings"
+      },
       "rank": 5,
       "top5": true
     },
@@ -172,7 +194,18 @@
       "delta_week": 0.0,
       "delta_day": null,
       "is_new": false,
-      "parse": null,
+      "parse": {
+        "best": 71.9,
+        "scaled": 57.5,
+        "by_role": {
+          "Tank": {
+            "best_perf_avg": 71.9,
+            "kills": 5
+          }
+        },
+        "difficulty": 4,
+        "source": "wcl_zone_rankings"
+      },
       "rank": 6,
       "top5": false
     },
@@ -679,8 +712,9 @@
     }
   },
   "parses": {
-    "available": "partial",
-    "source": "board_state records (Warcraft Logs enrichment not yet enabled; Raider.io does not expose parses)",
+    "available": "full",
+    "source": "Warcraft Logs character zoneRankings (per-character averages on characters[].parse; see the parses layer for the full detail) + board_state record holders",
+    "characters_with_parses": 3,
     "leaders": [
       {
         "name": "Amrevenge",

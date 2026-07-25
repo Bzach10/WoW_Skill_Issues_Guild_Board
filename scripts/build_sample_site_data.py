@@ -174,6 +174,41 @@ COMPETITION_FETCHED = {"prev_day_scores": {
 ]}
 
 
+# The credentialed WCL parse sweep (real parses_cache.json shape) so the
+# Four Emperors ranking, standings parse columns and newspaper raid sections
+# all render populated. Keyed by the FULL name-realm key, exactly like the
+# live cache — never bare names.
+PARSES_FETCHED = {
+    "last_updated": "2026-07-20T13:30:00+00:00",
+    "tier": {"zone_id": 46, "name": "Voidspire Sanctum"},
+    "characters": {
+        "amrevenge-stormrage": {
+            "name": "Amrevenge", "key": "amrevenge-stormrage",
+            "class": "Hunter", "best_perf_avg": 92.4, "median_perf_avg": 81.0,
+            "by_role": {"DPS": {"best_perf_avg": 92.4, "kills": 7}},
+            "difficulty": 5, "sourced_at": "2026-07-20T13:30:00+00:00"},
+        "rakdisc-proudmoore": {
+            "name": "Rakdisc", "key": "rakdisc-proudmoore",
+            "class": "Priest", "best_perf_avg": 88.1, "median_perf_avg": 74.5,
+            "by_role": {"Healer": {"best_perf_avg": 88.1, "kills": 6},
+                        "DPS": {"best_perf_avg": 41.2, "kills": 2}},
+            "difficulty": 5, "sourced_at": "2026-07-20T13:30:00+00:00"},
+        "floofwall-queldorei": {
+            "name": "Floofwall", "key": "floofwall-queldorei",
+            "class": "Monk", "best_perf_avg": 71.9,
+            "by_role": {"Tank": {"best_perf_avg": 71.9, "kills": 5}},
+            "difficulty": 4, "sourced_at": "2026-07-20T13:30:00+00:00"},
+    },
+}
+
+
+# Mirrors config.yml's parses.difficulty_scale so the sample shows the
+# scaled values the way a tuned production bundle would (Floofwall's
+# heroic 71.9 scales to 57.5, showing the discount visibly; normal is
+# excluded outright, matching the live config).
+PARSES_DIFFICULTY_SCALE = {"mythic": 1.0, "heroic": 0.8, "normal": 0.0}
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     site = web_data.build_site_data(
@@ -181,6 +216,8 @@ def main():
         dungeon_bests=DUNGEON_BESTS, raid_progression=RAID_PROGRESSION,
         guild_achievements=GUILD_ACHIEVEMENTS, transmog_snapshot=TRANSMOG_SNAPSHOT,
         pulse_items=PULSE_ITEMS, competition_fetched=COMPETITION_FETCHED,
+        parses_fetched=PARSES_FETCHED,
+        difficulty_scale=PARSES_DIFFICULTY_SCALE,
         guild={"name": "Skill Issues", "realm": "bleeding-hollow", "region": "us"},
         season=season_mod.CURRENT_SEASON)
     site["_sample"] = True
@@ -189,14 +226,15 @@ def main():
                      "guild_board.web_data producers.")
 
     _write(os.path.join(OUT, "site_data.sample.json"), site)
-    for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes", "guild_pulse",
-                  "competition"):
+    layers = ("recap_ribbon", "records_leaderboard", "guild_achievements",
+              "island_completion", "transmog_changes", "guild_pulse",
+              "competition", "parses")
+    for layer in layers:
         payload = dict(site[layer])
         payload["_sample"] = True
         _write(os.path.join(OUT, f"{layer}.sample.json"), payload)
 
-    print(f"Wrote {OUT}/site_data.sample.json (+ 6 per-layer samples)")
+    print(f"Wrote {OUT}/site_data.sample.json (+ {len(layers)} per-layer samples)")
     print(f"  recap beats     : {site['recap_ribbon']['beat_count']}")
     print(f"  ladder rows     : {site['records_leaderboard']['ladder_size']}")
     print(f"  achievements    : {site['guild_achievements']['trophy_count']} trophies")
@@ -206,6 +244,7 @@ def main():
     print(f"  guild pulse     : {site['guild_pulse']['item_count']} items {site['guild_pulse']['by_kind']}")
     print(f"  competition     : {site['competition']['character_count']} ranked, "
           f"top: {site['competition']['rankings']['top5'][0]['name'] if site['competition']['rankings']['top5'] else '-'}")
+    print(f"  parses          : {site['parses']['character_count']} characters with WCL averages")
     return 0
 
 
