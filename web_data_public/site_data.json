@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-26T18:21:04.597109+00:00",
+  "generated_at": "2026-07-26T18:29:30.927524+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.597199+00:00",
+    "generated_at": "2026-07-26T18:29:30.927623+00:00",
     "week_of": "2026-07-21",
     "based_on": "2026-07-21T18:04:28.385705+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.597356+00:00",
+    "generated_at": "2026-07-26T18:29:30.927746+00:00",
     "based_on": "2026-07-21T18:04:28.385705+00:00",
     "standing": {
       "realm": 49,
@@ -963,7 +963,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.597363+00:00",
+    "generated_at": "2026-07-26T18:29:30.927751+00:00",
     "available": false,
     "status": "pending_credentials",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -973,7 +973,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.597391+00:00",
+    "generated_at": "2026-07-26T18:29:30.927777+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -1170,7 +1170,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.596678+00:00",
+    "generated_at": "2026-07-26T18:29:30.927053+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -1179,7 +1179,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.597399+00:00",
+    "generated_at": "2026-07-26T18:29:30.927784+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -1323,6 +1323,11 @@
                   "best_perf_avg": 41.9
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 41.9,
+                "hps": 33.5
+              },
               "median_perf_avg": 41.9,
               "scaled_perf_avg": 41.9,
               "difficulty_scale": 1.0
@@ -1333,6 +1338,11 @@
                 "DPS": {
                   "best_perf_avg": 89.6
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 89.6,
+                "hps": 63.3
               },
               "median_perf_avg": 82.1,
               "scaled_perf_avg": 71.7,
@@ -1451,24 +1461,29 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 90.8,
-          "scaled": 72.6,
+          "best": 76.7,
+          "scaled": 76.7,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 90.8
+              "best_perf_avg": 54.8
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 54.8,
+              "best_perf_avg": 76.7,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 54.8
                 }
               },
-              "median_perf_avg": 34.8,
-              "scaled_perf_avg": 54.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 54.8,
+                "hps": 76.7
+              },
+              "median_perf_avg": 56.2,
+              "scaled_perf_avg": 76.7,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -1477,6 +1492,11 @@
                 "DPS": {
                   "best_perf_avg": 90.8
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 90.8,
+                "hps": 83.4
               },
               "median_perf_avg": 81.6,
               "scaled_perf_avg": 72.6,
@@ -1595,8 +1615,8 @@
         "delta_day": 77.0,
         "is_new": false,
         "parse": {
-          "best": 71.5,
-          "scaled": 71.5,
+          "best": 80.0,
+          "scaled": 80.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 71.5
@@ -1605,14 +1625,19 @@
           "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 71.5,
+              "best_perf_avg": 80.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 71.5
                 }
               },
-              "median_perf_avg": 61.1,
-              "scaled_perf_avg": 71.5,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 71.5,
+                "hps": 80.0
+              },
+              "median_perf_avg": 74.6,
+              "scaled_perf_avg": 80.0,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -1624,6 +1649,11 @@
                 "Tank": {
                   "best_perf_avg": 38.1
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 83.0,
+                "hps": 82.8
               },
               "median_perf_avg": 68.0,
               "scaled_perf_avg": 66.4,
@@ -1758,6 +1788,11 @@
                   "best_perf_avg": 9.9
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 3.2,
+                "hps": 9.9
+              },
               "median_perf_avg": 9.9,
               "scaled_perf_avg": 9.9,
               "difficulty_scale": 1.0
@@ -1768,6 +1803,11 @@
                 "Healer": {
                   "best_perf_avg": 53.0
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 16.7,
+                "hps": 53.0
               },
               "median_perf_avg": 43.1,
               "scaled_perf_avg": 42.4,
@@ -1886,23 +1926,20 @@
         "delta_day": 0.1,
         "is_new": false,
         "parse": {
-          "best": 94.2,
-          "scaled": 75.4,
+          "best": 79.0,
+          "scaled": 79.0,
           "by_role": {
-            "DPS": {
-              "best_perf_avg": 73.8
-            },
             "Healer": {
-              "best_perf_avg": 63.5
+              "best_perf_avg": 19.2
             },
             "Tank": {
-              "best_perf_avg": 92.4
+              "best_perf_avg": 75.3
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 75.3,
+              "best_perf_avg": 79.0,
               "by_role": {
                 "Healer": {
                   "best_perf_avg": 19.2
@@ -1911,8 +1948,13 @@
                   "best_perf_avg": 75.3
                 }
               },
-              "median_perf_avg": 63.3,
-              "scaled_perf_avg": 75.3,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 75.3,
+                "hps": 79.0
+              },
+              "median_perf_avg": 69.3,
+              "scaled_perf_avg": 79.0,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -1927,6 +1969,11 @@
                 "Tank": {
                   "best_perf_avg": 92.4
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 94.2,
+                "hps": 93.9
               },
               "median_perf_avg": 79.4,
               "scaled_perf_avg": 75.4,
@@ -2067,12 +2114,17 @@
                   "best_perf_avg": 62.1
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 61.2,
+                "hps": 62.1
+              },
               "median_perf_avg": 42.1,
               "scaled_perf_avg": 62.1,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 67.6,
+              "best_perf_avg": 74.4,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 72.9
@@ -2081,8 +2133,13 @@
                   "best_perf_avg": 65.0
                 }
               },
-              "median_perf_avg": 57.2,
-              "scaled_perf_avg": 54.1,
+              "metric": "dps",
+              "by_metric": {
+                "dps": 74.4,
+                "hps": 67.6
+              },
+              "median_perf_avg": 65.3,
+              "scaled_perf_avg": 59.5,
               "difficulty_scale": 0.8
             }
           },
@@ -2198,8 +2255,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 54.5,
-          "scaled": 54.5,
+          "best": 78.8,
+          "scaled": 78.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 54.5
@@ -2208,14 +2265,19 @@
           "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 54.5,
+              "best_perf_avg": 78.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 54.5
                 }
               },
-              "median_perf_avg": 47.0,
-              "scaled_perf_avg": 54.5,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 54.5,
+                "hps": 78.8
+              },
+              "median_perf_avg": 63.4,
+              "scaled_perf_avg": 78.8,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -2224,6 +2286,11 @@
                 "DPS": {
                   "best_perf_avg": 66.2
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 66.2,
+                "hps": 61.6
               },
               "median_perf_avg": 54.7,
               "scaled_perf_avg": 53.0,
@@ -2361,6 +2428,11 @@
                   "best_perf_avg": 60.1
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 60.1,
+                "hps": 13.2
+              },
               "median_perf_avg": 50.6,
               "scaled_perf_avg": 60.1,
               "difficulty_scale": 1.0
@@ -2374,6 +2446,11 @@
                 "Tank": {
                   "best_perf_avg": 82.3
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 82.3,
+                "hps": 63.0
               },
               "median_perf_avg": 61.5,
               "scaled_perf_avg": 65.8,
@@ -2508,6 +2585,11 @@
                   "best_perf_avg": 43.6
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 43.6,
+                "hps": 10.1
+              },
               "median_perf_avg": 25.2,
               "scaled_perf_avg": 43.6,
               "difficulty_scale": 1.0
@@ -2518,6 +2600,11 @@
                 "Tank": {
                   "best_perf_avg": 60.8
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 60.8,
+                "hps": 41.9
               },
               "median_perf_avg": 60.8,
               "scaled_perf_avg": 48.6,
@@ -2636,8 +2723,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 72.8,
-          "scaled": 72.8,
+          "best": 93.2,
+          "scaled": 93.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 72.8
@@ -2649,7 +2736,7 @@
           "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 72.8,
+              "best_perf_avg": 93.2,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 72.8
@@ -2658,8 +2745,13 @@
                   "best_perf_avg": 18.9
                 }
               },
-              "median_perf_avg": 52.7,
-              "scaled_perf_avg": 72.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 72.8,
+                "hps": 93.2
+              },
+              "median_perf_avg": 63.6,
+              "scaled_perf_avg": 93.2,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -2671,6 +2763,11 @@
                 "Tank": {
                   "best_perf_avg": 49.0
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 82.9,
+                "hps": 81.1
               },
               "median_perf_avg": 69.2,
               "scaled_perf_avg": 66.3,
@@ -2789,8 +2886,8 @@
         "delta_day": 0,
         "is_new": false,
         "parse": {
-          "best": 54.3,
-          "scaled": 43.4,
+          "best": 61.2,
+          "scaled": 49.0,
           "by_role": {
             "Tank": {
               "best_perf_avg": 54.3
@@ -2799,14 +2896,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 54.3,
+              "best_perf_avg": 61.2,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 54.3
                 }
               },
-              "median_perf_avg": 54.3,
-              "scaled_perf_avg": 43.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 54.3,
+                "hps": 61.2
+              },
+              "median_perf_avg": 61.2,
+              "scaled_perf_avg": 49.0,
               "difficulty_scale": 0.8
             }
           },
@@ -2938,6 +3040,11 @@
                   "best_perf_avg": 19.9
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 84.0,
+                "hps": 19.9
+              },
               "median_perf_avg": 74.9,
               "scaled_perf_avg": 84.0,
               "difficulty_scale": 1.0
@@ -2951,6 +3058,11 @@
                 "Healer": {
                   "best_perf_avg": 35.5
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 56.4,
+                "hps": 35.5
               },
               "median_perf_avg": 50.9,
               "scaled_perf_avg": 45.1,
@@ -3085,6 +3197,11 @@
                   "best_perf_avg": 78.7
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 78.7,
+                "hps": 55.9
+              },
               "median_perf_avg": 71.3,
               "scaled_perf_avg": 63.0,
               "difficulty_scale": 0.8
@@ -3217,6 +3334,11 @@
                 "Healer": {
                   "best_perf_avg": 69.5
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 52.8,
+                "hps": 69.5
               },
               "median_perf_avg": 60.6,
               "scaled_perf_avg": 55.6,
@@ -3351,6 +3473,11 @@
                   "best_perf_avg": 58.3
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 20.6,
+                "hps": 58.3
+              },
               "median_perf_avg": 35.2,
               "scaled_perf_avg": 58.3,
               "difficulty_scale": 1.0
@@ -3361,6 +3488,11 @@
                 "Healer": {
                   "best_perf_avg": 66.1
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 26.4,
+                "hps": 66.1
               },
               "median_perf_avg": 41.8,
               "scaled_perf_avg": 52.9,
@@ -3479,8 +3611,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 23.8,
-          "scaled": 23.8,
+          "best": 55.6,
+          "scaled": 55.6,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.8
@@ -3489,25 +3621,35 @@
           "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 23.8,
+              "best_perf_avg": 55.6,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 23.8
                 }
               },
-              "median_perf_avg": 16.3,
-              "scaled_perf_avg": 23.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.8,
+                "hps": 55.6
+              },
+              "median_perf_avg": 37.4,
+              "scaled_perf_avg": 55.6,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 4.4,
+              "best_perf_avg": 4.9,
               "by_role": {
                 "Healer": {
                   "best_perf_avg": 4.9
                 }
               },
-              "median_perf_avg": 4.2,
-              "scaled_perf_avg": 3.5,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 4.4,
+                "hps": 4.9
+              },
+              "median_perf_avg": 4.6,
+              "scaled_perf_avg": 3.9,
               "difficulty_scale": 0.8
             }
           },
@@ -3623,8 +3765,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 63.3,
-          "scaled": 50.6,
+          "best": 84.6,
+          "scaled": 67.7,
           "by_role": {
             "Tank": {
               "best_perf_avg": 63.3
@@ -3633,14 +3775,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 63.3,
+              "best_perf_avg": 84.6,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 63.3
                 }
               },
-              "median_perf_avg": 44.9,
-              "scaled_perf_avg": 50.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 63.3,
+                "hps": 84.6
+              },
+              "median_perf_avg": 65.0,
+              "scaled_perf_avg": 67.7,
               "difficulty_scale": 0.8
             }
           },
@@ -3772,6 +3919,11 @@
                   "best_perf_avg": 53.5
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 36.4,
+                "hps": 53.5
+              },
               "median_perf_avg": 50.9,
               "scaled_perf_avg": 42.8,
               "difficulty_scale": 0.8
@@ -3889,35 +4041,45 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 60.3,
-          "scaled": 48.2,
+          "best": 78.2,
+          "scaled": 78.2,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 60.3
+              "best_perf_avg": 30.3
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 30.3,
+              "best_perf_avg": 78.2,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 30.3
                 }
               },
-              "median_perf_avg": 26.4,
-              "scaled_perf_avg": 30.3,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 30.3,
+                "hps": 78.2
+              },
+              "median_perf_avg": 68.3,
+              "scaled_perf_avg": 78.2,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 60.3,
+              "best_perf_avg": 89.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 60.3
                 }
               },
-              "median_perf_avg": 37.7,
-              "scaled_perf_avg": 48.2,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 60.3,
+                "hps": 89.5
+              },
+              "median_perf_avg": 68.1,
+              "scaled_perf_avg": 71.6,
               "difficulty_scale": 0.8
             }
           },
@@ -4033,8 +4195,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 67.2,
-          "scaled": 53.8,
+          "best": 76.9,
+          "scaled": 61.5,
           "by_role": {
             "Tank": {
               "best_perf_avg": 67.2
@@ -4049,19 +4211,29 @@
                   "best_perf_avg": 34.4
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 34.4,
+                "hps": 33.8
+              },
               "median_perf_avg": 32.6,
               "scaled_perf_avg": 34.4,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 67.2,
+              "best_perf_avg": 76.9,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 67.2
                 }
               },
-              "median_perf_avg": 47.8,
-              "scaled_perf_avg": 53.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 67.2,
+                "hps": 76.9
+              },
+              "median_perf_avg": 44.0,
+              "scaled_perf_avg": 61.5,
               "difficulty_scale": 0.8
             }
           },
@@ -4177,8 +4349,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 39.1,
-          "scaled": 39.1,
+          "best": 66.7,
+          "scaled": 66.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 39.1
@@ -4187,25 +4359,35 @@
           "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 39.1,
+              "best_perf_avg": 66.7,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 39.1
                 }
               },
-              "median_perf_avg": 31.9,
-              "scaled_perf_avg": 39.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 39.1,
+                "hps": 66.7
+              },
+              "median_perf_avg": 64.5,
+              "scaled_perf_avg": 66.7,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 16.7,
+              "best_perf_avg": 39.9,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 16.7
                 }
               },
-              "median_perf_avg": 6.4,
-              "scaled_perf_avg": 13.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 16.7,
+                "hps": 39.9
+              },
+              "median_perf_avg": 21.9,
+              "scaled_perf_avg": 31.9,
               "difficulty_scale": 0.8
             }
           },
@@ -4321,35 +4503,45 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 75.7,
-          "scaled": 60.6,
+          "best": 73.1,
+          "scaled": 73.1,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 75.7
+              "best_perf_avg": 58.0
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 58.0,
+              "best_perf_avg": 73.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 58.0
                 }
               },
-              "median_perf_avg": 41.4,
-              "scaled_perf_avg": 58.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 58.0,
+                "hps": 73.1
+              },
+              "median_perf_avg": 53.6,
+              "scaled_perf_avg": 73.1,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 75.7,
+              "best_perf_avg": 77.2,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 75.7
                 }
               },
-              "median_perf_avg": 49.2,
-              "scaled_perf_avg": 60.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 75.7,
+                "hps": 77.2
+              },
+              "median_perf_avg": 56.5,
+              "scaled_perf_avg": 61.8,
               "difficulty_scale": 0.8
             }
           },
@@ -4481,6 +4673,11 @@
                   "best_perf_avg": 44.9
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 44.9,
+                "hps": 43.3
+              },
               "median_perf_avg": 44.9,
               "scaled_perf_avg": 35.9,
               "difficulty_scale": 0.8
@@ -4598,8 +4795,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 39.2,
-          "scaled": 31.4,
+          "best": 54.0,
+          "scaled": 43.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 39.2
@@ -4608,14 +4805,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 39.2,
+              "best_perf_avg": 54.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 39.2
                 }
               },
-              "median_perf_avg": 26.5,
-              "scaled_perf_avg": 31.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 39.2,
+                "hps": 54.0
+              },
+              "median_perf_avg": 40.1,
+              "scaled_perf_avg": 43.2,
               "difficulty_scale": 0.8
             }
           },
@@ -4741,14 +4943,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 5.6,
+              "best_perf_avg": 33.7,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 5.6
                 }
               },
-              "median_perf_avg": 5.6,
-              "scaled_perf_avg": 5.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 5.6,
+                "hps": 33.7
+              },
+              "median_perf_avg": 33.7,
+              "scaled_perf_avg": 33.7,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -4757,6 +4964,11 @@
                 "Healer": {
                   "best_perf_avg": 73.1
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 79.3,
+                "hps": 73.1
               },
               "median_perf_avg": 79.3,
               "scaled_perf_avg": 63.4,
@@ -4888,14 +5100,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 29.6,
+              "best_perf_avg": 33.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 29.6
                 }
               },
-              "median_perf_avg": 21.2,
-              "scaled_perf_avg": 29.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 29.6,
+                "hps": 33.5
+              },
+              "median_perf_avg": 26.5,
+              "scaled_perf_avg": 33.5,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -4907,6 +5124,11 @@
                 "Tank": {
                   "best_perf_avg": 27.7
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 87.0,
+                "hps": 34.6
               },
               "median_perf_avg": 77.7,
               "scaled_perf_avg": 69.6,
@@ -5135,35 +5357,45 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 72.1,
-          "scaled": 57.7,
+          "best": 78.3,
+          "scaled": 78.3,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 72.1
+              "best_perf_avg": 34.3
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 34.3,
+              "best_perf_avg": 78.3,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 34.3
                 }
               },
-              "median_perf_avg": 32.7,
-              "scaled_perf_avg": 34.3,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 34.3,
+                "hps": 78.3
+              },
+              "median_perf_avg": 74.4,
+              "scaled_perf_avg": 78.3,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 72.1,
+              "best_perf_avg": 73.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 72.1
                 }
               },
-              "median_perf_avg": 48.1,
-              "scaled_perf_avg": 57.7,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 72.1,
+                "hps": 73.8
+              },
+              "median_perf_avg": 41.1,
+              "scaled_perf_avg": 59.0,
               "difficulty_scale": 0.8
             }
           },
@@ -5289,14 +5521,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 8.1,
+              "best_perf_avg": 17.6,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 8.1
                 }
               },
-              "median_perf_avg": 8.1,
-              "scaled_perf_avg": 8.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 8.1,
+                "hps": 17.6
+              },
+              "median_perf_avg": 17.6,
+              "scaled_perf_avg": 17.6,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -5305,6 +5542,11 @@
                 "DPS": {
                   "best_perf_avg": 41.6
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 41.6,
+                "hps": 18.6
               },
               "median_perf_avg": 41.6,
               "scaled_perf_avg": 33.3,
@@ -5423,8 +5665,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 42.6,
-          "scaled": 34.1,
+          "best": 47.3,
+          "scaled": 37.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 42.6
@@ -5433,25 +5675,35 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 18.4,
+              "best_perf_avg": 37.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 18.4
                 }
               },
-              "median_perf_avg": 18.4,
-              "scaled_perf_avg": 18.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 18.4,
+                "hps": 37.1
+              },
+              "median_perf_avg": 37.1,
+              "scaled_perf_avg": 37.1,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 42.6,
+              "best_perf_avg": 47.3,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 42.6
                 }
               },
-              "median_perf_avg": 23.5,
-              "scaled_perf_avg": 34.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 42.6,
+                "hps": 47.3
+              },
+              "median_perf_avg": 24.6,
+              "scaled_perf_avg": 37.8,
               "difficulty_scale": 0.8
             }
           },
@@ -5586,6 +5838,11 @@
                   "best_perf_avg": 11.2
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 11.2,
+                "hps": 6.3
+              },
               "median_perf_avg": 11.2,
               "scaled_perf_avg": 11.2,
               "difficulty_scale": 1.0
@@ -5599,6 +5856,11 @@
                 "Tank": {
                   "best_perf_avg": 22.9
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 52.7,
+                "hps": 30.2
               },
               "median_perf_avg": 45.7,
               "scaled_perf_avg": 42.2,
@@ -5717,8 +5979,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 23.8,
-          "scaled": 19.0,
+          "best": 79.8,
+          "scaled": 63.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.8
@@ -5727,14 +5989,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 23.8,
+              "best_perf_avg": 79.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 23.8
                 }
               },
-              "median_perf_avg": 13.1,
-              "scaled_perf_avg": 19.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.8,
+                "hps": 79.8
+              },
+              "median_perf_avg": 54.0,
+              "scaled_perf_avg": 63.8,
               "difficulty_scale": 0.8
             }
           },
@@ -5850,8 +6117,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 47.7,
-          "scaled": 47.7,
+          "best": 83.8,
+          "scaled": 83.8,
           "by_role": {
             "Tank": {
               "best_perf_avg": 47.7
@@ -5860,18 +6127,23 @@
           "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 47.7,
+              "best_perf_avg": 83.8,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 47.7
                 }
               },
-              "median_perf_avg": 39.2,
-              "scaled_perf_avg": 47.7,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 47.7,
+                "hps": 83.8
+              },
+              "median_perf_avg": 80.4,
+              "scaled_perf_avg": 83.8,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 54.7,
+              "best_perf_avg": 68.6,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 9.7
@@ -5880,8 +6152,13 @@
                   "best_perf_avg": 54.7
                 }
               },
-              "median_perf_avg": 50.4,
-              "scaled_perf_avg": 43.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 54.7,
+                "hps": 68.6
+              },
+              "median_perf_avg": 57.3,
+              "scaled_perf_avg": 54.9,
               "difficulty_scale": 0.8
             }
           },
@@ -5997,35 +6274,45 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 66.0,
-          "scaled": 52.8,
+          "best": 77.1,
+          "scaled": 77.1,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 66.0
+              "best_perf_avg": 31.7
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 31.7,
+              "best_perf_avg": 77.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 31.7
                 }
               },
-              "median_perf_avg": 31.7,
-              "scaled_perf_avg": 31.7,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 31.7,
+                "hps": 77.1
+              },
+              "median_perf_avg": 77.1,
+              "scaled_perf_avg": 77.1,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 66.0,
+              "best_perf_avg": 76.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 66.0
                 }
               },
-              "median_perf_avg": 51.3,
-              "scaled_perf_avg": 52.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 66.0,
+                "hps": 76.0
+              },
+              "median_perf_avg": 67.4,
+              "scaled_perf_avg": 60.8,
               "difficulty_scale": 0.8
             }
           },
@@ -6141,35 +6428,45 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 75.1,
-          "scaled": 60.1,
+          "best": 85.0,
+          "scaled": 85.0,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 75.1
+              "best_perf_avg": 41.5
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 41.5,
+              "best_perf_avg": 85.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 41.5
                 }
               },
-              "median_perf_avg": 27.2,
-              "scaled_perf_avg": 41.5,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 41.5,
+                "hps": 85.0
+              },
+              "median_perf_avg": 79.1,
+              "scaled_perf_avg": 85.0,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 75.1,
+              "best_perf_avg": 85.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 75.1
                 }
               },
-              "median_perf_avg": 67.4,
-              "scaled_perf_avg": 60.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 75.1,
+                "hps": 85.0
+              },
+              "median_perf_avg": 80.2,
+              "scaled_perf_avg": 68.0,
               "difficulty_scale": 0.8
             }
           },
@@ -6301,6 +6598,11 @@
                   "best_perf_avg": 50.7
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 20.9,
+                "hps": 50.7
+              },
               "median_perf_avg": 41.8,
               "scaled_perf_avg": 50.7,
               "difficulty_scale": 1.0
@@ -6311,6 +6613,11 @@
                 "Healer": {
                   "best_perf_avg": 69.0
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 27.1,
+                "hps": 69.0
               },
               "median_perf_avg": 60.0,
               "scaled_perf_avg": 55.2,
@@ -6439,14 +6746,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 37.4,
+              "best_perf_avg": 52.2,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 37.4
                 }
               },
-              "median_perf_avg": 23.8,
-              "scaled_perf_avg": 37.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 37.4,
+                "hps": 52.2
+              },
+              "median_perf_avg": 42.1,
+              "scaled_perf_avg": 52.2,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -6455,6 +6767,11 @@
                 "DPS": {
                   "best_perf_avg": 81.6
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 81.6,
+                "hps": 61.3
               },
               "median_perf_avg": 55.6,
               "scaled_perf_avg": 65.3,
@@ -6573,8 +6890,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 18.9,
-          "scaled": 15.1,
+          "best": 72.2,
+          "scaled": 57.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 18.9
@@ -6583,14 +6900,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 18.9,
+              "best_perf_avg": 72.2,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 18.9
                 }
               },
-              "median_perf_avg": 12.6,
-              "scaled_perf_avg": 15.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 18.9,
+                "hps": 72.2
+              },
+              "median_perf_avg": 44.8,
+              "scaled_perf_avg": 57.8,
               "difficulty_scale": 0.8
             }
           },
@@ -6706,35 +7028,45 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 25.0,
-          "scaled": 20.0,
+          "best": 61.1,
+          "scaled": 61.1,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 25.0
+              "best_perf_avg": 14.1
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 14.1,
+              "best_perf_avg": 61.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 14.1
                 }
               },
-              "median_perf_avg": 13.3,
-              "scaled_perf_avg": 14.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 14.1,
+                "hps": 61.1
+              },
+              "median_perf_avg": 55.0,
+              "scaled_perf_avg": 61.1,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 25.0,
+              "best_perf_avg": 55.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 25.0
                 }
               },
-              "median_perf_avg": 25.0,
-              "scaled_perf_avg": 20.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 25.0,
+                "hps": 55.8
+              },
+              "median_perf_avg": 55.8,
+              "scaled_perf_avg": 44.6,
               "difficulty_scale": 0.8
             }
           },
@@ -6960,8 +7292,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 45.6,
-          "scaled": 36.5,
+          "best": 62.1,
+          "scaled": 49.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 45.6
@@ -6970,14 +7302,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 45.6,
+              "best_perf_avg": 62.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 45.6
                 }
               },
-              "median_perf_avg": 35.4,
-              "scaled_perf_avg": 36.5,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 45.6,
+                "hps": 62.1
+              },
+              "median_perf_avg": 45.9,
+              "scaled_perf_avg": 49.7,
               "difficulty_scale": 0.8
             }
           },
@@ -7213,14 +7550,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 9.4,
+              "best_perf_avg": 12.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 9.4
                 }
               },
-              "median_perf_avg": 9.4,
-              "scaled_perf_avg": 9.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 9.4,
+                "hps": 12.8
+              },
+              "median_perf_avg": 12.8,
+              "scaled_perf_avg": 12.8,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -7229,6 +7571,11 @@
                 "DPS": {
                   "best_perf_avg": 59.4
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 59.4,
+                "hps": 54.8
               },
               "median_perf_avg": 44.8,
               "scaled_perf_avg": 47.5,
@@ -7347,8 +7694,8 @@
         "delta_day": 43.7,
         "is_new": false,
         "parse": {
-          "best": 56.9,
-          "scaled": 45.5,
+          "best": 69.8,
+          "scaled": 55.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 56.9
@@ -7357,25 +7704,35 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 22.8,
+              "best_perf_avg": 55.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 22.8
                 }
               },
-              "median_perf_avg": 22.8,
-              "scaled_perf_avg": 22.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 22.8,
+                "hps": 55.0
+              },
+              "median_perf_avg": 55.0,
+              "scaled_perf_avg": 55.0,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 56.9,
+              "best_perf_avg": 69.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 56.9
                 }
               },
-              "median_perf_avg": 51.5,
-              "scaled_perf_avg": 45.5,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 56.9,
+                "hps": 69.8
+              },
+              "median_perf_avg": 53.6,
+              "scaled_perf_avg": 55.8,
               "difficulty_scale": 0.8
             }
           },
@@ -7513,6 +7870,11 @@
                   "best_perf_avg": 12.0
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 14.8,
+                "hps": 74.8
+              },
               "median_perf_avg": 74.8,
               "scaled_perf_avg": 74.8,
               "difficulty_scale": 1.0
@@ -7526,6 +7888,11 @@
                 "Tank": {
                   "best_perf_avg": 47.5
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 45.7,
+                "hps": 84.2
               },
               "median_perf_avg": 75.3,
               "scaled_perf_avg": 67.4,
@@ -7644,8 +8011,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 20.9,
-          "scaled": 16.7,
+          "best": 27.3,
+          "scaled": 21.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 20.9
@@ -7654,14 +8021,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 20.9,
+              "best_perf_avg": 27.3,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 20.9
                 }
               },
-              "median_perf_avg": 19.5,
-              "scaled_perf_avg": 16.7,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 20.9,
+                "hps": 27.3
+              },
+              "median_perf_avg": 24.8,
+              "scaled_perf_avg": 21.8,
               "difficulty_scale": 0.8
             }
           },
@@ -7777,8 +8149,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 44.2,
-          "scaled": 35.4,
+          "best": 87.1,
+          "scaled": 69.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 44.2
@@ -7787,14 +8159,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 44.2,
+              "best_perf_avg": 87.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 44.2
                 }
               },
-              "median_perf_avg": 41.9,
-              "scaled_perf_avg": 35.4,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 44.2,
+                "hps": 87.1
+              },
+              "median_perf_avg": 61.6,
+              "scaled_perf_avg": 69.7,
               "difficulty_scale": 0.8
             }
           },
@@ -7910,8 +8287,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 79.5,
-          "scaled": 63.6,
+          "best": 80.4,
+          "scaled": 64.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 79.5
@@ -7920,25 +8297,35 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 41.0,
+              "best_perf_avg": 59.4,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 41.0
                 }
               },
-              "median_perf_avg": 32.3,
-              "scaled_perf_avg": 41.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 41.0,
+                "hps": 59.4
+              },
+              "median_perf_avg": 53.4,
+              "scaled_perf_avg": 59.4,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 79.5,
+              "best_perf_avg": 80.4,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 79.5
                 }
               },
-              "median_perf_avg": 63.6,
-              "scaled_perf_avg": 63.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 79.5,
+                "hps": 80.4
+              },
+              "median_perf_avg": 62.3,
+              "scaled_perf_avg": 64.3,
               "difficulty_scale": 0.8
             }
           },
@@ -8164,8 +8551,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 27.8,
-          "scaled": 22.2,
+          "best": 41.7,
+          "scaled": 33.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 27.8
@@ -8174,14 +8561,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 27.8,
+              "best_perf_avg": 41.7,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 27.8
                 }
               },
-              "median_perf_avg": 17.3,
-              "scaled_perf_avg": 22.2,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 27.8,
+                "hps": 41.7
+              },
+              "median_perf_avg": 36.0,
+              "scaled_perf_avg": 33.4,
               "difficulty_scale": 0.8
             }
           },
@@ -8407,24 +8799,29 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 40.5,
-          "scaled": 32.4,
+          "best": 53.3,
+          "scaled": 53.3,
           "by_role": {
             "DPS": {
-              "best_perf_avg": 40.5
+              "best_perf_avg": 15.6
             }
           },
-          "difficulty": 4,
+          "difficulty": 5,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 15.6,
+              "best_perf_avg": 53.3,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 15.6
                 }
               },
-              "median_perf_avg": 13.2,
-              "scaled_perf_avg": 15.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 15.6,
+                "hps": 53.3
+              },
+              "median_perf_avg": 42.1,
+              "scaled_perf_avg": 53.3,
               "difficulty_scale": 1.0
             },
             "heroic": {
@@ -8433,6 +8830,11 @@
                 "DPS": {
                   "best_perf_avg": 40.5
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 40.5,
+                "hps": 24.5
               },
               "median_perf_avg": 30.0,
               "scaled_perf_avg": 32.4,
@@ -8661,8 +9063,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 19.0,
-          "scaled": 15.2,
+          "best": 46.8,
+          "scaled": 37.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 19.0
@@ -8671,25 +9073,35 @@
           "difficulty": 4,
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 7.7,
+              "best_perf_avg": 28.9,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 7.7
                 }
               },
-              "median_perf_avg": 7.7,
-              "scaled_perf_avg": 7.7,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 7.7,
+                "hps": 28.9
+              },
+              "median_perf_avg": 28.9,
+              "scaled_perf_avg": 28.9,
               "difficulty_scale": 1.0
             },
             "heroic": {
-              "best_perf_avg": 19.0,
+              "best_perf_avg": 46.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 19.0
                 }
               },
-              "median_perf_avg": 13.8,
-              "scaled_perf_avg": 15.2,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 19.0,
+                "hps": 46.8
+              },
+              "median_perf_avg": 39.9,
+              "scaled_perf_avg": 37.4,
               "difficulty_scale": 0.8
             }
           },
@@ -8820,6 +9232,11 @@
                 "DPS": {
                   "best_perf_avg": 54.5
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 54.5,
+                "hps": 45.5
               },
               "median_perf_avg": 46.8,
               "scaled_perf_avg": 43.6,
@@ -8953,6 +9370,11 @@
                 "DPS": {
                   "best_perf_avg": 49.3
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 49.3,
+                "hps": 46.9
               },
               "median_perf_avg": 49.3,
               "scaled_perf_avg": 39.4,
@@ -9181,8 +9603,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 23.3,
-          "scaled": 18.6,
+          "best": 72.9,
+          "scaled": 58.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.3
@@ -9191,14 +9613,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 23.3,
+              "best_perf_avg": 72.9,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 23.3
                 }
               },
-              "median_perf_avg": 18.0,
-              "scaled_perf_avg": 18.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.3,
+                "hps": 72.9
+              },
+              "median_perf_avg": 61.9,
+              "scaled_perf_avg": 58.3,
               "difficulty_scale": 0.8
             }
           },
@@ -9314,8 +9741,8 @@
         "delta_day": 0,
         "is_new": false,
         "parse": {
-          "best": 23.7,
-          "scaled": 19.0,
+          "best": 33.5,
+          "scaled": 26.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.7
@@ -9324,14 +9751,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 23.7,
+              "best_perf_avg": 33.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 23.7
                 }
               },
-              "median_perf_avg": 22.1,
-              "scaled_perf_avg": 19.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.7,
+                "hps": 33.5
+              },
+              "median_perf_avg": 28.3,
+              "scaled_perf_avg": 26.8,
               "difficulty_scale": 0.8
             }
           },
@@ -9777,8 +10209,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 12.5,
-          "scaled": 10.0,
+          "best": 33.8,
+          "scaled": 27.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 8.1
@@ -9790,7 +10222,7 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 12.5,
+              "best_perf_avg": 33.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 8.1
@@ -9799,8 +10231,13 @@
                   "best_perf_avg": 30.3
                 }
               },
-              "median_perf_avg": 12.5,
-              "scaled_perf_avg": 10.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 12.5,
+                "hps": 33.8
+              },
+              "median_perf_avg": 33.8,
+              "scaled_perf_avg": 27.0,
               "difficulty_scale": 0.8
             }
           },
@@ -9916,8 +10353,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 20.0,
-          "scaled": 16.0,
+          "best": 57.9,
+          "scaled": 46.3,
           "by_role": {
             "Healer": {
               "best_perf_avg": 20.0
@@ -9926,14 +10363,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 20.0,
+              "best_perf_avg": 57.9,
               "by_role": {
                 "Healer": {
                   "best_perf_avg": 20.0
                 }
               },
-              "median_perf_avg": 10.3,
-              "scaled_perf_avg": 16.0,
+              "metric": "dps",
+              "by_metric": {
+                "dps": 57.9,
+                "hps": 20.0
+              },
+              "median_perf_avg": 42.2,
+              "scaled_perf_avg": 46.3,
               "difficulty_scale": 0.8
             }
           },
@@ -10159,8 +10601,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 23.3,
-          "scaled": 18.6,
+          "best": 41.0,
+          "scaled": 32.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 11.6
@@ -10172,7 +10614,7 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 23.3,
+              "best_perf_avg": 41.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 11.6
@@ -10181,8 +10623,13 @@
                   "best_perf_avg": 23.3
                 }
               },
-              "median_perf_avg": 23.3,
-              "scaled_perf_avg": 18.6,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.3,
+                "hps": 41.0
+              },
+              "median_perf_avg": 38.9,
+              "scaled_perf_avg": 32.8,
               "difficulty_scale": 0.8
             }
           },
@@ -10298,8 +10745,8 @@
         "delta_day": 0,
         "is_new": false,
         "parse": {
-          "best": 31.4,
-          "scaled": 25.1,
+          "best": 71.8,
+          "scaled": 57.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 31.4
@@ -10308,14 +10755,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 31.4,
+              "best_perf_avg": 71.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 31.4
                 }
               },
-              "median_perf_avg": 25.1,
-              "scaled_perf_avg": 25.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 31.4,
+                "hps": 71.8
+              },
+              "median_perf_avg": 68.6,
+              "scaled_perf_avg": 57.4,
               "difficulty_scale": 0.8
             }
           },
@@ -10557,6 +11009,11 @@
                   "best_perf_avg": 23.6
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 23.6,
+                "hps": 8.8
+              },
               "median_perf_avg": 23.6,
               "scaled_perf_avg": 18.9,
               "difficulty_scale": 0.8
@@ -10674,8 +11131,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 15.4,
-          "scaled": 12.3,
+          "best": 53.8,
+          "scaled": 43.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 15.4
@@ -10684,14 +11141,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 15.4,
+              "best_perf_avg": 53.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 15.4
                 }
               },
-              "median_perf_avg": 15.4,
-              "scaled_perf_avg": 12.3,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 15.4,
+                "hps": 53.8
+              },
+              "median_perf_avg": 53.8,
+              "scaled_perf_avg": 43.0,
               "difficulty_scale": 0.8
             }
           },
@@ -10917,8 +11379,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 17.5,
-          "scaled": 14.0,
+          "best": 61.5,
+          "scaled": 49.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 17.5
@@ -10927,14 +11389,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 17.5,
+              "best_perf_avg": 61.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 17.5
                 }
               },
-              "median_perf_avg": 12.7,
-              "scaled_perf_avg": 14.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 17.5,
+                "hps": 61.5
+              },
+              "median_perf_avg": 52.1,
+              "scaled_perf_avg": 49.2,
               "difficulty_scale": 0.8
             }
           },
@@ -11175,6 +11642,11 @@
                   "best_perf_avg": 50.9
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 24.9,
+                "hps": 50.9
+              },
               "median_perf_avg": 50.9,
               "scaled_perf_avg": 40.7,
               "difficulty_scale": 0.8
@@ -11282,8 +11754,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 21.3,
-          "scaled": 17.0,
+          "best": 24.5,
+          "scaled": 19.6,
           "by_role": {
             "DPS": {
               "best_perf_avg": 21.3
@@ -11292,14 +11764,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 21.3,
+              "best_perf_avg": 24.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 21.3
                 }
               },
-              "median_perf_avg": 21.3,
-              "scaled_perf_avg": 17.0,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 21.3,
+                "hps": 24.5
+              },
+              "median_perf_avg": 24.5,
+              "scaled_perf_avg": 19.6,
               "difficulty_scale": 0.8
             }
           },
@@ -11505,8 +11982,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 15.1,
-          "scaled": 12.1,
+          "best": 62.3,
+          "scaled": 49.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 15.1
@@ -11515,14 +11992,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 15.1,
+              "best_perf_avg": 62.3,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 15.1
                 }
               },
-              "median_perf_avg": 15.1,
-              "scaled_perf_avg": 12.1,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 15.1,
+                "hps": 62.3
+              },
+              "median_perf_avg": 62.3,
+              "scaled_perf_avg": 49.8,
               "difficulty_scale": 0.8
             }
           },
@@ -11928,8 +12410,8 @@
         "delta_day": 60.0,
         "is_new": true,
         "parse": {
-          "best": 35.4,
-          "scaled": 28.3,
+          "best": 58.6,
+          "scaled": 46.9,
           "by_role": {
             "Healer": {
               "best_perf_avg": 35.4
@@ -11938,14 +12420,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 35.4,
+              "best_perf_avg": 58.6,
               "by_role": {
                 "Healer": {
                   "best_perf_avg": 35.4
                 }
               },
-              "median_perf_avg": 35.4,
-              "scaled_perf_avg": 28.3,
+              "metric": "dps",
+              "by_metric": {
+                "dps": 58.6,
+                "hps": 35.4
+              },
+              "median_perf_avg": 58.6,
+              "scaled_perf_avg": 46.9,
               "difficulty_scale": 0.8
             }
           },
@@ -12181,8 +12668,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 3.5,
-          "scaled": 2.8,
+          "best": 85.4,
+          "scaled": 68.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 3.5
@@ -12191,14 +12678,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 3.5,
+              "best_perf_avg": 85.4,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 3.5
                 }
               },
-              "median_perf_avg": 3.5,
-              "scaled_perf_avg": 2.8,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 3.5,
+                "hps": 85.4
+              },
+              "median_perf_avg": 85.4,
+              "scaled_perf_avg": 68.3,
               "difficulty_scale": 0.8
             }
           },
@@ -12524,8 +13016,8 @@
         "delta_day": 0.0,
         "is_new": false,
         "parse": {
-          "best": 4.6,
-          "scaled": 3.7,
+          "best": 45.8,
+          "scaled": 36.6,
           "by_role": {
             "DPS": {
               "best_perf_avg": 4.6
@@ -12534,14 +13026,19 @@
           "difficulty": 4,
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 4.6,
+              "best_perf_avg": 45.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 4.6
                 }
               },
-              "median_perf_avg": 4.6,
-              "scaled_perf_avg": 3.7,
+              "metric": "hps",
+              "by_metric": {
+                "dps": 4.6,
+                "hps": 45.8
+              },
+              "median_perf_avg": 45.8,
+              "scaled_perf_avg": 36.6,
               "difficulty_scale": 0.8
             }
           },
@@ -18276,7 +18773,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-07-26T18:21:04.597103+00:00",
+    "generated_at": "2026-07-26T18:29:30.927518+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
@@ -18288,7 +18785,7 @@
       "zone_id": 46,
       "name": "Voidspire Sanctum"
     },
-    "sourced_at": "2026-07-26T18:18:20.795475+00:00",
+    "sourced_at": "2026-07-26T18:26:36.912156+00:00",
     "difficulty_scale": {
       "mythic": 1.0,
       "heroic": 0.8,
@@ -18300,8 +18797,8 @@
         "name": "Aime",
         "key": "aime-bleeding-hollow",
         "class": "Druid",
-        "best_perf_avg": 15.4,
-        "scaled_perf_avg": 12.3,
+        "best_perf_avg": 53.8,
+        "scaled_perf_avg": 43.0,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18311,14 +18808,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 15.4,
+            "best_perf_avg": 53.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 15.4
               }
             },
-            "median_perf_avg": 15.4,
-            "scaled_perf_avg": 12.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 15.4,
+              "hps": 53.8
+            },
+            "median_perf_avg": 53.8,
+            "scaled_perf_avg": 43.0,
             "difficulty_scale": 0.8
           }
         },
@@ -18326,8 +18828,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 15.4
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 53.8
       },
       "amrevenge-stormrage": {
         "name": "Amrevenge",
@@ -18350,6 +18852,11 @@
                 "best_perf_avg": 41.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 41.9,
+              "hps": 33.5
+            },
             "median_perf_avg": 41.9,
             "scaled_perf_avg": 41.9,
             "difficulty_scale": 1.0
@@ -18361,6 +18868,11 @@
                 "best_perf_avg": 89.6
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 89.6,
+              "hps": 63.3
+            },
             "median_perf_avg": 82.1,
             "scaled_perf_avg": 71.7,
             "difficulty_scale": 0.8
@@ -18370,15 +18882,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 82.1
       },
       "anbux-bleeding-hollow": {
         "name": "Anbux",
         "key": "anbux-bleeding-hollow",
         "class": "Warlock",
-        "best_perf_avg": 21.3,
-        "scaled_perf_avg": 17.0,
+        "best_perf_avg": 24.5,
+        "scaled_perf_avg": 19.6,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18388,14 +18900,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 21.3,
+            "best_perf_avg": 24.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 21.3
               }
             },
-            "median_perf_avg": 21.3,
-            "scaled_perf_avg": 17.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 21.3,
+              "hps": 24.5
+            },
+            "median_perf_avg": 24.5,
+            "scaled_perf_avg": 19.6,
             "difficulty_scale": 0.8
           }
         },
@@ -18403,8 +18920,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 21.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 24.5
       },
       "arfas-queldorei": {
         "name": "Arfas",
@@ -18430,6 +18947,11 @@
                 "best_perf_avg": 11.2
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 11.2,
+              "hps": 6.3
+            },
             "median_perf_avg": 11.2,
             "scaled_perf_avg": 11.2,
             "difficulty_scale": 1.0
@@ -18444,6 +18966,11 @@
                 "best_perf_avg": 22.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 52.7,
+              "hps": 30.2
+            },
             "median_perf_avg": 45.7,
             "scaled_perf_avg": 42.2,
             "difficulty_scale": 0.8
@@ -18453,15 +18980,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 45.7
       },
       "autable-gurubashi": {
         "name": "Autable",
         "key": "autable-gurubashi",
         "class": "Demon Hunter",
-        "best_perf_avg": 20.9,
-        "scaled_perf_avg": 16.7,
+        "best_perf_avg": 27.3,
+        "scaled_perf_avg": 21.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18471,14 +18998,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 20.9,
+            "best_perf_avg": 27.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 20.9
               }
             },
-            "median_perf_avg": 19.5,
-            "scaled_perf_avg": 16.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 20.9,
+              "hps": 27.3
+            },
+            "median_perf_avg": 24.8,
+            "scaled_perf_avg": 21.8,
             "difficulty_scale": 0.8
           }
         },
@@ -18486,15 +19018,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 19.5
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 24.8
       },
       "azell-bleeding-hollow": {
         "name": "Azell",
         "key": "azell-bleeding-hollow",
         "class": "Monk",
-        "best_perf_avg": 12.5,
-        "scaled_perf_avg": 10.0,
+        "best_perf_avg": 33.8,
+        "scaled_perf_avg": 27.0,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18507,7 +19039,7 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 12.5,
+            "best_perf_avg": 33.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 8.1
@@ -18516,8 +19048,13 @@
                 "best_perf_avg": 30.3
               }
             },
-            "median_perf_avg": 12.5,
-            "scaled_perf_avg": 10.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 12.5,
+              "hps": 33.8
+            },
+            "median_perf_avg": 33.8,
+            "scaled_perf_avg": 27.0,
             "difficulty_scale": 0.8
           }
         },
@@ -18525,43 +19062,53 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 12.5
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 33.8
       },
       "beastfriend-thrall": {
         "name": "Beastfriend",
         "key": "beastfriend-thrall",
         "class": "Hunter",
-        "best_perf_avg": 66.0,
-        "scaled_perf_avg": 52.8,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 77.1,
+        "scaled_perf_avg": 77.1,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 66.0
+            "best_perf_avg": 31.7
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 31.7,
+            "best_perf_avg": 77.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 31.7
               }
             },
-            "median_perf_avg": 31.7,
-            "scaled_perf_avg": 31.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 31.7,
+              "hps": 77.1
+            },
+            "median_perf_avg": 77.1,
+            "scaled_perf_avg": 77.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 66.0,
+            "best_perf_avg": 76.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 66.0
               }
             },
-            "median_perf_avg": 51.3,
-            "scaled_perf_avg": 52.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 66.0,
+              "hps": 76.0
+            },
+            "median_perf_avg": 67.4,
+            "scaled_perf_avg": 60.8,
             "difficulty_scale": 0.8
           }
         },
@@ -18569,8 +19116,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 51.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 77.1
       },
       "beroben-emerald-dream": {
         "name": "Beroben",
@@ -18593,6 +19140,11 @@
                 "best_perf_avg": 49.3
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 49.3,
+              "hps": 46.9
+            },
             "median_perf_avg": 49.3,
             "scaled_perf_avg": 39.4,
             "difficulty_scale": 0.8
@@ -18602,43 +19154,53 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 49.3
       },
       "boondocka-hydraxis": {
         "name": "Boondocka",
         "key": "boondocka-hydraxis",
         "class": "Hunter",
-        "best_perf_avg": 72.1,
-        "scaled_perf_avg": 57.7,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 78.3,
+        "scaled_perf_avg": 78.3,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 72.1
+            "best_perf_avg": 34.3
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 34.3,
+            "best_perf_avg": 78.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 34.3
               }
             },
-            "median_perf_avg": 32.7,
-            "scaled_perf_avg": 34.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 34.3,
+              "hps": 78.3
+            },
+            "median_perf_avg": 74.4,
+            "scaled_perf_avg": 78.3,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 72.1,
+            "best_perf_avg": 73.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 72.1
               }
             },
-            "median_perf_avg": 48.1,
-            "scaled_perf_avg": 57.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 72.1,
+              "hps": 73.8
+            },
+            "median_perf_avg": 41.1,
+            "scaled_perf_avg": 59.0,
             "difficulty_scale": 0.8
           }
         },
@@ -18646,15 +19208,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 48.1
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 74.4
       },
       "breakdruid-area-52": {
         "name": "Breakdruid",
         "key": "breakdruid-area-52",
         "class": "Druid",
-        "best_perf_avg": 3.5,
-        "scaled_perf_avg": 2.8,
+        "best_perf_avg": 85.4,
+        "scaled_perf_avg": 68.3,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18664,14 +19226,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 3.5,
+            "best_perf_avg": 85.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 3.5
               }
             },
-            "median_perf_avg": 3.5,
-            "scaled_perf_avg": 2.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 3.5,
+              "hps": 85.4
+            },
+            "median_perf_avg": 85.4,
+            "scaled_perf_avg": 68.3,
             "difficulty_scale": 0.8
           }
         },
@@ -18679,31 +19246,28 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 3.5
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 85.4
       },
       "brewzleeh-tichondrius": {
         "name": "Brewzleeh",
         "key": "brewzleeh-tichondrius",
         "class": "Monk",
-        "best_perf_avg": 94.2,
-        "scaled_perf_avg": 75.4,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 79.0,
+        "scaled_perf_avg": 79.0,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
-          "DPS": {
-            "best_perf_avg": 73.8
-          },
           "Healer": {
-            "best_perf_avg": 63.5
+            "best_perf_avg": 19.2
           },
           "Tank": {
-            "best_perf_avg": 92.4
+            "best_perf_avg": 75.3
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 75.3,
+            "best_perf_avg": 79.0,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 19.2
@@ -18712,8 +19276,13 @@
                 "best_perf_avg": 75.3
               }
             },
-            "median_perf_avg": 63.3,
-            "scaled_perf_avg": 75.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 75.3,
+              "hps": 79.0
+            },
+            "median_perf_avg": 69.3,
+            "scaled_perf_avg": 79.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -18729,6 +19298,11 @@
                 "best_perf_avg": 92.4
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 94.2,
+              "hps": 93.9
+            },
             "median_perf_avg": 79.4,
             "scaled_perf_avg": 75.4,
             "difficulty_scale": 0.8
@@ -18738,43 +19312,53 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 79.4
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 69.3
       },
       "buchalter-area-52": {
         "name": "Buchalter",
         "key": "buchalter-area-52",
         "class": "Mage",
-        "best_perf_avg": 75.7,
-        "scaled_perf_avg": 60.6,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 73.1,
+        "scaled_perf_avg": 73.1,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 75.7
+            "best_perf_avg": 58.0
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 58.0,
+            "best_perf_avg": 73.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 58.0
               }
             },
-            "median_perf_avg": 41.4,
-            "scaled_perf_avg": 58.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 58.0,
+              "hps": 73.1
+            },
+            "median_perf_avg": 53.6,
+            "scaled_perf_avg": 73.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 75.7,
+            "best_perf_avg": 77.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 75.7
               }
             },
-            "median_perf_avg": 49.2,
-            "scaled_perf_avg": 60.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 75.7,
+              "hps": 77.2
+            },
+            "median_perf_avg": 56.5,
+            "scaled_perf_avg": 61.8,
             "difficulty_scale": 0.8
           }
         },
@@ -18782,32 +19366,37 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 49.2
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 53.6
       },
       "chokalock-sargeras": {
         "name": "Chokalock",
         "key": "chokalock-sargeras",
         "class": "Warlock",
-        "best_perf_avg": 40.5,
-        "scaled_perf_avg": 32.4,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 53.3,
+        "scaled_perf_avg": 53.3,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 40.5
+            "best_perf_avg": 15.6
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 15.6,
+            "best_perf_avg": 53.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 15.6
               }
             },
-            "median_perf_avg": 13.2,
-            "scaled_perf_avg": 15.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 15.6,
+              "hps": 53.3
+            },
+            "median_perf_avg": 42.1,
+            "scaled_perf_avg": 53.3,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -18816,6 +19405,11 @@
               "DPS": {
                 "best_perf_avg": 40.5
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 40.5,
+              "hps": 24.5
             },
             "median_perf_avg": 30.0,
             "scaled_perf_avg": 32.4,
@@ -18826,15 +19420,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 30.0
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 42.1
       },
       "coned-azgalor": {
         "name": "Coned",
         "key": "coned-azgalor",
         "class": "Warrior",
-        "best_perf_avg": 23.7,
-        "scaled_perf_avg": 19.0,
+        "best_perf_avg": 33.5,
+        "scaled_perf_avg": 26.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18844,14 +19438,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.7,
+            "best_perf_avg": 33.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.7
               }
             },
-            "median_perf_avg": 22.1,
-            "scaled_perf_avg": 19.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.7,
+              "hps": 33.5
+            },
+            "median_perf_avg": 28.3,
+            "scaled_perf_avg": 26.8,
             "difficulty_scale": 0.8
           }
         },
@@ -18859,8 +19458,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 22.1
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 28.3
       },
       "delusionz-icecrown": {
         "name": "Delusionz",
@@ -18883,6 +19482,11 @@
                 "best_perf_avg": 50.7
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 20.9,
+              "hps": 50.7
+            },
             "median_perf_avg": 41.8,
             "scaled_perf_avg": 50.7,
             "difficulty_scale": 1.0
@@ -18894,6 +19498,11 @@
                 "best_perf_avg": 69.0
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 27.1,
+              "hps": 69.0
+            },
             "median_perf_avg": 60.0,
             "scaled_perf_avg": 55.2,
             "difficulty_scale": 0.8
@@ -18903,7 +19512,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 60.0
       },
       "digglio-area-52": {
@@ -18927,6 +19536,11 @@
                 "best_perf_avg": 75.1
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 75.1,
+              "hps": 63.0
+            },
             "median_perf_avg": 46.8,
             "scaled_perf_avg": 60.1,
             "difficulty_scale": 0.8
@@ -18936,15 +19550,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 46.8
       },
       "dragoonx-bleeding-hollow": {
         "name": "Dragoonx",
         "key": "dragoonx-bleeding-hollow",
         "class": "Evoker",
-        "best_perf_avg": 27.8,
-        "scaled_perf_avg": 22.2,
+        "best_perf_avg": 41.7,
+        "scaled_perf_avg": 33.4,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -18954,14 +19568,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 27.8,
+            "best_perf_avg": 41.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 27.8
               }
             },
-            "median_perf_avg": 17.3,
-            "scaled_perf_avg": 22.2,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 27.8,
+              "hps": 41.7
+            },
+            "median_perf_avg": 36.0,
+            "scaled_perf_avg": 33.4,
             "difficulty_scale": 0.8
           }
         },
@@ -18969,8 +19588,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 17.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 36.0
       },
       "ellebasi-malganis": {
         "name": "Ellebasi",
@@ -18993,6 +19612,11 @@
                 "best_perf_avg": 43.6
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 43.6,
+              "hps": 10.1
+            },
             "median_perf_avg": 25.2,
             "scaled_perf_avg": 43.6,
             "difficulty_scale": 1.0
@@ -19004,6 +19628,11 @@
                 "best_perf_avg": 60.8
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 60.8,
+              "hps": 41.9
+            },
             "median_perf_avg": 60.8,
             "scaled_perf_avg": 48.6,
             "difficulty_scale": 0.8
@@ -19013,15 +19642,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 60.8
       },
       "enyò-area-52": {
         "name": "Enyò",
         "key": "enyò-area-52",
         "class": "Demon Hunter",
-        "best_perf_avg": 71.5,
-        "scaled_perf_avg": 71.5,
+        "best_perf_avg": 80.0,
+        "scaled_perf_avg": 80.0,
         "difficulty": 5,
         "difficulty_scale": 1.0,
         "by_role": {
@@ -19031,14 +19660,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 71.5,
+            "best_perf_avg": 80.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 71.5
               }
             },
-            "median_perf_avg": 61.1,
-            "scaled_perf_avg": 71.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 71.5,
+              "hps": 80.0
+            },
+            "median_perf_avg": 74.6,
+            "scaled_perf_avg": 80.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -19051,6 +19685,11 @@
                 "best_perf_avg": 38.1
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 83.0,
+              "hps": 82.8
+            },
             "median_perf_avg": 68.0,
             "scaled_perf_avg": 66.4,
             "difficulty_scale": 0.8
@@ -19060,15 +19699,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 61.1
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 74.6
       },
       "eponax-bleeding-hollow": {
         "name": "Eponax",
         "key": "eponax-bleeding-hollow",
         "class": "Demon Hunter",
-        "best_perf_avg": 23.3,
-        "scaled_perf_avg": 18.6,
+        "best_perf_avg": 41.0,
+        "scaled_perf_avg": 32.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19081,7 +19720,7 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.3,
+            "best_perf_avg": 41.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 11.6
@@ -19090,8 +19729,13 @@
                 "best_perf_avg": 23.3
               }
             },
-            "median_perf_avg": 23.3,
-            "scaled_perf_avg": 18.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.3,
+              "hps": 41.0
+            },
+            "median_perf_avg": 38.9,
+            "scaled_perf_avg": 32.8,
             "difficulty_scale": 0.8
           }
         },
@@ -19099,15 +19743,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 23.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 38.9
       },
       "flemel-area-52": {
         "name": "Flemel",
         "key": "flemel-area-52",
         "class": "Warlock",
-        "best_perf_avg": 44.2,
-        "scaled_perf_avg": 35.4,
+        "best_perf_avg": 87.1,
+        "scaled_perf_avg": 69.7,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19117,14 +19761,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 44.2,
+            "best_perf_avg": 87.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 44.2
               }
             },
-            "median_perf_avg": 41.9,
-            "scaled_perf_avg": 35.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 44.2,
+              "hps": 87.1
+            },
+            "median_perf_avg": 61.6,
+            "scaled_perf_avg": 69.7,
             "difficulty_scale": 0.8
           }
         },
@@ -19132,15 +19781,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 41.9
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 61.6
       },
       "flogeron-area-52": {
         "name": "Flogeron",
         "key": "flogeron-area-52",
         "class": "Warrior",
-        "best_perf_avg": 63.3,
-        "scaled_perf_avg": 50.6,
+        "best_perf_avg": 84.6,
+        "scaled_perf_avg": 67.7,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19150,14 +19799,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 63.3,
+            "best_perf_avg": 84.6,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 63.3
               }
             },
-            "median_perf_avg": 44.9,
-            "scaled_perf_avg": 50.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 63.3,
+              "hps": 84.6
+            },
+            "median_perf_avg": 65.0,
+            "scaled_perf_avg": 67.7,
             "difficulty_scale": 0.8
           }
         },
@@ -19165,8 +19819,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 44.9
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 65.0
       },
       "floofwall-queldorei": {
         "name": "Floofwall",
@@ -19192,6 +19846,11 @@
                 "best_perf_avg": 60.1
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 60.1,
+              "hps": 13.2
+            },
             "median_perf_avg": 50.6,
             "scaled_perf_avg": 60.1,
             "difficulty_scale": 1.0
@@ -19206,6 +19865,11 @@
                 "best_perf_avg": 82.3
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 82.3,
+              "hps": 63.0
+            },
             "median_perf_avg": 61.5,
             "scaled_perf_avg": 65.8,
             "difficulty_scale": 0.8
@@ -19215,7 +19879,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 61.5
       },
       "fugaku-icecrown": {
@@ -19239,6 +19903,11 @@
                 "best_perf_avg": 50.9
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 24.9,
+              "hps": 50.9
+            },
             "median_perf_avg": 50.9,
             "scaled_perf_avg": 40.7,
             "difficulty_scale": 0.8
@@ -19248,15 +19917,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 50.9
       },
       "gandamar-azgalor": {
         "name": "Gandamar",
         "key": "gandamar-azgalor",
         "class": "Warlock",
-        "best_perf_avg": 18.9,
-        "scaled_perf_avg": 15.1,
+        "best_perf_avg": 72.2,
+        "scaled_perf_avg": 57.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19266,14 +19935,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 18.9,
+            "best_perf_avg": 72.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 18.9
               }
             },
-            "median_perf_avg": 12.6,
-            "scaled_perf_avg": 15.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 18.9,
+              "hps": 72.2
+            },
+            "median_perf_avg": 44.8,
+            "scaled_perf_avg": 57.8,
             "difficulty_scale": 0.8
           }
         },
@@ -19281,15 +19955,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 12.6
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 44.8
       },
       "glinkz-wyrmrest-accord": {
         "name": "Glinkz",
         "key": "glinkz-wyrmrest-accord",
         "class": "Mage",
-        "best_perf_avg": 79.5,
-        "scaled_perf_avg": 63.6,
+        "best_perf_avg": 80.4,
+        "scaled_perf_avg": 64.3,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19299,25 +19973,35 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 41.0,
+            "best_perf_avg": 59.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 41.0
               }
             },
-            "median_perf_avg": 32.3,
-            "scaled_perf_avg": 41.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 41.0,
+              "hps": 59.4
+            },
+            "median_perf_avg": 53.4,
+            "scaled_perf_avg": 59.4,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 79.5,
+            "best_perf_avg": 80.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 79.5
               }
             },
-            "median_perf_avg": 63.6,
-            "scaled_perf_avg": 63.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 79.5,
+              "hps": 80.4
+            },
+            "median_perf_avg": 62.3,
+            "scaled_perf_avg": 64.3,
             "difficulty_scale": 0.8
           }
         },
@@ -19325,8 +20009,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 63.6
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 62.3
       },
       "healmates-korgath": {
         "name": "Healmates",
@@ -19349,6 +20033,11 @@
                 "best_perf_avg": 58.3
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 20.6,
+              "hps": 58.3
+            },
             "median_perf_avg": 35.2,
             "scaled_perf_avg": 58.3,
             "difficulty_scale": 1.0
@@ -19360,6 +20049,11 @@
                 "best_perf_avg": 66.1
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 26.4,
+              "hps": 66.1
+            },
             "median_perf_avg": 41.8,
             "scaled_perf_avg": 52.9,
             "difficulty_scale": 0.8
@@ -19369,15 +20063,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 35.2
       },
       "healyeah-queldorei": {
         "name": "Healyeah",
         "key": "healyeah-queldorei",
         "class": "Evoker",
-        "best_perf_avg": 23.8,
-        "scaled_perf_avg": 23.8,
+        "best_perf_avg": 55.6,
+        "scaled_perf_avg": 55.6,
         "difficulty": 5,
         "difficulty_scale": 1.0,
         "by_role": {
@@ -19387,25 +20081,35 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 23.8,
+            "best_perf_avg": 55.6,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.8
               }
             },
-            "median_perf_avg": 16.3,
-            "scaled_perf_avg": 23.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.8,
+              "hps": 55.6
+            },
+            "median_perf_avg": 37.4,
+            "scaled_perf_avg": 55.6,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 4.4,
+            "best_perf_avg": 4.9,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 4.9
               }
             },
-            "median_perf_avg": 4.2,
-            "scaled_perf_avg": 3.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 4.4,
+              "hps": 4.9
+            },
+            "median_perf_avg": 4.6,
+            "scaled_perf_avg": 3.9,
             "difficulty_scale": 0.8
           }
         },
@@ -19413,8 +20117,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 16.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 37.4
       },
       "hellful-lightnings-blade": {
         "name": "Hellful",
@@ -19437,6 +20141,11 @@
                 "best_perf_avg": 19.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 84.0,
+              "hps": 19.9
+            },
             "median_perf_avg": 74.9,
             "scaled_perf_avg": 84.0,
             "difficulty_scale": 1.0
@@ -19451,6 +20160,11 @@
                 "best_perf_avg": 35.5
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 56.4,
+              "hps": 35.5
+            },
             "median_perf_avg": 50.9,
             "scaled_perf_avg": 45.1,
             "difficulty_scale": 0.8
@@ -19460,15 +20174,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 74.9
       },
       "heximal-hydraxis": {
         "name": "Heximal",
         "key": "heximal-hydraxis",
         "class": "Druid",
-        "best_perf_avg": 56.9,
-        "scaled_perf_avg": 45.5,
+        "best_perf_avg": 69.8,
+        "scaled_perf_avg": 55.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19478,25 +20192,35 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 22.8,
+            "best_perf_avg": 55.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 22.8
               }
             },
-            "median_perf_avg": 22.8,
-            "scaled_perf_avg": 22.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 22.8,
+              "hps": 55.0
+            },
+            "median_perf_avg": 55.0,
+            "scaled_perf_avg": 55.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 56.9,
+            "best_perf_avg": 69.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 56.9
               }
             },
-            "median_perf_avg": 51.5,
-            "scaled_perf_avg": 45.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 56.9,
+              "hps": 69.8
+            },
+            "median_perf_avg": 53.6,
+            "scaled_perf_avg": 55.8,
             "difficulty_scale": 0.8
           }
         },
@@ -19504,8 +20228,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 51.5
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 53.6
       },
       "holyx-bleeding-hollow": {
         "name": "Holyx",
@@ -19525,14 +20249,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 29.6,
+            "best_perf_avg": 33.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 29.6
               }
             },
-            "median_perf_avg": 21.2,
-            "scaled_perf_avg": 29.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 29.6,
+              "hps": 33.5
+            },
+            "median_perf_avg": 26.5,
+            "scaled_perf_avg": 33.5,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -19545,6 +20274,11 @@
                 "best_perf_avg": 27.7
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 87.0,
+              "hps": 34.6
+            },
             "median_perf_avg": 77.7,
             "scaled_perf_avg": 69.6,
             "difficulty_scale": 0.8
@@ -19554,15 +20288,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 77.7
       },
       "huntlowx-bleeding-hollow": {
         "name": "Huntlowx",
         "key": "huntlowx-bleeding-hollow",
         "class": "Hunter",
-        "best_perf_avg": 31.4,
-        "scaled_perf_avg": 25.1,
+        "best_perf_avg": 71.8,
+        "scaled_perf_avg": 57.4,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19572,14 +20306,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 31.4,
+            "best_perf_avg": 71.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 31.4
               }
             },
-            "median_perf_avg": 25.1,
-            "scaled_perf_avg": 25.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 31.4,
+              "hps": 71.8
+            },
+            "median_perf_avg": 68.6,
+            "scaled_perf_avg": 57.4,
             "difficulty_scale": 0.8
           }
         },
@@ -19587,15 +20326,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 25.1
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 68.6
       },
       "icyx-bleeding-hollow": {
         "name": "Icyx",
         "key": "icyx-bleeding-hollow",
         "class": "Mage",
-        "best_perf_avg": 23.3,
-        "scaled_perf_avg": 18.6,
+        "best_perf_avg": 72.9,
+        "scaled_perf_avg": 58.3,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19605,14 +20344,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.3,
+            "best_perf_avg": 72.9,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.3
               }
             },
-            "median_perf_avg": 18.0,
-            "scaled_perf_avg": 18.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.3,
+              "hps": 72.9
+            },
+            "median_perf_avg": 61.9,
+            "scaled_perf_avg": 58.3,
             "difficulty_scale": 0.8
           }
         },
@@ -19620,43 +20364,53 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 18.0
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 61.9
       },
       "impkiller-tichondrius": {
         "name": "Impkiller",
         "key": "impkiller-tichondrius",
         "class": "Warlock",
-        "best_perf_avg": 60.3,
-        "scaled_perf_avg": 48.2,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 78.2,
+        "scaled_perf_avg": 78.2,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 60.3
+            "best_perf_avg": 30.3
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 30.3,
+            "best_perf_avg": 78.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 30.3
               }
             },
-            "median_perf_avg": 26.4,
-            "scaled_perf_avg": 30.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 30.3,
+              "hps": 78.2
+            },
+            "median_perf_avg": 68.3,
+            "scaled_perf_avg": 78.2,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 60.3,
+            "best_perf_avg": 89.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 60.3
               }
             },
-            "median_perf_avg": 37.7,
-            "scaled_perf_avg": 48.2,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 60.3,
+              "hps": 89.5
+            },
+            "median_perf_avg": 68.1,
+            "scaled_perf_avg": 71.6,
             "difficulty_scale": 0.8
           }
         },
@@ -19664,15 +20418,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 37.7
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 68.3
       },
       "jovala-stormrage": {
         "name": "Jovala",
         "key": "jovala-stormrage",
         "class": "Druid",
-        "best_perf_avg": 54.3,
-        "scaled_perf_avg": 43.4,
+        "best_perf_avg": 61.2,
+        "scaled_perf_avg": 49.0,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19682,14 +20436,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 54.3,
+            "best_perf_avg": 61.2,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 54.3
               }
             },
-            "median_perf_avg": 54.3,
-            "scaled_perf_avg": 43.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.3,
+              "hps": 61.2
+            },
+            "median_perf_avg": 61.2,
+            "scaled_perf_avg": 49.0,
             "difficulty_scale": 0.8
           }
         },
@@ -19697,8 +20456,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 54.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 61.2
       },
       "kegsmashroll-stormrage": {
         "name": "Kegsmashroll",
@@ -19721,6 +20480,11 @@
                 "best_perf_avg": 78.7
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 78.7,
+              "hps": 55.9
+            },
             "median_perf_avg": 71.3,
             "scaled_perf_avg": 63.0,
             "difficulty_scale": 0.8
@@ -19730,7 +20494,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 71.3
       },
       "kelova-stormrage": {
@@ -19754,6 +20518,11 @@
                 "best_perf_avg": 44.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 44.9,
+              "hps": 43.3
+            },
             "median_perf_avg": 44.9,
             "scaled_perf_avg": 35.9,
             "difficulty_scale": 0.8
@@ -19763,7 +20532,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 44.9
       },
       "kirrá-aggramar": {
@@ -19781,14 +20550,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 8.1,
+            "best_perf_avg": 17.6,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 8.1
               }
             },
-            "median_perf_avg": 8.1,
-            "scaled_perf_avg": 8.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 8.1,
+              "hps": 17.6
+            },
+            "median_perf_avg": 17.6,
+            "scaled_perf_avg": 17.6,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -19797,6 +20571,11 @@
               "DPS": {
                 "best_perf_avg": 41.6
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 41.6,
+              "hps": 18.6
             },
             "median_perf_avg": 41.6,
             "scaled_perf_avg": 33.3,
@@ -19807,15 +20586,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 41.6
       },
       "kitez-cenarion-circle": {
         "name": "Kitez",
         "key": "kitez-cenarion-circle",
         "class": "Mage",
-        "best_perf_avg": 15.1,
-        "scaled_perf_avg": 12.1,
+        "best_perf_avg": 62.3,
+        "scaled_perf_avg": 49.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19825,14 +20604,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 15.1,
+            "best_perf_avg": 62.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 15.1
               }
             },
-            "median_perf_avg": 15.1,
-            "scaled_perf_avg": 12.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 15.1,
+              "hps": 62.3
+            },
+            "median_perf_avg": 62.3,
+            "scaled_perf_avg": 49.8,
             "difficulty_scale": 0.8
           }
         },
@@ -19840,43 +20624,53 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 15.1
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 62.3
       },
       "maillo-area-52": {
         "name": "Maillo",
         "key": "maillo-area-52",
         "class": "Hunter",
-        "best_perf_avg": 75.1,
-        "scaled_perf_avg": 60.1,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 85.0,
+        "scaled_perf_avg": 85.0,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 75.1
+            "best_perf_avg": 41.5
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 41.5,
+            "best_perf_avg": 85.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 41.5
               }
             },
-            "median_perf_avg": 27.2,
-            "scaled_perf_avg": 41.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 41.5,
+              "hps": 85.0
+            },
+            "median_perf_avg": 79.1,
+            "scaled_perf_avg": 85.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 75.1,
+            "best_perf_avg": 85.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 75.1
               }
             },
-            "median_perf_avg": 67.4,
-            "scaled_perf_avg": 60.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 75.1,
+              "hps": 85.0
+            },
+            "median_perf_avg": 80.2,
+            "scaled_perf_avg": 68.0,
             "difficulty_scale": 0.8
           }
         },
@@ -19884,15 +20678,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 67.4
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 79.1
       },
       "martylol-illidan": {
         "name": "Martylol",
         "key": "martylol-illidan",
         "class": "Mage",
-        "best_perf_avg": 42.6,
-        "scaled_perf_avg": 34.1,
+        "best_perf_avg": 47.3,
+        "scaled_perf_avg": 37.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19902,25 +20696,35 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 18.4,
+            "best_perf_avg": 37.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 18.4
               }
             },
-            "median_perf_avg": 18.4,
-            "scaled_perf_avg": 18.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 18.4,
+              "hps": 37.1
+            },
+            "median_perf_avg": 37.1,
+            "scaled_perf_avg": 37.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 42.6,
+            "best_perf_avg": 47.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 42.6
               }
             },
-            "median_perf_avg": 23.5,
-            "scaled_perf_avg": 34.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 42.6,
+              "hps": 47.3
+            },
+            "median_perf_avg": 24.6,
+            "scaled_perf_avg": 37.8,
             "difficulty_scale": 0.8
           }
         },
@@ -19928,15 +20732,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 23.5
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 24.6
       },
       "marvinah-queldorei": {
         "name": "Marvinah",
         "key": "marvinah-queldorei",
         "class": "Hunter",
-        "best_perf_avg": 23.8,
-        "scaled_perf_avg": 19.0,
+        "best_perf_avg": 79.8,
+        "scaled_perf_avg": 63.8,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19946,14 +20750,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.8,
+            "best_perf_avg": 79.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.8
               }
             },
-            "median_perf_avg": 13.1,
-            "scaled_perf_avg": 19.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.8,
+              "hps": 79.8
+            },
+            "median_perf_avg": 54.0,
+            "scaled_perf_avg": 63.8,
             "difficulty_scale": 0.8
           }
         },
@@ -19961,15 +20770,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 13.1
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 54.0
       },
       "nivella-dawnbringer": {
         "name": "Nivella",
         "key": "nivella-dawnbringer",
         "class": "Warlock",
-        "best_perf_avg": 17.5,
-        "scaled_perf_avg": 14.0,
+        "best_perf_avg": 61.5,
+        "scaled_perf_avg": 49.2,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -19979,14 +20788,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 17.5,
+            "best_perf_avg": 61.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 17.5
               }
             },
-            "median_perf_avg": 12.7,
-            "scaled_perf_avg": 14.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 17.5,
+              "hps": 61.5
+            },
+            "median_perf_avg": 52.1,
+            "scaled_perf_avg": 49.2,
             "difficulty_scale": 0.8
           }
         },
@@ -19994,8 +20808,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 12.7
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 52.1
       },
       "nokori-proudmoore": {
         "name": "Nokori",
@@ -20012,14 +20826,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 5.6,
+            "best_perf_avg": 33.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 5.6
               }
             },
-            "median_perf_avg": 5.6,
-            "scaled_perf_avg": 5.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 5.6,
+              "hps": 33.7
+            },
+            "median_perf_avg": 33.7,
+            "scaled_perf_avg": 33.7,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -20028,6 +20847,11 @@
               "Healer": {
                 "best_perf_avg": 73.1
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 79.3,
+              "hps": 73.1
             },
             "median_perf_avg": 79.3,
             "scaled_perf_avg": 63.4,
@@ -20038,15 +20862,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 79.3
       },
       "ohnomyais-area-52": {
         "name": "Ohnomyais",
         "key": "ohnomyais-area-52",
         "class": "Warrior",
-        "best_perf_avg": 39.2,
-        "scaled_perf_avg": 31.4,
+        "best_perf_avg": 54.0,
+        "scaled_perf_avg": 43.2,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20056,14 +20880,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 39.2,
+            "best_perf_avg": 54.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 39.2
               }
             },
-            "median_perf_avg": 26.5,
-            "scaled_perf_avg": 31.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 39.2,
+              "hps": 54.0
+            },
+            "median_perf_avg": 40.1,
+            "scaled_perf_avg": 43.2,
             "difficulty_scale": 0.8
           }
         },
@@ -20071,8 +20900,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 26.5
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 40.1
       },
       "onessarain-area-52": {
         "name": "Onessarain",
@@ -20095,6 +20924,11 @@
                 "best_perf_avg": 69.5
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 52.8,
+              "hps": 69.5
+            },
             "median_perf_avg": 60.6,
             "scaled_perf_avg": 55.6,
             "difficulty_scale": 0.8
@@ -20104,7 +20938,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 60.6
       },
       "onetruemorty-area-52": {
@@ -20128,6 +20962,11 @@
                 "best_perf_avg": 54.5
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 54.5,
+              "hps": 45.5
+            },
             "median_perf_avg": 46.8,
             "scaled_perf_avg": 43.6,
             "difficulty_scale": 0.8
@@ -20137,7 +20976,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 46.8
       },
       "rakdisc-proudmoore": {
@@ -20167,12 +21006,17 @@
                 "best_perf_avg": 62.1
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 61.2,
+              "hps": 62.1
+            },
             "median_perf_avg": 42.1,
             "scaled_perf_avg": 62.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 67.6,
+            "best_perf_avg": 74.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 72.9
@@ -20181,8 +21025,13 @@
                 "best_perf_avg": 65.0
               }
             },
-            "median_perf_avg": 57.2,
-            "scaled_perf_avg": 54.1,
+            "metric": "dps",
+            "by_metric": {
+              "dps": 74.4,
+              "hps": 67.6
+            },
+            "median_perf_avg": 65.3,
+            "scaled_perf_avg": 59.5,
             "difficulty_scale": 0.8
           }
         },
@@ -20190,43 +21039,53 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 42.1
       },
       "rakell-proudmoore": {
         "name": "Rakell",
         "key": "rakell-proudmoore",
         "class": "Death Knight",
-        "best_perf_avg": 25.0,
-        "scaled_perf_avg": 20.0,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 61.1,
+        "scaled_perf_avg": 61.1,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 25.0
+            "best_perf_avg": 14.1
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 14.1,
+            "best_perf_avg": 61.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 14.1
               }
             },
-            "median_perf_avg": 13.3,
-            "scaled_perf_avg": 14.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 14.1,
+              "hps": 61.1
+            },
+            "median_perf_avg": 55.0,
+            "scaled_perf_avg": 61.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 25.0,
+            "best_perf_avg": 55.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 25.0
               }
             },
-            "median_perf_avg": 25.0,
-            "scaled_perf_avg": 20.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 25.0,
+              "hps": 55.8
+            },
+            "median_perf_avg": 55.8,
+            "scaled_perf_avg": 44.6,
             "difficulty_scale": 0.8
           }
         },
@@ -20234,15 +21093,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 25.0
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 55.0
       },
       "rexxhavocc-area-52": {
         "name": "Rexxhavocc",
         "key": "rexxhavocc-area-52",
         "class": "Hunter",
-        "best_perf_avg": 39.1,
-        "scaled_perf_avg": 39.1,
+        "best_perf_avg": 66.7,
+        "scaled_perf_avg": 66.7,
         "difficulty": 5,
         "difficulty_scale": 1.0,
         "by_role": {
@@ -20252,25 +21111,35 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 39.1,
+            "best_perf_avg": 66.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 39.1
               }
             },
-            "median_perf_avg": 31.9,
-            "scaled_perf_avg": 39.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 39.1,
+              "hps": 66.7
+            },
+            "median_perf_avg": 64.5,
+            "scaled_perf_avg": 66.7,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 16.7,
+            "best_perf_avg": 39.9,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 16.7
               }
             },
-            "median_perf_avg": 6.4,
-            "scaled_perf_avg": 13.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 16.7,
+              "hps": 39.9
+            },
+            "median_perf_avg": 21.9,
+            "scaled_perf_avg": 31.9,
             "difficulty_scale": 0.8
           }
         },
@@ -20278,15 +21147,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 31.9
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 64.5
       },
       "rhansìk-area-52": {
         "name": "Rhansìk",
         "key": "rhansìk-area-52",
         "class": "Hunter",
-        "best_perf_avg": 54.5,
-        "scaled_perf_avg": 54.5,
+        "best_perf_avg": 78.8,
+        "scaled_perf_avg": 78.8,
         "difficulty": 5,
         "difficulty_scale": 1.0,
         "by_role": {
@@ -20296,14 +21165,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 54.5,
+            "best_perf_avg": 78.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 54.5
               }
             },
-            "median_perf_avg": 47.0,
-            "scaled_perf_avg": 54.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.5,
+              "hps": 78.8
+            },
+            "median_perf_avg": 63.4,
+            "scaled_perf_avg": 78.8,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -20312,6 +21186,11 @@
               "DPS": {
                 "best_perf_avg": 66.2
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 66.2,
+              "hps": 61.6
             },
             "median_perf_avg": 54.7,
             "scaled_perf_avg": 53.0,
@@ -20322,8 +21201,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 47.0
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 63.4
       },
       "scounddrel-maelstrom": {
         "name": "Scounddrel",
@@ -20340,14 +21219,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 37.4,
+            "best_perf_avg": 52.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 37.4
               }
             },
-            "median_perf_avg": 23.8,
-            "scaled_perf_avg": 37.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 37.4,
+              "hps": 52.2
+            },
+            "median_perf_avg": 42.1,
+            "scaled_perf_avg": 52.2,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -20356,6 +21240,11 @@
               "DPS": {
                 "best_perf_avg": 81.6
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 81.6,
+              "hps": 61.3
             },
             "median_perf_avg": 55.6,
             "scaled_perf_avg": 65.3,
@@ -20366,7 +21255,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 55.6
       },
       "shadoxi-illidan": {
@@ -20390,6 +21279,11 @@
                 "best_perf_avg": 53.5
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 36.4,
+              "hps": 53.5
+            },
             "median_perf_avg": 50.9,
             "scaled_perf_avg": 42.8,
             "difficulty_scale": 0.8
@@ -20399,7 +21293,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 50.9
       },
       "shadoxii-illidan": {
@@ -20423,6 +21317,11 @@
                 "best_perf_avg": 9.9
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 3.2,
+              "hps": 9.9
+            },
             "median_perf_avg": 9.9,
             "scaled_perf_avg": 9.9,
             "difficulty_scale": 1.0
@@ -20434,6 +21333,11 @@
                 "best_perf_avg": 53.0
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 16.7,
+              "hps": 53.0
+            },
             "median_perf_avg": 43.1,
             "scaled_perf_avg": 42.4,
             "difficulty_scale": 0.8
@@ -20443,15 +21347,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 43.1
       },
       "skoala-frostwolf": {
         "name": "Skoala",
         "key": "skoala-frostwolf",
         "class": "Death Knight",
-        "best_perf_avg": 19.0,
-        "scaled_perf_avg": 15.2,
+        "best_perf_avg": 46.8,
+        "scaled_perf_avg": 37.4,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20461,25 +21365,35 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 7.7,
+            "best_perf_avg": 28.9,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 7.7
               }
             },
-            "median_perf_avg": 7.7,
-            "scaled_perf_avg": 7.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 7.7,
+              "hps": 28.9
+            },
+            "median_perf_avg": 28.9,
+            "scaled_perf_avg": 28.9,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 19.0,
+            "best_perf_avg": 46.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 19.0
               }
             },
-            "median_perf_avg": 13.8,
-            "scaled_perf_avg": 15.2,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 19.0,
+              "hps": 46.8
+            },
+            "median_perf_avg": 39.9,
+            "scaled_perf_avg": 37.4,
             "difficulty_scale": 0.8
           }
         },
@@ -20487,15 +21401,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 13.8
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 39.9
       },
       "slicerdicer-bleeding-hollow": {
         "name": "Slicerdicer",
         "key": "slicerdicer-bleeding-hollow",
         "class": "Demon Hunter",
-        "best_perf_avg": 45.6,
-        "scaled_perf_avg": 36.5,
+        "best_perf_avg": 62.1,
+        "scaled_perf_avg": 49.7,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20505,14 +21419,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 45.6,
+            "best_perf_avg": 62.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 45.6
               }
             },
-            "median_perf_avg": 35.4,
-            "scaled_perf_avg": 36.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 45.6,
+              "hps": 62.1
+            },
+            "median_perf_avg": 45.9,
+            "scaled_perf_avg": 49.7,
             "difficulty_scale": 0.8
           }
         },
@@ -20520,8 +21439,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 35.4
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 45.9
       },
       "thiccat-illidan": {
         "name": "Thiccat",
@@ -20544,6 +21463,11 @@
                 "best_perf_avg": 23.6
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 23.6,
+              "hps": 8.8
+            },
             "median_perf_avg": 23.6,
             "scaled_perf_avg": 18.9,
             "difficulty_scale": 0.8
@@ -20553,15 +21477,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 23.6
       },
       "tinyx-bleeding-hollow": {
         "name": "Tinyx",
         "key": "tinyx-bleeding-hollow",
         "class": "Druid",
-        "best_perf_avg": 47.7,
-        "scaled_perf_avg": 47.7,
+        "best_perf_avg": 83.8,
+        "scaled_perf_avg": 83.8,
         "difficulty": 5,
         "difficulty_scale": 1.0,
         "by_role": {
@@ -20571,18 +21495,23 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 47.7,
+            "best_perf_avg": 83.8,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 47.7
               }
             },
-            "median_perf_avg": 39.2,
-            "scaled_perf_avg": 47.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 47.7,
+              "hps": 83.8
+            },
+            "median_perf_avg": 80.4,
+            "scaled_perf_avg": 83.8,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 54.7,
+            "best_perf_avg": 68.6,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 9.7
@@ -20591,8 +21520,13 @@
                 "best_perf_avg": 54.7
               }
             },
-            "median_perf_avg": 50.4,
-            "scaled_perf_avg": 43.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.7,
+              "hps": 68.6
+            },
+            "median_perf_avg": 57.3,
+            "scaled_perf_avg": 54.9,
             "difficulty_scale": 0.8
           }
         },
@@ -20600,8 +21534,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 39.2
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 80.4
       },
       "tommybravo-bleeding-hollow": {
         "name": "Tommybravo",
@@ -20618,14 +21552,19 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 9.4,
+            "best_perf_avg": 12.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 9.4
               }
             },
-            "median_perf_avg": 9.4,
-            "scaled_perf_avg": 9.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 9.4,
+              "hps": 12.8
+            },
+            "median_perf_avg": 12.8,
+            "scaled_perf_avg": 12.8,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -20634,6 +21573,11 @@
               "DPS": {
                 "best_perf_avg": 59.4
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 59.4,
+              "hps": 54.8
             },
             "median_perf_avg": 44.8,
             "scaled_perf_avg": 47.5,
@@ -20644,32 +21588,37 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 44.8
       },
       "tommybravoo-bleeding-hollow": {
         "name": "Tommybravoo",
         "key": "tommybravoo-bleeding-hollow",
         "class": "Death Knight",
-        "best_perf_avg": 90.8,
-        "scaled_perf_avg": 72.6,
-        "difficulty": 4,
-        "difficulty_scale": 0.8,
+        "best_perf_avg": 76.7,
+        "scaled_perf_avg": 76.7,
+        "difficulty": 5,
+        "difficulty_scale": 1.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 90.8
+            "best_perf_avg": 54.8
           }
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 54.8,
+            "best_perf_avg": 76.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 54.8
               }
             },
-            "median_perf_avg": 34.8,
-            "scaled_perf_avg": 54.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.8,
+              "hps": 76.7
+            },
+            "median_perf_avg": 56.2,
+            "scaled_perf_avg": 76.7,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -20678,6 +21627,11 @@
               "DPS": {
                 "best_perf_avg": 90.8
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 90.8,
+              "hps": 83.4
             },
             "median_perf_avg": 81.6,
             "scaled_perf_avg": 72.6,
@@ -20688,15 +21642,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 81.6
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 56.2
       },
       "tommybravox-bleeding-hollow": {
         "name": "Tommybravox",
         "key": "tommybravox-bleeding-hollow",
         "class": "Demon Hunter",
-        "best_perf_avg": 72.8,
-        "scaled_perf_avg": 72.8,
+        "best_perf_avg": 93.2,
+        "scaled_perf_avg": 93.2,
         "difficulty": 5,
         "difficulty_scale": 1.0,
         "by_role": {
@@ -20709,7 +21663,7 @@
         },
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 72.8,
+            "best_perf_avg": 93.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 72.8
@@ -20718,8 +21672,13 @@
                 "best_perf_avg": 18.9
               }
             },
-            "median_perf_avg": 52.7,
-            "scaled_perf_avg": 72.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 72.8,
+              "hps": 93.2
+            },
+            "median_perf_avg": 63.6,
+            "scaled_perf_avg": 93.2,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -20732,6 +21691,11 @@
                 "best_perf_avg": 49.0
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 82.9,
+              "hps": 81.1
+            },
             "median_perf_avg": 69.2,
             "scaled_perf_avg": 66.3,
             "difficulty_scale": 0.8
@@ -20741,15 +21705,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 52.7
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 63.6
       },
       "viôlence-bleeding-hollow": {
         "name": "Viôlence",
         "key": "viôlence-bleeding-hollow",
         "class": "Druid",
-        "best_perf_avg": 20.0,
-        "scaled_perf_avg": 16.0,
+        "best_perf_avg": 57.9,
+        "scaled_perf_avg": 46.3,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20759,14 +21723,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 20.0,
+            "best_perf_avg": 57.9,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 20.0
               }
             },
-            "median_perf_avg": 10.3,
-            "scaled_perf_avg": 16.0,
+            "metric": "dps",
+            "by_metric": {
+              "dps": 57.9,
+              "hps": 20.0
+            },
+            "median_perf_avg": 42.2,
+            "scaled_perf_avg": 46.3,
             "difficulty_scale": 0.8
           }
         },
@@ -20774,8 +21743,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 10.3
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 42.2
       },
       "widowx-bleeding-hollow": {
         "name": "Widowx",
@@ -20804,6 +21773,11 @@
                 "best_perf_avg": 12.0
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 14.8,
+              "hps": 74.8
+            },
             "median_perf_avg": 74.8,
             "scaled_perf_avg": 74.8,
             "difficulty_scale": 1.0
@@ -20818,6 +21792,11 @@
                 "best_perf_avg": 47.5
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 45.7,
+              "hps": 84.2
+            },
             "median_perf_avg": 75.3,
             "scaled_perf_avg": 67.4,
             "difficulty_scale": 0.8
@@ -20827,15 +21806,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
         "median_perf_avg": 74.8
       },
       "wolfx-bleeding-hollow": {
         "name": "Wolfx",
         "key": "wolfx-bleeding-hollow",
         "class": "Shaman",
-        "best_perf_avg": 35.4,
-        "scaled_perf_avg": 28.3,
+        "best_perf_avg": 58.6,
+        "scaled_perf_avg": 46.9,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20845,14 +21824,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 35.4,
+            "best_perf_avg": 58.6,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 35.4
               }
             },
-            "median_perf_avg": 35.4,
-            "scaled_perf_avg": 28.3,
+            "metric": "dps",
+            "by_metric": {
+              "dps": 58.6,
+              "hps": 35.4
+            },
+            "median_perf_avg": 58.6,
+            "scaled_perf_avg": 46.9,
             "difficulty_scale": 0.8
           }
         },
@@ -20860,15 +21844,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 35.4
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 58.6
       },
       "yur-whisperwind": {
         "name": "Yur",
         "key": "yur-whisperwind",
         "class": "Demon Hunter",
-        "best_perf_avg": 67.2,
-        "scaled_perf_avg": 53.8,
+        "best_perf_avg": 76.9,
+        "scaled_perf_avg": 61.5,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20884,19 +21868,29 @@
                 "best_perf_avg": 34.4
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 34.4,
+              "hps": 33.8
+            },
             "median_perf_avg": 32.6,
             "scaled_perf_avg": 34.4,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 67.2,
+            "best_perf_avg": 76.9,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 67.2
               }
             },
-            "median_perf_avg": 47.8,
-            "scaled_perf_avg": 53.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 67.2,
+              "hps": 76.9
+            },
+            "median_perf_avg": 44.0,
+            "scaled_perf_avg": 61.5,
             "difficulty_scale": 0.8
           }
         },
@@ -20904,15 +21898,15 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 47.8
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 44.0
       },
       "zackoh-bloodhoof": {
         "name": "Zackoh",
         "key": "zackoh-bloodhoof",
         "class": "Hunter",
-        "best_perf_avg": 4.6,
-        "scaled_perf_avg": 3.7,
+        "best_perf_avg": 45.8,
+        "scaled_perf_avg": 36.6,
         "difficulty": 4,
         "difficulty_scale": 0.8,
         "by_role": {
@@ -20922,14 +21916,19 @@
         },
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 4.6,
+            "best_perf_avg": 45.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 4.6
               }
             },
-            "median_perf_avg": 4.6,
-            "scaled_perf_avg": 3.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 4.6,
+              "hps": 45.8
+            },
+            "median_perf_avg": 45.8,
+            "scaled_perf_avg": 36.6,
             "difficulty_scale": 0.8
           }
         },
@@ -20937,8 +21936,8 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-07-26T18:18:34.411734+00:00",
-        "median_perf_avg": 4.6
+        "sourced_at": "2026-07-26T18:26:47.304526+00:00",
+        "median_perf_avg": 45.8
       }
     },
     "character_count": 66,
@@ -20951,8 +21950,8 @@
             "name": "Boondocka",
             "key": "boondocka-hydraxis",
             "class": "Hunter",
-            "best_perf_avg": 23.6,
-            "scaled_perf_avg": 23.6,
+            "best_perf_avg": 77.5,
+            "scaled_perf_avg": 77.5,
             "difficulty": 5,
             "difficulty_scale": 1.0,
             "by_role": {
@@ -20962,14 +21961,19 @@
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 23.6,
+                "best_perf_avg": 77.5,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 23.6
                   }
                 },
-                "median_perf_avg": 12.4,
-                "scaled_perf_avg": 23.6,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 23.6,
+                  "hps": 77.5
+                },
+                "median_perf_avg": 67.0,
+                "scaled_perf_avg": 77.5,
                 "difficulty_scale": 1.0
               },
               "heroic": {
@@ -20978,6 +21982,11 @@
                   "DPS": {
                     "best_perf_avg": 24.6
                   }
+                },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 24.6,
+                  "hps": 16.2
                 },
                 "median_perf_avg": 24.6,
                 "scaled_perf_avg": 19.7,
@@ -20988,8 +21997,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 12.4
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 67.0
           },
           "brewzleeh-tichondrius": {
             "name": "Brewzleeh",
@@ -21018,6 +22027,11 @@
                     "best_perf_avg": 40.7
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 58.7,
+                  "hps": 40.7
+                },
                 "median_perf_avg": 38.5,
                 "scaled_perf_avg": 58.7,
                 "difficulty_scale": 1.0
@@ -21027,43 +22041,53 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 38.5
           },
           "buchalter-area-52": {
             "name": "Buchalter",
             "key": "buchalter-area-52",
             "class": "Mage",
-            "best_perf_avg": 73.4,
-            "scaled_perf_avg": 58.7,
-            "difficulty": 4,
-            "difficulty_scale": 0.8,
+            "best_perf_avg": 90.7,
+            "scaled_perf_avg": 90.7,
+            "difficulty": 5,
+            "difficulty_scale": 1.0,
             "by_role": {
               "DPS": {
-                "best_perf_avg": 73.4
+                "best_perf_avg": 30.9
               }
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 30.9,
+                "best_perf_avg": 90.7,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 30.9
                   }
                 },
-                "median_perf_avg": 23.9,
-                "scaled_perf_avg": 30.9,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 30.9,
+                  "hps": 90.7
+                },
+                "median_perf_avg": 75.9,
+                "scaled_perf_avg": 90.7,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 73.4,
+                "best_perf_avg": 77.5,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 73.4
                   }
                 },
-                "median_perf_avg": 57.0,
-                "scaled_perf_avg": 58.7,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 73.4,
+                  "hps": 77.5
+                },
+                "median_perf_avg": 67.5,
+                "scaled_perf_avg": 62.0,
                 "difficulty_scale": 0.8
               }
             },
@@ -21071,8 +22095,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 57.0
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 75.9
           },
           "chokalock-sargeras": {
             "name": "Chokalock",
@@ -21095,6 +22119,11 @@
                     "best_perf_avg": 43.5
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 43.5,
+                  "hps": 43.2
+                },
                 "median_perf_avg": 6.9,
                 "scaled_perf_avg": 43.5,
                 "difficulty_scale": 1.0
@@ -21104,7 +22133,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 6.9
           },
           "coned-azgalor": {
@@ -21128,6 +22157,11 @@
                     "best_perf_avg": 9.9
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 9.9,
+                  "hps": 4.9
+                },
                 "median_perf_avg": 9.9,
                 "scaled_perf_avg": 7.9,
                 "difficulty_scale": 0.8
@@ -21137,7 +22171,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 9.9
           },
           "delusionz-icecrown": {
@@ -21161,6 +22195,11 @@
                     "best_perf_avg": 41.4
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 35.8,
+                  "hps": 41.4
+                },
                 "median_perf_avg": 25.1,
                 "scaled_perf_avg": 41.4,
                 "difficulty_scale": 1.0
@@ -21172,6 +22211,11 @@
                     "best_perf_avg": 93.4
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 40.1,
+                  "hps": 93.4
+                },
                 "median_perf_avg": 93.4,
                 "scaled_perf_avg": 74.7,
                 "difficulty_scale": 0.8
@@ -21181,15 +22225,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 93.4
           },
           "digglio-area-52": {
             "name": "Digglio",
             "key": "digglio-area-52",
             "class": "Warlock",
-            "best_perf_avg": 29.2,
-            "scaled_perf_avg": 23.4,
+            "best_perf_avg": 32.8,
+            "scaled_perf_avg": 26.2,
             "difficulty": 4,
             "difficulty_scale": 0.8,
             "by_role": {
@@ -21199,14 +22243,19 @@
             },
             "by_difficulty": {
               "heroic": {
-                "best_perf_avg": 29.2,
+                "best_perf_avg": 32.8,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 29.2
                   }
                 },
-                "median_perf_avg": 29.2,
-                "scaled_perf_avg": 23.4,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 29.2,
+                  "hps": 32.8
+                },
+                "median_perf_avg": 32.8,
+                "scaled_perf_avg": 26.2,
                 "difficulty_scale": 0.8
               }
             },
@@ -21214,8 +22263,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 29.2
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 32.8
           },
           "ellebasi-malganis": {
             "name": "Ellebasi",
@@ -21238,6 +22287,11 @@
                     "best_perf_avg": 39.6
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 39.6,
+                  "hps": 21.8
+                },
                 "median_perf_avg": 36.1,
                 "scaled_perf_avg": 39.6,
                 "difficulty_scale": 1.0
@@ -21247,7 +22301,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 36.1
           },
           "enyò-area-52": {
@@ -21271,6 +22325,11 @@
                     "best_perf_avg": 90.7
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 90.7,
+                  "hps": 77.3
+                },
                 "median_perf_avg": 68.8,
                 "scaled_perf_avg": 90.7,
                 "difficulty_scale": 1.0
@@ -21280,15 +22339,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 68.8
           },
           "eponax-bleeding-hollow": {
             "name": "Eponax",
             "key": "eponax-bleeding-hollow",
             "class": "Demon Hunter",
-            "best_perf_avg": 8.4,
-            "scaled_perf_avg": 6.7,
+            "best_perf_avg": 42.6,
+            "scaled_perf_avg": 34.1,
             "difficulty": 4,
             "difficulty_scale": 0.8,
             "by_role": {
@@ -21298,14 +22357,19 @@
             },
             "by_difficulty": {
               "heroic": {
-                "best_perf_avg": 8.4,
+                "best_perf_avg": 42.6,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 8.4
                   }
                 },
-                "median_perf_avg": 5.7,
-                "scaled_perf_avg": 6.7,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 8.4,
+                  "hps": 42.6
+                },
+                "median_perf_avg": 31.1,
+                "scaled_perf_avg": 34.1,
                 "difficulty_scale": 0.8
               }
             },
@@ -21313,15 +22377,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 5.7
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 31.1
           },
           "flemel-area-52": {
             "name": "Flemel",
             "key": "flemel-area-52",
             "class": "Warlock",
-            "best_perf_avg": 16.8,
-            "scaled_perf_avg": 13.4,
+            "best_perf_avg": 73.0,
+            "scaled_perf_avg": 58.4,
             "difficulty": 4,
             "difficulty_scale": 0.8,
             "by_role": {
@@ -21331,14 +22395,19 @@
             },
             "by_difficulty": {
               "heroic": {
-                "best_perf_avg": 16.8,
+                "best_perf_avg": 73.0,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 16.8
                   }
                 },
-                "median_perf_avg": 16.8,
-                "scaled_perf_avg": 13.4,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 16.8,
+                  "hps": 73.0
+                },
+                "median_perf_avg": 73.0,
+                "scaled_perf_avg": 58.4,
                 "difficulty_scale": 0.8
               }
             },
@@ -21346,8 +22415,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 16.8
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 73.0
           },
           "fugaku-icecrown": {
             "name": "Fugaku",
@@ -21370,6 +22439,11 @@
                     "best_perf_avg": 57.7
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 32.4,
+                  "hps": 57.7
+                },
                 "median_perf_avg": 57.7,
                 "scaled_perf_avg": 46.2,
                 "difficulty_scale": 0.8
@@ -21379,7 +22453,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 57.7
           },
           "healmates-korgath": {
@@ -21403,6 +22477,11 @@
                     "best_perf_avg": 49.6
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 11.3,
+                  "hps": 49.6
+                },
                 "median_perf_avg": 29.7,
                 "scaled_perf_avg": 49.6,
                 "difficulty_scale": 1.0
@@ -21414,6 +22493,11 @@
                     "best_perf_avg": 60.9
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 7.4,
+                  "hps": 60.9
+                },
                 "median_perf_avg": 60.9,
                 "scaled_perf_avg": 48.7,
                 "difficulty_scale": 0.8
@@ -21423,17 +22507,17 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 29.7
           },
           "healyeah-queldorei": {
             "name": "Healyeah",
             "key": "healyeah-queldorei",
             "class": "Evoker",
-            "best_perf_avg": 39.7,
-            "scaled_perf_avg": 39.7,
-            "difficulty": 5,
-            "difficulty_scale": 1.0,
+            "best_perf_avg": 91.1,
+            "scaled_perf_avg": 72.9,
+            "difficulty": 4,
+            "difficulty_scale": 0.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 39.7
@@ -21447,19 +22531,29 @@
                     "best_perf_avg": 39.7
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 39.7,
+                  "hps": 7.8
+                },
                 "median_perf_avg": 10.1,
                 "scaled_perf_avg": 39.7,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 39.7,
+                "best_perf_avg": 91.1,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 39.7
                   }
                 },
-                "median_perf_avg": 39.7,
-                "scaled_perf_avg": 31.8,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 39.7,
+                  "hps": 91.1
+                },
+                "median_perf_avg": 91.1,
+                "scaled_perf_avg": 72.9,
                 "difficulty_scale": 0.8
               }
             },
@@ -21467,8 +22561,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 10.1
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 91.1
           },
           "hellful-lightnings-blade": {
             "name": "Hellful",
@@ -21491,6 +22585,11 @@
                     "best_perf_avg": 66.9
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 90.7,
+                  "hps": 66.9
+                },
                 "median_perf_avg": 90.7,
                 "scaled_perf_avg": 72.6,
                 "difficulty_scale": 0.8
@@ -21500,43 +22599,53 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 90.7
           },
           "holyx-bleeding-hollow": {
             "name": "Holyx",
             "key": "holyx-bleeding-hollow",
             "class": "Paladin",
-            "best_perf_avg": 53.5,
-            "scaled_perf_avg": 42.8,
-            "difficulty": 4,
-            "difficulty_scale": 0.8,
+            "best_perf_avg": 81.3,
+            "scaled_perf_avg": 81.3,
+            "difficulty": 5,
+            "difficulty_scale": 1.0,
             "by_role": {
               "DPS": {
-                "best_perf_avg": 53.5
+                "best_perf_avg": 17.5
               }
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 17.5,
+                "best_perf_avg": 81.3,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 17.5
                   }
                 },
-                "median_perf_avg": 13.7,
-                "scaled_perf_avg": 17.5,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 17.5,
+                  "hps": 81.3
+                },
+                "median_perf_avg": 62.6,
+                "scaled_perf_avg": 81.3,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 53.5,
+                "best_perf_avg": 96.2,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 53.5
                   }
                 },
-                "median_perf_avg": 24.4,
-                "scaled_perf_avg": 42.8,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 53.5,
+                  "hps": 96.2
+                },
+                "median_perf_avg": 62.6,
+                "scaled_perf_avg": 77.0,
                 "difficulty_scale": 0.8
               }
             },
@@ -21544,15 +22653,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 24.4
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 62.6
           },
           "huntlowx-bleeding-hollow": {
             "name": "Huntlowx",
             "key": "huntlowx-bleeding-hollow",
             "class": "Hunter",
-            "best_perf_avg": 4.6,
-            "scaled_perf_avg": 3.7,
+            "best_perf_avg": 52.0,
+            "scaled_perf_avg": 41.6,
             "difficulty": 4,
             "difficulty_scale": 0.8,
             "by_role": {
@@ -21562,14 +22671,19 @@
             },
             "by_difficulty": {
               "heroic": {
-                "best_perf_avg": 4.6,
+                "best_perf_avg": 52.0,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 4.6
                   }
                 },
-                "median_perf_avg": 4.6,
-                "scaled_perf_avg": 3.7,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 4.6,
+                  "hps": 52.0
+                },
+                "median_perf_avg": 52.0,
+                "scaled_perf_avg": 41.6,
                 "difficulty_scale": 0.8
               }
             },
@@ -21577,15 +22691,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 4.6
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 52.0
           },
           "maillo-area-52": {
             "name": "Maillo",
             "key": "maillo-area-52",
             "class": "Hunter",
-            "best_perf_avg": 67.7,
-            "scaled_perf_avg": 54.2,
+            "best_perf_avg": 99.5,
+            "scaled_perf_avg": 79.6,
             "difficulty": 4,
             "difficulty_scale": 0.8,
             "by_role": {
@@ -21595,25 +22709,35 @@
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 24.1,
+                "best_perf_avg": 71.9,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 24.1
                   }
                 },
-                "median_perf_avg": 16.7,
-                "scaled_perf_avg": 24.1,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 24.1,
+                  "hps": 71.9
+                },
+                "median_perf_avg": 67.4,
+                "scaled_perf_avg": 71.9,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 67.7,
+                "best_perf_avg": 99.5,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 67.7
                   }
                 },
-                "median_perf_avg": 44.5,
-                "scaled_perf_avg": 54.2,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 67.7,
+                  "hps": 99.5
+                },
+                "median_perf_avg": 58.7,
+                "scaled_perf_avg": 79.6,
                 "difficulty_scale": 0.8
               }
             },
@@ -21621,43 +22745,53 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 44.5
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 58.7
           },
           "marvinah-queldorei": {
             "name": "Marvinah",
             "key": "marvinah-queldorei",
             "class": "Hunter",
-            "best_perf_avg": 28.5,
-            "scaled_perf_avg": 28.5,
-            "difficulty": 5,
-            "difficulty_scale": 1.0,
+            "best_perf_avg": 83.4,
+            "scaled_perf_avg": 66.7,
+            "difficulty": 4,
+            "difficulty_scale": 0.8,
             "by_role": {
               "DPS": {
-                "best_perf_avg": 28.5
+                "best_perf_avg": 16.1
               }
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 28.5,
+                "best_perf_avg": 59.7,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 28.5
                   }
                 },
-                "median_perf_avg": 19.2,
-                "scaled_perf_avg": 28.5,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 28.5,
+                  "hps": 59.7
+                },
+                "median_perf_avg": 56.8,
+                "scaled_perf_avg": 59.7,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 16.1,
+                "best_perf_avg": 83.4,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 16.1
                   }
                 },
-                "median_perf_avg": 16.1,
-                "scaled_perf_avg": 12.9,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 16.1,
+                  "hps": 83.4
+                },
+                "median_perf_avg": 83.4,
+                "scaled_perf_avg": 66.7,
                 "difficulty_scale": 0.8
               }
             },
@@ -21665,8 +22799,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 19.2
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 83.4
           },
           "rakdisc-proudmoore": {
             "name": "Rakdisc",
@@ -21695,19 +22829,29 @@
                     "best_perf_avg": 70.4
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 70.0,
+                  "hps": 70.4
+                },
                 "median_perf_avg": 46.0,
                 "scaled_perf_avg": 70.4,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 37.6,
+                "best_perf_avg": 61.4,
                 "by_role": {
                   "Healer": {
                     "best_perf_avg": 37.6
                   }
                 },
-                "median_perf_avg": 37.6,
-                "scaled_perf_avg": 30.1,
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 61.4,
+                  "hps": 37.6
+                },
+                "median_perf_avg": 61.4,
+                "scaled_perf_avg": 49.1,
                 "difficulty_scale": 0.8
               }
             },
@@ -21715,7 +22859,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 46.0
           },
           "rakell-proudmoore": {
@@ -21739,6 +22883,11 @@
                     "best_perf_avg": 65.5
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 65.5,
+                  "hps": 59.5
+                },
                 "median_perf_avg": 65.5,
                 "scaled_perf_avg": 52.4,
                 "difficulty_scale": 0.8
@@ -21748,7 +22897,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 65.5
           },
           "rhansìk-area-52": {
@@ -21772,6 +22921,11 @@
                     "best_perf_avg": 74.9
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 74.9,
+                  "hps": 70.4
+                },
                 "median_perf_avg": 52.2,
                 "scaled_perf_avg": 74.9,
                 "difficulty_scale": 1.0
@@ -21781,15 +22935,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 52.2
           },
           "scounddrel-maelstrom": {
             "name": "Scounddrel",
             "key": "scounddrel-maelstrom",
             "class": "Hunter",
-            "best_perf_avg": 11.3,
-            "scaled_perf_avg": 11.3,
+            "best_perf_avg": 38.5,
+            "scaled_perf_avg": 38.5,
             "difficulty": 5,
             "difficulty_scale": 1.0,
             "by_role": {
@@ -21799,14 +22953,19 @@
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 11.3,
+                "best_perf_avg": 38.5,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 11.3
                   }
                 },
-                "median_perf_avg": 11.3,
-                "scaled_perf_avg": 11.3,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 11.3,
+                  "hps": 38.5
+                },
+                "median_perf_avg": 38.5,
+                "scaled_perf_avg": 38.5,
                 "difficulty_scale": 1.0
               }
             },
@@ -21814,8 +22973,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 11.3
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 38.5
           },
           "shadoxii-illidan": {
             "name": "Shadoxii",
@@ -21838,6 +22997,11 @@
                     "best_perf_avg": 15.2
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 1.5,
+                  "hps": 15.2
+                },
                 "median_perf_avg": 15.2,
                 "scaled_perf_avg": 12.2,
                 "difficulty_scale": 0.8
@@ -21847,43 +23011,53 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 15.2
           },
           "tinyx-bleeding-hollow": {
             "name": "Tinyx",
             "key": "tinyx-bleeding-hollow",
             "class": "Druid",
-            "best_perf_avg": 80.3,
-            "scaled_perf_avg": 64.2,
-            "difficulty": 4,
-            "difficulty_scale": 0.8,
+            "best_perf_avg": 97.0,
+            "scaled_perf_avg": 97.0,
+            "difficulty": 5,
+            "difficulty_scale": 1.0,
             "by_role": {
               "Tank": {
-                "best_perf_avg": 80.3
+                "best_perf_avg": 46.6
               }
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 46.6,
+                "best_perf_avg": 97.0,
                 "by_role": {
                   "Tank": {
                     "best_perf_avg": 46.6
                   }
                 },
-                "median_perf_avg": 46.4,
-                "scaled_perf_avg": 46.6,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 46.6,
+                  "hps": 97.0
+                },
+                "median_perf_avg": 97.0,
+                "scaled_perf_avg": 97.0,
                 "difficulty_scale": 1.0
               },
               "heroic": {
-                "best_perf_avg": 80.3,
+                "best_perf_avg": 94.0,
                 "by_role": {
                   "Tank": {
                     "best_perf_avg": 80.3
                   }
                 },
-                "median_perf_avg": 78.1,
-                "scaled_perf_avg": 64.2,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 80.3,
+                  "hps": 94.0
+                },
+                "median_perf_avg": 93.9,
+                "scaled_perf_avg": 75.2,
                 "difficulty_scale": 0.8
               }
             },
@@ -21891,8 +23065,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 78.1
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 97.0
           },
           "tommybravoo-bleeding-hollow": {
             "name": "Tommybravoo",
@@ -21915,6 +23089,11 @@
                     "best_perf_avg": 55.6
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 55.6,
+                  "hps": 29.6
+                },
                 "median_perf_avg": 23.4,
                 "scaled_perf_avg": 55.6,
                 "difficulty_scale": 1.0
@@ -21926,6 +23105,11 @@
                     "best_perf_avg": 95.8
                   }
                 },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 95.8,
+                  "hps": 93.8
+                },
                 "median_perf_avg": 51.9,
                 "scaled_perf_avg": 76.6,
                 "difficulty_scale": 0.8
@@ -21935,32 +23119,37 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 51.9
           },
           "tommybravox-bleeding-hollow": {
             "name": "Tommybravox",
             "key": "tommybravox-bleeding-hollow",
             "class": "Demon Hunter",
-            "best_perf_avg": 89.4,
-            "scaled_perf_avg": 71.5,
-            "difficulty": 4,
-            "difficulty_scale": 0.8,
+            "best_perf_avg": 80.0,
+            "scaled_perf_avg": 80.0,
+            "difficulty": 5,
+            "difficulty_scale": 1.0,
             "by_role": {
               "DPS": {
-                "best_perf_avg": 89.4
+                "best_perf_avg": 61.0
               }
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 61.0,
+                "best_perf_avg": 80.0,
                 "by_role": {
                   "DPS": {
                     "best_perf_avg": 61.0
                   }
                 },
-                "median_perf_avg": 41.4,
-                "scaled_perf_avg": 61.0,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 61.0,
+                  "hps": 80.0
+                },
+                "median_perf_avg": 55.8,
+                "scaled_perf_avg": 80.0,
                 "difficulty_scale": 1.0
               },
               "heroic": {
@@ -21969,6 +23158,11 @@
                   "DPS": {
                     "best_perf_avg": 89.4
                   }
+                },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 89.4,
+                  "hps": 87.4
                 },
                 "median_perf_avg": 75.7,
                 "scaled_perf_avg": 71.5,
@@ -21979,8 +23173,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 75.7
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 55.8
           },
           "widowx-bleeding-hollow": {
             "name": "Widowx",
@@ -22003,6 +23197,11 @@
                     "best_perf_avg": 1.1
                   }
                 },
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 1.1,
+                  "hps": 1.7
+                },
                 "median_perf_avg": 1.7,
                 "scaled_perf_avg": 1.4,
                 "difficulty_scale": 0.8
@@ -22012,15 +23211,15 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 1.7
           },
           "wolfx-bleeding-hollow": {
             "name": "Wolfx",
             "key": "wolfx-bleeding-hollow",
             "class": "Shaman",
-            "best_perf_avg": 46.4,
-            "scaled_perf_avg": 37.1,
+            "best_perf_avg": 82.8,
+            "scaled_perf_avg": 66.2,
             "difficulty": 4,
             "difficulty_scale": 0.8,
             "by_role": {
@@ -22030,14 +23229,19 @@
             },
             "by_difficulty": {
               "heroic": {
-                "best_perf_avg": 46.4,
+                "best_perf_avg": 82.8,
                 "by_role": {
                   "Healer": {
                     "best_perf_avg": 46.4
                   }
                 },
-                "median_perf_avg": 31.8,
-                "scaled_perf_avg": 37.1,
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 82.8,
+                  "hps": 46.4
+                },
+                "median_perf_avg": 79.2,
+                "scaled_perf_avg": 66.2,
                 "difficulty_scale": 0.8
               }
             },
@@ -22045,8 +23249,8 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
-            "median_perf_avg": 31.8
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
+            "median_perf_avg": 79.2
           },
           "yur-whisperwind": {
             "name": "Yur",
@@ -22063,14 +23267,19 @@
             },
             "by_difficulty": {
               "mythic": {
-                "best_perf_avg": 24.5,
+                "best_perf_avg": 42.6,
                 "by_role": {
                   "Tank": {
                     "best_perf_avg": 24.5
                   }
                 },
-                "median_perf_avg": 24.5,
-                "scaled_perf_avg": 24.5,
+                "metric": "hps",
+                "by_metric": {
+                  "dps": 24.5,
+                  "hps": 42.6
+                },
+                "median_perf_avg": 42.6,
+                "scaled_perf_avg": 42.6,
                 "difficulty_scale": 1.0
               },
               "heroic": {
@@ -22079,6 +23288,11 @@
                   "Tank": {
                     "best_perf_avg": 83.0
                   }
+                },
+                "metric": "dps",
+                "by_metric": {
+                  "dps": 83.0,
+                  "hps": 48.4
                 },
                 "median_perf_avg": 83.0,
                 "scaled_perf_avg": 66.4,
@@ -22089,7 +23303,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+            "sourced_at": "2026-07-26T18:28:18.503921+00:00",
             "median_perf_avg": 83.0
           }
         },

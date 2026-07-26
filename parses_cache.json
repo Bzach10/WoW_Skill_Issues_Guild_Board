@@ -1,5 +1,5 @@
 {
-  "last_updated": "2026-07-26T18:18:20.795475+00:00",
+  "last_updated": "2026-07-26T18:26:36.912156+00:00",
   "last_full_sweep": "2026-07-25T02:32:40.627585+00:00",
   "sweep_mode": "active",
   "swept_count": 66,
@@ -26,16 +26,21 @@
       "name": "Aime",
       "class": "Druid",
       "key": "aime-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 15.4,
+          "best_perf_avg": 53.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 15.4
             }
           },
-          "median_perf_avg": 15.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 15.4,
+            "hps": 53.8
+          },
+          "median_perf_avg": 53.8
         }
       }
     },
@@ -43,7 +48,7 @@
       "name": "Amrevenge",
       "class": "Hunter",
       "key": "amrevenge-stormrage",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 41.9,
@@ -51,6 +56,11 @@
             "DPS": {
               "best_perf_avg": 41.9
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 41.9,
+            "hps": 33.5
           },
           "median_perf_avg": 41.9
         },
@@ -61,6 +71,11 @@
               "best_perf_avg": 89.6
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 89.6,
+            "hps": 63.3
+          },
           "median_perf_avg": 82.1
         }
       }
@@ -69,16 +84,21 @@
       "name": "Anbux",
       "class": "Warlock",
       "key": "anbux-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 21.3,
+          "best_perf_avg": 24.5,
           "by_role": {
             "DPS": {
               "best_perf_avg": 21.3
             }
           },
-          "median_perf_avg": 21.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 21.3,
+            "hps": 24.5
+          },
+          "median_perf_avg": 24.5
         }
       }
     },
@@ -86,7 +106,7 @@
       "name": "Arfas",
       "class": "Death Knight",
       "key": "arfas-queldorei",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 11.2,
@@ -94,6 +114,11 @@
             "DPS": {
               "best_perf_avg": 11.2
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 11.2,
+            "hps": 6.3
           },
           "median_perf_avg": 11.2
         },
@@ -107,6 +132,11 @@
               "best_perf_avg": 22.9
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 52.7,
+            "hps": 30.2
+          },
           "median_perf_avg": 45.7
         }
       }
@@ -115,16 +145,21 @@
       "name": "Autable",
       "class": "Demon Hunter",
       "key": "autable-gurubashi",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 20.9,
+          "best_perf_avg": 27.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 20.9
             }
           },
-          "median_perf_avg": 19.5
+          "metric": "hps",
+          "by_metric": {
+            "dps": 20.9,
+            "hps": 27.3
+          },
+          "median_perf_avg": 24.8
         }
       }
     },
@@ -132,10 +167,10 @@
       "name": "Azell",
       "class": "Monk",
       "key": "azell-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 12.5,
+          "best_perf_avg": 33.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 8.1
@@ -144,7 +179,12 @@
               "best_perf_avg": 30.3
             }
           },
-          "median_perf_avg": 12.5
+          "metric": "hps",
+          "by_metric": {
+            "dps": 12.5,
+            "hps": 33.8
+          },
+          "median_perf_avg": 33.8
         }
       }
     },
@@ -152,25 +192,35 @@
       "name": "Beastfriend",
       "class": "Hunter",
       "key": "beastfriend-thrall",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 31.7,
+          "best_perf_avg": 77.1,
           "by_role": {
             "DPS": {
               "best_perf_avg": 31.7
             }
           },
-          "median_perf_avg": 31.7
+          "metric": "hps",
+          "by_metric": {
+            "dps": 31.7,
+            "hps": 77.1
+          },
+          "median_perf_avg": 77.1
         },
         "heroic": {
-          "best_perf_avg": 66.0,
+          "best_perf_avg": 76.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 66.0
             }
           },
-          "median_perf_avg": 51.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 66.0,
+            "hps": 76.0
+          },
+          "median_perf_avg": 67.4
         }
       }
     },
@@ -178,7 +228,7 @@
       "name": "Beroben",
       "class": "Mage",
       "key": "beroben-emerald-dream",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 49.3,
@@ -186,6 +236,11 @@
             "DPS": {
               "best_perf_avg": 49.3
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 49.3,
+            "hps": 46.9
           },
           "median_perf_avg": 49.3
         }
@@ -195,25 +250,35 @@
       "name": "Boondocka",
       "class": "Hunter",
       "key": "boondocka-hydraxis",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 34.3,
+          "best_perf_avg": 78.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 34.3
             }
           },
-          "median_perf_avg": 32.7
+          "metric": "hps",
+          "by_metric": {
+            "dps": 34.3,
+            "hps": 78.3
+          },
+          "median_perf_avg": 74.4
         },
         "heroic": {
-          "best_perf_avg": 72.1,
+          "best_perf_avg": 73.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 72.1
             }
           },
-          "median_perf_avg": 48.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 72.1,
+            "hps": 73.8
+          },
+          "median_perf_avg": 41.1
         }
       }
     },
@@ -221,16 +286,21 @@
       "name": "Breakdruid",
       "class": "Druid",
       "key": "breakdruid-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 3.5,
+          "best_perf_avg": 85.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 3.5
             }
           },
-          "median_perf_avg": 3.5
+          "metric": "hps",
+          "by_metric": {
+            "dps": 3.5,
+            "hps": 85.4
+          },
+          "median_perf_avg": 85.4
         }
       }
     },
@@ -238,10 +308,10 @@
       "name": "Brewzleeh",
       "class": "Monk",
       "key": "brewzleeh-tichondrius",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 75.3,
+          "best_perf_avg": 79.0,
           "by_role": {
             "Healer": {
               "best_perf_avg": 19.2
@@ -250,7 +320,12 @@
               "best_perf_avg": 75.3
             }
           },
-          "median_perf_avg": 63.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 75.3,
+            "hps": 79.0
+          },
+          "median_perf_avg": 69.3
         },
         "heroic": {
           "best_perf_avg": 94.2,
@@ -265,6 +340,11 @@
               "best_perf_avg": 92.4
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 94.2,
+            "hps": 93.9
+          },
           "median_perf_avg": 79.4
         }
       }
@@ -273,25 +353,35 @@
       "name": "Buchalter",
       "class": "Mage",
       "key": "buchalter-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 58.0,
+          "best_perf_avg": 73.1,
           "by_role": {
             "DPS": {
               "best_perf_avg": 58.0
             }
           },
-          "median_perf_avg": 41.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 58.0,
+            "hps": 73.1
+          },
+          "median_perf_avg": 53.6
         },
         "heroic": {
-          "best_perf_avg": 75.7,
+          "best_perf_avg": 77.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 75.7
             }
           },
-          "median_perf_avg": 49.2
+          "metric": "hps",
+          "by_metric": {
+            "dps": 75.7,
+            "hps": 77.2
+          },
+          "median_perf_avg": 56.5
         }
       }
     },
@@ -299,16 +389,21 @@
       "name": "Chokalock",
       "class": "Warlock",
       "key": "chokalock-sargeras",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 15.6,
+          "best_perf_avg": 53.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 15.6
             }
           },
-          "median_perf_avg": 13.2
+          "metric": "hps",
+          "by_metric": {
+            "dps": 15.6,
+            "hps": 53.3
+          },
+          "median_perf_avg": 42.1
         },
         "heroic": {
           "best_perf_avg": 40.5,
@@ -316,6 +411,11 @@
             "DPS": {
               "best_perf_avg": 40.5
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 40.5,
+            "hps": 24.5
           },
           "median_perf_avg": 30.0
         }
@@ -325,16 +425,21 @@
       "name": "Coned",
       "class": "Warrior",
       "key": "coned-azgalor",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 23.7,
+          "best_perf_avg": 33.5,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.7
             }
           },
-          "median_perf_avg": 22.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 23.7,
+            "hps": 33.5
+          },
+          "median_perf_avg": 28.3
         }
       }
     },
@@ -342,7 +447,7 @@
       "name": "Delusionz",
       "class": "Priest",
       "key": "delusionz-icecrown",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 50.7,
@@ -350,6 +455,11 @@
             "Healer": {
               "best_perf_avg": 50.7
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 20.9,
+            "hps": 50.7
           },
           "median_perf_avg": 41.8
         },
@@ -360,6 +470,11 @@
               "best_perf_avg": 69.0
             }
           },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 27.1,
+            "hps": 69.0
+          },
           "median_perf_avg": 60.0
         }
       }
@@ -368,7 +483,7 @@
       "name": "Digglio",
       "class": "Warlock",
       "key": "digglio-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 75.1,
@@ -376,6 +491,11 @@
             "DPS": {
               "best_perf_avg": 75.1
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 75.1,
+            "hps": 63.0
           },
           "median_perf_avg": 46.8
         }
@@ -385,16 +505,21 @@
       "name": "Dragoonx",
       "class": "Evoker",
       "key": "dragoonx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 27.8,
+          "best_perf_avg": 41.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 27.8
             }
           },
-          "median_perf_avg": 17.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 27.8,
+            "hps": 41.7
+          },
+          "median_perf_avg": 36.0
         }
       }
     },
@@ -402,7 +527,7 @@
       "name": "Ellebasi",
       "class": "Druid",
       "key": "ellebasi-malganis",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 43.6,
@@ -410,6 +535,11 @@
             "Tank": {
               "best_perf_avg": 43.6
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 43.6,
+            "hps": 10.1
           },
           "median_perf_avg": 25.2
         },
@@ -420,6 +550,11 @@
               "best_perf_avg": 60.8
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 60.8,
+            "hps": 41.9
+          },
           "median_perf_avg": 60.8
         }
       }
@@ -428,16 +563,21 @@
       "name": "Enyò",
       "class": "Demon Hunter",
       "key": "enyò-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 71.5,
+          "best_perf_avg": 80.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 71.5
             }
           },
-          "median_perf_avg": 61.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 71.5,
+            "hps": 80.0
+          },
+          "median_perf_avg": 74.6
         },
         "heroic": {
           "best_perf_avg": 83.0,
@@ -449,6 +589,11 @@
               "best_perf_avg": 38.1
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 83.0,
+            "hps": 82.8
+          },
           "median_perf_avg": 68.0
         }
       }
@@ -457,10 +602,10 @@
       "name": "Eponax",
       "class": "Demon Hunter",
       "key": "eponax-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 23.3,
+          "best_perf_avg": 41.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 11.6
@@ -469,7 +614,12 @@
               "best_perf_avg": 23.3
             }
           },
-          "median_perf_avg": 23.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 23.3,
+            "hps": 41.0
+          },
+          "median_perf_avg": 38.9
         }
       }
     },
@@ -477,16 +627,21 @@
       "name": "Flemel",
       "class": "Warlock",
       "key": "flemel-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 44.2,
+          "best_perf_avg": 87.1,
           "by_role": {
             "DPS": {
               "best_perf_avg": 44.2
             }
           },
-          "median_perf_avg": 41.9
+          "metric": "hps",
+          "by_metric": {
+            "dps": 44.2,
+            "hps": 87.1
+          },
+          "median_perf_avg": 61.6
         }
       }
     },
@@ -494,16 +649,21 @@
       "name": "Flogeron",
       "class": "Warrior",
       "key": "flogeron-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 63.3,
+          "best_perf_avg": 84.6,
           "by_role": {
             "Tank": {
               "best_perf_avg": 63.3
             }
           },
-          "median_perf_avg": 44.9
+          "metric": "hps",
+          "by_metric": {
+            "dps": 63.3,
+            "hps": 84.6
+          },
+          "median_perf_avg": 65.0
         }
       }
     },
@@ -511,7 +671,7 @@
       "name": "Floofwall",
       "class": "Monk",
       "key": "floofwall-queldorei",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 60.1,
@@ -519,6 +679,11 @@
             "Tank": {
               "best_perf_avg": 60.1
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 60.1,
+            "hps": 13.2
           },
           "median_perf_avg": 50.6
         },
@@ -532,6 +697,11 @@
               "best_perf_avg": 82.3
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 82.3,
+            "hps": 63.0
+          },
           "median_perf_avg": 61.5
         }
       }
@@ -540,7 +710,7 @@
       "name": "Fugaku",
       "class": "Evoker",
       "key": "fugaku-icecrown",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 50.9,
@@ -548,6 +718,11 @@
             "Healer": {
               "best_perf_avg": 50.9
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 24.9,
+            "hps": 50.9
           },
           "median_perf_avg": 50.9
         }
@@ -557,16 +732,21 @@
       "name": "Gandamar",
       "class": "Warlock",
       "key": "gandamar-azgalor",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 18.9,
+          "best_perf_avg": 72.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 18.9
             }
           },
-          "median_perf_avg": 12.6
+          "metric": "hps",
+          "by_metric": {
+            "dps": 18.9,
+            "hps": 72.2
+          },
+          "median_perf_avg": 44.8
         }
       }
     },
@@ -574,25 +754,35 @@
       "name": "Glinkz",
       "class": "Mage",
       "key": "glinkz-wyrmrest-accord",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 41.0,
+          "best_perf_avg": 59.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 41.0
             }
           },
-          "median_perf_avg": 32.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 41.0,
+            "hps": 59.4
+          },
+          "median_perf_avg": 53.4
         },
         "heroic": {
-          "best_perf_avg": 79.5,
+          "best_perf_avg": 80.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 79.5
             }
           },
-          "median_perf_avg": 63.6
+          "metric": "hps",
+          "by_metric": {
+            "dps": 79.5,
+            "hps": 80.4
+          },
+          "median_perf_avg": 62.3
         }
       }
     },
@@ -600,7 +790,7 @@
       "name": "Healmates",
       "class": "Priest",
       "key": "healmates-korgath",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 58.3,
@@ -608,6 +798,11 @@
             "Healer": {
               "best_perf_avg": 58.3
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 20.6,
+            "hps": 58.3
           },
           "median_perf_avg": 35.2
         },
@@ -618,6 +813,11 @@
               "best_perf_avg": 66.1
             }
           },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 26.4,
+            "hps": 66.1
+          },
           "median_perf_avg": 41.8
         }
       }
@@ -626,25 +826,35 @@
       "name": "Healyeah",
       "class": "Evoker",
       "key": "healyeah-queldorei",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 23.8,
+          "best_perf_avg": 55.6,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.8
             }
           },
-          "median_perf_avg": 16.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 23.8,
+            "hps": 55.6
+          },
+          "median_perf_avg": 37.4
         },
         "heroic": {
-          "best_perf_avg": 4.4,
+          "best_perf_avg": 4.9,
           "by_role": {
             "Healer": {
               "best_perf_avg": 4.9
             }
           },
-          "median_perf_avg": 4.2
+          "metric": "hps",
+          "by_metric": {
+            "dps": 4.4,
+            "hps": 4.9
+          },
+          "median_perf_avg": 4.6
         }
       }
     },
@@ -652,7 +862,7 @@
       "name": "Hellful",
       "class": "Shaman",
       "key": "hellful-lightnings-blade",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 84.0,
@@ -660,6 +870,11 @@
             "Healer": {
               "best_perf_avg": 19.9
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 84.0,
+            "hps": 19.9
           },
           "median_perf_avg": 74.9
         },
@@ -673,6 +888,11 @@
               "best_perf_avg": 35.5
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 56.4,
+            "hps": 35.5
+          },
           "median_perf_avg": 50.9
         }
       }
@@ -681,25 +901,35 @@
       "name": "Heximal",
       "class": "Druid",
       "key": "heximal-hydraxis",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 22.8,
+          "best_perf_avg": 55.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 22.8
             }
           },
-          "median_perf_avg": 22.8
+          "metric": "hps",
+          "by_metric": {
+            "dps": 22.8,
+            "hps": 55.0
+          },
+          "median_perf_avg": 55.0
         },
         "heroic": {
-          "best_perf_avg": 56.9,
+          "best_perf_avg": 69.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 56.9
             }
           },
-          "median_perf_avg": 51.5
+          "metric": "hps",
+          "by_metric": {
+            "dps": 56.9,
+            "hps": 69.8
+          },
+          "median_perf_avg": 53.6
         }
       }
     },
@@ -707,16 +937,21 @@
       "name": "Holyx",
       "class": "Paladin",
       "key": "holyx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 29.6,
+          "best_perf_avg": 33.5,
           "by_role": {
             "DPS": {
               "best_perf_avg": 29.6
             }
           },
-          "median_perf_avg": 21.2
+          "metric": "hps",
+          "by_metric": {
+            "dps": 29.6,
+            "hps": 33.5
+          },
+          "median_perf_avg": 26.5
         },
         "heroic": {
           "best_perf_avg": 87.0,
@@ -728,6 +963,11 @@
               "best_perf_avg": 27.7
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 87.0,
+            "hps": 34.6
+          },
           "median_perf_avg": 77.7
         }
       }
@@ -736,16 +976,21 @@
       "name": "Huntlowx",
       "class": "Hunter",
       "key": "huntlowx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 31.4,
+          "best_perf_avg": 71.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 31.4
             }
           },
-          "median_perf_avg": 25.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 31.4,
+            "hps": 71.8
+          },
+          "median_perf_avg": 68.6
         }
       }
     },
@@ -753,16 +998,21 @@
       "name": "Icyx",
       "class": "Mage",
       "key": "icyx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 23.3,
+          "best_perf_avg": 72.9,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.3
             }
           },
-          "median_perf_avg": 18.0
+          "metric": "hps",
+          "by_metric": {
+            "dps": 23.3,
+            "hps": 72.9
+          },
+          "median_perf_avg": 61.9
         }
       }
     },
@@ -770,25 +1020,35 @@
       "name": "Impkiller",
       "class": "Warlock",
       "key": "impkiller-tichondrius",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 30.3,
+          "best_perf_avg": 78.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 30.3
             }
           },
-          "median_perf_avg": 26.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 30.3,
+            "hps": 78.2
+          },
+          "median_perf_avg": 68.3
         },
         "heroic": {
-          "best_perf_avg": 60.3,
+          "best_perf_avg": 89.5,
           "by_role": {
             "DPS": {
               "best_perf_avg": 60.3
             }
           },
-          "median_perf_avg": 37.7
+          "metric": "hps",
+          "by_metric": {
+            "dps": 60.3,
+            "hps": 89.5
+          },
+          "median_perf_avg": 68.1
         }
       }
     },
@@ -796,16 +1056,21 @@
       "name": "Jovala",
       "class": "Druid",
       "key": "jovala-stormrage",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 54.3,
+          "best_perf_avg": 61.2,
           "by_role": {
             "Tank": {
               "best_perf_avg": 54.3
             }
           },
-          "median_perf_avg": 54.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 54.3,
+            "hps": 61.2
+          },
+          "median_perf_avg": 61.2
         }
       }
     },
@@ -813,7 +1078,7 @@
       "name": "Kegsmashroll",
       "class": "Monk",
       "key": "kegsmashroll-stormrage",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 78.7,
@@ -821,6 +1086,11 @@
             "Tank": {
               "best_perf_avg": 78.7
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 78.7,
+            "hps": 55.9
           },
           "median_perf_avg": 71.3
         }
@@ -830,7 +1100,7 @@
       "name": "Kelova",
       "class": "Monk",
       "key": "kelova-stormrage",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 44.9,
@@ -838,6 +1108,11 @@
             "DPS": {
               "best_perf_avg": 44.9
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 44.9,
+            "hps": 43.3
           },
           "median_perf_avg": 44.9
         }
@@ -847,16 +1122,21 @@
       "name": "Kirrá",
       "class": "Warlock",
       "key": "kirrá-aggramar",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 8.1,
+          "best_perf_avg": 17.6,
           "by_role": {
             "DPS": {
               "best_perf_avg": 8.1
             }
           },
-          "median_perf_avg": 8.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 8.1,
+            "hps": 17.6
+          },
+          "median_perf_avg": 17.6
         },
         "heroic": {
           "best_perf_avg": 41.6,
@@ -864,6 +1144,11 @@
             "DPS": {
               "best_perf_avg": 41.6
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 41.6,
+            "hps": 18.6
           },
           "median_perf_avg": 41.6
         }
@@ -873,16 +1158,21 @@
       "name": "Kitez",
       "class": "Mage",
       "key": "kitez-cenarion-circle",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 15.1,
+          "best_perf_avg": 62.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 15.1
             }
           },
-          "median_perf_avg": 15.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 15.1,
+            "hps": 62.3
+          },
+          "median_perf_avg": 62.3
         }
       }
     },
@@ -890,25 +1180,35 @@
       "name": "Maillo",
       "class": "Hunter",
       "key": "maillo-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 41.5,
+          "best_perf_avg": 85.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 41.5
             }
           },
-          "median_perf_avg": 27.2
+          "metric": "hps",
+          "by_metric": {
+            "dps": 41.5,
+            "hps": 85.0
+          },
+          "median_perf_avg": 79.1
         },
         "heroic": {
-          "best_perf_avg": 75.1,
+          "best_perf_avg": 85.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 75.1
             }
           },
-          "median_perf_avg": 67.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 75.1,
+            "hps": 85.0
+          },
+          "median_perf_avg": 80.2
         }
       }
     },
@@ -916,25 +1216,35 @@
       "name": "Martylol",
       "class": "Mage",
       "key": "martylol-illidan",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 18.4,
+          "best_perf_avg": 37.1,
           "by_role": {
             "DPS": {
               "best_perf_avg": 18.4
             }
           },
-          "median_perf_avg": 18.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 18.4,
+            "hps": 37.1
+          },
+          "median_perf_avg": 37.1
         },
         "heroic": {
-          "best_perf_avg": 42.6,
+          "best_perf_avg": 47.3,
           "by_role": {
             "DPS": {
               "best_perf_avg": 42.6
             }
           },
-          "median_perf_avg": 23.5
+          "metric": "hps",
+          "by_metric": {
+            "dps": 42.6,
+            "hps": 47.3
+          },
+          "median_perf_avg": 24.6
         }
       }
     },
@@ -942,16 +1252,21 @@
       "name": "Marvinah",
       "class": "Hunter",
       "key": "marvinah-queldorei",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 23.8,
+          "best_perf_avg": 79.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 23.8
             }
           },
-          "median_perf_avg": 13.1
+          "metric": "hps",
+          "by_metric": {
+            "dps": 23.8,
+            "hps": 79.8
+          },
+          "median_perf_avg": 54.0
         }
       }
     },
@@ -959,16 +1274,21 @@
       "name": "Nivella",
       "class": "Warlock",
       "key": "nivella-dawnbringer",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 17.5,
+          "best_perf_avg": 61.5,
           "by_role": {
             "DPS": {
               "best_perf_avg": 17.5
             }
           },
-          "median_perf_avg": 12.7
+          "metric": "hps",
+          "by_metric": {
+            "dps": 17.5,
+            "hps": 61.5
+          },
+          "median_perf_avg": 52.1
         }
       }
     },
@@ -976,16 +1296,21 @@
       "name": "Nokori",
       "class": "Shaman",
       "key": "nokori-proudmoore",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 5.6,
+          "best_perf_avg": 33.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 5.6
             }
           },
-          "median_perf_avg": 5.6
+          "metric": "hps",
+          "by_metric": {
+            "dps": 5.6,
+            "hps": 33.7
+          },
+          "median_perf_avg": 33.7
         },
         "heroic": {
           "best_perf_avg": 79.3,
@@ -993,6 +1318,11 @@
             "Healer": {
               "best_perf_avg": 73.1
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 79.3,
+            "hps": 73.1
           },
           "median_perf_avg": 79.3
         }
@@ -1002,16 +1332,21 @@
       "name": "Ohnomyais",
       "class": "Warrior",
       "key": "ohnomyais-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 39.2,
+          "best_perf_avg": 54.0,
           "by_role": {
             "DPS": {
               "best_perf_avg": 39.2
             }
           },
-          "median_perf_avg": 26.5
+          "metric": "hps",
+          "by_metric": {
+            "dps": 39.2,
+            "hps": 54.0
+          },
+          "median_perf_avg": 40.1
         }
       }
     },
@@ -1019,7 +1354,7 @@
       "name": "Onessarain",
       "class": "Shaman",
       "key": "onessarain-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 69.5,
@@ -1027,6 +1362,11 @@
             "Healer": {
               "best_perf_avg": 69.5
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 52.8,
+            "hps": 69.5
           },
           "median_perf_avg": 60.6
         }
@@ -1036,7 +1376,7 @@
       "name": "Onetruemorty",
       "class": "Warrior",
       "key": "onetruemorty-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 54.5,
@@ -1044,6 +1384,11 @@
             "DPS": {
               "best_perf_avg": 54.5
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 54.5,
+            "hps": 45.5
           },
           "median_perf_avg": 46.8
         }
@@ -1053,7 +1398,7 @@
       "name": "Rakdisc",
       "class": "Priest",
       "key": "rakdisc-proudmoore",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 62.1,
@@ -1065,10 +1410,15 @@
               "best_perf_avg": 62.1
             }
           },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 61.2,
+            "hps": 62.1
+          },
           "median_perf_avg": 42.1
         },
         "heroic": {
-          "best_perf_avg": 67.6,
+          "best_perf_avg": 74.4,
           "by_role": {
             "DPS": {
               "best_perf_avg": 72.9
@@ -1077,7 +1427,12 @@
               "best_perf_avg": 65.0
             }
           },
-          "median_perf_avg": 57.2
+          "metric": "dps",
+          "by_metric": {
+            "dps": 74.4,
+            "hps": 67.6
+          },
+          "median_perf_avg": 65.3
         }
       }
     },
@@ -1085,25 +1440,35 @@
       "name": "Rakell",
       "class": "Death Knight",
       "key": "rakell-proudmoore",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 14.1,
+          "best_perf_avg": 61.1,
           "by_role": {
             "DPS": {
               "best_perf_avg": 14.1
             }
           },
-          "median_perf_avg": 13.3
+          "metric": "hps",
+          "by_metric": {
+            "dps": 14.1,
+            "hps": 61.1
+          },
+          "median_perf_avg": 55.0
         },
         "heroic": {
-          "best_perf_avg": 25.0,
+          "best_perf_avg": 55.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 25.0
             }
           },
-          "median_perf_avg": 25.0
+          "metric": "hps",
+          "by_metric": {
+            "dps": 25.0,
+            "hps": 55.8
+          },
+          "median_perf_avg": 55.8
         }
       }
     },
@@ -1111,25 +1476,35 @@
       "name": "Rexxhavocc",
       "class": "Hunter",
       "key": "rexxhavocc-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 39.1,
+          "best_perf_avg": 66.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 39.1
             }
           },
-          "median_perf_avg": 31.9
+          "metric": "hps",
+          "by_metric": {
+            "dps": 39.1,
+            "hps": 66.7
+          },
+          "median_perf_avg": 64.5
         },
         "heroic": {
-          "best_perf_avg": 16.7,
+          "best_perf_avg": 39.9,
           "by_role": {
             "DPS": {
               "best_perf_avg": 16.7
             }
           },
-          "median_perf_avg": 6.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 16.7,
+            "hps": 39.9
+          },
+          "median_perf_avg": 21.9
         }
       }
     },
@@ -1137,16 +1512,21 @@
       "name": "Rhansìk",
       "class": "Hunter",
       "key": "rhansìk-area-52",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 54.5,
+          "best_perf_avg": 78.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 54.5
             }
           },
-          "median_perf_avg": 47.0
+          "metric": "hps",
+          "by_metric": {
+            "dps": 54.5,
+            "hps": 78.8
+          },
+          "median_perf_avg": 63.4
         },
         "heroic": {
           "best_perf_avg": 66.2,
@@ -1154,6 +1534,11 @@
             "DPS": {
               "best_perf_avg": 66.2
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 66.2,
+            "hps": 61.6
           },
           "median_perf_avg": 54.7
         }
@@ -1163,16 +1548,21 @@
       "name": "Scounddrel",
       "class": "Hunter",
       "key": "scounddrel-maelstrom",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 37.4,
+          "best_perf_avg": 52.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 37.4
             }
           },
-          "median_perf_avg": 23.8
+          "metric": "hps",
+          "by_metric": {
+            "dps": 37.4,
+            "hps": 52.2
+          },
+          "median_perf_avg": 42.1
         },
         "heroic": {
           "best_perf_avg": 81.6,
@@ -1180,6 +1570,11 @@
             "DPS": {
               "best_perf_avg": 81.6
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 81.6,
+            "hps": 61.3
           },
           "median_perf_avg": 55.6
         }
@@ -1189,7 +1584,7 @@
       "name": "Shadoxi",
       "class": "Druid",
       "key": "shadoxi-illidan",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 53.5,
@@ -1197,6 +1592,11 @@
             "Healer": {
               "best_perf_avg": 53.5
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 36.4,
+            "hps": 53.5
           },
           "median_perf_avg": 50.9
         }
@@ -1206,7 +1606,7 @@
       "name": "Shadoxii",
       "class": "Monk",
       "key": "shadoxii-illidan",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 9.9,
@@ -1214,6 +1614,11 @@
             "Healer": {
               "best_perf_avg": 9.9
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 3.2,
+            "hps": 9.9
           },
           "median_perf_avg": 9.9
         },
@@ -1224,6 +1629,11 @@
               "best_perf_avg": 53.0
             }
           },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 16.7,
+            "hps": 53.0
+          },
           "median_perf_avg": 43.1
         }
       }
@@ -1232,25 +1642,35 @@
       "name": "Skoala",
       "class": "Death Knight",
       "key": "skoala-frostwolf",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 7.7,
+          "best_perf_avg": 28.9,
           "by_role": {
             "DPS": {
               "best_perf_avg": 7.7
             }
           },
-          "median_perf_avg": 7.7
+          "metric": "hps",
+          "by_metric": {
+            "dps": 7.7,
+            "hps": 28.9
+          },
+          "median_perf_avg": 28.9
         },
         "heroic": {
-          "best_perf_avg": 19.0,
+          "best_perf_avg": 46.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 19.0
             }
           },
-          "median_perf_avg": 13.8
+          "metric": "hps",
+          "by_metric": {
+            "dps": 19.0,
+            "hps": 46.8
+          },
+          "median_perf_avg": 39.9
         }
       }
     },
@@ -1258,16 +1678,21 @@
       "name": "Slicerdicer",
       "class": "Demon Hunter",
       "key": "slicerdicer-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 45.6,
+          "best_perf_avg": 62.1,
           "by_role": {
             "DPS": {
               "best_perf_avg": 45.6
             }
           },
-          "median_perf_avg": 35.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 45.6,
+            "hps": 62.1
+          },
+          "median_perf_avg": 45.9
         }
       }
     },
@@ -1275,7 +1700,7 @@
       "name": "Thiccat",
       "class": "Druid",
       "key": "thiccat-illidan",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
           "best_perf_avg": 23.6,
@@ -1283,6 +1708,11 @@
             "Tank": {
               "best_perf_avg": 23.6
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 23.6,
+            "hps": 8.8
           },
           "median_perf_avg": 23.6
         }
@@ -1292,19 +1722,24 @@
       "name": "Tinyx",
       "class": "Druid",
       "key": "tinyx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 47.7,
+          "best_perf_avg": 83.8,
           "by_role": {
             "Tank": {
               "best_perf_avg": 47.7
             }
           },
-          "median_perf_avg": 39.2
+          "metric": "hps",
+          "by_metric": {
+            "dps": 47.7,
+            "hps": 83.8
+          },
+          "median_perf_avg": 80.4
         },
         "heroic": {
-          "best_perf_avg": 54.7,
+          "best_perf_avg": 68.6,
           "by_role": {
             "DPS": {
               "best_perf_avg": 9.7
@@ -1313,7 +1748,12 @@
               "best_perf_avg": 54.7
             }
           },
-          "median_perf_avg": 50.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 54.7,
+            "hps": 68.6
+          },
+          "median_perf_avg": 57.3
         }
       }
     },
@@ -1321,16 +1761,21 @@
       "name": "Tommybravo",
       "class": "Priest",
       "key": "tommybravo-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 9.4,
+          "best_perf_avg": 12.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 9.4
             }
           },
-          "median_perf_avg": 9.4
+          "metric": "hps",
+          "by_metric": {
+            "dps": 9.4,
+            "hps": 12.8
+          },
+          "median_perf_avg": 12.8
         },
         "heroic": {
           "best_perf_avg": 59.4,
@@ -1338,6 +1783,11 @@
             "DPS": {
               "best_perf_avg": 59.4
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 59.4,
+            "hps": 54.8
           },
           "median_perf_avg": 44.8
         }
@@ -1347,16 +1797,21 @@
       "name": "Tommybravoo",
       "class": "Death Knight",
       "key": "tommybravoo-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 54.8,
+          "best_perf_avg": 76.7,
           "by_role": {
             "DPS": {
               "best_perf_avg": 54.8
             }
           },
-          "median_perf_avg": 34.8
+          "metric": "hps",
+          "by_metric": {
+            "dps": 54.8,
+            "hps": 76.7
+          },
+          "median_perf_avg": 56.2
         },
         "heroic": {
           "best_perf_avg": 90.8,
@@ -1364,6 +1819,11 @@
             "DPS": {
               "best_perf_avg": 90.8
             }
+          },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 90.8,
+            "hps": 83.4
           },
           "median_perf_avg": 81.6
         }
@@ -1373,10 +1833,10 @@
       "name": "Tommybravox",
       "class": "Demon Hunter",
       "key": "tommybravox-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
-          "best_perf_avg": 72.8,
+          "best_perf_avg": 93.2,
           "by_role": {
             "DPS": {
               "best_perf_avg": 72.8
@@ -1385,7 +1845,12 @@
               "best_perf_avg": 18.9
             }
           },
-          "median_perf_avg": 52.7
+          "metric": "hps",
+          "by_metric": {
+            "dps": 72.8,
+            "hps": 93.2
+          },
+          "median_perf_avg": 63.6
         },
         "heroic": {
           "best_perf_avg": 82.9,
@@ -1397,6 +1862,11 @@
               "best_perf_avg": 49.0
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 82.9,
+            "hps": 81.1
+          },
           "median_perf_avg": 69.2
         }
       }
@@ -1405,16 +1875,21 @@
       "name": "Viôlence",
       "class": "Druid",
       "key": "viôlence-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 20.0,
+          "best_perf_avg": 57.9,
           "by_role": {
             "Healer": {
               "best_perf_avg": 20.0
             }
           },
-          "median_perf_avg": 10.3
+          "metric": "dps",
+          "by_metric": {
+            "dps": 57.9,
+            "hps": 20.0
+          },
+          "median_perf_avg": 42.2
         }
       }
     },
@@ -1422,7 +1897,7 @@
       "name": "Widowx",
       "class": "Monk",
       "key": "widowx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 74.8,
@@ -1433,6 +1908,11 @@
             "Tank": {
               "best_perf_avg": 12.0
             }
+          },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 14.8,
+            "hps": 74.8
           },
           "median_perf_avg": 74.8
         },
@@ -1446,6 +1926,11 @@
               "best_perf_avg": 47.5
             }
           },
+          "metric": "hps",
+          "by_metric": {
+            "dps": 45.7,
+            "hps": 84.2
+          },
           "median_perf_avg": 75.3
         }
       }
@@ -1454,16 +1939,21 @@
       "name": "Wolfx",
       "class": "Shaman",
       "key": "wolfx-bleeding-hollow",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 35.4,
+          "best_perf_avg": 58.6,
           "by_role": {
             "Healer": {
               "best_perf_avg": 35.4
             }
           },
-          "median_perf_avg": 35.4
+          "metric": "dps",
+          "by_metric": {
+            "dps": 58.6,
+            "hps": 35.4
+          },
+          "median_perf_avg": 58.6
         }
       }
     },
@@ -1471,7 +1961,7 @@
       "name": "Yur",
       "class": "Demon Hunter",
       "key": "yur-whisperwind",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "mythic": {
           "best_perf_avg": 34.4,
@@ -1480,16 +1970,26 @@
               "best_perf_avg": 34.4
             }
           },
+          "metric": "dps",
+          "by_metric": {
+            "dps": 34.4,
+            "hps": 33.8
+          },
           "median_perf_avg": 32.6
         },
         "heroic": {
-          "best_perf_avg": 67.2,
+          "best_perf_avg": 76.9,
           "by_role": {
             "Tank": {
               "best_perf_avg": 67.2
             }
           },
-          "median_perf_avg": 47.8
+          "metric": "hps",
+          "by_metric": {
+            "dps": 67.2,
+            "hps": 76.9
+          },
+          "median_perf_avg": 44.0
         }
       }
     },
@@ -1497,16 +1997,21 @@
       "name": "Zackoh",
       "class": "Hunter",
       "key": "zackoh-bloodhoof",
-      "sourced_at": "2026-07-26T18:18:34.411734+00:00",
+      "sourced_at": "2026-07-26T18:26:47.304526+00:00",
       "by_difficulty": {
         "heroic": {
-          "best_perf_avg": 4.6,
+          "best_perf_avg": 45.8,
           "by_role": {
             "DPS": {
               "best_perf_avg": 4.6
             }
           },
-          "median_perf_avg": 4.6
+          "metric": "hps",
+          "by_metric": {
+            "dps": 4.6,
+            "hps": 45.8
+          },
+          "median_perf_avg": 45.8
         }
       }
     }
@@ -1520,16 +2025,21 @@
           "name": "Boondocka",
           "class": "Hunter",
           "key": "boondocka-hydraxis",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 23.6,
+              "best_perf_avg": 77.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 23.6
                 }
               },
-              "median_perf_avg": 12.4
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.6,
+                "hps": 77.5
+              },
+              "median_perf_avg": 67.0
             },
             "heroic": {
               "best_perf_avg": 24.6,
@@ -1537,6 +2047,11 @@
                 "DPS": {
                   "best_perf_avg": 24.6
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 24.6,
+                "hps": 16.2
               },
               "median_perf_avg": 24.6
             }
@@ -1546,7 +2061,7 @@
           "name": "Brewzleeh",
           "class": "Monk",
           "key": "brewzleeh-tichondrius",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 58.7,
@@ -1558,6 +2073,11 @@
                   "best_perf_avg": 40.7
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 58.7,
+                "hps": 40.7
+              },
               "median_perf_avg": 38.5
             }
           }
@@ -1566,25 +2086,35 @@
           "name": "Buchalter",
           "class": "Mage",
           "key": "buchalter-area-52",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 30.9,
+              "best_perf_avg": 90.7,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 30.9
                 }
               },
-              "median_perf_avg": 23.9
+              "metric": "hps",
+              "by_metric": {
+                "dps": 30.9,
+                "hps": 90.7
+              },
+              "median_perf_avg": 75.9
             },
             "heroic": {
-              "best_perf_avg": 73.4,
+              "best_perf_avg": 77.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 73.4
                 }
               },
-              "median_perf_avg": 57.0
+              "metric": "hps",
+              "by_metric": {
+                "dps": 73.4,
+                "hps": 77.5
+              },
+              "median_perf_avg": 67.5
             }
           }
         },
@@ -1592,7 +2122,7 @@
           "name": "Chokalock",
           "class": "Warlock",
           "key": "chokalock-sargeras",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 43.5,
@@ -1600,6 +2130,11 @@
                 "DPS": {
                   "best_perf_avg": 43.5
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 43.5,
+                "hps": 43.2
               },
               "median_perf_avg": 6.9
             }
@@ -1609,7 +2144,7 @@
           "name": "Coned",
           "class": "Warrior",
           "key": "coned-azgalor",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
               "best_perf_avg": 9.9,
@@ -1617,6 +2152,11 @@
                 "DPS": {
                   "best_perf_avg": 9.9
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 9.9,
+                "hps": 4.9
               },
               "median_perf_avg": 9.9
             }
@@ -1626,7 +2166,7 @@
           "name": "Delusionz",
           "class": "Priest",
           "key": "delusionz-icecrown",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 41.4,
@@ -1634,6 +2174,11 @@
                 "Healer": {
                   "best_perf_avg": 41.4
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 35.8,
+                "hps": 41.4
               },
               "median_perf_avg": 25.1
             },
@@ -1644,6 +2189,11 @@
                   "best_perf_avg": 93.4
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 40.1,
+                "hps": 93.4
+              },
               "median_perf_avg": 93.4
             }
           }
@@ -1652,16 +2202,21 @@
           "name": "Digglio",
           "class": "Warlock",
           "key": "digglio-area-52",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 29.2,
+              "best_perf_avg": 32.8,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 29.2
                 }
               },
-              "median_perf_avg": 29.2
+              "metric": "hps",
+              "by_metric": {
+                "dps": 29.2,
+                "hps": 32.8
+              },
+              "median_perf_avg": 32.8
             }
           }
         },
@@ -1669,7 +2224,7 @@
           "name": "Ellebasi",
           "class": "Druid",
           "key": "ellebasi-malganis",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 39.6,
@@ -1677,6 +2232,11 @@
                 "Tank": {
                   "best_perf_avg": 39.6
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 39.6,
+                "hps": 21.8
               },
               "median_perf_avg": 36.1
             }
@@ -1686,7 +2246,7 @@
           "name": "Enyò",
           "class": "Demon Hunter",
           "key": "enyò-area-52",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 90.7,
@@ -1694,6 +2254,11 @@
                 "DPS": {
                   "best_perf_avg": 90.7
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 90.7,
+                "hps": 77.3
               },
               "median_perf_avg": 68.8
             }
@@ -1703,16 +2268,21 @@
           "name": "Eponax",
           "class": "Demon Hunter",
           "key": "eponax-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 8.4,
+              "best_perf_avg": 42.6,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 8.4
                 }
               },
-              "median_perf_avg": 5.7
+              "metric": "hps",
+              "by_metric": {
+                "dps": 8.4,
+                "hps": 42.6
+              },
+              "median_perf_avg": 31.1
             }
           }
         },
@@ -1720,16 +2290,21 @@
           "name": "Flemel",
           "class": "Warlock",
           "key": "flemel-area-52",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 16.8,
+              "best_perf_avg": 73.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 16.8
                 }
               },
-              "median_perf_avg": 16.8
+              "metric": "hps",
+              "by_metric": {
+                "dps": 16.8,
+                "hps": 73.0
+              },
+              "median_perf_avg": 73.0
             }
           }
         },
@@ -1737,7 +2312,7 @@
           "name": "Fugaku",
           "class": "Evoker",
           "key": "fugaku-icecrown",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
               "best_perf_avg": 57.7,
@@ -1745,6 +2320,11 @@
                 "Healer": {
                   "best_perf_avg": 57.7
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 32.4,
+                "hps": 57.7
               },
               "median_perf_avg": 57.7
             }
@@ -1754,7 +2334,7 @@
           "name": "Healmates",
           "class": "Priest",
           "key": "healmates-korgath",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 49.6,
@@ -1762,6 +2342,11 @@
                 "Healer": {
                   "best_perf_avg": 49.6
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 11.3,
+                "hps": 49.6
               },
               "median_perf_avg": 29.7
             },
@@ -1772,6 +2357,11 @@
                   "best_perf_avg": 60.9
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 7.4,
+                "hps": 60.9
+              },
               "median_perf_avg": 60.9
             }
           }
@@ -1780,7 +2370,7 @@
           "name": "Healyeah",
           "class": "Evoker",
           "key": "healyeah-queldorei",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 39.7,
@@ -1789,16 +2379,26 @@
                   "best_perf_avg": 39.7
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 39.7,
+                "hps": 7.8
+              },
               "median_perf_avg": 10.1
             },
             "heroic": {
-              "best_perf_avg": 39.7,
+              "best_perf_avg": 91.1,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 39.7
                 }
               },
-              "median_perf_avg": 39.7
+              "metric": "hps",
+              "by_metric": {
+                "dps": 39.7,
+                "hps": 91.1
+              },
+              "median_perf_avg": 91.1
             }
           }
         },
@@ -1806,7 +2406,7 @@
           "name": "Hellful",
           "class": "Shaman",
           "key": "hellful-lightnings-blade",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
               "best_perf_avg": 90.7,
@@ -1814,6 +2414,11 @@
                 "Healer": {
                   "best_perf_avg": 66.9
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 90.7,
+                "hps": 66.9
               },
               "median_perf_avg": 90.7
             }
@@ -1823,25 +2428,35 @@
           "name": "Holyx",
           "class": "Paladin",
           "key": "holyx-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 17.5,
+              "best_perf_avg": 81.3,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 17.5
                 }
               },
-              "median_perf_avg": 13.7
+              "metric": "hps",
+              "by_metric": {
+                "dps": 17.5,
+                "hps": 81.3
+              },
+              "median_perf_avg": 62.6
             },
             "heroic": {
-              "best_perf_avg": 53.5,
+              "best_perf_avg": 96.2,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 53.5
                 }
               },
-              "median_perf_avg": 24.4
+              "metric": "hps",
+              "by_metric": {
+                "dps": 53.5,
+                "hps": 96.2
+              },
+              "median_perf_avg": 62.6
             }
           }
         },
@@ -1849,16 +2464,21 @@
           "name": "Huntlowx",
           "class": "Hunter",
           "key": "huntlowx-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 4.6,
+              "best_perf_avg": 52.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 4.6
                 }
               },
-              "median_perf_avg": 4.6
+              "metric": "hps",
+              "by_metric": {
+                "dps": 4.6,
+                "hps": 52.0
+              },
+              "median_perf_avg": 52.0
             }
           }
         },
@@ -1866,25 +2486,35 @@
           "name": "Maillo",
           "class": "Hunter",
           "key": "maillo-area-52",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 24.1,
+              "best_perf_avg": 71.9,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 24.1
                 }
               },
-              "median_perf_avg": 16.7
+              "metric": "hps",
+              "by_metric": {
+                "dps": 24.1,
+                "hps": 71.9
+              },
+              "median_perf_avg": 67.4
             },
             "heroic": {
-              "best_perf_avg": 67.7,
+              "best_perf_avg": 99.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 67.7
                 }
               },
-              "median_perf_avg": 44.5
+              "metric": "hps",
+              "by_metric": {
+                "dps": 67.7,
+                "hps": 99.5
+              },
+              "median_perf_avg": 58.7
             }
           }
         },
@@ -1892,25 +2522,35 @@
           "name": "Marvinah",
           "class": "Hunter",
           "key": "marvinah-queldorei",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 28.5,
+              "best_perf_avg": 59.7,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 28.5
                 }
               },
-              "median_perf_avg": 19.2
+              "metric": "hps",
+              "by_metric": {
+                "dps": 28.5,
+                "hps": 59.7
+              },
+              "median_perf_avg": 56.8
             },
             "heroic": {
-              "best_perf_avg": 16.1,
+              "best_perf_avg": 83.4,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 16.1
                 }
               },
-              "median_perf_avg": 16.1
+              "metric": "hps",
+              "by_metric": {
+                "dps": 16.1,
+                "hps": 83.4
+              },
+              "median_perf_avg": 83.4
             }
           }
         },
@@ -1918,7 +2558,7 @@
           "name": "Rakdisc",
           "class": "Priest",
           "key": "rakdisc-proudmoore",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 70.4,
@@ -1930,16 +2570,26 @@
                   "best_perf_avg": 70.4
                 }
               },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 70.0,
+                "hps": 70.4
+              },
               "median_perf_avg": 46.0
             },
             "heroic": {
-              "best_perf_avg": 37.6,
+              "best_perf_avg": 61.4,
               "by_role": {
                 "Healer": {
                   "best_perf_avg": 37.6
                 }
               },
-              "median_perf_avg": 37.6
+              "metric": "dps",
+              "by_metric": {
+                "dps": 61.4,
+                "hps": 37.6
+              },
+              "median_perf_avg": 61.4
             }
           }
         },
@@ -1947,7 +2597,7 @@
           "name": "Rakell",
           "class": "Death Knight",
           "key": "rakell-proudmoore",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
               "best_perf_avg": 65.5,
@@ -1955,6 +2605,11 @@
                 "DPS": {
                   "best_perf_avg": 65.5
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 65.5,
+                "hps": 59.5
               },
               "median_perf_avg": 65.5
             }
@@ -1964,7 +2619,7 @@
           "name": "Rhansìk",
           "class": "Hunter",
           "key": "rhansìk-area-52",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 74.9,
@@ -1972,6 +2627,11 @@
                 "DPS": {
                   "best_perf_avg": 74.9
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 74.9,
+                "hps": 70.4
               },
               "median_perf_avg": 52.2
             }
@@ -1981,16 +2641,21 @@
           "name": "Scounddrel",
           "class": "Hunter",
           "key": "scounddrel-maelstrom",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 11.3,
+              "best_perf_avg": 38.5,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 11.3
                 }
               },
-              "median_perf_avg": 11.3
+              "metric": "hps",
+              "by_metric": {
+                "dps": 11.3,
+                "hps": 38.5
+              },
+              "median_perf_avg": 38.5
             }
           }
         },
@@ -1998,7 +2663,7 @@
           "name": "Shadoxii",
           "class": "Monk",
           "key": "shadoxii-illidan",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
               "best_perf_avg": 15.2,
@@ -2006,6 +2671,11 @@
                 "Healer": {
                   "best_perf_avg": 15.2
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 1.5,
+                "hps": 15.2
               },
               "median_perf_avg": 15.2
             }
@@ -2015,25 +2685,35 @@
           "name": "Tinyx",
           "class": "Druid",
           "key": "tinyx-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 46.6,
+              "best_perf_avg": 97.0,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 46.6
                 }
               },
-              "median_perf_avg": 46.4
+              "metric": "hps",
+              "by_metric": {
+                "dps": 46.6,
+                "hps": 97.0
+              },
+              "median_perf_avg": 97.0
             },
             "heroic": {
-              "best_perf_avg": 80.3,
+              "best_perf_avg": 94.0,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 80.3
                 }
               },
-              "median_perf_avg": 78.1
+              "metric": "hps",
+              "by_metric": {
+                "dps": 80.3,
+                "hps": 94.0
+              },
+              "median_perf_avg": 93.9
             }
           }
         },
@@ -2041,7 +2721,7 @@
           "name": "Tommybravoo",
           "class": "Death Knight",
           "key": "tommybravoo-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
               "best_perf_avg": 55.6,
@@ -2049,6 +2729,11 @@
                 "DPS": {
                   "best_perf_avg": 55.6
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 55.6,
+                "hps": 29.6
               },
               "median_perf_avg": 23.4
             },
@@ -2059,6 +2744,11 @@
                   "best_perf_avg": 95.8
                 }
               },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 95.8,
+                "hps": 93.8
+              },
               "median_perf_avg": 51.9
             }
           }
@@ -2067,16 +2757,21 @@
           "name": "Tommybravox",
           "class": "Demon Hunter",
           "key": "tommybravox-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 61.0,
+              "best_perf_avg": 80.0,
               "by_role": {
                 "DPS": {
                   "best_perf_avg": 61.0
                 }
               },
-              "median_perf_avg": 41.4
+              "metric": "hps",
+              "by_metric": {
+                "dps": 61.0,
+                "hps": 80.0
+              },
+              "median_perf_avg": 55.8
             },
             "heroic": {
               "best_perf_avg": 89.4,
@@ -2084,6 +2779,11 @@
                 "DPS": {
                   "best_perf_avg": 89.4
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 89.4,
+                "hps": 87.4
               },
               "median_perf_avg": 75.7
             }
@@ -2093,7 +2793,7 @@
           "name": "Widowx",
           "class": "Monk",
           "key": "widowx-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
               "best_perf_avg": 1.7,
@@ -2101,6 +2801,11 @@
                 "DPS": {
                   "best_perf_avg": 1.1
                 }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 1.1,
+                "hps": 1.7
               },
               "median_perf_avg": 1.7
             }
@@ -2110,16 +2815,21 @@
           "name": "Wolfx",
           "class": "Shaman",
           "key": "wolfx-bleeding-hollow",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "heroic": {
-              "best_perf_avg": 46.4,
+              "best_perf_avg": 82.8,
               "by_role": {
                 "Healer": {
                   "best_perf_avg": 46.4
                 }
               },
-              "median_perf_avg": 31.8
+              "metric": "dps",
+              "by_metric": {
+                "dps": 82.8,
+                "hps": 46.4
+              },
+              "median_perf_avg": 79.2
             }
           }
         },
@@ -2127,16 +2837,21 @@
           "name": "Yur",
           "class": "Demon Hunter",
           "key": "yur-whisperwind",
-          "sourced_at": "2026-07-26T18:19:54.119593+00:00",
+          "sourced_at": "2026-07-26T18:28:18.503921+00:00",
           "by_difficulty": {
             "mythic": {
-              "best_perf_avg": 24.5,
+              "best_perf_avg": 42.6,
               "by_role": {
                 "Tank": {
                   "best_perf_avg": 24.5
                 }
               },
-              "median_perf_avg": 24.5
+              "metric": "hps",
+              "by_metric": {
+                "dps": 24.5,
+                "hps": 42.6
+              },
+              "median_perf_avg": 42.6
             },
             "heroic": {
               "best_perf_avg": 83.0,
@@ -2144,6 +2859,11 @@
                 "Tank": {
                   "best_perf_avg": 83.0
                 }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 83.0,
+                "hps": 48.4
               },
               "median_perf_avg": 83.0
             }

@@ -134,6 +134,11 @@
                 "best_perf_avg": 41.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 41.9,
+              "hps": 33.5
+            },
             "median_perf_avg": 41.9,
             "scaled_perf_avg": 41.9,
             "difficulty_scale": 1.0
@@ -144,6 +149,11 @@
               "DPS": {
                 "best_perf_avg": 89.6
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 89.6,
+              "hps": 63.3
             },
             "median_perf_avg": 82.1,
             "scaled_perf_avg": 71.7,
@@ -262,24 +272,29 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 90.8,
-        "scaled": 72.6,
+        "best": 76.7,
+        "scaled": 76.7,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 90.8
+            "best_perf_avg": 54.8
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 54.8,
+            "best_perf_avg": 76.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 54.8
               }
             },
-            "median_perf_avg": 34.8,
-            "scaled_perf_avg": 54.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.8,
+              "hps": 76.7
+            },
+            "median_perf_avg": 56.2,
+            "scaled_perf_avg": 76.7,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -288,6 +303,11 @@
               "DPS": {
                 "best_perf_avg": 90.8
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 90.8,
+              "hps": 83.4
             },
             "median_perf_avg": 81.6,
             "scaled_perf_avg": 72.6,
@@ -406,8 +426,8 @@
       "delta_day": 77.0,
       "is_new": false,
       "parse": {
-        "best": 71.5,
-        "scaled": 71.5,
+        "best": 80.0,
+        "scaled": 80.0,
         "by_role": {
           "DPS": {
             "best_perf_avg": 71.5
@@ -416,14 +436,19 @@
         "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 71.5,
+            "best_perf_avg": 80.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 71.5
               }
             },
-            "median_perf_avg": 61.1,
-            "scaled_perf_avg": 71.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 71.5,
+              "hps": 80.0
+            },
+            "median_perf_avg": 74.6,
+            "scaled_perf_avg": 80.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -435,6 +460,11 @@
               "Tank": {
                 "best_perf_avg": 38.1
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 83.0,
+              "hps": 82.8
             },
             "median_perf_avg": 68.0,
             "scaled_perf_avg": 66.4,
@@ -569,6 +599,11 @@
                 "best_perf_avg": 9.9
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 3.2,
+              "hps": 9.9
+            },
             "median_perf_avg": 9.9,
             "scaled_perf_avg": 9.9,
             "difficulty_scale": 1.0
@@ -579,6 +614,11 @@
               "Healer": {
                 "best_perf_avg": 53.0
               }
+            },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 16.7,
+              "hps": 53.0
             },
             "median_perf_avg": 43.1,
             "scaled_perf_avg": 42.4,
@@ -697,23 +737,20 @@
       "delta_day": 0.1,
       "is_new": false,
       "parse": {
-        "best": 94.2,
-        "scaled": 75.4,
+        "best": 79.0,
+        "scaled": 79.0,
         "by_role": {
-          "DPS": {
-            "best_perf_avg": 73.8
-          },
           "Healer": {
-            "best_perf_avg": 63.5
+            "best_perf_avg": 19.2
           },
           "Tank": {
-            "best_perf_avg": 92.4
+            "best_perf_avg": 75.3
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 75.3,
+            "best_perf_avg": 79.0,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 19.2
@@ -722,8 +759,13 @@
                 "best_perf_avg": 75.3
               }
             },
-            "median_perf_avg": 63.3,
-            "scaled_perf_avg": 75.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 75.3,
+              "hps": 79.0
+            },
+            "median_perf_avg": 69.3,
+            "scaled_perf_avg": 79.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -738,6 +780,11 @@
               "Tank": {
                 "best_perf_avg": 92.4
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 94.2,
+              "hps": 93.9
             },
             "median_perf_avg": 79.4,
             "scaled_perf_avg": 75.4,
@@ -878,12 +925,17 @@
                 "best_perf_avg": 62.1
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 61.2,
+              "hps": 62.1
+            },
             "median_perf_avg": 42.1,
             "scaled_perf_avg": 62.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 67.6,
+            "best_perf_avg": 74.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 72.9
@@ -892,8 +944,13 @@
                 "best_perf_avg": 65.0
               }
             },
-            "median_perf_avg": 57.2,
-            "scaled_perf_avg": 54.1,
+            "metric": "dps",
+            "by_metric": {
+              "dps": 74.4,
+              "hps": 67.6
+            },
+            "median_perf_avg": 65.3,
+            "scaled_perf_avg": 59.5,
             "difficulty_scale": 0.8
           }
         },
@@ -1009,8 +1066,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 54.5,
-        "scaled": 54.5,
+        "best": 78.8,
+        "scaled": 78.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 54.5
@@ -1019,14 +1076,19 @@
         "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 54.5,
+            "best_perf_avg": 78.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 54.5
               }
             },
-            "median_perf_avg": 47.0,
-            "scaled_perf_avg": 54.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.5,
+              "hps": 78.8
+            },
+            "median_perf_avg": 63.4,
+            "scaled_perf_avg": 78.8,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -1035,6 +1097,11 @@
               "DPS": {
                 "best_perf_avg": 66.2
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 66.2,
+              "hps": 61.6
             },
             "median_perf_avg": 54.7,
             "scaled_perf_avg": 53.0,
@@ -1172,6 +1239,11 @@
                 "best_perf_avg": 60.1
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 60.1,
+              "hps": 13.2
+            },
             "median_perf_avg": 50.6,
             "scaled_perf_avg": 60.1,
             "difficulty_scale": 1.0
@@ -1185,6 +1257,11 @@
               "Tank": {
                 "best_perf_avg": 82.3
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 82.3,
+              "hps": 63.0
             },
             "median_perf_avg": 61.5,
             "scaled_perf_avg": 65.8,
@@ -1319,6 +1396,11 @@
                 "best_perf_avg": 43.6
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 43.6,
+              "hps": 10.1
+            },
             "median_perf_avg": 25.2,
             "scaled_perf_avg": 43.6,
             "difficulty_scale": 1.0
@@ -1329,6 +1411,11 @@
               "Tank": {
                 "best_perf_avg": 60.8
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 60.8,
+              "hps": 41.9
             },
             "median_perf_avg": 60.8,
             "scaled_perf_avg": 48.6,
@@ -1447,8 +1534,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 72.8,
-        "scaled": 72.8,
+        "best": 93.2,
+        "scaled": 93.2,
         "by_role": {
           "DPS": {
             "best_perf_avg": 72.8
@@ -1460,7 +1547,7 @@
         "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 72.8,
+            "best_perf_avg": 93.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 72.8
@@ -1469,8 +1556,13 @@
                 "best_perf_avg": 18.9
               }
             },
-            "median_perf_avg": 52.7,
-            "scaled_perf_avg": 72.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 72.8,
+              "hps": 93.2
+            },
+            "median_perf_avg": 63.6,
+            "scaled_perf_avg": 93.2,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -1482,6 +1574,11 @@
               "Tank": {
                 "best_perf_avg": 49.0
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 82.9,
+              "hps": 81.1
             },
             "median_perf_avg": 69.2,
             "scaled_perf_avg": 66.3,
@@ -1600,8 +1697,8 @@
       "delta_day": 0,
       "is_new": false,
       "parse": {
-        "best": 54.3,
-        "scaled": 43.4,
+        "best": 61.2,
+        "scaled": 49.0,
         "by_role": {
           "Tank": {
             "best_perf_avg": 54.3
@@ -1610,14 +1707,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 54.3,
+            "best_perf_avg": 61.2,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 54.3
               }
             },
-            "median_perf_avg": 54.3,
-            "scaled_perf_avg": 43.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.3,
+              "hps": 61.2
+            },
+            "median_perf_avg": 61.2,
+            "scaled_perf_avg": 49.0,
             "difficulty_scale": 0.8
           }
         },
@@ -1749,6 +1851,11 @@
                 "best_perf_avg": 19.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 84.0,
+              "hps": 19.9
+            },
             "median_perf_avg": 74.9,
             "scaled_perf_avg": 84.0,
             "difficulty_scale": 1.0
@@ -1762,6 +1869,11 @@
               "Healer": {
                 "best_perf_avg": 35.5
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 56.4,
+              "hps": 35.5
             },
             "median_perf_avg": 50.9,
             "scaled_perf_avg": 45.1,
@@ -1896,6 +2008,11 @@
                 "best_perf_avg": 78.7
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 78.7,
+              "hps": 55.9
+            },
             "median_perf_avg": 71.3,
             "scaled_perf_avg": 63.0,
             "difficulty_scale": 0.8
@@ -2028,6 +2145,11 @@
               "Healer": {
                 "best_perf_avg": 69.5
               }
+            },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 52.8,
+              "hps": 69.5
             },
             "median_perf_avg": 60.6,
             "scaled_perf_avg": 55.6,
@@ -2162,6 +2284,11 @@
                 "best_perf_avg": 58.3
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 20.6,
+              "hps": 58.3
+            },
             "median_perf_avg": 35.2,
             "scaled_perf_avg": 58.3,
             "difficulty_scale": 1.0
@@ -2172,6 +2299,11 @@
               "Healer": {
                 "best_perf_avg": 66.1
               }
+            },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 26.4,
+              "hps": 66.1
             },
             "median_perf_avg": 41.8,
             "scaled_perf_avg": 52.9,
@@ -2290,8 +2422,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 23.8,
-        "scaled": 23.8,
+        "best": 55.6,
+        "scaled": 55.6,
         "by_role": {
           "DPS": {
             "best_perf_avg": 23.8
@@ -2300,25 +2432,35 @@
         "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 23.8,
+            "best_perf_avg": 55.6,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.8
               }
             },
-            "median_perf_avg": 16.3,
-            "scaled_perf_avg": 23.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.8,
+              "hps": 55.6
+            },
+            "median_perf_avg": 37.4,
+            "scaled_perf_avg": 55.6,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 4.4,
+            "best_perf_avg": 4.9,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 4.9
               }
             },
-            "median_perf_avg": 4.2,
-            "scaled_perf_avg": 3.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 4.4,
+              "hps": 4.9
+            },
+            "median_perf_avg": 4.6,
+            "scaled_perf_avg": 3.9,
             "difficulty_scale": 0.8
           }
         },
@@ -2434,8 +2576,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 63.3,
-        "scaled": 50.6,
+        "best": 84.6,
+        "scaled": 67.7,
         "by_role": {
           "Tank": {
             "best_perf_avg": 63.3
@@ -2444,14 +2586,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 63.3,
+            "best_perf_avg": 84.6,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 63.3
               }
             },
-            "median_perf_avg": 44.9,
-            "scaled_perf_avg": 50.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 63.3,
+              "hps": 84.6
+            },
+            "median_perf_avg": 65.0,
+            "scaled_perf_avg": 67.7,
             "difficulty_scale": 0.8
           }
         },
@@ -2583,6 +2730,11 @@
                 "best_perf_avg": 53.5
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 36.4,
+              "hps": 53.5
+            },
             "median_perf_avg": 50.9,
             "scaled_perf_avg": 42.8,
             "difficulty_scale": 0.8
@@ -2700,35 +2852,45 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 60.3,
-        "scaled": 48.2,
+        "best": 78.2,
+        "scaled": 78.2,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 60.3
+            "best_perf_avg": 30.3
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 30.3,
+            "best_perf_avg": 78.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 30.3
               }
             },
-            "median_perf_avg": 26.4,
-            "scaled_perf_avg": 30.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 30.3,
+              "hps": 78.2
+            },
+            "median_perf_avg": 68.3,
+            "scaled_perf_avg": 78.2,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 60.3,
+            "best_perf_avg": 89.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 60.3
               }
             },
-            "median_perf_avg": 37.7,
-            "scaled_perf_avg": 48.2,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 60.3,
+              "hps": 89.5
+            },
+            "median_perf_avg": 68.1,
+            "scaled_perf_avg": 71.6,
             "difficulty_scale": 0.8
           }
         },
@@ -2844,8 +3006,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 67.2,
-        "scaled": 53.8,
+        "best": 76.9,
+        "scaled": 61.5,
         "by_role": {
           "Tank": {
             "best_perf_avg": 67.2
@@ -2860,19 +3022,29 @@
                 "best_perf_avg": 34.4
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 34.4,
+              "hps": 33.8
+            },
             "median_perf_avg": 32.6,
             "scaled_perf_avg": 34.4,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 67.2,
+            "best_perf_avg": 76.9,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 67.2
               }
             },
-            "median_perf_avg": 47.8,
-            "scaled_perf_avg": 53.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 67.2,
+              "hps": 76.9
+            },
+            "median_perf_avg": 44.0,
+            "scaled_perf_avg": 61.5,
             "difficulty_scale": 0.8
           }
         },
@@ -2988,8 +3160,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 39.1,
-        "scaled": 39.1,
+        "best": 66.7,
+        "scaled": 66.7,
         "by_role": {
           "DPS": {
             "best_perf_avg": 39.1
@@ -2998,25 +3170,35 @@
         "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 39.1,
+            "best_perf_avg": 66.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 39.1
               }
             },
-            "median_perf_avg": 31.9,
-            "scaled_perf_avg": 39.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 39.1,
+              "hps": 66.7
+            },
+            "median_perf_avg": 64.5,
+            "scaled_perf_avg": 66.7,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 16.7,
+            "best_perf_avg": 39.9,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 16.7
               }
             },
-            "median_perf_avg": 6.4,
-            "scaled_perf_avg": 13.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 16.7,
+              "hps": 39.9
+            },
+            "median_perf_avg": 21.9,
+            "scaled_perf_avg": 31.9,
             "difficulty_scale": 0.8
           }
         },
@@ -3132,35 +3314,45 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 75.7,
-        "scaled": 60.6,
+        "best": 73.1,
+        "scaled": 73.1,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 75.7
+            "best_perf_avg": 58.0
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 58.0,
+            "best_perf_avg": 73.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 58.0
               }
             },
-            "median_perf_avg": 41.4,
-            "scaled_perf_avg": 58.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 58.0,
+              "hps": 73.1
+            },
+            "median_perf_avg": 53.6,
+            "scaled_perf_avg": 73.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 75.7,
+            "best_perf_avg": 77.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 75.7
               }
             },
-            "median_perf_avg": 49.2,
-            "scaled_perf_avg": 60.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 75.7,
+              "hps": 77.2
+            },
+            "median_perf_avg": 56.5,
+            "scaled_perf_avg": 61.8,
             "difficulty_scale": 0.8
           }
         },
@@ -3292,6 +3484,11 @@
                 "best_perf_avg": 44.9
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 44.9,
+              "hps": 43.3
+            },
             "median_perf_avg": 44.9,
             "scaled_perf_avg": 35.9,
             "difficulty_scale": 0.8
@@ -3409,8 +3606,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 39.2,
-        "scaled": 31.4,
+        "best": 54.0,
+        "scaled": 43.2,
         "by_role": {
           "DPS": {
             "best_perf_avg": 39.2
@@ -3419,14 +3616,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 39.2,
+            "best_perf_avg": 54.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 39.2
               }
             },
-            "median_perf_avg": 26.5,
-            "scaled_perf_avg": 31.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 39.2,
+              "hps": 54.0
+            },
+            "median_perf_avg": 40.1,
+            "scaled_perf_avg": 43.2,
             "difficulty_scale": 0.8
           }
         },
@@ -3552,14 +3754,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 5.6,
+            "best_perf_avg": 33.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 5.6
               }
             },
-            "median_perf_avg": 5.6,
-            "scaled_perf_avg": 5.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 5.6,
+              "hps": 33.7
+            },
+            "median_perf_avg": 33.7,
+            "scaled_perf_avg": 33.7,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -3568,6 +3775,11 @@
               "Healer": {
                 "best_perf_avg": 73.1
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 79.3,
+              "hps": 73.1
             },
             "median_perf_avg": 79.3,
             "scaled_perf_avg": 63.4,
@@ -3699,14 +3911,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 29.6,
+            "best_perf_avg": 33.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 29.6
               }
             },
-            "median_perf_avg": 21.2,
-            "scaled_perf_avg": 29.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 29.6,
+              "hps": 33.5
+            },
+            "median_perf_avg": 26.5,
+            "scaled_perf_avg": 33.5,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -3718,6 +3935,11 @@
               "Tank": {
                 "best_perf_avg": 27.7
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 87.0,
+              "hps": 34.6
             },
             "median_perf_avg": 77.7,
             "scaled_perf_avg": 69.6,
@@ -3946,35 +4168,45 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 72.1,
-        "scaled": 57.7,
+        "best": 78.3,
+        "scaled": 78.3,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 72.1
+            "best_perf_avg": 34.3
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 34.3,
+            "best_perf_avg": 78.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 34.3
               }
             },
-            "median_perf_avg": 32.7,
-            "scaled_perf_avg": 34.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 34.3,
+              "hps": 78.3
+            },
+            "median_perf_avg": 74.4,
+            "scaled_perf_avg": 78.3,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 72.1,
+            "best_perf_avg": 73.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 72.1
               }
             },
-            "median_perf_avg": 48.1,
-            "scaled_perf_avg": 57.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 72.1,
+              "hps": 73.8
+            },
+            "median_perf_avg": 41.1,
+            "scaled_perf_avg": 59.0,
             "difficulty_scale": 0.8
           }
         },
@@ -4100,14 +4332,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 8.1,
+            "best_perf_avg": 17.6,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 8.1
               }
             },
-            "median_perf_avg": 8.1,
-            "scaled_perf_avg": 8.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 8.1,
+              "hps": 17.6
+            },
+            "median_perf_avg": 17.6,
+            "scaled_perf_avg": 17.6,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -4116,6 +4353,11 @@
               "DPS": {
                 "best_perf_avg": 41.6
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 41.6,
+              "hps": 18.6
             },
             "median_perf_avg": 41.6,
             "scaled_perf_avg": 33.3,
@@ -4234,8 +4476,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 42.6,
-        "scaled": 34.1,
+        "best": 47.3,
+        "scaled": 37.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 42.6
@@ -4244,25 +4486,35 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 18.4,
+            "best_perf_avg": 37.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 18.4
               }
             },
-            "median_perf_avg": 18.4,
-            "scaled_perf_avg": 18.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 18.4,
+              "hps": 37.1
+            },
+            "median_perf_avg": 37.1,
+            "scaled_perf_avg": 37.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 42.6,
+            "best_perf_avg": 47.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 42.6
               }
             },
-            "median_perf_avg": 23.5,
-            "scaled_perf_avg": 34.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 42.6,
+              "hps": 47.3
+            },
+            "median_perf_avg": 24.6,
+            "scaled_perf_avg": 37.8,
             "difficulty_scale": 0.8
           }
         },
@@ -4397,6 +4649,11 @@
                 "best_perf_avg": 11.2
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 11.2,
+              "hps": 6.3
+            },
             "median_perf_avg": 11.2,
             "scaled_perf_avg": 11.2,
             "difficulty_scale": 1.0
@@ -4410,6 +4667,11 @@
               "Tank": {
                 "best_perf_avg": 22.9
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 52.7,
+              "hps": 30.2
             },
             "median_perf_avg": 45.7,
             "scaled_perf_avg": 42.2,
@@ -4528,8 +4790,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 23.8,
-        "scaled": 19.0,
+        "best": 79.8,
+        "scaled": 63.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 23.8
@@ -4538,14 +4800,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.8,
+            "best_perf_avg": 79.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.8
               }
             },
-            "median_perf_avg": 13.1,
-            "scaled_perf_avg": 19.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.8,
+              "hps": 79.8
+            },
+            "median_perf_avg": 54.0,
+            "scaled_perf_avg": 63.8,
             "difficulty_scale": 0.8
           }
         },
@@ -4661,8 +4928,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 47.7,
-        "scaled": 47.7,
+        "best": 83.8,
+        "scaled": 83.8,
         "by_role": {
           "Tank": {
             "best_perf_avg": 47.7
@@ -4671,18 +4938,23 @@
         "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 47.7,
+            "best_perf_avg": 83.8,
             "by_role": {
               "Tank": {
                 "best_perf_avg": 47.7
               }
             },
-            "median_perf_avg": 39.2,
-            "scaled_perf_avg": 47.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 47.7,
+              "hps": 83.8
+            },
+            "median_perf_avg": 80.4,
+            "scaled_perf_avg": 83.8,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 54.7,
+            "best_perf_avg": 68.6,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 9.7
@@ -4691,8 +4963,13 @@
                 "best_perf_avg": 54.7
               }
             },
-            "median_perf_avg": 50.4,
-            "scaled_perf_avg": 43.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 54.7,
+              "hps": 68.6
+            },
+            "median_perf_avg": 57.3,
+            "scaled_perf_avg": 54.9,
             "difficulty_scale": 0.8
           }
         },
@@ -4808,35 +5085,45 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 66.0,
-        "scaled": 52.8,
+        "best": 77.1,
+        "scaled": 77.1,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 66.0
+            "best_perf_avg": 31.7
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 31.7,
+            "best_perf_avg": 77.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 31.7
               }
             },
-            "median_perf_avg": 31.7,
-            "scaled_perf_avg": 31.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 31.7,
+              "hps": 77.1
+            },
+            "median_perf_avg": 77.1,
+            "scaled_perf_avg": 77.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 66.0,
+            "best_perf_avg": 76.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 66.0
               }
             },
-            "median_perf_avg": 51.3,
-            "scaled_perf_avg": 52.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 66.0,
+              "hps": 76.0
+            },
+            "median_perf_avg": 67.4,
+            "scaled_perf_avg": 60.8,
             "difficulty_scale": 0.8
           }
         },
@@ -4952,35 +5239,45 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 75.1,
-        "scaled": 60.1,
+        "best": 85.0,
+        "scaled": 85.0,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 75.1
+            "best_perf_avg": 41.5
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 41.5,
+            "best_perf_avg": 85.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 41.5
               }
             },
-            "median_perf_avg": 27.2,
-            "scaled_perf_avg": 41.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 41.5,
+              "hps": 85.0
+            },
+            "median_perf_avg": 79.1,
+            "scaled_perf_avg": 85.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 75.1,
+            "best_perf_avg": 85.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 75.1
               }
             },
-            "median_perf_avg": 67.4,
-            "scaled_perf_avg": 60.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 75.1,
+              "hps": 85.0
+            },
+            "median_perf_avg": 80.2,
+            "scaled_perf_avg": 68.0,
             "difficulty_scale": 0.8
           }
         },
@@ -5112,6 +5409,11 @@
                 "best_perf_avg": 50.7
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 20.9,
+              "hps": 50.7
+            },
             "median_perf_avg": 41.8,
             "scaled_perf_avg": 50.7,
             "difficulty_scale": 1.0
@@ -5122,6 +5424,11 @@
               "Healer": {
                 "best_perf_avg": 69.0
               }
+            },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 27.1,
+              "hps": 69.0
             },
             "median_perf_avg": 60.0,
             "scaled_perf_avg": 55.2,
@@ -5250,14 +5557,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 37.4,
+            "best_perf_avg": 52.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 37.4
               }
             },
-            "median_perf_avg": 23.8,
-            "scaled_perf_avg": 37.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 37.4,
+              "hps": 52.2
+            },
+            "median_perf_avg": 42.1,
+            "scaled_perf_avg": 52.2,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -5266,6 +5578,11 @@
               "DPS": {
                 "best_perf_avg": 81.6
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 81.6,
+              "hps": 61.3
             },
             "median_perf_avg": 55.6,
             "scaled_perf_avg": 65.3,
@@ -5384,8 +5701,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 18.9,
-        "scaled": 15.1,
+        "best": 72.2,
+        "scaled": 57.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 18.9
@@ -5394,14 +5711,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 18.9,
+            "best_perf_avg": 72.2,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 18.9
               }
             },
-            "median_perf_avg": 12.6,
-            "scaled_perf_avg": 15.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 18.9,
+              "hps": 72.2
+            },
+            "median_perf_avg": 44.8,
+            "scaled_perf_avg": 57.8,
             "difficulty_scale": 0.8
           }
         },
@@ -5517,35 +5839,45 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 25.0,
-        "scaled": 20.0,
+        "best": 61.1,
+        "scaled": 61.1,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 25.0
+            "best_perf_avg": 14.1
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 14.1,
+            "best_perf_avg": 61.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 14.1
               }
             },
-            "median_perf_avg": 13.3,
-            "scaled_perf_avg": 14.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 14.1,
+              "hps": 61.1
+            },
+            "median_perf_avg": 55.0,
+            "scaled_perf_avg": 61.1,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 25.0,
+            "best_perf_avg": 55.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 25.0
               }
             },
-            "median_perf_avg": 25.0,
-            "scaled_perf_avg": 20.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 25.0,
+              "hps": 55.8
+            },
+            "median_perf_avg": 55.8,
+            "scaled_perf_avg": 44.6,
             "difficulty_scale": 0.8
           }
         },
@@ -5771,8 +6103,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 45.6,
-        "scaled": 36.5,
+        "best": 62.1,
+        "scaled": 49.7,
         "by_role": {
           "DPS": {
             "best_perf_avg": 45.6
@@ -5781,14 +6113,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 45.6,
+            "best_perf_avg": 62.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 45.6
               }
             },
-            "median_perf_avg": 35.4,
-            "scaled_perf_avg": 36.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 45.6,
+              "hps": 62.1
+            },
+            "median_perf_avg": 45.9,
+            "scaled_perf_avg": 49.7,
             "difficulty_scale": 0.8
           }
         },
@@ -6024,14 +6361,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 9.4,
+            "best_perf_avg": 12.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 9.4
               }
             },
-            "median_perf_avg": 9.4,
-            "scaled_perf_avg": 9.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 9.4,
+              "hps": 12.8
+            },
+            "median_perf_avg": 12.8,
+            "scaled_perf_avg": 12.8,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -6040,6 +6382,11 @@
               "DPS": {
                 "best_perf_avg": 59.4
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 59.4,
+              "hps": 54.8
             },
             "median_perf_avg": 44.8,
             "scaled_perf_avg": 47.5,
@@ -6158,8 +6505,8 @@
       "delta_day": 43.7,
       "is_new": false,
       "parse": {
-        "best": 56.9,
-        "scaled": 45.5,
+        "best": 69.8,
+        "scaled": 55.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 56.9
@@ -6168,25 +6515,35 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 22.8,
+            "best_perf_avg": 55.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 22.8
               }
             },
-            "median_perf_avg": 22.8,
-            "scaled_perf_avg": 22.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 22.8,
+              "hps": 55.0
+            },
+            "median_perf_avg": 55.0,
+            "scaled_perf_avg": 55.0,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 56.9,
+            "best_perf_avg": 69.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 56.9
               }
             },
-            "median_perf_avg": 51.5,
-            "scaled_perf_avg": 45.5,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 56.9,
+              "hps": 69.8
+            },
+            "median_perf_avg": 53.6,
+            "scaled_perf_avg": 55.8,
             "difficulty_scale": 0.8
           }
         },
@@ -6324,6 +6681,11 @@
                 "best_perf_avg": 12.0
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 14.8,
+              "hps": 74.8
+            },
             "median_perf_avg": 74.8,
             "scaled_perf_avg": 74.8,
             "difficulty_scale": 1.0
@@ -6337,6 +6699,11 @@
               "Tank": {
                 "best_perf_avg": 47.5
               }
+            },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 45.7,
+              "hps": 84.2
             },
             "median_perf_avg": 75.3,
             "scaled_perf_avg": 67.4,
@@ -6455,8 +6822,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 20.9,
-        "scaled": 16.7,
+        "best": 27.3,
+        "scaled": 21.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 20.9
@@ -6465,14 +6832,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 20.9,
+            "best_perf_avg": 27.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 20.9
               }
             },
-            "median_perf_avg": 19.5,
-            "scaled_perf_avg": 16.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 20.9,
+              "hps": 27.3
+            },
+            "median_perf_avg": 24.8,
+            "scaled_perf_avg": 21.8,
             "difficulty_scale": 0.8
           }
         },
@@ -6588,8 +6960,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 44.2,
-        "scaled": 35.4,
+        "best": 87.1,
+        "scaled": 69.7,
         "by_role": {
           "DPS": {
             "best_perf_avg": 44.2
@@ -6598,14 +6970,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 44.2,
+            "best_perf_avg": 87.1,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 44.2
               }
             },
-            "median_perf_avg": 41.9,
-            "scaled_perf_avg": 35.4,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 44.2,
+              "hps": 87.1
+            },
+            "median_perf_avg": 61.6,
+            "scaled_perf_avg": 69.7,
             "difficulty_scale": 0.8
           }
         },
@@ -6721,8 +7098,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 79.5,
-        "scaled": 63.6,
+        "best": 80.4,
+        "scaled": 64.3,
         "by_role": {
           "DPS": {
             "best_perf_avg": 79.5
@@ -6731,25 +7108,35 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 41.0,
+            "best_perf_avg": 59.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 41.0
               }
             },
-            "median_perf_avg": 32.3,
-            "scaled_perf_avg": 41.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 41.0,
+              "hps": 59.4
+            },
+            "median_perf_avg": 53.4,
+            "scaled_perf_avg": 59.4,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 79.5,
+            "best_perf_avg": 80.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 79.5
               }
             },
-            "median_perf_avg": 63.6,
-            "scaled_perf_avg": 63.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 79.5,
+              "hps": 80.4
+            },
+            "median_perf_avg": 62.3,
+            "scaled_perf_avg": 64.3,
             "difficulty_scale": 0.8
           }
         },
@@ -6975,8 +7362,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 27.8,
-        "scaled": 22.2,
+        "best": 41.7,
+        "scaled": 33.4,
         "by_role": {
           "DPS": {
             "best_perf_avg": 27.8
@@ -6985,14 +7372,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 27.8,
+            "best_perf_avg": 41.7,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 27.8
               }
             },
-            "median_perf_avg": 17.3,
-            "scaled_perf_avg": 22.2,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 27.8,
+              "hps": 41.7
+            },
+            "median_perf_avg": 36.0,
+            "scaled_perf_avg": 33.4,
             "difficulty_scale": 0.8
           }
         },
@@ -7218,24 +7610,29 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 40.5,
-        "scaled": 32.4,
+        "best": 53.3,
+        "scaled": 53.3,
         "by_role": {
           "DPS": {
-            "best_perf_avg": 40.5
+            "best_perf_avg": 15.6
           }
         },
-        "difficulty": 4,
+        "difficulty": 5,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 15.6,
+            "best_perf_avg": 53.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 15.6
               }
             },
-            "median_perf_avg": 13.2,
-            "scaled_perf_avg": 15.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 15.6,
+              "hps": 53.3
+            },
+            "median_perf_avg": 42.1,
+            "scaled_perf_avg": 53.3,
             "difficulty_scale": 1.0
           },
           "heroic": {
@@ -7244,6 +7641,11 @@
               "DPS": {
                 "best_perf_avg": 40.5
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 40.5,
+              "hps": 24.5
             },
             "median_perf_avg": 30.0,
             "scaled_perf_avg": 32.4,
@@ -7472,8 +7874,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 19.0,
-        "scaled": 15.2,
+        "best": 46.8,
+        "scaled": 37.4,
         "by_role": {
           "DPS": {
             "best_perf_avg": 19.0
@@ -7482,25 +7884,35 @@
         "difficulty": 4,
         "by_difficulty": {
           "mythic": {
-            "best_perf_avg": 7.7,
+            "best_perf_avg": 28.9,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 7.7
               }
             },
-            "median_perf_avg": 7.7,
-            "scaled_perf_avg": 7.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 7.7,
+              "hps": 28.9
+            },
+            "median_perf_avg": 28.9,
+            "scaled_perf_avg": 28.9,
             "difficulty_scale": 1.0
           },
           "heroic": {
-            "best_perf_avg": 19.0,
+            "best_perf_avg": 46.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 19.0
               }
             },
-            "median_perf_avg": 13.8,
-            "scaled_perf_avg": 15.2,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 19.0,
+              "hps": 46.8
+            },
+            "median_perf_avg": 39.9,
+            "scaled_perf_avg": 37.4,
             "difficulty_scale": 0.8
           }
         },
@@ -7631,6 +8043,11 @@
               "DPS": {
                 "best_perf_avg": 54.5
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 54.5,
+              "hps": 45.5
             },
             "median_perf_avg": 46.8,
             "scaled_perf_avg": 43.6,
@@ -7764,6 +8181,11 @@
               "DPS": {
                 "best_perf_avg": 49.3
               }
+            },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 49.3,
+              "hps": 46.9
             },
             "median_perf_avg": 49.3,
             "scaled_perf_avg": 39.4,
@@ -7992,8 +8414,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 23.3,
-        "scaled": 18.6,
+        "best": 72.9,
+        "scaled": 58.3,
         "by_role": {
           "DPS": {
             "best_perf_avg": 23.3
@@ -8002,14 +8424,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.3,
+            "best_perf_avg": 72.9,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.3
               }
             },
-            "median_perf_avg": 18.0,
-            "scaled_perf_avg": 18.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.3,
+              "hps": 72.9
+            },
+            "median_perf_avg": 61.9,
+            "scaled_perf_avg": 58.3,
             "difficulty_scale": 0.8
           }
         },
@@ -8125,8 +8552,8 @@
       "delta_day": 0,
       "is_new": false,
       "parse": {
-        "best": 23.7,
-        "scaled": 19.0,
+        "best": 33.5,
+        "scaled": 26.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 23.7
@@ -8135,14 +8562,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.7,
+            "best_perf_avg": 33.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 23.7
               }
             },
-            "median_perf_avg": 22.1,
-            "scaled_perf_avg": 19.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.7,
+              "hps": 33.5
+            },
+            "median_perf_avg": 28.3,
+            "scaled_perf_avg": 26.8,
             "difficulty_scale": 0.8
           }
         },
@@ -8588,8 +9020,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 12.5,
-        "scaled": 10.0,
+        "best": 33.8,
+        "scaled": 27.0,
         "by_role": {
           "DPS": {
             "best_perf_avg": 8.1
@@ -8601,7 +9033,7 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 12.5,
+            "best_perf_avg": 33.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 8.1
@@ -8610,8 +9042,13 @@
                 "best_perf_avg": 30.3
               }
             },
-            "median_perf_avg": 12.5,
-            "scaled_perf_avg": 10.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 12.5,
+              "hps": 33.8
+            },
+            "median_perf_avg": 33.8,
+            "scaled_perf_avg": 27.0,
             "difficulty_scale": 0.8
           }
         },
@@ -8727,8 +9164,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 20.0,
-        "scaled": 16.0,
+        "best": 57.9,
+        "scaled": 46.3,
         "by_role": {
           "Healer": {
             "best_perf_avg": 20.0
@@ -8737,14 +9174,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 20.0,
+            "best_perf_avg": 57.9,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 20.0
               }
             },
-            "median_perf_avg": 10.3,
-            "scaled_perf_avg": 16.0,
+            "metric": "dps",
+            "by_metric": {
+              "dps": 57.9,
+              "hps": 20.0
+            },
+            "median_perf_avg": 42.2,
+            "scaled_perf_avg": 46.3,
             "difficulty_scale": 0.8
           }
         },
@@ -8970,8 +9412,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 23.3,
-        "scaled": 18.6,
+        "best": 41.0,
+        "scaled": 32.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 11.6
@@ -8983,7 +9425,7 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 23.3,
+            "best_perf_avg": 41.0,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 11.6
@@ -8992,8 +9434,13 @@
                 "best_perf_avg": 23.3
               }
             },
-            "median_perf_avg": 23.3,
-            "scaled_perf_avg": 18.6,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 23.3,
+              "hps": 41.0
+            },
+            "median_perf_avg": 38.9,
+            "scaled_perf_avg": 32.8,
             "difficulty_scale": 0.8
           }
         },
@@ -9109,8 +9556,8 @@
       "delta_day": 0,
       "is_new": false,
       "parse": {
-        "best": 31.4,
-        "scaled": 25.1,
+        "best": 71.8,
+        "scaled": 57.4,
         "by_role": {
           "DPS": {
             "best_perf_avg": 31.4
@@ -9119,14 +9566,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 31.4,
+            "best_perf_avg": 71.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 31.4
               }
             },
-            "median_perf_avg": 25.1,
-            "scaled_perf_avg": 25.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 31.4,
+              "hps": 71.8
+            },
+            "median_perf_avg": 68.6,
+            "scaled_perf_avg": 57.4,
             "difficulty_scale": 0.8
           }
         },
@@ -9368,6 +9820,11 @@
                 "best_perf_avg": 23.6
               }
             },
+            "metric": "dps",
+            "by_metric": {
+              "dps": 23.6,
+              "hps": 8.8
+            },
             "median_perf_avg": 23.6,
             "scaled_perf_avg": 18.9,
             "difficulty_scale": 0.8
@@ -9485,8 +9942,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 15.4,
-        "scaled": 12.3,
+        "best": 53.8,
+        "scaled": 43.0,
         "by_role": {
           "DPS": {
             "best_perf_avg": 15.4
@@ -9495,14 +9952,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 15.4,
+            "best_perf_avg": 53.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 15.4
               }
             },
-            "median_perf_avg": 15.4,
-            "scaled_perf_avg": 12.3,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 15.4,
+              "hps": 53.8
+            },
+            "median_perf_avg": 53.8,
+            "scaled_perf_avg": 43.0,
             "difficulty_scale": 0.8
           }
         },
@@ -9728,8 +10190,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 17.5,
-        "scaled": 14.0,
+        "best": 61.5,
+        "scaled": 49.2,
         "by_role": {
           "DPS": {
             "best_perf_avg": 17.5
@@ -9738,14 +10200,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 17.5,
+            "best_perf_avg": 61.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 17.5
               }
             },
-            "median_perf_avg": 12.7,
-            "scaled_perf_avg": 14.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 17.5,
+              "hps": 61.5
+            },
+            "median_perf_avg": 52.1,
+            "scaled_perf_avg": 49.2,
             "difficulty_scale": 0.8
           }
         },
@@ -9986,6 +10453,11 @@
                 "best_perf_avg": 50.9
               }
             },
+            "metric": "hps",
+            "by_metric": {
+              "dps": 24.9,
+              "hps": 50.9
+            },
             "median_perf_avg": 50.9,
             "scaled_perf_avg": 40.7,
             "difficulty_scale": 0.8
@@ -10093,8 +10565,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 21.3,
-        "scaled": 17.0,
+        "best": 24.5,
+        "scaled": 19.6,
         "by_role": {
           "DPS": {
             "best_perf_avg": 21.3
@@ -10103,14 +10575,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 21.3,
+            "best_perf_avg": 24.5,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 21.3
               }
             },
-            "median_perf_avg": 21.3,
-            "scaled_perf_avg": 17.0,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 21.3,
+              "hps": 24.5
+            },
+            "median_perf_avg": 24.5,
+            "scaled_perf_avg": 19.6,
             "difficulty_scale": 0.8
           }
         },
@@ -10316,8 +10793,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 15.1,
-        "scaled": 12.1,
+        "best": 62.3,
+        "scaled": 49.8,
         "by_role": {
           "DPS": {
             "best_perf_avg": 15.1
@@ -10326,14 +10803,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 15.1,
+            "best_perf_avg": 62.3,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 15.1
               }
             },
-            "median_perf_avg": 15.1,
-            "scaled_perf_avg": 12.1,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 15.1,
+              "hps": 62.3
+            },
+            "median_perf_avg": 62.3,
+            "scaled_perf_avg": 49.8,
             "difficulty_scale": 0.8
           }
         },
@@ -10739,8 +11221,8 @@
       "delta_day": 60.0,
       "is_new": true,
       "parse": {
-        "best": 35.4,
-        "scaled": 28.3,
+        "best": 58.6,
+        "scaled": 46.9,
         "by_role": {
           "Healer": {
             "best_perf_avg": 35.4
@@ -10749,14 +11231,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 35.4,
+            "best_perf_avg": 58.6,
             "by_role": {
               "Healer": {
                 "best_perf_avg": 35.4
               }
             },
-            "median_perf_avg": 35.4,
-            "scaled_perf_avg": 28.3,
+            "metric": "dps",
+            "by_metric": {
+              "dps": 58.6,
+              "hps": 35.4
+            },
+            "median_perf_avg": 58.6,
+            "scaled_perf_avg": 46.9,
             "difficulty_scale": 0.8
           }
         },
@@ -10992,8 +11479,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 3.5,
-        "scaled": 2.8,
+        "best": 85.4,
+        "scaled": 68.3,
         "by_role": {
           "DPS": {
             "best_perf_avg": 3.5
@@ -11002,14 +11489,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 3.5,
+            "best_perf_avg": 85.4,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 3.5
               }
             },
-            "median_perf_avg": 3.5,
-            "scaled_perf_avg": 2.8,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 3.5,
+              "hps": 85.4
+            },
+            "median_perf_avg": 85.4,
+            "scaled_perf_avg": 68.3,
             "difficulty_scale": 0.8
           }
         },
@@ -11335,8 +11827,8 @@
       "delta_day": 0.0,
       "is_new": false,
       "parse": {
-        "best": 4.6,
-        "scaled": 3.7,
+        "best": 45.8,
+        "scaled": 36.6,
         "by_role": {
           "DPS": {
             "best_perf_avg": 4.6
@@ -11345,14 +11837,19 @@
         "difficulty": 4,
         "by_difficulty": {
           "heroic": {
-            "best_perf_avg": 4.6,
+            "best_perf_avg": 45.8,
             "by_role": {
               "DPS": {
                 "best_perf_avg": 4.6
               }
             },
-            "median_perf_avg": 4.6,
-            "scaled_perf_avg": 3.7,
+            "metric": "hps",
+            "by_metric": {
+              "dps": 4.6,
+              "hps": 45.8
+            },
+            "median_perf_avg": 45.8,
+            "scaled_perf_avg": 36.6,
             "difficulty_scale": 0.8
           }
         },
