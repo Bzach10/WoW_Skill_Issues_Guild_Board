@@ -9,7 +9,6 @@ bare-name season_scores keying is a documented data-destroying bug for
 same-named characters on different realms — this layer must not repeat it.
 """
 
-import json
 import os
 import subprocess
 import sys
@@ -41,7 +40,8 @@ def _blob(avg, median=None, kills=None):
 def test_normalize_full_blob_rounds_and_buckets_roles():
     char = {
         "name": "Rakdisc", "classID": 7,
-        "overall": _blob(88.123, median=74.456),
+        "overall_dps": _blob(41.25, median=30.0),
+        "overall_hps": _blob(88.123, median=74.456),
         "dps": _blob(41.25, kills=2),
         "healer": _blob(88.123, kills=6),
         "tank": _blob(None),
@@ -54,19 +54,69 @@ def test_normalize_full_blob_rounds_and_buckets_roles():
     assert set(entry["by_role"]) == {"DPS", "Healer"}  # tank blob empty -> absent
     assert entry["by_role"]["Healer"] == {"best_perf_avg": 88.1, "kills": 6}
     assert entry["by_role"]["DPS"] == {"best_perf_avg": 41.2, "kills": 2}
+    # BEST-ACROSS-METRICS: counted on hps here, with both figures kept and
+    # the median taken from the SAME blob the counted figure came from.
+    assert entry["metric"] == "hps"
+    assert entry["by_metric"] == {"dps": 41.2, "hps": 88.1}
+
+
+def test_normalize_counts_the_better_overall_metric():
+    # THE HEALER BUG (2026-07-26): the overall blob asked for `metric:
+    # default`, which WCL resolved per its own spec detection and handed
+    # most healers their DAMAGE percentile (Hellful mythic 84.0 damage
+    # beside 19.9 real healing). Both metrics are asked for now and the
+    # higher one counts — which also pays dual-spec raiders for their
+    # better spec instead of guessing at a roster role.
+    healer = wcl.normalize_character_parses(
+        {"name": "Shadoxii", "classID": 5,
+         "overall_dps": _blob(16.7, median=12.1),
+         "overall_hps": _blob(53.0, median=43.1)})
+    assert (healer["best_perf_avg"], healer["metric"]) == (53.0, "hps")
+    assert healer["median_perf_avg"] == 43.1
+
+    dual = wcl.normalize_character_parses(
+        {"name": "Hellful", "classID": 9,
+         "overall_dps": _blob(84.0, median=74.9),
+         "overall_hps": _blob(19.9, median=15.0)})
+    assert (dual["best_perf_avg"], dual["metric"]) == (84.0, "dps")
+    assert dual["median_perf_avg"] == 74.9
+
+    # One metric answering alone is enough; a tie counts as dps.
+    solo = wcl.normalize_character_parses(
+        {"name": "Aime", "classID": 2, "overall_hps": _blob(61.0)})
+    assert (solo["best_perf_avg"], solo["metric"]) == (61.0, "hps")
+    tied = wcl.normalize_character_parses(
+        {"name": "Aime", "classID": 2,
+         "overall_dps": _blob(61.0), "overall_hps": _blob(61.0)})
+    assert tied["metric"] == "dps"
+
+
+def test_query_asks_both_overall_metrics_and_never_default():
+    q = wcl.CHARACTER_PARSES_QUERY
+    assert "metric: default" not in q
+    assert "overall_dps: zoneRankings" in q and "overall_hps: zoneRankings" in q
+    # Unbracketed: the overall blobs carry no role filter...
+    for line in q.splitlines():
+        if line.strip().startswith("overall_"):
+            assert "role:" not in line
+    # ...while the by-role sub-queries keep their own metrics unchanged.
+    assert "metric: dps, role: DPS" in q
+    assert "metric: hps, role: Healer" in q
+    assert "metric: dps, role: Tank" in q
 
 
 def test_normalize_no_rankings_is_none():
     assert wcl.normalize_character_parses(None) is None
     assert wcl.normalize_character_parses({}) is None
     assert wcl.normalize_character_parses(
-        {"name": "Aiime", "classID": 4, "overall": _blob(None),
-         "dps": _blob(None), "healer": _blob(None), "tank": _blob(None)}) is None
+        {"name": "Aiime", "classID": 4, "overall_dps": _blob(None),
+         "overall_hps": _blob(None), "dps": _blob(None),
+         "healer": _blob(None), "tank": _blob(None)}) is None
 
 
 def test_normalize_role_blob_alone_still_counts():
     entry = wcl.normalize_character_parses(
-        {"name": "Floofwall", "classID": 5, "overall": _blob(None),
+        {"name": "Floofwall", "classID": 5, "overall_dps": _blob(None),
          "tank": _blob(71.9, kills=5)})
     assert entry["best_perf_avg"] == 71.9
     assert entry["by_role"] == {"Tank": {"best_perf_avg": 71.9, "kills": 5}}
@@ -90,9 +140,9 @@ def test_fetch_keys_by_full_name_realm_never_bare_name(monkeypatch):
     roster = ["violënce-bleeding-hollow", "violënce-area-52"]
     per_realm = {
         "bleeding-hollow": {"name": "Violënce", "classID": 11,
-                            "overall": _blob(90.0), "dps": _blob(90.0, kills=8)},
+                            "overall_dps": _blob(90.0), "dps": _blob(90.0, kills=8)},
         "area-52": {"name": "Violënce", "classID": 2,
-                    "overall": _blob(30.0), "dps": _blob(30.0, kills=1)},
+                    "overall_dps": _blob(30.0), "dps": _blob(30.0, kills=1)},
     }
     calls = []
 
@@ -126,9 +176,9 @@ def test_fetch_splits_multiword_realms_on_first_hyphen(monkeypatch):
 def test_fetch_collects_every_enabled_difficulty(monkeypatch):
     # The website shows mythic and heroic side by side, so BOTH are
     # fetched — a mythic answer must never stop the heroic query.
-    char_mythic = {"name": "Aiime", "classID": 4, "overall": _blob(80.0),
+    char_mythic = {"name": "Aiime", "classID": 4, "overall_dps": _blob(80.0),
                    "dps": _blob(80.0, kills=5)}
-    char_heroic = {"name": "Aiime", "classID": 4, "overall": _blob(95.5),
+    char_heroic = {"name": "Aiime", "classID": 4, "overall_dps": _blob(95.5),
                    "dps": _blob(95.5, kills=9)}
     answers = {("aiime", 5): char_mythic, ("aiime", 4): char_heroic}
     calls = []
@@ -148,8 +198,8 @@ def test_fetch_collects_every_enabled_difficulty(monkeypatch):
 
 def test_fetch_keeps_heroic_only_raiders(monkeypatch):
     # Empty at mythic (character exists, no rankings) -> heroic still lands.
-    char_empty = {"name": "Aiime", "classID": 4, "overall": _blob(None)}
-    char_heroic = {"name": "Aiime", "classID": 4, "overall": _blob(65.5),
+    char_empty = {"name": "Aiime", "classID": 4, "overall_dps": _blob(None)}
+    char_heroic = {"name": "Aiime", "classID": 4, "overall_dps": _blob(65.5),
                    "dps": _blob(65.5, kills=3)}
     answers = {("aiime", 5): char_empty, ("aiime", 4): char_heroic}
     calls = []
@@ -161,54 +211,6 @@ def test_fetch_keeps_heroic_only_raiders(monkeypatch):
     entry = out["aiime-bleeding-hollow"]
     assert set(entry["by_difficulty"]) == {"heroic"}
     assert entry["by_difficulty"]["heroic"]["best_perf_avg"] == 65.5
-
-
-def _overall_metric_in(query):
-    """The metric the OVERALL zoneRankings alias asks for, read out of the
-    built query text (the aliased role blobs keep their own metrics)."""
-    line = next(ln for ln in query.splitlines() if "overall:" in ln)
-    return line.rsplit("metric:", 1)[1].strip().rstrip(")")
-
-
-def test_overall_metric_follows_roster_role_never_default():
-    # THE HEALER BUG (2026-07-26): `metric: default` let WCL resolve the
-    # overall blob per its own spec detection and handed most healers their
-    # DAMAGE percentile (Hellful mythic 84.0 damage vs 19.9 real healing).
-    assert wcl.overall_metric_for_role("Healer") == "hps"
-    assert wcl.overall_metric_for_role("HEALING") == "hps"
-    assert wcl.overall_metric_for_role("DPS") == "dps"
-    assert wcl.overall_metric_for_role("Tank") == "dps"
-    assert wcl.overall_metric_for_role(None) == "dps"  # roleless -> explicit
-    assert _overall_metric_in(wcl.character_parses_query("Healer")) == "hps"
-    assert _overall_metric_in(wcl.character_parses_query("Tank")) == "dps"
-    for query in wcl.CHARACTER_PARSES_QUERIES.values():
-        assert "metric: default" not in query
-        # The by-role sub-queries are untouched by the role switch.
-        assert "healer: zoneRankings" in query and "metric: hps, role: Healer" in query
-        assert "tank: zoneRankings" in query and "metric: dps, role: Tank" in query
-
-
-def test_fetch_picks_the_overall_metric_per_character(monkeypatch):
-    seen = []
-
-    def fake(token, query, variables):
-        seen.append((variables["name"], _overall_metric_in(query)))
-        return {"characterData": {"character": None}}
-
-    monkeypatch.setattr(wcl, "gql", fake)
-    monkeypatch.setattr(wcl.time, "sleep", lambda s: None)
-    wcl.fetch_character_parses(
-        "tok", CFG,
-        ["hellful-lightnings-blade", "aime-bleeding-hollow",
-         "floofwall-bleeding-hollow", "stranger-area-52"],
-        zone_id=46,
-        roles={"hellful-lightnings-blade": "Healer",
-               "aime-bleeding-hollow": "DPS",
-               "floofwall-bleeding-hollow": "Tank"})
-    # Healer on hps; DPS, tank and the character the roster has no role for
-    # all on dps — one query each (character: null stops the difficulties).
-    assert seen == [("hellful", "hps"), ("aime", "dps"),
-                    ("floofwall", "dps"), ("stranger", "dps")]
 
 
 def test_fetch_unknown_character_skips_lower_difficulties(monkeypatch):
@@ -469,7 +471,7 @@ def test_mixed_case_manual_roster_entry_still_merges_parses(monkeypatch):
     assert [c["key"] for c in fetched["characters"]] == ["rakell-proudmoore"]
 
     answers = {("rakell", 5): {"name": "Rakell", "classID": 6,
-                               "overall": _blob(77.0),
+                               "overall_hps": _blob(77.0),
                                "healer": _blob(77.0, kills=4)}}
     calls = []
     monkeypatch.setattr(wcl, "gql", _fake_gql(answers, calls))
@@ -651,31 +653,6 @@ def test_delivery_set_includes_parses():
 # ---------------------------------------------------------------------------
 # refresh script — inert without credentials
 # ---------------------------------------------------------------------------
-
-def test_refresh_parses_reads_roster_roles_from_competition_cache(tmp_path, monkeypatch):
-    # The role source for the overall metric: Raider.io's active_spec_role as
-    # competition_cache.json keeps it, joined by the exact name-realm key.
-    sys.path.insert(0, os.path.join(ROOT, "scripts"))
-    import refresh_parses
-
-    cache = tmp_path / "competition_cache.json"
-    cache.write_text(json.dumps({"characters": [
-        {"key": "hellful-lightnings-blade", "role": "Healer"},
-        {"key": "aime-bleeding-hollow", "role": "DPS"},
-        {"key": "floofwall-bleeding-hollow", "role": "TANK"},
-        {"key": "roleless-area-52"},
-    ]}), encoding="utf-8")
-    monkeypatch.setattr(refresh_parses, "COMPETITION_CACHE_PATH", str(cache))
-    assert refresh_parses._load_roster_roles() == {
-        "hellful-lightnings-blade": "Healer",
-        "aime-bleeding-hollow": "DPS",
-        "floofwall-bleeding-hollow": "Tank",
-    }
-    # No cache is not fatal: everyone sweeps on dps and the gap gets logged.
-    monkeypatch.setattr(refresh_parses, "COMPETITION_CACHE_PATH",
-                        str(tmp_path / "absent.json"))
-    assert refresh_parses._load_roster_roles() == {}
-
 
 def test_refresh_parses_is_inert_without_credentials(tmp_path):
     env = dict(os.environ)
