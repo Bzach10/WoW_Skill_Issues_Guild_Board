@@ -9,6 +9,7 @@ bare-name season_scores keying is a documented data-destroying bug for
 same-named characters on different realms — this layer must not repeat it.
 """
 
+import json
 import os
 import subprocess
 import sys
@@ -160,6 +161,54 @@ def test_fetch_keeps_heroic_only_raiders(monkeypatch):
     entry = out["aiime-bleeding-hollow"]
     assert set(entry["by_difficulty"]) == {"heroic"}
     assert entry["by_difficulty"]["heroic"]["best_perf_avg"] == 65.5
+
+
+def _overall_metric_in(query):
+    """The metric the OVERALL zoneRankings alias asks for, read out of the
+    built query text (the aliased role blobs keep their own metrics)."""
+    line = next(ln for ln in query.splitlines() if "overall:" in ln)
+    return line.rsplit("metric:", 1)[1].strip().rstrip(")")
+
+
+def test_overall_metric_follows_roster_role_never_default():
+    # THE HEALER BUG (2026-07-26): `metric: default` let WCL resolve the
+    # overall blob per its own spec detection and handed most healers their
+    # DAMAGE percentile (Hellful mythic 84.0 damage vs 19.9 real healing).
+    assert wcl.overall_metric_for_role("Healer") == "hps"
+    assert wcl.overall_metric_for_role("HEALING") == "hps"
+    assert wcl.overall_metric_for_role("DPS") == "dps"
+    assert wcl.overall_metric_for_role("Tank") == "dps"
+    assert wcl.overall_metric_for_role(None) == "dps"  # roleless -> explicit
+    assert _overall_metric_in(wcl.character_parses_query("Healer")) == "hps"
+    assert _overall_metric_in(wcl.character_parses_query("Tank")) == "dps"
+    for query in wcl.CHARACTER_PARSES_QUERIES.values():
+        assert "metric: default" not in query
+        # The by-role sub-queries are untouched by the role switch.
+        assert "healer: zoneRankings" in query and "metric: hps, role: Healer" in query
+        assert "tank: zoneRankings" in query and "metric: dps, role: Tank" in query
+
+
+def test_fetch_picks_the_overall_metric_per_character(monkeypatch):
+    seen = []
+
+    def fake(token, query, variables):
+        seen.append((variables["name"], _overall_metric_in(query)))
+        return {"characterData": {"character": None}}
+
+    monkeypatch.setattr(wcl, "gql", fake)
+    monkeypatch.setattr(wcl.time, "sleep", lambda s: None)
+    wcl.fetch_character_parses(
+        "tok", CFG,
+        ["hellful-lightnings-blade", "aime-bleeding-hollow",
+         "floofwall-bleeding-hollow", "stranger-area-52"],
+        zone_id=46,
+        roles={"hellful-lightnings-blade": "Healer",
+               "aime-bleeding-hollow": "DPS",
+               "floofwall-bleeding-hollow": "Tank"})
+    # Healer on hps; DPS, tank and the character the roster has no role for
+    # all on dps — one query each (character: null stops the difficulties).
+    assert seen == [("hellful", "hps"), ("aime", "dps"),
+                    ("floofwall", "dps"), ("stranger", "dps")]
 
 
 def test_fetch_unknown_character_skips_lower_difficulties(monkeypatch):
@@ -602,6 +651,31 @@ def test_delivery_set_includes_parses():
 # ---------------------------------------------------------------------------
 # refresh script — inert without credentials
 # ---------------------------------------------------------------------------
+
+def test_refresh_parses_reads_roster_roles_from_competition_cache(tmp_path, monkeypatch):
+    # The role source for the overall metric: Raider.io's active_spec_role as
+    # competition_cache.json keeps it, joined by the exact name-realm key.
+    sys.path.insert(0, os.path.join(ROOT, "scripts"))
+    import refresh_parses
+
+    cache = tmp_path / "competition_cache.json"
+    cache.write_text(json.dumps({"characters": [
+        {"key": "hellful-lightnings-blade", "role": "Healer"},
+        {"key": "aime-bleeding-hollow", "role": "DPS"},
+        {"key": "floofwall-bleeding-hollow", "role": "TANK"},
+        {"key": "roleless-area-52"},
+    ]}), encoding="utf-8")
+    monkeypatch.setattr(refresh_parses, "COMPETITION_CACHE_PATH", str(cache))
+    assert refresh_parses._load_roster_roles() == {
+        "hellful-lightnings-blade": "Healer",
+        "aime-bleeding-hollow": "DPS",
+        "floofwall-bleeding-hollow": "Tank",
+    }
+    # No cache is not fatal: everyone sweeps on dps and the gap gets logged.
+    monkeypatch.setattr(refresh_parses, "COMPETITION_CACHE_PATH",
+                        str(tmp_path / "absent.json"))
+    assert refresh_parses._load_roster_roles() == {}
+
 
 def test_refresh_parses_is_inert_without_credentials(tmp_path):
     env = dict(os.environ)

@@ -16,6 +16,13 @@ raid sections). Warcraft Logs credentials exist ONLY in GitHub Actions, so:
   * BOTH mythic and heroic are fetched for every swept character (any
     difficulty whose parses.difficulty_scale factor is > 0) -- the website
     shows them side by side, so one must never shadow the other.
+  * ROLE-AWARE METRIC: the overall zoneRankings blob is asked for on the
+    metric the character's ROSTER ROLE ranks on -- hps for healers, dps for
+    everyone else -- read from competition_cache.json (Raider.io's
+    active_spec_role). It used to ask for `metric: default` and let WCL
+    decide, which handed most healers their DAMAGE percentile (verified
+    2026-07-26: Hellful's mythic overall read 84.0 damage against a real
+    19.9 healing average).
   * FAIL-OPEN like refresh_competition.py: if the fresh sweep resolves far
     fewer characters than the cache already holds (a bad WCL day), the old
     cache is kept rather than blanking every parse on the site.
@@ -43,6 +50,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import requests  # noqa: E402
 
 from guild_board import season as season_mod  # noqa: E402
+from guild_board.competition import canonical_role  # noqa: E402
 from guild_board.config import load_config, load_roster_cache  # noqa: E402
 from guild_board.wcl import (  # noqa: E402
     IMPROVEMENT_MAX_DAYS,
@@ -52,6 +60,7 @@ from guild_board.wcl import (  # noqa: E402
     fetch_guild_reports,
     fetch_zone_directory,
     get_wcl_token,
+    overall_metric_for_role,
     resolve_raid_zone,
     resolve_zone_id,
     select_active_roster,
@@ -60,6 +69,7 @@ from guild_board.web_data import sweep_difficulties  # noqa: E402
 
 REPO_ROOT = str(Path(__file__).resolve().parents[1])
 CACHE_PATH = os.path.join(REPO_ROOT, "parses_cache.json")
+COMPETITION_CACHE_PATH = os.path.join(REPO_ROOT, "competition_cache.json")
 
 
 def _say(msg):
@@ -72,6 +82,29 @@ def _load_cache():
             return json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         return {}
+
+
+def _load_roster_roles():
+    """{roster key: canonical role} from competition_cache.json -- the
+    roster's own role record (Raider.io's active_spec_role, refreshed daily
+    by scripts/refresh_competition.py).
+
+    The sweep needs it because the OVERALL zoneRankings blob has to ask for
+    the right metric: healers rank on hps, everyone else on dps. Keyed by
+    the exact name-realm key, so it joins the sweep roster by dict lookup and
+    never by bare name. Absent/unreadable cache -> {}: every character then
+    sweeps on dps and wcl.fetch_character_parses logs the gap."""
+    try:
+        with open(COMPETITION_CACHE_PATH, encoding="utf-8") as f:
+            data = json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
+    roles = {}
+    for rec in data.get("characters") or []:
+        key, role = rec.get("key"), canonical_role(rec.get("role"))
+        if key and role:
+            roles[key] = role
+    return roles
 
 
 def _discovery_due(old, discovery_days):
@@ -226,10 +259,25 @@ def main(argv=None):
                  "cache untouched.")
             return 0
 
+    # Which metric each character's OVERALL blob is asked for, by roster
+    # role -- healers on hps, everyone else on dps. Reported before the
+    # sweep so a run's own log shows the split (and any roleless character)
+    # without re-deriving it from the cache afterwards.
+    roles = _load_roster_roles()
+    by_metric = {}
+    for key in sweep_roster:
+        metric = overall_metric_for_role(roles.get(key))
+        by_metric[metric] = by_metric.get(metric, 0) + 1
+    roleless = [k for k in sweep_roster if not roles.get(k)]
+    _say("Overall metric by roster role: "
+         + ", ".join(f"{n} on {m}" for m, n in sorted(by_metric.items()))
+         + (f" ({len(roleless)} with no roster role -- swept on dps)"
+            if roleless else ""))
+
     _say(f"Sweeping WCL parse averages (difficulties {list(difficulties)})...")
     t = time.perf_counter()
     characters = fetch_character_parses(token, cfg, sweep_roster, zone_id,
-                                        difficulties=difficulties)
+                                        difficulties=difficulties, roles=roles)
     elapsed = time.perf_counter() - t
     _say(f"  {len(characters)} characters with rankings in {elapsed:.0f}s")
 
@@ -241,7 +289,7 @@ def main(argv=None):
         t = time.perf_counter()
         zchars = fetch_character_parses(token, cfg, sweep_roster,
                                         zone["zone_id"],
-                                        difficulties=difficulties)
+                                        difficulties=difficulties, roles=roles)
         _say(f"  {len(zchars)} characters with {zone['name']} rankings "
              f"in {time.perf_counter() - t:.0f}s")
         extra_data[zone["slug"]] = {"zone_id": zone["zone_id"],

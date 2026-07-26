@@ -682,13 +682,22 @@ def fetch_realm_rank_leaders(token, cfg, participants, zone_id, difficulty):
 # One query per character: the overall zoneRankings blob plus one aliased
 # blob per role. Metrics mirror the weekly board's convention (healers in
 # the hps bracket; tanks ranked within the dps metric's tank bracket).
-CHARACTER_PARSES_QUERY = """
+#
+# THE OVERALL BLOB'S METRIC IS CHOSEN BY THE CHARACTER'S ROSTER ROLE, never
+# left to `metric: default`. WCL resolves `default` with its own per-log
+# spec detection, and for healers that resolved to DAMAGE: verified live on
+# 2026-07-26, Hellful's mythic overall read 84.0 (a damage percentile)
+# against a real healing average of 19.9, and 9 of the 11 rostered healers
+# were wrong in one direction or the other. DPS and tank figures were exact
+# under `default`, so the fix is confined to which metric the overall blob
+# asks for -- healers ask for hps, everyone else asks for dps, explicitly.
+_CHARACTER_PARSES_QUERY_TEMPLATE = """
 query ($name: String!, $slug: String!, $region: String!, $zoneId: Int!, $difficulty: Int!) {
   characterData {
     character(name: $name, serverSlug: $slug, serverRegion: $region) {
       name
       classID
-      overall: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: default)
+      overall: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: %(overall)s)
       dps: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: dps, role: DPS)
       healer: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: hps, role: Healer)
       tank: zoneRankings(zoneID: $zoneId, difficulty: $difficulty, metric: dps, role: Tank)
@@ -696,6 +705,33 @@ query ($name: String!, $slug: String!, $region: String!, $zoneId: Int!, $difficu
   }
 }
 """
+
+# Canonical roster role (competition.canonical_role's vocabulary, plus
+# Raider.io's own raw spellings) -> the overall metric. Anything not a
+# healer -- DPS, tanks, and anyone the roster has no role for -- ranks on
+# dps, the metric their percentile is actually computed from.
+OVERALL_METRIC_BY_ROLE = {"healer": "hps", "healing": "hps", "heal": "hps"}
+DEFAULT_OVERALL_METRIC = "dps"
+
+# Built once per metric at import: the query text is fixed, so a stray role
+# string can never reach the GraphQL document.
+CHARACTER_PARSES_QUERIES = {
+    metric: _CHARACTER_PARSES_QUERY_TEMPLATE % {"overall": metric}
+    for metric in ("dps", "hps")
+}
+
+
+def overall_metric_for_role(role):
+    """The zoneRankings metric the OVERALL blob must ask for, given a
+    character's roster role. Healers -> hps, everyone else -> dps. Never
+    `default`, which is what mixed healers' damage into their averages."""
+    return OVERALL_METRIC_BY_ROLE.get((role or "").strip().lower(),
+                                      DEFAULT_OVERALL_METRIC)
+
+
+def character_parses_query(role):
+    """The per-character parses query built for one roster role."""
+    return CHARACTER_PARSES_QUERIES[overall_metric_for_role(role)]
 
 # zoneRankings answers one difficulty at a time, and the website shows
 # difficulties SIDE BY SIDE (mythic and heroic columns) — so the sweep
@@ -766,9 +802,17 @@ def normalize_character_parses(char_blob):
 
 
 def fetch_character_parses(token, cfg, roster, zone_id,
-                           difficulties=PARSE_SWEEP_DIFFICULTIES):
+                           difficulties=PARSE_SWEEP_DIFFICULTIES, roles=None):
     """Current-tier parse averages per roster member, from WCL character
     zoneRankings.
+
+    roles: {roster key: role} -- the roster's own role record (Raider.io's
+    active_spec_role, as competition_cache.json keeps it). It selects the
+    OVERALL blob's metric per character: healers ask for hps, everyone else
+    asks for dps (see overall_metric_for_role). Keys are the SAME full
+    name-realm keys as `roster`, so this is a dict lookup, never a bare-name
+    join. A key with no role falls back to dps and is logged -- the sweep
+    still runs, and the gap is diagnosable from the run's own output.
 
     roster: name-realm entries exactly as roster_cache.json keeps them
     ("amrevenge-stormrage", Unicode preserved, lowercased once at roster
@@ -797,17 +841,23 @@ def fetch_character_parses(token, cfg, roster, zone_id,
     region = cfg["guild"]["region"]
     default_realm = cfg["guild"]["realm_slug"]
     sourced_at = datetime.now(timezone.utc).isoformat()
+    roles = roles or {}
 
     out = {}
+    roleless = []
     for entry_key in roster:
         name, realm = split_name_realm(entry_key, default_realm)
         if not name:
             continue
+        role = roles.get(entry_key)
+        if not role:
+            roleless.append(entry_key)
+        query = character_parses_query(role)
         char_name, char_class = "", ""
         by_difficulty = {}
         for difficulty in difficulties:
             try:
-                data = gql(token, CHARACTER_PARSES_QUERY, {
+                data = gql(token, query, {
                     "name": name,
                     "slug": realm or default_realm,
                     "region": region,
@@ -839,6 +889,10 @@ def fetch_character_parses(token, cfg, roster, zone_id,
                 "sourced_at": sourced_at,
                 "by_difficulty": by_difficulty,
             }
+    if roleless:
+        logger.warning("Parse sweep: no roster role for %d character(s), "
+                       "swept on the %s metric: %s", len(roleless),
+                       DEFAULT_OVERALL_METRIC, ", ".join(sorted(roleless)))
     return out
 
 
