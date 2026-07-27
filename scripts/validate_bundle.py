@@ -152,6 +152,20 @@ def check_competition_internal(bundle, report):
             report.error("competition", "unranked names unknown key {}".format(u.get("key")))
         elif c.get("rank") is not None:
             report.error("competition", "unranked key {} carries a rank in characters".format(u.get("key")))
+    # Departed ledger (additive): a character is a member or departed, never
+    # both; the count must describe the rows; every row must say when the
+    # absence was first observed.
+    departed = comp.get("departed") or []
+    for d in departed:
+        if d.get("key") in by_key:
+            report.error("competition",
+                         "departed key {} still listed in characters".format(d.get("key")))
+        if not d.get("departed_at"):
+            report.error("competition",
+                         "departed key {} carries no departed_at stamp".format(d.get("key")))
+    if comp.get("departed_count") is not None and comp.get("departed_count") != len(departed):
+        report.error("competition", "departed_count {} != departed rows {}".format(
+            comp.get("departed_count"), len(departed)))
     overall = (comp.get("rankings") or {}).get("overall") or []
     if len(overall) != len(ranked_rows):
         report.error("competition", f"rankings.overall has {len(overall)} rows, expected {len(ranked_rows)} ranked")

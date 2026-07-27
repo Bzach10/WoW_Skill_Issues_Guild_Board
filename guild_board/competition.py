@@ -321,6 +321,13 @@ def build_competition(fetched=None, board_state=None, season=None,
         # Full browsable detail — one entry per character, every number.
         "characters": characters,
         "unranked": unranked,
+        # Two-way roster truth (refresh_competition.apply_membership):
+        # previous members now absent from the live guild roster, last-known
+        # record retained, `departed_at` = first run that observed the
+        # absence. Additive; empty until the live-membership pull has run.
+        "departed": list(fetched.get("departed") or []),
+        "departed_count": len(fetched.get("departed") or []),
+        "membership": fetched.get("membership"),
         "key_records": key_records,
         "rankings": {
             "overall": overall,
