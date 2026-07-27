@@ -57,7 +57,11 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add guild_pulse_cache.json web_data_public
+          # The cache is untracked and only written once discord_inputs.
+          # pulse_channels is configured AND the bot token secret exists —
+          # until then the refresh script no-ops and the file is absent.
+          [ -f guild_pulse_cache.json ] && git add guild_pulse_cache.json
+          git add web_data_public
           if git diff --cached --quiet; then
             echo "No pulse changes to commit."
           else
@@ -65,8 +69,9 @@ jobs:
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
-              git checkout --ours guild_pulse_cache.json web_data_public
-              git add guild_pulse_cache.json web_data_public
+              for f in guild_pulse_cache.json web_data_public; do
+                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+              done
               git rebase --continue
               git push
             fi
