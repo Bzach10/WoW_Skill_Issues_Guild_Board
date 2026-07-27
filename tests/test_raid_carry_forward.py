@@ -16,7 +16,7 @@ import sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.join(ROOT, "scripts"))
 
-from build_site_data import carry_forward_raid  # noqa: E402
+from build_site_data import carry_forward_raid, resolve_raid_progression  # noqa: E402
 
 
 def _site(bosses_killed, mythic=0, heroic=0):
@@ -65,3 +65,32 @@ def test_previous_zeros_are_not_worth_carrying():
     site = _site(0)
     assert carry_forward_raid(site, _prev(0)) is False
     assert "carried_forward_from" not in site["island_completion"]["raid"]
+
+
+# ---------------------------------------------------------------------------
+# resolve_raid_progression — input-level last-good (the cache only a
+# successful fetch may write, so a bad day can never poison it)
+# ---------------------------------------------------------------------------
+
+LIVE = {"tier-mn-1": {"summary": "4/9 M", "mythic_bosses_killed": 4}}
+CACHED = {"fetched_at": "2026-07-27T00:03:52+00:00",
+          "raid_progression": {"tier-mn-1": {"summary": "4/9 M",
+                                             "mythic_bosses_killed": 4}}}
+
+
+def test_live_fetch_wins():
+    prog, source = resolve_raid_progression(LIVE, CACHED)
+    assert source == "live"
+    assert prog is LIVE
+
+
+def test_empty_fetch_falls_back_to_last_good_cache():
+    prog, source = resolve_raid_progression({}, CACHED)
+    assert source == "cache"
+    assert prog == CACHED["raid_progression"]
+
+
+def test_no_cache_yields_honest_nothing():
+    prog, source = resolve_raid_progression({}, None)
+    assert source == "none"
+    assert prog == {}

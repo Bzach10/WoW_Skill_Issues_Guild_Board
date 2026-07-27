@@ -18,6 +18,7 @@ import json
 import os
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
@@ -129,6 +130,25 @@ def _fetch_guild_progression(cfg):
     return {}
 
 
+def resolve_raid_progression(fetched, cached):
+    """(progression, source_label): the live fetch when it returned data,
+    else the last-good cache (raid_progression_cache.json — written ONLY on
+    a successful fetch, so a failing day can never poison it), else {}.
+
+    The 2026-07-27 lesson, input-level: the committed bundle is a bad
+    last-good source because one zeroed rebuild overwrites it in place —
+    the 06:25 run found only its own poison to carry. The cache file has
+    exactly one writer condition (fetch succeeded), so it survives any
+    number of bad days between good ones.
+    """
+    if fetched:
+        return fetched, "live"
+    rp = (cached or {}).get("raid_progression")
+    if rp:
+        return rp, "cache"
+    return {}, "none"
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--live-dungeons", action="store_true",
@@ -192,7 +212,22 @@ def main(argv=None):
     else:
         dungeon_bests = _load_json(dungeon_cache, {})
 
-    raid_progression = _fetch_guild_progression(cfg)
+    prog_cache_path = os.path.join(REPO_ROOT, "raid_progression_cache.json")
+    fetched_prog = _fetch_guild_progression(cfg)
+    raid_progression, prog_source = resolve_raid_progression(
+        fetched_prog, _load_json(prog_cache_path, None))
+    if prog_source == "live":
+        with open(prog_cache_path, "w", encoding="utf-8") as f:
+            json.dump({"fetched_at": datetime.now(timezone.utc).isoformat(),
+                       "source": "raider.io guilds/profile fields=raid_progression",
+                       "raid_progression": raid_progression}, f, indent=2)
+    elif prog_source == "cache":
+        print("  WARNING: live guild progression unavailable — using last-good "
+              "raid_progression_cache.json (fetched_at "
+              f"{_load_json(prog_cache_path, {}).get('fetched_at')})")
+    else:
+        print("  WARNING: live guild progression unavailable and no last-good "
+              "cache — raid layer will reflect no data this run")
 
     site = web_data.build_site_data(
         board_state=board_state, manifest=manifest,

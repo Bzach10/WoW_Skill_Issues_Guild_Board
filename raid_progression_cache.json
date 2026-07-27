@@ -1,0 +1,14 @@
+{
+  "fetched_at": "2026-07-27T00:03:52.735595+00:00",
+  "source": "raider.io guilds/profile fields=raid_progression",
+  "seed_note": "Seeded 2026-07-27 from the last bundle built from a successful live fetch (commit 8ccfda9, web_data_public/island_completion.json generated_at 2026-07-27T00:03:52Z) after raider.io's guild-profile endpoint began returning 500s during the guild-split churn and two rebuilds committed a zeroed raid block. Values are the pipeline's own last-good output converted back to the raw fetch shape; the next successful live fetch overwrites this file.",
+  "raid_progression": {
+    "tier-mn-1": {
+      "summary": "4/9 M",
+      "total_bosses": 9,
+      "normal_bosses_killed": 0,
+      "heroic_bosses_killed": 9,
+      "mythic_bosses_killed": 4
+    }
+  }
+}

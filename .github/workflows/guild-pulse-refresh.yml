@@ -61,15 +61,17 @@ jobs:
           # pulse_channels is configured AND the bot token secret exists —
           # until then the refresh script no-ops and the file is absent.
           [ -f guild_pulse_cache.json ] && git add guild_pulse_cache.json
+          [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
           git add web_data_public
           if git diff --cached --quiet; then
             echo "No pulse changes to commit."
           else
             git commit -m "Refresh guild pulse feed [skip ci]"
+            git checkout -- .
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
-              for f in guild_pulse_cache.json web_data_public; do
+              for f in guild_pulse_cache.json web_data_public raid_progression_cache.json; do
                 git checkout --ours "$f" 2>/dev/null && git add "$f" || true
               done
               git rebase --continue

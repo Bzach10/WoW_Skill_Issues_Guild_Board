@@ -55,15 +55,17 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           git add parses_cache.json web_data_public
+          [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
           if git diff --cached --quiet; then
             echo "No parse changes to commit."
           else
             git commit -m "Refresh WCL parse data [skip ci]"
+            git checkout -- .
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
-              git checkout --ours parses_cache.json web_data_public
-              git add parses_cache.json web_data_public
+              git checkout --ours parses_cache.json web_data_public raid_progression_cache.json
+              git add parses_cache.json web_data_public raid_progression_cache.json
               git rebase --continue
               git push
             fi
