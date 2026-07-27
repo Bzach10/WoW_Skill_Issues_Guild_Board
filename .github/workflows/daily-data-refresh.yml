@@ -1,0 +1,92 @@
+name: Daily Data Refresh
+
+# THE FULL DAILY DATA PULL — data only, nothing posts anywhere.
+#
+# Owner's question (2026-07-27): "We're setup to do the full data pull on a
+# daily basis correct?" The honest answer was NO: the roster swept only in
+# weekly-board's Tuesday cron, and the daily competition (14:00 UTC) and
+# parse (13:30 UTC) refreshes both land AFTER the consumer site's own daily
+# pickup at 13:00 UTC — so the site always shipped yesterday's bundle.
+#
+# This workflow closes both gaps in one scheduled job, at 11:30 UTC —
+# comfortably before the 13:00 UTC site pickup:
+#   1. refresh_competition — LIVE two-way guild membership (joiners in,
+#      verified leavers to the departed ledger) + M+ scores/runs/ranks;
+#   2. refresh_parses — per-character WCL parse averages (active sweep
+#      daily, full discovery per its own cadence; inert without creds);
+#   3. build_site_data — full web_data_public rebuild, raid block from the
+#      live fetch or the last-good raid_progression_cache.json;
+#   4. validate_bundle — the cross-layer gate; nothing inconsistent commits.
+#
+# NO Discord steps here, by design: the weekly board post stays Tuesday's
+# (weekly-board.yml), and the daily WANTED-BOARD post remains gated off in
+# daily-competition-refresh.yml (config competition.daily_post: false).
+# The 13:30/14:00 crons stay as same-day refreshers; this job's only role
+# is a complete, fresh bundle BEFORE the site's daily delivery window.
+
+on:
+  schedule:
+    - cron: "30 11 * * *"
+  workflow_dispatch:
+
+jobs:
+  refresh-data:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Refresh competition + live two-way roster (Raider.io, public)
+        run: python scripts/refresh_competition.py
+
+      - name: Refresh per-character WCL parses (inert without creds)
+        env:
+          WCL_CLIENT_ID: ${{ secrets.WCL_CLIENT_ID }}
+          WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
+        run: python scripts/refresh_parses.py
+
+      - name: Rebuild the site data bundle
+        run: python scripts/build_site_data.py --out web_data_public
+
+      - name: Validate the bundle (cross-layer consistency gate)
+        run: python scripts/validate_bundle.py web_data_public
+
+      - name: Commit the refreshed data
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Branch names may contain shell metacharacters; bind, don't splice.
+          REF_NAME: ${{ github.ref_name }}
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add competition_cache.json web_data_public
+          [ -f parses_cache.json ] && git add parses_cache.json
+          [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+          else
+            git commit -m "Daily data refresh [skip ci]"
+            # Drop unstaged leftovers (roster_reconciliation.json et al.) so
+            # a rebase onto a moved main cannot strand this commit on the
+            # runner — the 2026-07-27 weekly-board failure mode.
+            git checkout -- .
+            if git pull --rebase origin "$REF_NAME"; then
+              git push
+            else
+              for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
+                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+              done
+              git rebase --continue
+              git push
+            fi
+          fi
