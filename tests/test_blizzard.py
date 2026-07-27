@@ -104,6 +104,25 @@ def test_fetch_roster_profiles_skips_failures_and_lowercases_keys(monkeypatch):
     assert list(profiles.keys()) == ["rakdisc-proudmoore"]
 
 
+def test_fetch_roster_profiles_splits_multiword_realm_slugs(monkeypatch):
+    """Names cannot contain '-'; realm slugs can ("bleeding-hollow",
+    "area-52"). The split must be on the FIRST dash — the old rsplit
+    sent name="Meowstal-bleeding" realm="hollow" and silently dropped
+    every multi-word-realm character from the cache."""
+    calls = []
+
+    def fake_fetch(token, region, realm, name):
+        calls.append((name, realm))
+        return {"name": name, "realm": realm}
+
+    monkeypatch.setattr(blizzard, "fetch_character_profile", fake_fetch)
+    profiles = blizzard.fetch_roster_profiles(
+        "tok", "us", ["Meowstal-bleeding-hollow", "Andika-area-52"])
+
+    assert calls == [("Meowstal", "bleeding-hollow"), ("Andika", "area-52")]
+    assert sorted(profiles) == ["andika-area-52", "meowstal-bleeding-hollow"]
+
+
 def test_refresh_profile_cache_noop_when_disabled(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     monkeypatch.setenv("BLIZZARD_CLIENT_ID", "cid")

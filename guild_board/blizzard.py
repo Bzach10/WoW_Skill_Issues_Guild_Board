@@ -108,12 +108,18 @@ def fetch_roster_profiles(token, region, roster):
     """roster: iterable of 'Name-Realm' strings (same shape roster_cache.json
     already uses). Returns {"name-realm": profile_dict} — lowercased keys,
     entries that failed or came back empty are simply omitted.
+
+    Split on the FIRST dash: WoW character names cannot contain '-', but
+    realm slugs routinely do ("bleeding-hollow", "area-52", "emerald-dream").
+    The old rsplit('-', 1) mangled every multi-word realm (name="x-bleeding",
+    realm="hollow" -> 404 -> silently omitted), which is why the cache held
+    zero multi-dash keys while 65 of 135 roster members had them.
     """
     profiles = {}
     for entry in roster:
         if "-" not in entry:
             continue
-        name, realm = entry.rsplit("-", 1)
+        name, realm = entry.split("-", 1)
         profile = fetch_character_profile(token, region, realm, name)
         if profile:
             profiles[entry.lower()] = profile

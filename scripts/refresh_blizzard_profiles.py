@@ -7,8 +7,16 @@ with either missing: it logs why it skipped and exits 0 without touching
 the board pipeline.
 
 Usage: python scripts/refresh_blizzard_profiles.py [--force]
+           [--extra "name-realm,name-realm,..."]
+
+--extra appends characters to the roster list for this refresh only —
+same "name-realm" slug shape roster_cache.json uses. It exists for crew
+the roster pull does not carry (e.g. unverified members who need armory
+appearance data for cast art). Keys only; the appearance data itself
+always comes from the Blizzard API, never by hand.
 """
 
+import argparse
 import os
 import sys
 from pathlib import Path
@@ -26,8 +34,13 @@ REQUIRED_SECRETS = ("BLIZZARD_CLIENT_ID", "BLIZZARD_CLIENT_SECRET")
 
 
 def main(argv=None):
-    argv = argv if argv is not None else sys.argv[1:]
-    force = "--force" in argv
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--force", action="store_true")
+    parser.add_argument("--extra", default="",
+                        help="comma-separated extra name-realm keys to refresh "
+                             "alongside the roster (keys only, data from API)")
+    args = parser.parse_args(argv if argv is not None else sys.argv[1:])
+    force = args.force
 
     cfg = load_config()
 
@@ -44,6 +57,12 @@ def main(argv=None):
         return 0
 
     roster, _ = load_roster_cache(cfg)
+    extra = [e.strip().lower() for e in args.extra.split(",") if e.strip()]
+    if extra:
+        seen = set(roster)
+        added = [e for e in extra if e not in seen]
+        roster = list(roster) + added
+        print(f"--extra: {len(added)} character(s) appended to this refresh.")
     if not roster:
         print("roster_cache.json is empty or missing; nothing to refresh. "
               "Run the weekly board at least once first so a roster exists.")

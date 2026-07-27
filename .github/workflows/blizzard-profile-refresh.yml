@@ -22,6 +22,13 @@ on:
         description: "Force refresh even if the cache is still fresh"
         type: boolean
         required: false
+      extra:
+        description: >-
+          Comma-separated extra name-realm keys (roster_cache slug shape,
+          e.g. meowstal-bleeding-hollow) to refresh alongside the roster.
+          Keys only — appearance data always comes from the Blizzard API.
+        type: string
+        required: false
 
 jobs:
   refresh-blizzard-profiles:
@@ -44,13 +51,17 @@ jobs:
         env:
           BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
           BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
-          # The dispatch input is free text. It is bound to an env var here
-          # and read as "$VAR" below — never spliced into the script body.
+          # The dispatch inputs are free text. They are bound to env vars
+          # here and read as "$VAR" below — never spliced into the script body.
           FORCE: ${{ github.event.inputs.force }}
+          EXTRA: ${{ github.event.inputs.extra }}
         run: |
           args=()
           if [ "$FORCE" == "true" ]; then
             args+=(--force)
+          fi
+          if [ -n "$EXTRA" ]; then
+            args+=(--extra "$EXTRA")
           fi
           python scripts/refresh_blizzard_profiles.py "${args[@]}"
 
