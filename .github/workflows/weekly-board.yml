@@ -163,6 +163,13 @@ jobs:
             echo "No cache/state changes to commit."
           else
             git commit -m "Update roster cache and board state [skip ci]"
+            # The run leaves other tracked files modified in the workspace
+            # (roster_reconciliation.json is regenerated every board build).
+            # Everything we want is committed above; drop the leftovers or
+            # `git pull --rebase` refuses and the commit dies with the
+            # runner — which is exactly how the 2026-07-27 roster refresh
+            # was lost the first time.
+            git checkout -- .
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
