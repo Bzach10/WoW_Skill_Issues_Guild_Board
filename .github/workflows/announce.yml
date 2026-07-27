@@ -22,6 +22,10 @@ on:
         type: boolean
         default: false
 
+# The job never touches the repo -- no checkout, no commits. The webhook
+# secret is the only capability it needs, so the token gets no scopes at all.
+permissions: {}
+
 jobs:
   announce:
     runs-on: ubuntu-latest
