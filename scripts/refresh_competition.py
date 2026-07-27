@@ -115,6 +115,74 @@ def apply_membership(old, live_members, now_iso, min_fraction=0.5):
     return sorted(live_members), membership, departed
 
 
+def _check_departure(key, cfg):
+    """In-the-moment second source for one departure candidate: the
+    character's own Raider.io profile, which names their CURRENT guild.
+
+    Absence from the guild-members crawl alone is one pull's opinion — and
+    this project has deleted a real raider on exactly that inference before.
+    Returns (status, guild_name):
+      'present'  profile says they are in OUR guild  -> not departed;
+      'left'     profile names another/no guild      -> departure confirmed;
+      'gone'     profile 400/404 (deleted/transferred) -> confirmed gone;
+      'unknown'  transport error / unexpected status -> cannot verify.
+    """
+    from guild_board.raiderio import _rio_get
+
+    guild = ((cfg or {}).get("guild") or {})
+    name, realm = key.split("-", 1)
+    try:
+        resp = _rio_get(params={"region": guild.get("region", "us"),
+                                "realm": realm, "name": name,
+                                "fields": "guild"})
+    except Exception:  # noqa: BLE001 — transport failure is 'unknown', never fatal
+        return "unknown", None
+    if resp.status_code in (400, 404):
+        return "gone", None
+    if resp.status_code != 200:
+        return "unknown", None
+    current = ((resp.json() or {}).get("guild") or {}).get("name")
+    if current == guild.get("name"):
+        return "present", current
+    return "left", current
+
+
+def verify_departures(departed, now_iso, checker):
+    """Confirm every unannotated ledger row against a second source. Pure —
+    `checker` is injectable (tests pass a fake; main passes _check_departure).
+
+    Returns (confirmed, reinstated):
+      confirmed  — rows staying in the ledger. 'left'/'gone' rows gain a
+                   departure_check annotation (real pulled data: status, the
+                   guild the profile named, checked_at). 'unknown' rows that
+                   were ALREADY ledgered stay, unannotated, and will be
+                   re-checked next run.
+      reinstated — keys whose profile says they are still in our guild, plus
+                   NEW candidates that could not be verified this run: both
+                   stay members. Unverifiable is not evidence of leaving.
+    """
+    confirmed, reinstated = [], []
+    for row in departed:
+        if row.get("departure_check"):
+            confirmed.append(row)  # already confirmed on an earlier run
+            continue
+        status, current_guild = checker(row["key"])
+        if status == "present":
+            reinstated.append(row["key"])
+        elif status in ("left", "gone"):
+            confirmed.append({**row, "departure_check": {
+                "method": "raider.io character profile",
+                "status": status,
+                "guild": current_guild,
+                "checked_at": now_iso,
+            }})
+        elif row.get("departed_at") == now_iso:
+            reinstated.append(row["key"])  # new candidate, unverifiable today
+        else:
+            confirmed.append(row)  # standing ledger row; re-check next run
+    return confirmed, reinstated
+
+
 def _member_stub(key, info):
     """A live guild member the per-character sweep could not resolve (e.g.
     Raider.io has not crawled them yet). Everything here is REAL data from
@@ -161,15 +229,30 @@ def main(argv=None):
 
     membership = departed = None
     roster = []
+    reinstated_rows = {}
     if live is not None:
         try:
             roster, membership, departed = apply_membership(
                 old, live, now_iso, args.min_fraction)
             print(f"Live guild roster: {len(live)} members "
                   f"({MEMBERSHIP_SOURCE}); departed ledger: {len(departed)}")
+            # Second source before anyone is (or stays) ledgered: their own
+            # character profile. Absence from one crawl is not a departure.
+            departed, reinstated = verify_departures(
+                departed, now_iso, lambda k: _check_departure(k, cfg))
+            if reinstated:
+                print(f"  {len(reinstated)} departure candidate(s) reinstated "
+                      "— their profile still names our guild, or could not "
+                      "be verified this run: " + ", ".join(sorted(reinstated)))
+                last_known = {c["key"]: c for c in old.get("characters") or []
+                              if c.get("key")}
+                reinstated_rows = {k: last_known[k] for k in reinstated
+                                   if k in last_known}
+                roster = sorted(set(roster) | set(reinstated))
         except MembershipGuard as exc:
             print(f"  live roster REFUSED: {exc}; "
                   "falling back to roster_cache.json")
+            membership = departed = None
 
     if membership is None:
         roster, _ = load_roster_cache(cfg)
@@ -206,10 +289,15 @@ def main(argv=None):
     # guild, not the subset Raider.io has crawled character pages for.
     if live is not None and membership and membership.get("source") == MEMBERSHIP_SOURCE:
         resolved = {c["key"] for c in fresh["characters"]}
-        stubs = [_member_stub(k, live[k]) for k in roster if k not in resolved]
+        stubs = [_member_stub(k, live[k]) for k in roster
+                 if k not in resolved and k in live]
+        # A reinstated member whose re-sweep also failed keeps their
+        # last-known record — reinstatement must never become a silent drop.
+        stubs += [row for k, row in sorted(reinstated_rows.items())
+                  if k not in resolved and k not in live]
         if stubs:
-            print(f"  {len(stubs)} live member(s) had no character page yet — "
-                  "kept as unscored membership stubs")
+            print(f"  {len(stubs)} member(s) without a live sweep result — "
+                  "kept with roster facts / last-known data, no invented scores")
             fresh["characters"].extend(stubs)
             fresh["count"] = len(fresh["characters"])
 

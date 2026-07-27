@@ -79,6 +79,39 @@ def fetch_dungeon_bests(cfg, season):
     return bests
 
 
+def carry_forward_raid(site, previous_island_completion):
+    """LAST-GOOD semantics for the raid block (2026-07-27 incident).
+
+    _fetch_guild_progression fails open to {} — and on 2026-07-27 Raider.io's
+    guild profile endpoint 500'd (mid guild-split churn), so the rebuild wrote
+    an internally-consistent raid block with EVERY kill count at zero. Zeros
+    that mean "the fetch failed" must never masquerade as zeros that mean
+    "no boss has died": when the fresh raid block carries no kills and the
+    previously committed island_completion.json does, the previous raid block
+    is carried forward verbatim, stamped `carried_forward_from` with the
+    bundle timestamp it came from. The next successful live fetch replaces it
+    wholesale (a genuinely new tier fetches successfully and never lands
+    here). Returns True when the carry happened.
+
+    Only call this when the live progression fetch returned nothing — the
+    trigger is "no data this run", never "data we dislike".
+    """
+    ic = site.get("island_completion") or {}
+    raid = ic.get("raid") or {}
+    kbd = raid.get("killed_by_difficulty") or {}
+    fresh_has_kills = bool(raid.get("bosses_killed")) or any(kbd.values())
+    prev = previous_island_completion or {}
+    prev_raid = prev.get("raid") or {}
+    prev_kbd = prev_raid.get("killed_by_difficulty") or {}
+    prev_has_kills = bool(prev_raid.get("bosses_killed")) or any(prev_kbd.values())
+    if fresh_has_kills or not prev_has_kills:
+        return False
+    carried = dict(prev_raid)
+    carried["carried_forward_from"] = prev.get("generated_at")
+    ic["raid"] = carried
+    return True
+
+
 def _fetch_guild_progression(cfg):
     """Live guild raid_progression from Raider.io (public, no creds)."""
     import requests
@@ -174,6 +207,20 @@ def main(argv=None):
         guild={"name": cfg["guild"]["name"], "realm": cfg["guild"]["realm_slug"],
                "region": cfg["guild"]["region"]},
         season=season)
+
+    if not raid_progression:
+        # The live fetch came back empty — see carry_forward_raid: the
+        # previously committed raid block (still on disk, not yet
+        # overwritten) beats a zeroed one that only means "fetch failed".
+        prev_ic = _load_json(os.path.join(args.out, "island_completion.json"), None)
+        if carry_forward_raid(site, prev_ic):
+            print("  WARNING: live guild progression unavailable — carried the "
+                  "previous raid block forward (last-good, from bundle "
+                  f"{(prev_ic or {}).get('generated_at')})")
+        else:
+            print("  WARNING: live guild progression unavailable and no "
+                  "previous raid block with kills to carry — raid layer "
+                  "reflects no data this run")
 
     # Persist the fresh transmog snapshot for next week's diff.
     with open(os.path.join(args.out, "transmog_snapshot.json"), "w", encoding="utf-8") as f:

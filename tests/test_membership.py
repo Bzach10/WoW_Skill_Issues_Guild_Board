@@ -30,6 +30,7 @@ from refresh_competition import (  # noqa: E402
     MembershipGuard,
     _member_stub,
     apply_membership,
+    verify_departures,
 )
 
 from guild_board.competition import build_competition  # noqa: E402
@@ -116,6 +117,77 @@ def test_first_run_with_no_previous_cache_accepts_any_size():
     assert roster == ["solo-dalaran"]
     assert departed == []
     assert membership["source"] == "raider.io guild roster"
+
+
+# ---------------------------------------------------------------------------
+# verify_departures — a second source before anyone is ledgered
+# ---------------------------------------------------------------------------
+
+def _ledger_row(key, departed_at=NOW, **extra):
+    return {**_cached(key), "departed_at": departed_at, **extra}
+
+
+def test_profile_still_in_guild_reinstates_the_member():
+    confirmed, reinstated = verify_departures(
+        [_ledger_row("crawlgap-dalaran")], NOW,
+        checker=lambda k: ("present", "Skill Issues"))
+    assert confirmed == []
+    assert reinstated == ["crawlgap-dalaran"]
+
+
+def test_confirmed_leaver_is_annotated_with_the_evidence():
+    confirmed, reinstated = verify_departures(
+        [_ledger_row("leaver-dalaran")], NOW,
+        checker=lambda k: ("left", "Some Other Guild"))
+    assert reinstated == []
+    check = confirmed[0]["departure_check"]
+    assert check["status"] == "left"
+    assert check["guild"] == "Some Other Guild"
+    assert check["checked_at"] == NOW
+
+
+def test_deleted_character_is_confirmed_gone():
+    confirmed, _ = verify_departures(
+        [_ledger_row("erased-dalaran")], NOW, checker=lambda k: ("gone", None))
+    assert confirmed[0]["departure_check"]["status"] == "gone"
+
+
+def test_unverifiable_new_candidate_stays_a_member():
+    # Unverifiable is not evidence of leaving: a NEW candidate the profile
+    # check cannot reach today is reinstated and re-examined next run.
+    confirmed, reinstated = verify_departures(
+        [_ledger_row("flaky-dalaran", departed_at=NOW)], NOW,
+        checker=lambda k: ("unknown", None))
+    assert confirmed == []
+    assert reinstated == ["flaky-dalaran"]
+
+
+def test_unverifiable_standing_ledger_row_stays_ledgered():
+    # An OLD ledger row is standing state, not a fresh conclusion — an
+    # unreachable profile keeps it, unannotated, for the next run.
+    confirmed, reinstated = verify_departures(
+        [_ledger_row("gone-dalaran", departed_at=EARLIER)], NOW,
+        checker=lambda k: ("unknown", None))
+    assert reinstated == []
+    assert confirmed[0]["departed_at"] == EARLIER
+    assert "departure_check" not in confirmed[0]
+
+
+def test_already_annotated_rows_are_not_rechecked():
+    calls = []
+
+    def checker(key):
+        calls.append(key)
+        return ("left", "Elsewhere")
+
+    row = _ledger_row("settled-dalaran", departed_at=EARLIER,
+                      departure_check={"method": "raider.io character profile",
+                                       "status": "left", "guild": "Elsewhere",
+                                       "checked_at": EARLIER})
+    confirmed, reinstated = verify_departures([row], NOW, checker)
+    assert calls == []
+    assert confirmed == [row]
+    assert reinstated == []
 
 
 # ---------------------------------------------------------------------------
