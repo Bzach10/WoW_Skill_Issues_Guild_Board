@@ -1,0 +1,50 @@
+name: Announce
+
+# One-off announcements to the guild-board channel, posted through the same
+# DISCORD_WEBHOOK_URL secret the weekly board uses. The message is a manual
+# dispatch input, so nothing posts on a schedule and nothing posts twice.
+#
+#   gh workflow run announce.yml -f message="text here"
+#   gh workflow run announce.yml -f message="test" -f dry_run=true
+#
+# dry_run proves the workflow and the secret without sending anything.
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: "The announcement text (Discord markdown, multiline OK)"
+        required: true
+        type: string
+      dry_run:
+        description: "Validate without posting"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  announce:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post the announcement
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          MSG: ${{ inputs.message }}
+          DRY: ${{ inputs.dry_run }}
+        run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "DISCORD_WEBHOOK_URL secret is not set" >&2
+            exit 1
+          fi
+          if [ -z "$MSG" ]; then
+            echo "empty message" >&2
+            exit 1
+          fi
+          PAYLOAD=$(jq -n --arg c "$MSG" '{content: $c}')
+          if [ "$DRY" = "true" ]; then
+            echo "dry run: secret present, payload valid, nothing posted"
+            exit 0
+          fi
+          curl -sf -X POST -H "Content-Type: application/json" \
+               -d "$PAYLOAD" "$DISCORD_WEBHOOK_URL" > /dev/null
+          echo "announcement posted"
