@@ -44,10 +44,21 @@ jobs:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         run: python scripts/refresh_guild_pulse.py
 
+      - name: Refresh competition so the rebuilt bundle is ONE moment
+        # THE 2026-07-28 FIX -- see blizzard-profile-refresh.yml for the full
+        # note. This job runs every 6 hours and was the most frequent producer
+        # of mixed-vintage bundles: four times a day it re-stamped every layer
+        # with `now` while competition.based_on stayed put, and each of those
+        # bundles was uningestible by the site. Public API, no credentials.
+        run: python scripts/refresh_competition.py
+
       - name: Rebuild the site bundle (reuses committed data caches)
         # No --live-dungeons here: this is the frequent feed refresh, so it
         # reuses the dungeon/guild caches the weekly Blizzard Action committed.
         run: python scripts/build_site_data.py --out web_data_public
+
+      - name: Validate the bundle (cross-layer consistency gate)
+        run: python scripts/validate_bundle.py web_data_public
 
       - name: Commit refreshed pulse + bundle
         env:
@@ -62,7 +73,10 @@ jobs:
           # until then the refresh script no-ops and the file is absent.
           [ -f guild_pulse_cache.json ] && git add guild_pulse_cache.json
           [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
-          git add web_data_public
+          # competition_cache.json rides along because this job now refreshes
+          # it (see the coherence step above) -- committing the bundle without
+          # the cache that produced it would re-open the same vintage gap.
+          git add competition_cache.json web_data_public
           if git diff --cached --quiet; then
             echo "No pulse changes to commit."
           else

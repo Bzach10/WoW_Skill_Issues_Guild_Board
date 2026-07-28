@@ -249,6 +249,105 @@ def check_stamps(bundle, report):
                 "is the daily refresh actually running?")
 
 
+# The consumer's own window. data/build_contract.py::verify_source_vintage in
+# the redesign repo refuses any delivery whose meta.sources span more than
+# this. Duplicated here ON PURPOSE so the producer fails first, loudly, at the
+# workflow that made the bad bundle -- instead of the consumer failing later,
+# quietly, in a place nobody is watching.
+CONSUMER_VINTAGE_WINDOW_SECONDS = 30 * 60
+
+
+def _iso(ts):
+    from datetime import datetime
+    if not ts:
+        return None
+    try:
+        return datetime.fromisoformat(ts)
+    except (TypeError, ValueError):
+        return None
+
+
+def check_bundle_coherence(bundle, report):
+    """The bundle is ONE MOMENT, or it is not shippable.
+
+    The 2026-07-28 incident. build_site_data.py stamps generated_at = now on
+    site_data / island_completion / records_leaderboard / parses -- the
+    REBUILD clock -- while competition.json carries based_on from
+    competition_cache.json, which only moves when refresh_competition.py
+    runs. FIVE workflows rebuild this bundle; only two of them refresh
+    competition first. The other three therefore committed bundles whose
+    stamps spanned hours, and every one of those was silently UNINGESTIBLE:
+    the consumer's vintage guard refused each delivery, the site froze on a
+    two-day-old raid number, and nothing in this repo said a word about it.
+
+    Nothing here looks wrong file-by-file -- that is exactly why it needs a
+    check. The rule is the consumer's own: every source stamp within 30
+    minutes of every other. A bundle that fails this must not be committed
+    and must not be delivered.
+
+    THE FIX WHEN THIS FIRES is at the producer, never here: refresh the
+    laggard layer before rebuilding the bundle (for competition that is
+    `python scripts/refresh_competition.py`, public API, no credentials).
+    Widening this window would only move the lie downstream.
+    """
+    site = bundle.get("site_data")
+    if not isinstance(site, dict):
+        return  # presence check already reported it
+
+    comp = bundle.get("competition") or {}
+    stamps = {
+        "site_data.generated_at": site.get("generated_at"),
+        "competition.based_on": comp.get("based_on") if comp.get("available") else None,
+        "island_completion.generated_at": (bundle.get("island_completion") or {}).get("generated_at"),
+        "records_leaderboard.generated_at": (bundle.get("records_leaderboard") or {}).get("generated_at"),
+        "parses.generated_at": (bundle.get("parses") or {}).get("generated_at"),
+    }
+    parsed = {k: _iso(v) for k, v in stamps.items() if v}
+    if len(parsed) < 2:
+        return
+
+    newest_k = max(parsed, key=lambda k: parsed[k])
+    oldest_k = min(parsed, key=lambda k: parsed[k])
+    spread = parsed[newest_k] - parsed[oldest_k]
+    if spread.total_seconds() > CONSUMER_VINTAGE_WINDOW_SECONDS:
+        report.error(
+            "coherence",
+            f"bundle spans {spread} -- {oldest_k} ({stamps[oldest_k]}) is that much "
+            f"older than {newest_k} ({stamps[newest_k]}). The consumer's 30-minute "
+            f"vintage guard will REFUSE this delivery and the site will freeze on "
+            f"whatever it already had. Refresh '{oldest_k.split('.')[0]}' before "
+            "rebuilding the bundle (competition: python scripts/refresh_competition.py).")
+
+
+def check_raid_frame(bundle, report):
+    """The raid's per-boss frame must not contradict its own aggregate.
+
+    island_completion.raid carries BOTH an aggregate (bosses_killed,
+    killed_by_difficulty) and a per-boss islands[] list. When the per-boss
+    detail comes from Blizzard guild achievements those name only the kills
+    that earned a Guild Run achievement -- three of them at the time of
+    writing -- while the aggregate says nine bosses are down on Heroic. A
+    consumer that renders the islands list would then show 3/9 next to a
+    "5/9 M" headline. Warning, not error: the redesign's contract derives
+    per-boss state from the aggregate plus attestations and is unaffected,
+    so this must not block a bundle -- but no other consumer should discover
+    it the hard way.
+    """
+    raid = ((bundle.get("island_completion") or {}).get("raid")) or {}
+    islands = raid.get("islands") or []
+    if not islands:
+        return
+    conquered = sum(1 for b in islands if b.get("status") == "conquered")
+    killed = raid.get("bosses_killed")
+    if isinstance(killed, int) and killed and conquered < killed:
+        report.warn(
+            "raid_frame",
+            f"raid.islands marks {conquered} boss(es) conquered but bosses_killed "
+            f"= {killed} (detail_source={raid.get('detail_source')}). The named-kill "
+            "source knows fewer kills than the aggregate; a consumer reading the "
+            "islands list will under-report progress.")
+
+
 def validate_bundle(bundle_dir):
     """Run every check; returns a Report."""
     report = Report()
@@ -257,6 +356,8 @@ def validate_bundle(bundle_dir):
     check_competition_internal(bundle, report)
     check_weekly_coherence(bundle, report)
     check_stamps(bundle, report)
+    check_bundle_coherence(bundle, report)
+    check_raid_frame(bundle, report)
     return report
 
 

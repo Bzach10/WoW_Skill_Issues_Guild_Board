@@ -39,6 +39,14 @@ jobs:
           WCL_CLIENT_SECRET: ${{ secrets.WCL_CLIENT_SECRET }}
         run: python scripts/refresh_parses.py
 
+      - name: Refresh competition so the rebuilt bundle is ONE moment
+        # THE 2026-07-28 FIX -- see blizzard-profile-refresh.yml for the full
+        # note. Short version: competition.json is the only layer that carries
+        # the age of its own cache instead of the rebuild clock, so a rebuild
+        # that skips this step emits a bundle the consumer's vintage guard
+        # must refuse. Public Raider.io API, no credentials, fail-open.
+        run: python scripts/refresh_competition.py
+
       - name: Rebuild the site data bundle
         # Reuses the committed caches; the parses layer is the point here.
         run: python scripts/build_site_data.py --out web_data_public
@@ -54,7 +62,10 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add parses_cache.json web_data_public
+          # competition_cache.json rides along because this job now refreshes
+          # it (see the coherence step above) -- committing the bundle without
+          # the cache that produced it would re-open the same vintage gap.
+          git add parses_cache.json competition_cache.json web_data_public
           [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
           if git diff --cached --quiet; then
             echo "No parse changes to commit."
