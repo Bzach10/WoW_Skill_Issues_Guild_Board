@@ -148,6 +148,13 @@ jobs:
             echo "No Blizzard data changes to commit."
           else
             git commit -m "Update Blizzard profile + guild + card data [skip ci]"
+            # Drop unstaged leftovers (roster_reconciliation.json, web_stats.json
+            # et al., rewritten by build_site_data) BEFORE the rebase. Without
+            # this, `git pull --rebase` refuses with "cannot pull with rebase:
+            # You have unstaged changes" and the commit is stranded on the
+            # runner — which is exactly what run 30332438237 did, and the same
+            # failure daily-data-refresh.yml already carries this fix for.
+            git checkout -- .
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
