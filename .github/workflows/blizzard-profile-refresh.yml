@@ -5,13 +5,28 @@ name: Blizzard Profile Refresh
 # It reads the roster_cache.json already committed by the weekly board run
 # and never touches board rendering or the Discord post.
 #
-# Two independent refreshes run here, each gated + fail-soft on its own:
+# Three independent refreshes run here, each gated + fail-soft on its own:
 #   1. per-character profiles (gender/race/class/spec + transmog render URL
 #      + per-slot equipment)  -> blizzard_profile_cache.json
 #   2. guild-level data (achievements + activity)
 #      -> blizzard_guild_cache.json
+#   3. per-character TRADING CARD data — every useful Profile API endpoint
+#      (identity, gear, the stats panel, achievements, the statistics panel,
+#      titles, keystone runs, professions, collections, PvP, raid kills),
+#      slimmed at fetch time  -> blizzard_card_cache.json
+#                             +  blizzard_statistic_catalog.json
 # The guild cache is what populates the site's trophy hall (layer 3) and the
-# authoritative per-boss raid-island completion (layer 4).
+# authoritative per-boss raid-island completion (layer 4). The card cache is
+# the TCG's data plane and nothing on the board or the site reads it, so it
+# can fail whole without touching anything that ships today.
+#
+# WHY THE CARD STEP LIVES ON THIS WEEKLY CRON, not the daily 11:30 job:
+# a card is a DATED SNAPSHOT — the game reads frozen printings, and printings
+# mint on the chapter boundary. Tuesday 13:15 UTC IS that boundary (it trails
+# the weekly board's 13:00 run). Cost is not the reason: the sweep is ~2,550
+# requests, ~7% of one hour's client budget and ~90s of wall clock, so the
+# daily job could absorb it if the site ever wants a daily LIVE view beside
+# the weekly printings.
 #
 # No-ops cleanly until BOTH of these exist:
 #   1. blizzard.enabled: true in config.yml
@@ -28,6 +43,12 @@ on:
       force:
         description: "Force refresh even if the caches are still fresh"
         type: boolean
+        required: false
+      cards_limit:
+        description: >-
+          Card data: fetch only the first N roster characters (a cheap probe
+          run — 0 or blank means the whole roster). Digits only.
+        type: string
         required: false
 
 jobs:
@@ -74,6 +95,28 @@ jobs:
           fi
           python scripts/refresh_guild_data.py "${args[@]}"
 
+      - name: Refresh Blizzard trading-card data (every profile endpoint)
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
+          # Same binding rule as the steps above — dispatch inputs are free
+          # text and are read as "$VAR", never spliced into the script body.
+          FORCE: ${{ github.event.inputs.force }}
+          CARDS_LIMIT: ${{ github.event.inputs.cards_limit }}
+        run: |
+          args=()
+          if [ "$FORCE" == "true" ]; then
+            args+=(--force)
+          fi
+          # Digits only: a non-numeric input is ignored rather than passed on,
+          # so a typo cannot turn into an argparse failure that reds the job.
+          case "$CARDS_LIMIT" in
+            ''|*[!0-9]*) ;;
+            0) ;;
+            *) args+=(--limit "$CARDS_LIMIT") ;;
+          esac
+          python scripts/refresh_blizzard_cards.py "${args[@]}"
+
       - name: Rebuild the site data bundle (layers 3 & 4 now fill)
         # --live-dungeons does the Raider.io roster sweep so layer 4's dungeon
         # islands populate too (public API, no creds); guild achievements
@@ -88,18 +131,30 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          # The two caches are the credentialed source data; the rebuilt
-          # bundle under web_data_public/ is what the site serves.
-          git add blizzard_profile_cache.json blizzard_guild_cache.json web_data_public
+          # The caches are the credentialed source data; the rebuilt bundle
+          # under web_data_public/ is what the site serves. The card cache and
+          # its statistic catalog are the TCG's source data — added with -f
+          # guards absent, since a probe run may legitimately not write them.
+          CACHES="blizzard_profile_cache.json blizzard_guild_cache.json"
+          CARDS="blizzard_card_cache.json blizzard_statistic_catalog.json"
+          git add $CACHES web_data_public
+          for f in $CARDS; do
+            # `&& ... || true`: the runner's shell is `bash -e`, so a bare
+            # failing test would abort the step on a probe run that wrote
+            # neither file.
+            [ -f "$f" ] && git add "$f" || true
+          done
           if git diff --cached --quiet; then
             echo "No Blizzard data changes to commit."
           else
-            git commit -m "Update Blizzard profile + guild data [skip ci]"
+            git commit -m "Update Blizzard profile + guild + card data [skip ci]"
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
-              git checkout --ours blizzard_profile_cache.json blizzard_guild_cache.json
-              git add blizzard_profile_cache.json blizzard_guild_cache.json web_data_public
+              for f in $CACHES $CARDS; do
+                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+              done
+              git add web_data_public
               git rebase --continue
               git push
             fi
