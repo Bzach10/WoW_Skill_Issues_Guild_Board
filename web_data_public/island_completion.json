@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-27T21:48:10.844946+00:00",
+  "generated_at": "2026-07-28T05:55:19.397104+00:00",
   "season_slug": "season-mn-1",
   "season_name": "Midnight Season 1",
   "dungeons": {
@@ -10,83 +10,83 @@
         "name": "Algeth'ar Academy",
         "kind": "dungeon",
         "challenge_mode_id": 402,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "magisters-terrace",
         "name": "Magisters' Terrace",
         "kind": "dungeon",
         "challenge_mode_id": 558,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "maisara-caverns",
         "name": "Maisara Caverns",
         "kind": "dungeon",
         "challenge_mode_id": 560,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "nexuspoint-xenas",
         "name": "Nexus-Point Xenas",
         "kind": "dungeon",
         "challenge_mode_id": 559,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "pit-of-saron",
         "name": "Pit of Saron",
         "kind": "dungeon",
         "challenge_mode_id": 556,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "seat-of-the-triumvirate",
         "name": "Seat of the Triumvirate",
         "kind": "dungeon",
         "challenge_mode_id": 239,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "skyreach",
         "name": "Skyreach",
         "kind": "dungeon",
         "challenge_mode_id": 161,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       },
       {
         "id": "windrunner-spire",
         "name": "Windrunner Spire",
         "kind": "dungeon",
         "challenge_mode_id": 557,
-        "status": "locked",
-        "best_level": null,
-        "timed": false,
-        "held_by": null
+        "status": "conquered",
+        "best_level": 20,
+        "timed": true,
+        "held_by": "Amrevenge"
       }
     ],
-    "conquered": 0,
+    "conquered": 8,
     "total": 8
   },
   "raid": {
@@ -116,9 +116,9 @@
         "name": "Vorasius",
         "kind": "raid_boss",
         "order": 2,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true,
+        "inferred_from_progress": false,
         "first_kill_at": null
       },
       {
@@ -136,9 +136,9 @@
         "name": "Vaelgor & Ezzorak",
         "kind": "raid_boss",
         "order": 4,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true,
+        "inferred_from_progress": false,
         "first_kill_at": null
       },
       {
@@ -146,9 +146,9 @@
         "name": "Lightblinded Vanguard",
         "kind": "raid_boss",
         "order": 5,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true,
+        "inferred_from_progress": false,
         "first_kill_at": null
       },
       {
@@ -156,9 +156,9 @@
         "name": "Crown of the Cosmos",
         "kind": "raid_boss",
         "order": 6,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true,
+        "inferred_from_progress": false,
         "first_kill_at": null
       },
       {
@@ -167,18 +167,18 @@
         "kind": "raid_boss",
         "order": 7,
         "status": "conquered",
-        "kill_confirmed": false,
-        "inferred_from_progress": true,
-        "first_kill_at": null
+        "kill_confirmed": true,
+        "inferred_from_progress": false,
+        "first_kill_at": "2026-03-21T00:42:22+00:00"
       },
       {
         "id": "beloren-child-of-alar",
         "name": "Belo'ren, Child of Al'ar",
         "kind": "raid_boss",
         "order": 8,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true,
+        "inferred_from_progress": false,
         "first_kill_at": null
       },
       {
@@ -186,12 +186,12 @@
         "name": "Midnight Falls",
         "kind": "raid_boss",
         "order": 9,
-        "status": "conquered",
+        "status": "locked",
         "kill_confirmed": false,
-        "inferred_from_progress": true,
+        "inferred_from_progress": false,
         "first_kill_at": null
       }
     ],
-    "detail_source": "raid_progression_count"
+    "detail_source": "guild_achievements"
   }
 }
