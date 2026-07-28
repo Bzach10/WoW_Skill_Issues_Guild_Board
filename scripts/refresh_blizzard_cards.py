@@ -29,6 +29,7 @@ as silently missing card fields.
 """
 
 import argparse
+import json
 import os
 import sys
 from pathlib import Path
@@ -43,6 +44,51 @@ from guild_board.blizzard_cards import (  # noqa: E402
 from guild_board.config import load_config, load_roster_cache  # noqa: E402
 
 REQUIRED_SECRETS = ("BLIZZARD_CLIENT_ID", "BLIZZARD_CLIENT_SECRET")
+
+# The competition bundle carries the LIVE two-way roster -- ranked, unranked
+# AND the departed ledger. roster_cache.json is a different, narrower list.
+COMPETITION = ("web_data_public/competition.json", "web_data/competition.json")
+
+
+def card_roster(cfg):
+    """Every character a CARD could exist for: roster_cache UNION the
+    competition bundle's ranked + unranked + departed.
+
+    WHY THE UNION, measured. The first full sweep sweep ran off roster_cache
+    alone (156 entries) and reached 121 of the consumer's 135 active cards.
+    All 14 misses were characters the sweep NEVER ATTEMPTED -- not one API
+    failure among them -- because roster_cache and the competition roster are
+    different lists. That 89.6% ceiling held six otherwise-complete fields
+    (item level, health, signature gear, achievement points, mounts, deaths)
+    below the consumer's 90% "safe as a game mechanic" floor, purely as a
+    delivery artefact.
+
+    THE DEPARTED ARE SWEPT TOO, on purpose: the consumer keeps a card for
+    every member who has left, and a card with no gear line is a worse
+    memorial than one with the gear they left in.
+
+    Falls back to roster_cache alone when no bundle is on disk, so a fresh
+    checkout still works.
+    """
+    roster, _ = load_roster_cache(cfg)
+    keys = {str(k).strip().lower() for k in roster if k}
+    root = Path(__file__).resolve().parents[1]
+    for rel in COMPETITION:
+        path = root / rel
+        if not path.exists():
+            continue
+        try:
+            with open(path, encoding="utf-8") as f:
+                bundle = json.load(f)
+        except (OSError, json.JSONDecodeError):
+            continue
+        for group in ("characters", "unranked", "departed"):
+            for entry in bundle.get(group) or []:
+                key = (entry or {}).get("key")
+                if key:
+                    keys.add(str(key).strip().lower())
+        break
+    return sorted(keys)
 
 
 def _say(msg):
@@ -90,7 +136,7 @@ def main(argv=None):
              "secrets, never locally. See SETUP_BLIZZARD.md.".format(", ".join(missing)))
         return 0
 
-    roster, _ = load_roster_cache(cfg)
+    roster = card_roster(cfg)
     if args.only:
         roster = [e.strip().lower() for e in args.only.split(",") if e.strip()]
         _say(f"--only: {len(roster)} character(s) this run.")
