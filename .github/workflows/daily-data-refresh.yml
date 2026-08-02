@@ -83,10 +83,15 @@ jobs:
             if git pull --rebase origin "$REF_NAME"; then
               git push
             else
+              # Rebase semantics: during a rebase, --theirs is THE COMMIT BEING
+              # REPLAYED (our freshly generated data); --ours is upstream's
+              # older copy. We always want the fresh generation to win for
+              # generated artifacts. And --continue needs an editor in CI, so
+              # pin GIT_EDITOR=true or it dies with "Terminal is dumb".
               for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
-                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
               done
-              git rebase --continue
+              GIT_EDITOR=true git rebase --continue
               git push
             fi
           fi
