@@ -13,6 +13,11 @@ only sanctioned way to hand the bundle to a consumer:
      evidence-based membership record) are never touched;
   4. a DELIVERY.json manifest records what was delivered, from where, when.
 
+OPTIONAL files (see OPTIONAL below) ride the same atomic swap when they are
+present and are never a reason to refuse a delivery -- "complete or not at
+all" is a rule about the required set, not a demand that every graceful
+sidecar be healthy on the same day.
+
 Default consumer: the redesign's contract inputs at
 C:/dev/wipefest-redesign/data/source. Its own build (build_contract.py)
 re-verifies everything on its side, so a bad delivery cannot silently ship
@@ -43,6 +48,15 @@ from validate_bundle import validate_bundle  # noqa: E402
 DELIVERED = ("competition.json", "records_leaderboard.json",
              "recap_ribbon.json", "island_completion.json",
              "guild_achievements.json", "parses.json", "site_data.json")
+
+# Delivered when present, never a reason to refuse. raid_kills.json is the
+# per-boss kill record (build_site_data.py, Raider.io guilds/boss-kill): a
+# sidecar the consumer reads as top authority when it is there and does
+# without when it is not. Making it REQUIRED would mean a Raider.io fault on
+# the boss-kill endpoint blocks the delivery of six healthy files -- the
+# opposite of what a graceful layer is for. A bundle built before this file
+# existed still delivers cleanly for the same reason.
+OPTIONAL = ("raid_kills.json",)
 
 DEFAULT_TO = "C:/dev/wipefest-redesign/data/source"
 
@@ -76,8 +90,12 @@ def deliver(src_dir, dest_dir, dry_run=False):
         _say(f"DELIVERY REFUSED: destination does not exist: {dest_dir}")
         return 1
 
+    present_optional = tuple(f for f in OPTIONAL
+                             if os.path.exists(os.path.join(src_dir, f)))
+    files = DELIVERED + present_optional
+
     if dry_run:
-        _say(f"dry run: would deliver {len(DELIVERED)} files "
+        _say(f"dry run: would deliver {len(files)} files "
              f"{src_dir} -> {dest_dir}")
         return 0
 
@@ -85,7 +103,8 @@ def deliver(src_dir, dest_dir, dry_run=False):
         "delivered_at": datetime.now(timezone.utc).isoformat(),
         "delivered_from": os.path.abspath(src_dir),
         "delivered_by": "wipefest-board/scripts/deliver_bundle.py",
-        "files": list(DELIVERED),
+        "files": list(files),
+        "optional_absent": [f for f in OPTIONAL if f not in present_optional],
         "note": ("Complete-set delivery. roster_supplement.json is "
                  "consumer-local and never delivered or touched."),
     }
@@ -95,16 +114,16 @@ def deliver(src_dir, dest_dir, dry_run=False):
     # die halfway through a file.
     staging = tempfile.mkdtemp(prefix=".delivery-", dir=os.path.dirname(dest_dir.rstrip("/\\")) or ".")
     try:
-        for f in DELIVERED:
+        for f in files:
             shutil.copy2(os.path.join(src_dir, f), os.path.join(staging, f))
         with open(os.path.join(staging, "DELIVERY.json"), "w", encoding="utf-8") as fh:
             json.dump(manifest, fh, ensure_ascii=False, indent=1)
-        for f in DELIVERED + ("DELIVERY.json",):
+        for f in files + ("DELIVERY.json",):
             os.replace(os.path.join(staging, f), os.path.join(dest_dir, f))
     finally:
         shutil.rmtree(staging, ignore_errors=True)
 
-    _say(f"delivered {len(DELIVERED)} files + DELIVERY.json -> {dest_dir}")
+    _say(f"delivered {len(files)} files + DELIVERY.json -> {dest_dir}")
     _say("next: python data/build_contract.py in the consumer repo "
          "(its own guard re-verifies the delivery)")
     return 0

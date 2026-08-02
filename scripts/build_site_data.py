@@ -9,6 +9,12 @@ Live M+ dungeon bests (island completion) require a full-roster Raider.io
 sweep, so they are OFF by default. Pass --live-dungeons to fetch them; the
 result is cached in web_data/dungeon_bests.json and reused otherwise.
 
+Also writes raid_kills.json — the per-boss, per-difficulty kill record with
+dates (Raider.io guilds/boss-kill, 27 requests, ~9s). It is a sidecar, not a
+site_data layer: it names WHICH bosses are down where the bundle's
+killed_by_difficulty only counts them, and it degrades to available:false
+without touching anything else.
+
 Usage:
     python scripts/build_site_data.py [--live-dungeons] [--out DIR]
 """
@@ -23,8 +29,8 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from guild_board import raiderio, web_data  # noqa: E402
 from guild_board import season as season_mod  # noqa: E402
-from guild_board import web_data  # noqa: E402
 from guild_board.blizzard import load_guild_cache  # noqa: E402
 from guild_board.cast_manifest import load_manifest  # noqa: E402
 from guild_board.config import load_config, load_roster_cache, split_name_realm  # noqa: E402
@@ -257,6 +263,31 @@ def main(argv=None):
                   "previous raid block with kills to carry — raid layer "
                   "reflects no data this run")
 
+    # PER-BOSS RAID KILLS (raid_kills.json) — WHICH bosses are down, at which
+    # difficulty, and when, from Raider.io's public guilds/boss-kill endpoint.
+    # This is the named answer the aggregate raid_progression count above
+    # cannot give; downstream consumers read it as the top authority over any
+    # order-walk inference. It is a SIDECAR, not a site_data layer: nothing in
+    # the envelope depends on it, so a bad sweep degrades exactly one file.
+    # Never allowed to break the refresh — a fetch fault lands as
+    # available:false (see collect_raid_boss_kills), and anything else is
+    # caught here and written as the same honest empty shape.
+    print("Fetching per-boss raid kills from Raider.io (public, no creds)...")
+    try:
+        raid_kills = raiderio.collect_raid_boss_kills(cfg, season)
+    except Exception as exc:
+        raid_kills = {
+            "schema_version": raiderio.RAID_KILLS_SCHEMA_VERSION,
+            "fetched_at": datetime.now(timezone.utc).isoformat(),
+            "available": False, "status": "unavailable",
+            "error": f"{type(exc).__name__}: {exc}",
+            "source": raiderio.RAIDERIO_BOSS_KILL_URL,
+            "raid": {"slug": season["raid"]["slug"]},
+            "difficulties": list(raiderio.KILL_DIFFICULTIES),
+            "killed_by_difficulty": {}, "bosses": [],
+        }
+    _write(os.path.join(args.out, "raid_kills.json"), raid_kills)
+
     # Persist the fresh transmog snapshot for next week's diff.
     with open(os.path.join(args.out, "transmog_snapshot.json"), "w", encoding="utf-8") as f:
         json.dump(site["transmog_changes"]["snapshot"], f, indent=2)
@@ -278,6 +309,14 @@ def main(argv=None):
     n_confirmed = sum(1 for b in raid["islands"] if b["kill_confirmed"])
     print(f"  raid islands    : {n_confirmed} confirmed / {raid['bosses_killed']} killed "
           f"(source: {raid['detail_source']})")
+    if raid_kills.get("available"):
+        named = ", ".join(f"{d} {n}" for d, n in
+                          (raid_kills.get("killed_by_difficulty") or {}).items() if n)
+        print(f"  raid kills      : named + dated ({named or 'none yet'})")
+    else:
+        print(f"  raid kills      : {raid_kills.get('status')} — "
+              f"{len(raid_kills.get('unresolved') or [])} boss/difficulty pair(s) "
+              "unanswered; consumers fall back to count inference")
     print(f"  transmog changes: {site['transmog_changes']['changed_count']}"
           f"{' (first run — baseline seeded)' if site['transmog_changes']['is_first_run'] else ''}")
     pulse = site["guild_pulse"]

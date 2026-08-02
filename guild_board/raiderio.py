@@ -1,4 +1,5 @@
 import logging
+from datetime import datetime, timezone
 
 import requests
 
@@ -15,11 +16,23 @@ RAIDERIO_URL = "https://raider.io/api/v1/characters/profile"
 _rio_limiter = RateLimiter()
 
 
+def _rio_request(url, params, timeout=30, headers=None):
+    """GET any Raider.io endpoint through the pooled session, paced by the ONE
+    shared limiter — so a collector on a second endpoint cannot stack up past
+    the intended aggregate rate.
+
+    `headers` is only forwarded when a caller actually sets one, so the profile
+    path's call signature is byte-for-byte what it always was (several tests
+    stand in a fake `get` that accepts exactly the old keywords)."""
+    _rio_limiter.acquire()
+    extra = {"headers": headers} if headers else {}
+    return get_session().get(url, params=params, timeout=timeout, **extra)
+
+
 def _rio_get(params, timeout=30):
     """GET the Raider.io profile endpoint through the pooled session, paced
     by the shared limiter. Replaces per-call requests.get + sleep(0.3)."""
-    _rio_limiter.acquire()
-    return get_session().get(RAIDERIO_URL, params=params, timeout=timeout)
+    return _rio_request(RAIDERIO_URL, params, timeout=timeout)
 
 
 DUNGEON_NAME_FIXES = {
@@ -357,3 +370,167 @@ def raiderio_profile_url(name, realm, region):
 def raiderio_run_url(name, realm, region, dungeon):
     """Best-effort URL for a character's best run for a dungeon."""
     return f"https://raider.io/characters/{region}/{realm}/{name}#mythic-plus"
+
+
+# ---------------------------------------------------------------------------
+# PER-BOSS RAID KILLS — WHICH bosses are down, at which difficulty, and when.
+#
+# WHY THIS EXISTS. guilds/profile?fields=raid_progression reports progression as
+# a COUNT per difficulty and nothing else: "5/9 M" says five bosses are down on
+# Mythic, never WHICH five. Everything downstream that wanted names had to walk
+# the pull order and credit the first five — a guess wearing a fact's clothes,
+# and wrong the moment a guild kills out of order (this one did: Chimaerus at
+# order 7 died before Lightblinded Vanguard at order 5). guilds/boss-kill
+# answers the real question one boss and one difficulty at a time, dated:
+#
+#   GET /api/v1/guilds/boss-kill?region&realm&guild&raid&boss&difficulty
+#       -> {"kill": {"defeatedAt": "...", ...}, "roster": [...]}   killed
+#       -> {}                                                      not killed
+#
+# Public and unauthenticated like the rest of Raider.io, so it works locally and
+# rides the same shared limiter: 9 bosses x 3 difficulties = 27 requests, ~9s.
+#
+# TWO KINDS OF "NO KILL", NEVER CONFLATED. HTTP 200 with an empty body is DATA
+# ("this guild has not killed that boss at that difficulty"). A timeout, a 5xx,
+# a rejected question or an unparseable body is IGNORANCE. Ignorance about even
+# one pair makes the WHOLE payload non-authoritative (available=false): a
+# partial sweep read as complete would publish "not killed" for a boss we merely
+# failed to ask about — the exact confident-wrong-answer this endpoint exists to
+# end. Consumers must treat available=false as "no named data", not as zeros.
+# ---------------------------------------------------------------------------
+
+RAIDERIO_BOSS_KILL_URL = "https://raider.io/api/v1/guilds/boss-kill"
+
+# Raider.io wants a real User-Agent on the guild endpoints; requests' default
+# names the library, not the caller. Identifying the project is what the API
+# asks for and makes our traffic legible if we ever need support.
+BOSS_KILL_USER_AGENT = ("skill-issues-guild-board "
+                        "(+https://github.com/Bzach10/WoW_Skill_Issues_Guild_Board)")
+
+# Ascending, the same order guild progression is reported in. Normal is swept
+# too: it costs 9 requests and an early-season tier is normal-only.
+KILL_DIFFICULTIES = ("normal", "heroic", "mythic")
+
+# One retry before a pair is declared unknown. A transient 5xx should not cost
+# the whole day's named data; a persistent one should not be papered over.
+KILL_FETCH_ATTEMPTS = 2
+
+RAID_KILLS_SCHEMA_VERSION = 1
+
+
+def _now_iso():
+    return datetime.now(timezone.utc).isoformat()
+
+
+def fetch_boss_kill(guild, raid_slug, boss_slug, difficulty):
+    """(defeated_at, known) for ONE boss at ONE difficulty.
+
+        (None, True)   asked and answered: NOT killed at this difficulty
+        (iso,  True)   asked and answered: killed, on this date
+        (None, False)  we could not ask. NOT the same as "not killed" — the
+                       caller must degrade the whole payload rather than
+                       publish this silence as a negative.
+
+    guild is {"name", "realm", "region"}. Never raises.
+    """
+    params = {"region": guild.get("region"), "realm": guild.get("realm"),
+              "guild": guild.get("name"), "raid": raid_slug,
+              "boss": boss_slug, "difficulty": difficulty}
+    for attempt in range(1, KILL_FETCH_ATTEMPTS + 1):
+        try:
+            resp = _rio_request(RAIDERIO_BOSS_KILL_URL, params,
+                                headers={"User-Agent": BOSS_KILL_USER_AGENT})
+        except requests.RequestException as exc:
+            logger.warning("boss-kill %s/%s: %s (attempt %s)",
+                           boss_slug, difficulty, exc, attempt)
+            continue
+        if resp.status_code == 200:
+            try:
+                body = resp.json() or {}
+            except ValueError:
+                logger.warning("boss-kill %s/%s: unparseable body (attempt %s)",
+                               boss_slug, difficulty, attempt)
+                continue
+            return ((body.get("kill") or {}).get("defeatedAt") or None), True
+        if 400 <= resp.status_code < 500:
+            # The API rejecting the question (bad slug, unknown guild) is not
+            # transient; retrying only spends the rate limit. Still unknown.
+            logger.warning("boss-kill %s/%s: HTTP %s — question rejected",
+                           boss_slug, difficulty, resp.status_code)
+            break
+        logger.warning("boss-kill %s/%s: HTTP %s (attempt %s)",
+                       boss_slug, difficulty, resp.status_code, attempt)
+    return None, False
+
+
+def collect_raid_boss_kills(cfg, season=None, difficulties=KILL_DIFFICULTIES):
+    """The raid_kills.json payload: every boss of the season's raid, at every
+    difficulty, with the date it died.
+
+    Shape (schema_version 1):
+        available   True only when EVERY boss x difficulty pair was answered.
+        status      "ok" | "partial_fetch" | "unavailable"
+        fetched_at  when this sweep ran (UTC ISO8601)
+        bosses[]    {slug, name, order, kills: {difficulty: {defeated_at}}}
+                    — a difficulty absent from `kills` means NOT killed, and
+                    only means that when available is True.
+        killed_by_difficulty  named-kill counts, for a consumer to reconcile
+                    against raid_progression's aggregate. They must agree; a
+                    consumer that finds them disagreeing should refuse rather
+                    than pick a winner.
+
+    Never raises on a network fault — every failure lands in `unresolved` and
+    flips `available`. A malformed season definition is a code bug and is left
+    to raise; the caller (build_site_data) wraps the whole call so a refresh
+    still completes.
+    """
+    from guild_board import season as season_mod
+
+    season = season or season_mod.CURRENT_SEASON
+    g = (cfg or {}).get("guild") or {}
+    guild = {"name": g.get("name"), "realm": g.get("realm_slug"),
+             "region": g.get("region", "us")}
+    raid = season["raid"]
+    difficulties = tuple(difficulties)
+
+    bosses = []
+    unresolved = []
+    for boss in raid["bosses"]:
+        kills = {}
+        for difficulty in difficulties:
+            defeated_at, known = fetch_boss_kill(
+                guild, raid["slug"], boss["slug"], difficulty)
+            if not known:
+                unresolved.append(f"{boss['slug']}/{difficulty}")
+                continue
+            if defeated_at:
+                kills[difficulty] = {"defeated_at": defeated_at}
+        bosses.append({"slug": boss["slug"], "name": boss["name"],
+                       "order": boss["order"], "kills": kills})
+
+    asked = len(bosses) * len(difficulties)
+    if not unresolved:
+        status = "ok"
+    elif len(unresolved) >= asked:
+        status = "unavailable"
+    else:
+        status = "partial_fetch"
+
+    payload = {
+        "schema_version": RAID_KILLS_SCHEMA_VERSION,
+        "fetched_at": _now_iso(),
+        "available": not unresolved,
+        "status": status,
+        "source": RAIDERIO_BOSS_KILL_URL,
+        "guild": guild,
+        "raid": {"slug": raid["slug"],
+                 "display_name": raid.get("display_name"),
+                 "total_bosses": len(raid["bosses"])},
+        "difficulties": list(difficulties),
+        "killed_by_difficulty": {d: sum(1 for b in bosses if d in b["kills"])
+                                 for d in difficulties},
+        "bosses": bosses,
+    }
+    if unresolved:
+        payload["unresolved"] = unresolved
+    return payload
