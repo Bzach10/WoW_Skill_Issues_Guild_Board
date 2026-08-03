@@ -28,6 +28,11 @@ jobs:
           out = {"name": g.get("name"), "realm": g.get("realm", {}).get("name"),
                  "faction": g.get("faction", {}).get("name"),
                  "member_count": g.get("member_count"), "crest": g.get("crest")}
+          for part in ("emblem", "border"):
+              href = out["crest"][part]["media"]["key"]["href"]
+              req2 = urllib.request.Request(href + "&locale=en_US" if "?" in href else href,
+                                            headers={"Authorization": "Bearer " + tok})
+              out["crest"][part]["media_assets"] = json.load(urllib.request.urlopen(req2)).get("assets")
           json.dump(out, open("guild_crest.json", "w"), indent=1)
           print("crest fetched:", json.dumps(out.get("crest", {}))[:200])
           PY
