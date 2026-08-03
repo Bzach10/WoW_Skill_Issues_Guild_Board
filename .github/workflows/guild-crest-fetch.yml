@@ -1,0 +1,35 @@
+# One-shot: fetch the guild's REAL in-game crest (emblem/border/colors) from
+# Blizzard's guild endpoint. Artifact-only -- commits nothing, touches no data.
+# Owner asked 2026-08-03 whether the site's crest is the real tabard; it is not
+# (house-designed device). This fetch enables the side-by-side for his pick.
+name: guild-crest-fetch
+on: { workflow_dispatch: {} }
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch crest components
+        env:
+          BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
+          BLIZZARD_CLIENT_SECRET: ${{ secrets.BLIZZARD_CLIENT_SECRET }}
+        run: |
+          python3 - <<'PY'
+          import json, os, urllib.request, urllib.parse, base64
+          cid, sec = os.environ["BLIZZARD_CLIENT_ID"], os.environ["BLIZZARD_CLIENT_SECRET"]
+          tok_req = urllib.request.Request(
+              "https://oauth.battle.net/token",
+              data=b"grant_type=client_credentials",
+              headers={"Authorization": "Basic " + base64.b64encode(f"{cid}:{sec}".encode()).decode()})
+          tok = json.load(urllib.request.urlopen(tok_req))["access_token"]
+          url = ("https://us.api.blizzard.com/data/wow/guild/bleeding-hollow/skill-issues"
+                 "?namespace=profile-us&locale=en_US")
+          req = urllib.request.Request(url, headers={"Authorization": "Bearer " + tok})
+          g = json.load(urllib.request.urlopen(req))
+          out = {"name": g.get("name"), "realm": g.get("realm", {}).get("name"),
+                 "faction": g.get("faction", {}).get("name"),
+                 "member_count": g.get("member_count"), "crest": g.get("crest")}
+          json.dump(out, open("guild_crest.json", "w"), indent=1)
+          print("crest fetched:", json.dumps(out.get("crest", {}))[:200])
+          PY
+      - uses: actions/upload-artifact@v4
+        with: { name: guild-crest, path: guild_crest.json }
