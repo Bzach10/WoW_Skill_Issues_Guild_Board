@@ -1,12 +1,20 @@
-# One-shot: full character sheets for the card game's stat model.
-# v2: correct statistics path (/statistics), payload slimmed server-side
-# (spec names only, profile scalars only). Artifact-only.
+# Character sheets for the card game's stat model (SKILL ISSUE).
+# v3: weekly on Tuesday 16:00 UTC (after US reset) + manual dispatch;
+# commits char_stats.json as a CI-owned cache like its refresh siblings.
+# The cards' numbers re-derive from this weekly - the "your card upgrades
+# on reset day" cadence (owner-picked over daily, 2026-08-03).
 name: char-stats-fetch
-on: { workflow_dispatch: {} }
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 16 * * 2"
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
+      - uses: actions/checkout@v5
       - name: Fetch character sheets
         env:
           BLIZZARD_CLIENT_ID: ${{ secrets.BLIZZARD_CLIENT_ID }}
@@ -183,3 +191,14 @@ jobs:
           PY
       - uses: actions/upload-artifact@v4
         with: { name: char-stats, path: char_stats.json }
+      - name: Commit the cache
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add char_stats.json
+          if git diff --cached --quiet; then
+            echo "no changes"
+          else
+            git commit -m "Refresh character sheets [skip ci]"
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push
+          fi
