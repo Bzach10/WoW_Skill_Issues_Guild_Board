@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-03T21:49:54.548991+00:00",
+  "generated_at": "2026-08-03T23:01:21.468894+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.549116+00:00",
+    "generated_at": "2026-08-03T23:01:21.469072+00:00",
     "week_of": "2026-07-28",
     "based_on": "2026-07-28T18:11:22.043694+00:00",
     "beats": [
@@ -75,7 +75,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.549271+00:00",
+    "generated_at": "2026-08-03T23:01:21.469332+00:00",
     "based_on": "2026-07-28T18:11:22.043694+00:00",
     "standing": {
       "realm": 35,
@@ -1144,7 +1144,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.549281+00:00",
+    "generated_at": "2026-08-03T23:01:21.469346+00:00",
     "available": false,
     "based_on": "2026-07-28T18:11:22.043694+00:00",
     "week_label": null,
@@ -1199,7 +1199,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.549520+00:00",
+    "generated_at": "2026-08-03T23:01:21.469733+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2164,7 +2164,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.549547+00:00",
+    "generated_at": "2026-08-03T23:01:21.469776+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -2361,7 +2361,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.547886+00:00",
+    "generated_at": "2026-08-03T23:01:21.467123+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2370,7 +2370,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.549554+00:00",
+    "generated_at": "2026-08-03T23:01:21.469784+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2385,7 +2385,7 @@
       "slug": "season-mn-1",
       "name": "Midnight Season 1"
     },
-    "based_on": "2026-08-03T21:49:13.071359+00:00",
+    "based_on": "2026-08-03T23:00:38.235105+00:00",
     "week_baseline_from": "2026-07-28T18:11:22.043694+00:00",
     "character_count": 114,
     "ranked_count": 96,
@@ -2490,9 +2490,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1077,
+          "realm_overall": 1078,
           "realm_class": 41,
-          "region_overall": 11918
+          "region_overall": 11938
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -2646,7 +2646,7 @@
         "ranks": {
           "realm_overall": 1733,
           "realm_class": 203,
-          "region_overall": 13230
+          "region_overall": 13244
         },
         "delta_week": 320.5,
         "delta_day": 0.0,
@@ -2803,7 +2803,7 @@
         "ranks": {
           "realm_overall": 274,
           "realm_class": 28,
-          "region_overall": 14390
+          "region_overall": 14409
         },
         "delta_week": 127.8,
         "delta_day": 0.0,
@@ -2955,9 +2955,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3972,
+          "realm_overall": 3974,
           "realm_class": 556,
-          "region_overall": 28698
+          "region_overall": 28709
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -3020,11 +3020,11 @@
         "class": "Monk",
         "spec": "Brewmaster Monk",
         "role": "Tank",
-        "score": 3685.9,
+        "score": 3690.1,
         "scores_by_role": {
           "dps": 871,
           "healer": 3132.5,
-          "tank": 3685.9
+          "tank": 3690.1
         },
         "best_runs": [
           {
@@ -3048,6 +3048,26 @@
             "par_ms": 1800999
           },
           {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 459.2,
+            "clear_ms": 1493936,
+            "par_ms": 1680999
+          },
+          {
+            "dungeon": "Windrunner Spire",
+            "short": "WS",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 458.3,
+            "clear_ms": 1808036,
+            "par_ms": 1980999
+          },
+          {
             "dungeon": "Seat of the Triumvirate",
             "short": "SEAT",
             "level": 18,
@@ -3068,16 +3088,6 @@
             "par_ms": 1980999
           },
           {
-            "dungeon": "Skyreach",
-            "short": "SR",
-            "level": 18,
-            "timed": true,
-            "upgrades": 1,
-            "score": 456.7,
-            "clear_ms": 1604702,
-            "par_ms": 1680999
-          },
-          {
             "dungeon": "Algeth'ar Academy",
             "short": "AA",
             "level": 18,
@@ -3086,16 +3096,6 @@
             "score": 456.7,
             "clear_ms": 1778167,
             "par_ms": 1860999
-          },
-          {
-            "dungeon": "Windrunner Spire",
-            "short": "WS",
-            "level": 18,
-            "timed": true,
-            "upgrades": 1,
-            "score": 456.5,
-            "clear_ms": 1901669,
-            "par_ms": 1980999
           },
           {
             "dungeon": "Nexus-Point Xenas",
@@ -3109,12 +3109,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2258,
-          "realm_class": 312,
-          "region_overall": 29437
+          "realm_overall": 2222,
+          "realm_class": 307,
+          "region_overall": 28911
         },
-        "delta_week": 0.1,
-        "delta_day": 0.0,
+        "delta_week": 4.3,
+        "delta_day": 4.2,
         "is_new": false,
         "parse": {
           "best": 79.0,
@@ -3277,7 +3277,7 @@
         "ranks": {
           "realm_overall": 194,
           "realm_class": 9,
-          "region_overall": 48069
+          "region_overall": 48081
         },
         "delta_week": 277.4,
         "delta_day": 0.0,
@@ -3429,9 +3429,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4984,
+          "realm_overall": 4985,
           "realm_class": 471,
-          "region_overall": 51948
+          "region_overall": 51955
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -3539,9 +3539,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1332,
+          "realm_overall": 1333,
           "realm_class": 76,
-          "region_overall": 53673
+          "region_overall": 53680
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -3702,9 +3702,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7075,
+          "realm_overall": 7076,
           "realm_class": 383,
-          "region_overall": 57397
+          "region_overall": 57413
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -3858,7 +3858,7 @@
         "ranks": {
           "realm_overall": 1083,
           "realm_class": 89,
-          "region_overall": 59391
+          "region_overall": 59407
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -4012,7 +4012,7 @@
         "ranks": {
           "realm_overall": 378,
           "realm_class": 16,
-          "region_overall": 61231
+          "region_overall": 61248
         },
         "delta_week": 129.3,
         "delta_day": 0.0,
@@ -4166,7 +4166,7 @@
         "ranks": {
           "realm_overall": 274,
           "realm_class": 34,
-          "region_overall": 62779
+          "region_overall": 62793
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -4223,6 +4223,160 @@
           "source": "wcl_zone_rankings"
         },
         "rank": 12,
+        "top5": false
+      },
+      {
+        "name": "Phyrthesham",
+        "realm": "Bleeding Hollow",
+        "realm_slug": "bleeding-hollow",
+        "key": "phyrthesham-bleeding-hollow",
+        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/phyrthesham",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/phyrthesham",
+        "class": "Shaman",
+        "spec": "Restoration Shaman",
+        "role": "Healer",
+        "score": 3459.3,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 3459.3,
+          "tank": 0
+        },
+        "best_runs": [
+          {
+            "dungeon": "Magisters' Terrace",
+            "short": "MT",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 461.3,
+            "clear_ms": 1699897,
+            "par_ms": 2040999
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 459.2,
+            "clear_ms": 1493936,
+            "par_ms": 1680999
+          },
+          {
+            "dungeon": "Windrunner Spire",
+            "short": "WS",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 458.3,
+            "clear_ms": 1808036,
+            "par_ms": 1980999
+          },
+          {
+            "dungeon": "Nexus-Point Xenas",
+            "short": "NPX",
+            "level": 17,
+            "timed": true,
+            "upgrades": 1,
+            "score": 444.9,
+            "clear_ms": 1563617,
+            "par_ms": 1800999
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 16,
+            "timed": true,
+            "upgrades": 1,
+            "score": 425.9,
+            "clear_ms": 1756183,
+            "par_ms": 1800999
+          },
+          {
+            "dungeon": "Maisara Caverns",
+            "short": "MC",
+            "level": 15,
+            "timed": true,
+            "upgrades": 2,
+            "score": 419.4,
+            "clear_ms": 1482143,
+            "par_ms": 1980999
+          },
+          {
+            "dungeon": "Seat of the Triumvirate",
+            "short": "SEAT",
+            "level": 15,
+            "timed": true,
+            "upgrades": 1,
+            "score": 411.9,
+            "clear_ms": 1940202,
+            "par_ms": 2040999
+          },
+          {
+            "dungeon": "Algeth'ar Academy",
+            "short": "AA",
+            "level": 12,
+            "timed": true,
+            "upgrades": 2,
+            "score": 378.4,
+            "clear_ms": 1196373,
+            "par_ms": 1860999
+          }
+        ],
+        "ranks": {
+          "realm_overall": 1270,
+          "realm_class": 152,
+          "region_overall": 69935
+        },
+        "delta_week": null,
+        "delta_day": 128.2,
+        "is_new": true,
+        "parse": {
+          "best": 55.4,
+          "scaled": 55.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 5.0
+            }
+          },
+          "difficulty": 5,
+          "by_difficulty": {
+            "mythic": {
+              "best_perf_avg": 55.4,
+              "by_role": {
+                "DPS": {
+                  "best_perf_avg": 5.0
+                }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 5.0,
+                "hps": 55.4
+              },
+              "median_perf_avg": 55.4,
+              "scaled_perf_avg": 55.4,
+              "difficulty_scale": 1.0
+            },
+            "heroic": {
+              "best_perf_avg": 40.7,
+              "by_role": {
+                "Healer": {
+                  "best_perf_avg": 40.7
+                }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 33.7,
+                "hps": 40.7
+              },
+              "median_perf_avg": 40.7,
+              "scaled_perf_avg": 32.6,
+              "difficulty_scale": 0.8
+            }
+          },
+          "source": "wcl_zone_rankings"
+        },
+        "rank": 13,
         "top5": false
       },
       {
@@ -4326,7 +4480,7 @@
         "ranks": {
           "realm_overall": 221,
           "realm_class": 13,
-          "region_overall": 71711
+          "region_overall": 71726
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -4376,7 +4530,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 13,
+        "rank": 14,
         "top5": false
       },
       {
@@ -4478,9 +4632,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3162,
+          "realm_overall": 3164,
           "realm_class": 372,
-          "region_overall": 80126
+          "region_overall": 80146
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -4530,7 +4684,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 14,
+        "rank": 15,
         "top5": false
       },
       {
@@ -4632,9 +4786,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1493,
+          "realm_overall": 1494,
           "realm_class": 135,
-          "region_overall": 81290
+          "region_overall": 81311
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -4693,7 +4847,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 15,
+        "rank": 16,
         "top5": false
       },
       {
@@ -4795,9 +4949,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1560,
+          "realm_overall": 1563,
           "realm_class": 141,
-          "region_overall": 84115
+          "region_overall": 84140
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -4856,7 +5010,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 16,
+        "rank": 17,
         "top5": false
       },
       {
@@ -4958,9 +5112,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 594,
+          "realm_overall": 595,
           "realm_class": 61,
-          "region_overall": 92540
+          "region_overall": 92566
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -5013,7 +5167,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 17,
+        "rank": 18,
         "top5": false
       },
       {
@@ -5115,9 +5269,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10909,
-          "realm_class": 1150,
-          "region_overall": 96191
+          "realm_overall": 10913,
+          "realm_class": 1151,
+          "region_overall": 96220
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -5151,7 +5305,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 18,
+        "rank": 19,
         "top5": false
       },
       {
@@ -5253,9 +5407,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3153,
+          "realm_overall": 3154,
           "realm_class": 338,
-          "region_overall": 118912
+          "region_overall": 118944
         },
         "delta_week": 329.4,
         "delta_day": 0.0,
@@ -5305,7 +5459,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 19,
+        "rank": 20,
         "top5": false
       },
       {
@@ -5407,9 +5561,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 13972,
+          "realm_overall": 13973,
           "realm_class": 1700,
-          "region_overall": 129178
+          "region_overall": 129199
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -5443,7 +5597,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 20,
+        "rank": 21,
         "top5": false
       },
       {
@@ -5545,9 +5699,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11669,
+          "realm_overall": 11671,
           "realm_class": 540,
-          "region_overall": 129549
+          "region_overall": 129573
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -5592,160 +5746,6 @@
               },
               "median_perf_avg": 69.9,
               "scaled_perf_avg": 72.3,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 21,
-        "top5": false
-      },
-      {
-        "name": "Phyrthesham",
-        "realm": "Bleeding Hollow",
-        "realm_slug": "bleeding-hollow",
-        "key": "phyrthesham-bleeding-hollow",
-        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/phyrthesham",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/phyrthesham",
-        "class": "Shaman",
-        "spec": "Restoration Shaman",
-        "role": "Healer",
-        "score": 3331.1,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 3331.1,
-          "tank": 0
-        },
-        "best_runs": [
-          {
-            "dungeon": "Magisters' Terrace",
-            "short": "MT",
-            "level": 18,
-            "timed": true,
-            "upgrades": 1,
-            "score": 461.3,
-            "clear_ms": 1699897,
-            "par_ms": 2040999
-          },
-          {
-            "dungeon": "Nexus-Point Xenas",
-            "short": "NPX",
-            "level": 17,
-            "timed": true,
-            "upgrades": 1,
-            "score": 444.9,
-            "clear_ms": 1563617,
-            "par_ms": 1800999
-          },
-          {
-            "dungeon": "Pit of Saron",
-            "short": "POS",
-            "level": 16,
-            "timed": true,
-            "upgrades": 1,
-            "score": 425.9,
-            "clear_ms": 1756183,
-            "par_ms": 1800999
-          },
-          {
-            "dungeon": "Maisara Caverns",
-            "short": "MC",
-            "level": 15,
-            "timed": true,
-            "upgrades": 2,
-            "score": 419.4,
-            "clear_ms": 1482143,
-            "par_ms": 1980999
-          },
-          {
-            "dungeon": "Seat of the Triumvirate",
-            "short": "SEAT",
-            "level": 15,
-            "timed": true,
-            "upgrades": 1,
-            "score": 411.9,
-            "clear_ms": 1940202,
-            "par_ms": 2040999
-          },
-          {
-            "dungeon": "Windrunner Spire",
-            "short": "WS",
-            "level": 14,
-            "timed": true,
-            "upgrades": 2,
-            "score": 403.5,
-            "clear_ms": 1534375,
-            "par_ms": 1980999
-          },
-          {
-            "dungeon": "Skyreach",
-            "short": "SR",
-            "level": 13,
-            "timed": true,
-            "upgrades": 1,
-            "score": 385.8,
-            "clear_ms": 1421060,
-            "par_ms": 1680999
-          },
-          {
-            "dungeon": "Algeth'ar Academy",
-            "short": "AA",
-            "level": 12,
-            "timed": true,
-            "upgrades": 2,
-            "score": 378.4,
-            "clear_ms": 1196373,
-            "par_ms": 1860999
-          }
-        ],
-        "ranks": {
-          "realm_overall": 2409,
-          "realm_class": 242,
-          "region_overall": 129914
-        },
-        "delta_week": null,
-        "delta_day": 28.3,
-        "is_new": true,
-        "parse": {
-          "best": 55.4,
-          "scaled": 55.4,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 5.0
-            }
-          },
-          "difficulty": 5,
-          "by_difficulty": {
-            "mythic": {
-              "best_perf_avg": 55.4,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 5.0
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 5.0,
-                "hps": 55.4
-              },
-              "median_perf_avg": 55.4,
-              "scaled_perf_avg": 55.4,
-              "difficulty_scale": 1.0
-            },
-            "heroic": {
-              "best_perf_avg": 40.7,
-              "by_role": {
-                "Healer": {
-                  "best_perf_avg": 40.7
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 33.7,
-                "hps": 40.7
-              },
-              "median_perf_avg": 40.7,
-              "scaled_perf_avg": 32.6,
               "difficulty_scale": 0.8
             }
           },
@@ -5855,7 +5855,7 @@
         "ranks": {
           "realm_overall": 246,
           "realm_class": 22,
-          "region_overall": 140444
+          "region_overall": 140472
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -5963,9 +5963,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 16522,
+          "realm_overall": 16526,
           "realm_class": 725,
-          "region_overall": 153276
+          "region_overall": 153310
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -6073,9 +6073,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 16729,
-          "realm_class": 930,
-          "region_overall": 155383
+          "realm_overall": 16732,
+          "realm_class": 931,
+          "region_overall": 155417
         },
         "delta_week": 42.3,
         "delta_day": 0.0,
@@ -6229,7 +6229,7 @@
         "ranks": {
           "realm_overall": 595,
           "realm_class": 45,
-          "region_overall": 157246
+          "region_overall": 157279
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -6381,9 +6381,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 17679,
-          "realm_class": 1160,
-          "region_overall": 164869
+          "realm_overall": 17683,
+          "realm_class": 1162,
+          "region_overall": 164910
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -6535,9 +6535,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 20464,
+          "realm_overall": 20468,
           "realm_class": 2300,
-          "region_overall": 192731
+          "region_overall": 192760
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -6698,9 +6698,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 20381,
+          "realm_overall": 20383,
           "realm_class": 1200,
-          "region_overall": 200156
+          "region_overall": 200180
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -6852,9 +6852,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7938,
-          "realm_class": 605,
-          "region_overall": 206959
+          "realm_overall": 7940,
+          "realm_class": 606,
+          "region_overall": 206981
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -6962,9 +6962,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 560,
+          "realm_overall": 561,
           "realm_class": 45,
-          "region_overall": 208707
+          "region_overall": 208730
         },
         "delta_week": 36.7,
         "delta_day": 0.0,
@@ -7116,9 +7116,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7619,
-          "realm_class": 359,
-          "region_overall": 210568
+          "realm_overall": 7621,
+          "realm_class": 360,
+          "region_overall": 210590
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -7265,9 +7265,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7747,
+          "realm_overall": 7748,
           "realm_class": 809,
-          "region_overall": 213809
+          "region_overall": 213829
         },
         "delta_week": null,
         "delta_day": 0,
@@ -7405,7 +7405,7 @@
         "ranks": {
           "realm_overall": 4042,
           "realm_class": 470,
-          "region_overall": 215806
+          "region_overall": 215825
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -7565,7 +7565,7 @@
         "ranks": {
           "realm_overall": 1403,
           "realm_class": 112,
-          "region_overall": 220837
+          "region_overall": 220854
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -7717,9 +7717,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 23514,
-          "realm_class": 2295,
-          "region_overall": 237432
+          "realm_overall": 23520,
+          "realm_class": 2297,
+          "region_overall": 237466
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -7879,7 +7879,7 @@
         "ranks": {
           "realm_overall": 1368,
           "realm_class": 141,
-          "region_overall": 239329
+          "region_overall": 239363
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -8037,9 +8037,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 9238,
+          "realm_overall": 9239,
           "realm_class": 615,
-          "region_overall": 240311
+          "region_overall": 240345
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -8149,7 +8149,7 @@
         "ranks": {
           "realm_overall": 1428,
           "realm_class": 111,
-          "region_overall": 248353
+          "region_overall": 248386
         },
         "delta_week": 15.9,
         "delta_day": 0.0,
@@ -8285,9 +8285,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4773,
+          "realm_overall": 4774,
           "realm_class": 544,
-          "region_overall": 254399
+          "region_overall": 254434
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -8442,9 +8442,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 28767,
-          "realm_class": 2006,
-          "region_overall": 279594
+          "realm_overall": 28771,
+          "realm_class": 2007,
+          "region_overall": 279635
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -8598,7 +8598,7 @@
         "ranks": {
           "realm_overall": 566,
           "realm_class": 53,
-          "region_overall": 292430
+          "region_overall": 292472
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -8750,9 +8750,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3361,
+          "realm_overall": 3362,
           "realm_class": 224,
-          "region_overall": 295228
+          "region_overall": 295270
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -8888,9 +8888,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10658,
+          "realm_overall": 10659,
           "realm_class": 801,
-          "region_overall": 299066
+          "region_overall": 299110
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -8998,9 +8998,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 32352,
-          "realm_class": 2304,
-          "region_overall": 319545
+          "realm_overall": 32358,
+          "realm_class": 2305,
+          "region_overall": 319607
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -9136,9 +9136,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11197,
+          "realm_overall": 11198,
           "realm_class": 839,
-          "region_overall": 321464
+          "region_overall": 321522
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -9290,9 +9290,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 9151,
+          "realm_overall": 9153,
           "realm_class": 755,
-          "region_overall": 331307
+          "region_overall": 331367
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -9446,7 +9446,7 @@
         "ranks": {
           "realm_overall": 1139,
           "realm_class": 34,
-          "region_overall": 334673
+          "region_overall": 334732
         },
         "delta_week": 147.5,
         "delta_day": 0.0,
@@ -9556,7 +9556,7 @@
         "ranks": {
           "realm_overall": 6546,
           "realm_class": 512,
-          "region_overall": 349400
+          "region_overall": 349458
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -9694,7 +9694,7 @@
         "ranks": {
           "realm_overall": 7095,
           "realm_class": 424,
-          "region_overall": 379950
+          "region_overall": 380007
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -9846,9 +9846,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2892,
+          "realm_overall": 2893,
           "realm_class": 328,
-          "region_overall": 381005
+          "region_overall": 381062
         },
         "delta_week": 169.6,
         "delta_day": 0.0,
@@ -10002,7 +10002,7 @@
         "ranks": {
           "realm_overall": 7120,
           "realm_class": 761,
-          "region_overall": 381191
+          "region_overall": 381249
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10163,9 +10163,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 13875,
-          "realm_class": 1258,
-          "region_overall": 391631
+          "realm_overall": 13878,
+          "realm_class": 1259,
+          "region_overall": 391692
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10273,9 +10273,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 39911,
-          "realm_class": 2173,
-          "region_overall": 400809
+          "realm_overall": 39920,
+          "realm_class": 2175,
+          "region_overall": 400877
         },
         "delta_week": 135.8,
         "delta_day": 0,
@@ -10427,9 +10427,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 40049,
-          "realm_class": 2910,
-          "region_overall": 402270
+          "realm_overall": 40058,
+          "realm_class": 2912,
+          "region_overall": 402341
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10565,9 +10565,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3121,
+          "realm_overall": 3122,
           "realm_class": 458,
-          "region_overall": 405156
+          "region_overall": 405228
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10703,9 +10703,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4644,
+          "realm_overall": 4646,
           "realm_class": 303,
-          "region_overall": 411448
+          "region_overall": 411512
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10857,9 +10857,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15706,
+          "realm_overall": 15708,
           "realm_class": 1307,
-          "region_overall": 415178
+          "region_overall": 415237
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10967,9 +10967,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7921,
+          "realm_overall": 7923,
           "realm_class": 401,
-          "region_overall": 424104
+          "region_overall": 424165
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -11105,9 +11105,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11797,
+          "realm_overall": 11799,
           "realm_class": 1370,
-          "region_overall": 428059
+          "region_overall": 428126
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -11215,9 +11215,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 16607,
-          "realm_class": 1036,
-          "region_overall": 439304
+          "realm_overall": 16611,
+          "realm_class": 1037,
+          "region_overall": 439366
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -11369,9 +11369,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5416,
+          "realm_overall": 5418,
           "realm_class": 316,
-          "region_overall": 439762
+          "region_overall": 439823
         },
         "delta_week": null,
         "delta_day": 0,
@@ -11479,9 +11479,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 40443,
-          "realm_class": 4537,
-          "region_overall": 447730
+          "realm_overall": 40449,
+          "realm_class": 4538,
+          "region_overall": 447793
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11591,7 +11591,7 @@
         "ranks": {
           "realm_overall": 3433,
           "realm_class": 295,
-          "region_overall": 448518
+          "region_overall": 448583
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -11745,7 +11745,7 @@
         "ranks": {
           "realm_overall": 5293,
           "realm_class": 366,
-          "region_overall": 495645
+          "region_overall": 495715
         },
         "delta_week": 770.6,
         "delta_day": 0.0,
@@ -11910,9 +11910,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 17504,
+          "realm_overall": 17509,
           "realm_class": 1520,
-          "region_overall": 503274
+          "region_overall": 503353
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12022,7 +12022,7 @@
         "ranks": {
           "realm_overall": 1236,
           "realm_class": 90,
-          "region_overall": 511845
+          "region_overall": 511918
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12132,7 +12132,7 @@
         "ranks": {
           "realm_overall": 848,
           "realm_class": 97,
-          "region_overall": 530761
+          "region_overall": 530836
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12242,7 +12242,7 @@
         "ranks": {
           "realm_overall": 685,
           "realm_class": 97,
-          "region_overall": 533084
+          "region_overall": 533161
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -12350,9 +12350,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 9941,
+          "realm_overall": 9942,
           "realm_class": 679,
-          "region_overall": 537317
+          "region_overall": 537392
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -12488,9 +12488,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7204,
-          "realm_class": 475,
-          "region_overall": 549560
+          "realm_overall": 7207,
+          "realm_class": 476,
+          "region_overall": 549646
         },
         "delta_week": 42.4,
         "delta_day": 0,
@@ -12626,9 +12626,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10213,
+          "realm_overall": 10215,
           "realm_class": 709,
-          "region_overall": 553855
+          "region_overall": 553943
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12736,9 +12736,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 53846,
-          "realm_class": 5931,
-          "region_overall": 559104
+          "realm_overall": 53853,
+          "realm_class": 5930,
+          "region_overall": 559192
         },
         "delta_week": null,
         "delta_day": 0,
@@ -12892,7 +12892,7 @@
         "ranks": {
           "realm_overall": 3395,
           "realm_class": 221,
-          "region_overall": 585206
+          "region_overall": 585294
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13000,9 +13000,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 50881,
+          "realm_overall": 50889,
           "realm_class": 1523,
-          "region_overall": 586415
+          "region_overall": 586503
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13102,7 +13102,7 @@
         "ranks": {
           "realm_overall": 3952,
           "realm_class": 316,
-          "region_overall": 587776
+          "region_overall": 587864
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13212,7 +13212,7 @@
         "ranks": {
           "realm_overall": 4828,
           "realm_class": 462,
-          "region_overall": 611837
+          "region_overall": 611915
         },
         "delta_week": 0.2,
         "delta_day": 0,
@@ -13322,7 +13322,7 @@
         "ranks": {
           "realm_overall": 12010,
           "realm_class": 1028,
-          "region_overall": 658614
+          "region_overall": 658697
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -13466,7 +13466,7 @@
         "ranks": {
           "realm_overall": 12075,
           "realm_class": 875,
-          "region_overall": 662800
+          "region_overall": 662890
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -13594,7 +13594,7 @@
         "ranks": {
           "realm_overall": 12332,
           "realm_class": 1380,
-          "region_overall": 679407
+          "region_overall": 679505
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -13682,9 +13682,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 18810,
-          "realm_class": 1177,
-          "region_overall": 680579
+          "realm_overall": 18813,
+          "realm_class": 1179,
+          "region_overall": 680671
         },
         "delta_week": null,
         "delta_day": 0,
@@ -13784,7 +13784,7 @@
         "ranks": {
           "realm_overall": 13375,
           "realm_class": 903,
-          "region_overall": 741558
+          "region_overall": 741645
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -13892,7 +13892,7 @@
         "ranks": {
           "realm_overall": 7767,
           "realm_class": 632,
-          "region_overall": 788264
+          "region_overall": 788379
         },
         "delta_week": 1221.6,
         "delta_day": 0.0,
@@ -13970,9 +13970,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15559,
+          "realm_overall": 15560,
           "realm_class": 1394,
-          "region_overall": 869941
+          "region_overall": 870065
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14068,9 +14068,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 79286,
-          "realm_class": 4991,
-          "region_overall": 878502
+          "realm_overall": 79299,
+          "realm_class": 4993,
+          "region_overall": 878615
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -14130,7 +14130,7 @@
         "ranks": {
           "realm_overall": 6586,
           "realm_class": 571,
-          "region_overall": 896837
+          "region_overall": 896961
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -14200,7 +14200,7 @@
         "ranks": {
           "realm_overall": 7606,
           "realm_class": 1054,
-          "region_overall": 901908
+          "region_overall": 902038
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -14258,9 +14258,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 83985,
-          "realm_class": 5341,
-          "region_overall": 942175
+          "realm_overall": 84005,
+          "realm_class": 5343,
+          "region_overall": 942301
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -14308,9 +14308,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 52807,
+          "realm_overall": 52813,
           "realm_class": 3597,
-          "region_overall": 1015695
+          "region_overall": 1015867
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14358,9 +14358,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 89913,
-          "realm_class": 10509,
-          "region_overall": 1022135
+          "realm_overall": 89929,
+          "realm_class": 10513,
+          "region_overall": 1022309
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14398,9 +14398,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 56579,
-          "realm_class": 3983,
-          "region_overall": 1095827
+          "realm_overall": 56581,
+          "realm_class": 3985,
+          "region_overall": 1095988
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14438,9 +14438,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 97957,
+          "realm_overall": 97978,
           "realm_class": 8640,
-          "region_overall": 1133117
+          "region_overall": 1133301
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -14480,7 +14480,7 @@
         "ranks": {
           "realm_overall": 2767,
           "realm_class": 173,
-          "region_overall": 1133670
+          "region_overall": 1133855
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14518,9 +14518,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 31271,
+          "realm_overall": 31274,
           "realm_class": 2179,
-          "region_overall": 1151472
+          "region_overall": 1151647
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -14558,9 +14558,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 88475,
-          "realm_class": 9601,
-          "region_overall": 1151547
+          "realm_overall": 88493,
+          "realm_class": 9602,
+          "region_overall": 1151722
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -19996,7 +19996,7 @@
     "departed_count": 65,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-03T21:49:13.071359+00:00",
+      "as_of": "2026-08-03T23:00:38.235105+00:00",
       "member_count": 114
     },
     "key_records": {
@@ -20125,13 +20125,13 @@
           "rank": 5,
           "name": "Brewzleeh",
           "key": "brewzleeh-tichondrius",
-          "score": 3685.9,
+          "score": 3690.1,
           "class": "Monk",
           "spec": "Brewmaster Monk",
           "role": "Tank",
           "top5": true,
-          "delta_week": 0.1,
-          "delta_day": 0.0,
+          "delta_week": 4.3,
+          "delta_day": 4.2,
           "is_new": false
         },
         {
@@ -20227,6 +20227,19 @@
         },
         {
           "rank": 13,
+          "name": "Phyrthesham",
+          "key": "phyrthesham-bleeding-hollow",
+          "score": 3459.3,
+          "class": "Shaman",
+          "spec": "Restoration Shaman",
+          "role": "Healer",
+          "top5": false,
+          "delta_week": null,
+          "delta_day": 128.2,
+          "is_new": true
+        },
+        {
+          "rank": 14,
           "name": "Madreezus",
           "key": "madreezus-elune",
           "score": 3454.7,
@@ -20239,7 +20252,7 @@
           "is_new": true
         },
         {
-          "rank": 14,
+          "rank": 15,
           "name": "Ellebasi",
           "key": "ellebasi-malganis",
           "score": 3436.6,
@@ -20252,7 +20265,7 @@
           "is_new": false
         },
         {
-          "rank": 15,
+          "rank": 16,
           "name": "Tommybravox",
           "key": "tommybravox-bleeding-hollow",
           "score": 3434.5,
@@ -20265,7 +20278,7 @@
           "is_new": false
         },
         {
-          "rank": 16,
+          "rank": 17,
           "name": "Meowstal",
           "key": "meowstal-bleeding-hollow",
           "score": 3430.2,
@@ -20278,7 +20291,7 @@
           "is_new": true
         },
         {
-          "rank": 17,
+          "rank": 18,
           "name": "Hellful",
           "key": "hellful-lightnings-blade",
           "score": 3418.7,
@@ -20291,7 +20304,7 @@
           "is_new": false
         },
         {
-          "rank": 18,
+          "rank": 19,
           "name": "Onessarain",
           "key": "onessarain-area-52",
           "score": 3414.3,
@@ -20304,7 +20317,7 @@
           "is_new": false
         },
         {
-          "rank": 19,
+          "rank": 20,
           "name": "Nokori",
           "key": "nokori-proudmoore",
           "score": 3372.1,
@@ -20317,7 +20330,7 @@
           "is_new": false
         },
         {
-          "rank": 20,
+          "rank": 21,
           "name": "Shadoxi",
           "key": "shadoxi-illidan",
           "score": 3333.5,
@@ -20330,7 +20343,7 @@
           "is_new": false
         },
         {
-          "rank": 21,
+          "rank": 22,
           "name": "Sewenity",
           "key": "sewenity-stormrage",
           "score": 3332.2,
@@ -20340,19 +20353,6 @@
           "top5": false,
           "delta_week": null,
           "delta_day": 0.0,
-          "is_new": true
-        },
-        {
-          "rank": 22,
-          "name": "Phyrthesham",
-          "key": "phyrthesham-bleeding-hollow",
-          "score": 3331.1,
-          "class": "Shaman",
-          "spec": "Restoration Shaman",
-          "role": "Healer",
-          "top5": false,
-          "delta_week": null,
-          "delta_day": 28.3,
           "is_new": true
         },
         {
@@ -21324,13 +21324,13 @@
             "rank": 1,
             "name": "Brewzleeh",
             "key": "brewzleeh-tichondrius",
-            "score": 3685.9,
+            "score": 3690.1,
             "class": "Monk",
             "spec": "Brewmaster Monk",
             "role": "Tank",
             "top5": true,
-            "delta_week": 0.1,
-            "delta_day": 0.0,
+            "delta_week": 4.3,
+            "delta_day": 4.2,
             "is_new": false
           },
           {
@@ -21558,6 +21558,19 @@
           },
           {
             "rank": 4,
+            "name": "Phyrthesham",
+            "key": "phyrthesham-bleeding-hollow",
+            "score": 3459.3,
+            "class": "Shaman",
+            "spec": "Restoration Shaman",
+            "role": "Healer",
+            "top5": false,
+            "delta_week": null,
+            "delta_day": 128.2,
+            "is_new": true
+          },
+          {
+            "rank": 5,
             "name": "Onessarain",
             "key": "onessarain-area-52",
             "score": 3414.3,
@@ -21570,7 +21583,7 @@
             "is_new": false
           },
           {
-            "rank": 5,
+            "rank": 6,
             "name": "Shadoxi",
             "key": "shadoxi-illidan",
             "score": 3333.5,
@@ -21583,7 +21596,7 @@
             "is_new": false
           },
           {
-            "rank": 6,
+            "rank": 7,
             "name": "Sewenity",
             "key": "sewenity-stormrage",
             "score": 3332.2,
@@ -21593,19 +21606,6 @@
             "top5": false,
             "delta_week": null,
             "delta_day": 0.0,
-            "is_new": true
-          },
-          {
-            "rank": 7,
-            "name": "Phyrthesham",
-            "key": "phyrthesham-bleeding-hollow",
-            "score": 3331.1,
-            "class": "Shaman",
-            "spec": "Restoration Shaman",
-            "role": "Healer",
-            "top5": false,
-            "delta_week": null,
-            "delta_day": 28.3,
             "is_new": true
           },
           {
@@ -23203,13 +23203,13 @@
             "rank": 2,
             "name": "Brewzleeh",
             "key": "brewzleeh-tichondrius",
-            "score": 3685.9,
+            "score": 3690.1,
             "class": "Monk",
             "spec": "Brewmaster Monk",
             "role": "Tank",
             "top5": true,
-            "delta_week": 0.1,
-            "delta_day": 0.0,
+            "delta_week": 4.3,
+            "delta_day": 4.2,
             "is_new": false
           },
           {
@@ -23495,6 +23495,19 @@
         "Shaman": [
           {
             "rank": 1,
+            "name": "Phyrthesham",
+            "key": "phyrthesham-bleeding-hollow",
+            "score": 3459.3,
+            "class": "Shaman",
+            "spec": "Restoration Shaman",
+            "role": "Healer",
+            "top5": false,
+            "delta_week": null,
+            "delta_day": 128.2,
+            "is_new": true
+          },
+          {
+            "rank": 2,
             "name": "Hellful",
             "key": "hellful-lightnings-blade",
             "score": 3418.7,
@@ -23507,7 +23520,7 @@
             "is_new": false
           },
           {
-            "rank": 2,
+            "rank": 3,
             "name": "Onessarain",
             "key": "onessarain-area-52",
             "score": 3414.3,
@@ -23520,7 +23533,7 @@
             "is_new": false
           },
           {
-            "rank": 3,
+            "rank": 4,
             "name": "Nokori",
             "key": "nokori-proudmoore",
             "score": 3372.1,
@@ -23531,19 +23544,6 @@
             "delta_week": 329.4,
             "delta_day": 0.0,
             "is_new": false
-          },
-          {
-            "rank": 4,
-            "name": "Phyrthesham",
-            "key": "phyrthesham-bleeding-hollow",
-            "score": 3331.1,
-            "class": "Shaman",
-            "spec": "Restoration Shaman",
-            "role": "Healer",
-            "top5": false,
-            "delta_week": null,
-            "delta_day": 28.3,
-            "is_new": true
           },
           {
             "rank": 5,
@@ -23907,13 +23907,13 @@
           "rank": 5,
           "name": "Brewzleeh",
           "key": "brewzleeh-tichondrius",
-          "score": 3685.9,
+          "score": 3690.1,
           "class": "Monk",
           "spec": "Brewmaster Monk",
           "role": "Tank",
           "top5": true,
-          "delta_week": 0.1,
-          "delta_day": 0.0,
+          "delta_week": 4.3,
+          "delta_day": 4.2,
           "is_new": false
         }
       ]
@@ -23996,14 +23996,14 @@
           "delta_week": 15.9
         },
         {
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "delta_week": 4.3
+        },
+        {
           "name": "Jilk",
           "key": "jilk-eldrethalas",
           "delta_week": 0.2
-        },
-        {
-          "name": "Brewzleeh",
-          "key": "brewzleeh-tichondrius",
-          "delta_week": 0.1
         }
       ],
       "climbers_today": [
@@ -24015,7 +24015,12 @@
         {
           "name": "Phyrthesham",
           "key": "phyrthesham-bleeding-hollow",
-          "delta_day": 28.3
+          "delta_day": 128.2
+        },
+        {
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "delta_day": 4.2
         }
       ],
       "new_to_board": [
@@ -24028,6 +24033,11 @@
           "name": "Phyrthepali",
           "key": "phyrthepali-bleeding-hollow",
           "score": 3500.1
+        },
+        {
+          "name": "Phyrthesham",
+          "key": "phyrthesham-bleeding-hollow",
+          "score": 3459.3
         },
         {
           "name": "Madreezus",
@@ -24043,11 +24053,6 @@
           "name": "Sewenity",
           "key": "sewenity-stormrage",
           "score": 3332.2
-        },
-        {
-          "name": "Phyrthesham",
-          "key": "phyrthesham-bleeding-hollow",
-          "score": 3331.1
         },
         {
           "name": "Guloot",
@@ -24240,7 +24245,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-03T21:49:54.548985+00:00",
+    "generated_at": "2026-08-03T23:01:21.468883+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
@@ -24252,7 +24257,7 @@
       "zone_id": 46,
       "name": "Voidspire Sanctum"
     },
-    "sourced_at": "2026-08-03T18:18:33.196900+00:00",
+    "sourced_at": "2026-08-03T22:56:17.649541+00:00",
     "difficulty_scale": {
       "mythic": 1.0,
       "heroic": 0.8,
@@ -24295,7 +24300,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 53.8
       },
       "amrevenge-stormrage": {
@@ -24349,7 +24354,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 82.1
       },
       "anbux-bleeding-hollow": {
@@ -24387,7 +24392,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 24.5
       },
       "andika-area-52": {
@@ -24425,7 +24430,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 61.7
       },
       "arfas-queldorei": {
@@ -24485,7 +24490,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 46.8
       },
       "autable-gurubashi": {
@@ -24523,7 +24528,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 24.8
       },
       "azell-bleeding-hollow": {
@@ -24567,7 +24572,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 33.8
       },
       "beastfriend-thrall": {
@@ -24621,7 +24626,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 77.1
       },
       "beroben-emerald-dream": {
@@ -24659,7 +24664,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 51.1
       },
       "boltzaa-thrall": {
@@ -24713,7 +24718,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 65.6
       },
       "boondocka-hydraxis": {
@@ -24767,7 +24772,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 77.1
       },
       "breakdruid-area-52": {
@@ -24805,7 +24810,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 85.4
       },
       "breaktheicee-illidan": {
@@ -24859,7 +24864,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 74.4
       },
       "brewzleeh-tichondrius": {
@@ -24925,7 +24930,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 69.3
       },
       "buchalter-area-52": {
@@ -24979,7 +24984,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 60.5
       },
       "chokalock-sargeras": {
@@ -25033,7 +25038,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 40.0
       },
       "coned-azgalor": {
@@ -25071,7 +25076,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 28.3
       },
       "delusionz-icecrown": {
@@ -25125,7 +25130,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 58.6
       },
       "digglio-area-52": {
@@ -25163,7 +25168,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 46.8
       },
       "dragoonx-bleeding-hollow": {
@@ -25201,7 +25206,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 36.0
       },
       "ellebasi-malganis": {
@@ -25255,7 +25260,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 60.8
       },
       "enyò-area-52": {
@@ -25312,7 +25317,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 77.9
       },
       "eponax-bleeding-hollow": {
@@ -25356,7 +25361,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 38.9
       },
       "flemel-area-52": {
@@ -25394,7 +25399,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 61.6
       },
       "flogeron-area-52": {
@@ -25432,7 +25437,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 65.0
       },
       "floofwall-queldorei": {
@@ -25492,7 +25497,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 61.5
       },
       "fugaku-icecrown": {
@@ -25530,7 +25535,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 51.9
       },
       "gandamar-azgalor": {
@@ -25568,7 +25573,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 44.8
       },
       "glinkz-wyrmrest-accord": {
@@ -25622,7 +25627,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 62.3
       },
       "grandsongor-thrall": {
@@ -25676,7 +25681,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 42.0
       },
       "healmates-korgath": {
@@ -25730,7 +25735,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 39.9
       },
       "healyeah-queldorei": {
@@ -25784,7 +25789,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 44.2
       },
       "hellful-lightnings-blade": {
@@ -25841,7 +25846,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 74.9
       },
       "heximal-hydraxis": {
@@ -25895,7 +25900,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 67.3
       },
       "holyx-bleeding-hollow": {
@@ -25955,7 +25960,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 77.7
       },
       "huntlowx-bleeding-hollow": {
@@ -25993,7 +25998,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 68.6
       },
       "icyx-bleeding-hollow": {
@@ -26031,7 +26036,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 61.9
       },
       "impkiller-tichondrius": {
@@ -26085,7 +26090,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 68.3
       },
       "jerbane-illidan": {
@@ -26145,7 +26150,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 57.5
       },
       "jovala-stormrage": {
@@ -26183,7 +26188,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 61.2
       },
       "kegsmashroll-stormrage": {
@@ -26221,7 +26226,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 71.3
       },
       "kelova-stormrage": {
@@ -26259,7 +26264,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 44.9
       },
       "kirrá-aggramar": {
@@ -26313,7 +26318,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 69.3
       },
       "kitez-cenarion-circle": {
@@ -26351,7 +26356,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 62.3
       },
       "madreezus-elune": {
@@ -26405,7 +26410,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 86.5
       },
       "maillo-area-52": {
@@ -26459,7 +26464,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 84.9
       },
       "marceau-malganis": {
@@ -26508,7 +26513,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 51.8
       },
       "martylol-illidan": {
@@ -26562,7 +26567,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 24.6
       },
       "marvinah-queldorei": {
@@ -26600,7 +26605,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 66.4
       },
       "meowstal-bleeding-hollow": {
@@ -26663,7 +26668,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 60.6
       },
       "miallo-area-52": {
@@ -26717,7 +26722,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 56.5
       },
       "mogaslst-malganis": {
@@ -26755,7 +26760,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 46.3
       },
       "muramorn-dalaran": {
@@ -26793,7 +26798,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 15.7
       },
       "nivella-dawnbringer": {
@@ -26831,7 +26836,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 52.1
       },
       "nixfallë-area-52": {
@@ -26894,7 +26899,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 69.4
       },
       "nokori-proudmoore": {
@@ -26948,7 +26953,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 79.3
       },
       "ohnomyais-area-52": {
@@ -26986,7 +26991,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 40.1
       },
       "onessarain-area-52": {
@@ -27024,7 +27029,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 60.6
       },
       "onetruemorty-area-52": {
@@ -27078,7 +27083,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 51.6
       },
       "phyrthepali-bleeding-hollow": {
@@ -27132,7 +27137,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 75.4
       },
       "phyrthesham-bleeding-hollow": {
@@ -27186,7 +27191,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 55.4
       },
       "rakdisc-proudmoore": {
@@ -27249,7 +27254,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 46.2
       },
       "rakell-proudmoore": {
@@ -27303,7 +27308,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 55.0
       },
       "redgicide-hydraxis": {
@@ -27341,7 +27346,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 39.4
       },
       "rexxhavocc-area-52": {
@@ -27395,7 +27400,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 64.5
       },
       "rhansìk-area-52": {
@@ -27449,7 +27454,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 41.3
       },
       "scounddrel-maelstrom": {
@@ -27503,7 +27508,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 55.6
       },
       "sewenity-stormrage": {
@@ -27557,7 +27562,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 69.9
       },
       "shadoxi-illidan": {
@@ -27595,7 +27600,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 50.9
       },
       "shadoxii-illidan": {
@@ -27649,7 +27654,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 43.1
       },
       "skoala-frostwolf": {
@@ -27703,7 +27708,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 39.9
       },
       "slicerdicer-bleeding-hollow": {
@@ -27741,7 +27746,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 45.9
       },
       "thiccat-illidan": {
@@ -27779,7 +27784,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 23.6
       },
       "tinyx-bleeding-hollow": {
@@ -27836,7 +27841,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 80.4
       },
       "tommybravo-bleeding-hollow": {
@@ -27890,7 +27895,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 44.8
       },
       "tommybravoo-bleeding-hollow": {
@@ -27944,7 +27949,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 83.1
       },
       "tommybravox-bleeding-hollow": {
@@ -28007,7 +28012,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 63.6
       },
       "viôlence-bleeding-hollow": {
@@ -28045,7 +28050,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 42.2
       },
       "widowx-bleeding-hollow": {
@@ -28108,7 +28113,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 74.8
       },
       "witherbear-azuremyst": {
@@ -28146,7 +28151,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 91.0
       },
       "witherhoard-azuremyst": {
@@ -28184,7 +28189,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 66.5
       },
       "wolfx-bleeding-hollow": {
@@ -28222,7 +28227,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 58.6
       },
       "yur-whisperwind": {
@@ -28276,7 +28281,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 44.0
       },
       "zackoh-bloodhoof": {
@@ -28314,7 +28319,7 @@
           "zone_id": 46,
           "name": "Voidspire Sanctum"
         },
-        "sourced_at": "2026-08-03T18:19:07.107097+00:00",
+        "sourced_at": "2026-08-03T22:56:46.031118+00:00",
         "median_perf_avg": 45.8
       }
     },
@@ -28359,7 +28364,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 45.2
           },
           "arfas-queldorei": {
@@ -28397,7 +28402,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 39.8
           },
           "boltzaa-thrall": {
@@ -28435,7 +28440,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 6.5
           },
           "boondocka-hydraxis": {
@@ -28489,7 +28494,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 67.0
           },
           "breaktheicee-illidan": {
@@ -28527,7 +28532,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 24.2
           },
           "brewzleeh-tichondrius": {
@@ -28577,7 +28582,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 85.2
           },
           "buchalter-area-52": {
@@ -28631,7 +28636,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 71.0
           },
           "chokalock-sargeras": {
@@ -28669,7 +28674,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 7.2
           },
           "coned-azgalor": {
@@ -28707,7 +28712,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 9.9
           },
           "delusionz-icecrown": {
@@ -28761,7 +28766,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 93.4
           },
           "digglio-area-52": {
@@ -28799,7 +28804,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 32.8
           },
           "ellebasi-malganis": {
@@ -28837,7 +28842,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 37.9
           },
           "enyò-area-52": {
@@ -28875,7 +28880,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 68.8
           },
           "eponax-bleeding-hollow": {
@@ -28913,7 +28918,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 31.1
           },
           "flemel-area-52": {
@@ -28951,7 +28956,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 73.0
           },
           "fugaku-icecrown": {
@@ -28989,7 +28994,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 49.5
           },
           "gener-dalaran": {
@@ -29027,7 +29032,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 11.6
           },
           "healmates-korgath": {
@@ -29081,7 +29086,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 29.7
           },
           "healyeah-queldorei": {
@@ -29135,7 +29140,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 91.1
           },
           "hellful-lightnings-blade": {
@@ -29189,7 +29194,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 90.7
           },
           "holyx-bleeding-hollow": {
@@ -29243,7 +29248,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 81.3
           },
           "huntlowx-bleeding-hollow": {
@@ -29281,7 +29286,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 52.0
           },
           "jerbane-illidan": {
@@ -29338,7 +29343,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 39.7
           },
           "kirrá-aggramar": {
@@ -29376,7 +29381,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 31.6
           },
           "madreezus-elune": {
@@ -29430,7 +29435,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 78.6
           },
           "maillo-area-52": {
@@ -29484,7 +29489,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 58.7
           },
           "marvinah-queldorei": {
@@ -29538,7 +29543,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 83.4
           },
           "meowstal-bleeding-hollow": {
@@ -29576,7 +29581,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 86.5
           },
           "mogaslst-malganis": {
@@ -29614,7 +29619,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 96.4
           },
           "phyrthepali-bleeding-hollow": {
@@ -29652,7 +29657,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 81.4
           },
           "purcules-area-52": {
@@ -29690,7 +29695,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 35.7
           },
           "rakdisc-proudmoore": {
@@ -29750,7 +29755,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 46.0
           },
           "rakell-proudmoore": {
@@ -29788,7 +29793,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 65.5
           },
           "redgicide-hydraxis": {
@@ -29826,7 +29831,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 60.9
           },
           "rhansìk-area-52": {
@@ -29864,7 +29869,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 51.9
           },
           "scounddrel-maelstrom": {
@@ -29902,7 +29907,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 38.5
           },
           "sewenity-stormrage": {
@@ -29940,7 +29945,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 49.4
           },
           "shadoxii-illidan": {
@@ -29978,7 +29983,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 15.2
           },
           "tinyx-bleeding-hollow": {
@@ -30032,7 +30037,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 97.0
           },
           "tommybravoo-bleeding-hollow": {
@@ -30086,7 +30091,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 51.9
           },
           "tommybravox-bleeding-hollow": {
@@ -30140,7 +30145,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 55.8
           },
           "widowx-bleeding-hollow": {
@@ -30178,7 +30183,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 1.7
           },
           "witherbear-azuremyst": {
@@ -30216,7 +30221,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 87.5
           },
           "wolfx-bleeding-hollow": {
@@ -30254,7 +30259,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 79.2
           },
           "yur-whisperwind": {
@@ -30308,7 +30313,7 @@
               "zone_id": 50,
               "name": "Sporefall"
             },
-            "sourced_at": "2026-08-03T18:21:39.185034+00:00",
+            "sourced_at": "2026-08-03T22:58:54.033878+00:00",
             "median_perf_avg": 83.0
           }
         },
