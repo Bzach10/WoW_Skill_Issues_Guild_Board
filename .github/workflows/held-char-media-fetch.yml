@@ -23,7 +23,7 @@ jobs:
             ("malganis","danukira"),("laughing-skull","erosina"),("stormrage","glaiveshott"),
             ("shadow-council","guloot"),("kalecgos","kao"),("zuljin","katesthio"),
             ("elune","madreezus"),("malganis","marceau"),("tichondrius","néfèrtítì"),
-            ("bleeding-hollow","phyrthesham"),("senjin","réi"),("stormrage","sewenity")]
+            ("bleeding-hollow","phyrthesham"),("senjin","réi"),("stormrage","sewenity"),("zuljin","sosomage")]
           out = {}
           for realm, name in CHARS:
               enc = urllib.parse.quote(name.lower())
