@@ -106,8 +106,6 @@ kept:
     was: "CLOSEST RACES"
     page: 2
     anchor: "section.spo-standings p.races"
-    pending: true
-    note: >-
       NEW on the paper (2026-08-03) and enforceable the moment the officer
       deploys the site. A datum that has never been live cannot have vanished,
       so gating on it before the deploy would refuse a Tuesday post for
@@ -169,8 +167,6 @@ kept:
     was: "the arrow beside each rank tile"
     page: 3
     anchor: "div.decree table.agate td.n.wk"
-    pending: true
-    note: >-
       NEW on the paper (2026-08-03): the Wk column is set, and its VALUES fill
       from records_leaderboard.standing_delta on the officer's next data
       delivery. Enforceable once the site deploy is live; the values are a
@@ -225,40 +221,30 @@ kept:
     was: "WIPES THIS WEEK / SEASON REPAIR BILL / GO AGANE COUNTER / hero tiles PULLS+DEATHS"
     page: 3
     anchor: "section.gz-civil__col (#week-h) table.agate"
-    pending: true
-    note: "fills from contract.weekly_board.kills/pulls/wipes/repair_estimate"
     expect: "The Week.s Returns"
 
   - datum: weekly_timed_keys
     was: "TOP TIMED KEYS THIS WEEK"
     page: 3
     anchor: "section.gz-civil__col (#week-h)"
-    pending: true
-    note: "fills from contract.weekly_board.keys"
     expect: "This week.s keys"
 
   - datum: weekly_mplus_parses
     was: "TOP M+ DPS / HPS / TANKS THIS WEEK"
     page: 3
     anchor: "section.gz-civil__col (#week-h)"
-    pending: true
-    note: "fills from contract.weekly_board.mplus_parses"
     expect: "The week.s lane parses"
 
   - datum: most_improved
     was: "MOST IMPROVED DPS / MOST IMPROVED HEALERS"
     page: 3
     anchor: "section.gz-civil__col (#week-h)"
-    pending: true
-    note: "fills from contract.weekly_board.improvement"
     expect: "Most improved"
 
   - datum: iron_attendance
     was: "WEEKLY AWARD - IRON ATTENDANCE"
     page: 3
     anchor: "section.gz-civil__col ul.seamlist (#seams-h)"
-    pending: true
-    note: >-
       the paper refuses the board's bare-name streak tally and waits for a
       name-realm keyed ingestion; the seam is deliberate
     expect: "Iron Attendance"
