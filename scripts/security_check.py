@@ -126,12 +126,20 @@ def _scan_text(where, text, found):
             found.append(f"  FOUND {label} in {where} (fp {digest})")
 
 
+# The scanner's own test file: its fixtures are synthetic by design (AWS's
+# documented example key, a 123456789012 webhook) and exist to prove the
+# patterns fire. Skipped by exact path, in the tree and in history.
+SELF_TEST_FILE = "tests/test_security_check.py"
+
+
 def check_secrets(quick=False):
     """Committed credentials, in the working tree and in history."""
     found = []
 
     tracked = _run(["git", "ls-files"]).stdout.split()
     for rel in tracked:
+        if rel == SELF_TEST_FILE:
+            continue
         p = ROOT / rel
         if p.suffix.lower() not in TEXTY or not p.is_file():
             continue
@@ -148,6 +156,8 @@ def check_secrets(quick=False):
         names = {}
         for line in blobs:
             sha, _, name = line.partition(" ")
+            if name == SELF_TEST_FILE:
+                continue
             if name and Path(name).suffix.lower() in TEXTY:
                 names[sha] = name
         for sha, name in names.items():
