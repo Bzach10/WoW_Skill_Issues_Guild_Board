@@ -1,6 +1,6 @@
 # One-shot: full character sheets for the card game's stat model.
-# Three profile endpoints per character (base profile, character-statistics,
-# specializations). Artifact-only; no CI-owned files touched.
+# v2: correct statistics path (/statistics), payload slimmed server-side
+# (spec names only, profile scalars only). Artifact-only.
 name: char-stats-fetch
 on: { workflow_dispatch: {} }
 jobs:
@@ -142,17 +142,37 @@ jobs:
               url = (f"https://us.api.blizzard.com/profile/wow/character/{path}"
                      f"?namespace=profile-us&locale=en_US")
               req = urllib.request.Request(url, headers={"Authorization": "Bearer " + tok})
-              d = json.load(urllib.request.urlopen(req))
-              d.pop("_links", None); d.pop("character", None)
-              return d
+              return json.load(urllib.request.urlopen(req))
+          def slim_profile(p):
+              return {
+                  "level": p.get("level"), "faction": (p.get("faction") or {}).get("name"),
+                  "race": (p.get("race") or {}).get("name"),
+                  "class": (p.get("character_class") or {}).get("name"),
+                  "active_spec": (p.get("active_spec") or {}).get("name"),
+                  "equipped_item_level": p.get("equipped_item_level"),
+                  "average_item_level": p.get("average_item_level"),
+                  "achievement_points": p.get("achievement_points"),
+                  "last_login_timestamp": p.get("last_login_timestamp")}
+          def slim_specs(sp):
+              out = []
+              for g in sp.get("specializations", []):
+                  nm = (g.get("specialization") or {}).get("name")
+                  if nm: out.append(nm)
+              active = ((sp.get("active_specialization") or {}).get("name"))
+              return {"known": out, "active": active}
+          def slim_stats(st):
+              st.pop("_links", None); st.pop("character", None)
+              return st
           out = {}
           for realm, name in CHARS:
               enc = urllib.parse.quote(name)
               key = f"{name}-{realm}"
               row = {}
-              for label, suffix in [("profile",""),("statistics","/character-statistics"),("specs","/specializations")]:
+              for label, suffix, slim in [("profile","",slim_profile),
+                                          ("statistics","/statistics",slim_stats),
+                                          ("specs","/specializations",slim_specs)]:
                   try:
-                      row[label] = get(f"{realm}/{enc}{suffix}")
+                      row[label] = slim(get(f"{realm}/{enc}{suffix}"))
                   except Exception as e:
                       row[label] = {"error": str(e)[:120]}
               ok = all("error" not in v for v in row.values())
