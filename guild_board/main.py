@@ -5,7 +5,11 @@ from datetime import datetime, timedelta, timezone
 
 import requests
 
-from guild_board.board_image import generate_board_animation, generate_board_image
+from guild_board.board_image import (
+    DIFFICULTY_NAMES,
+    generate_board_animation,
+    generate_board_image,
+)
 from guild_board.config import load_config, require_env
 from guild_board.discord import post_to_discord
 from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
@@ -19,6 +23,7 @@ from guild_board.raiderio import (
 )
 from guild_board.state import (
     baselines_view,
+    build_week_block,
     load_board_state,
     raid_attendance_streaks,
     raid_week_label,
@@ -447,7 +452,41 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                      for n, i in (stats.get("best_tanks") or {}).items()})
 
     mobile_path = None
-    if layout == "image_board":
+    extra_paths = []
+
+    # ---- THE PAPER IS THE POST ------------------------------------------
+    # The website already prints this guild, this week and these numbers as a
+    # four-page newspaper. Rendering a SECOND board here means two
+    # compositions of one week, and the one nobody is looking at is the one
+    # that drifts. So the default post is a photograph of the paper itself.
+    #
+    # FAILS CLOSED on parity (a paper that has quietly stopped carrying a
+    # datum the board used to publish must not be posted -- that is the whole
+    # risk of the swap, and parity_manifest.yml is the check) and OPEN on
+    # everything else: a browser fault or a bad deploy drops through to the
+    # classic renderer so the guild still gets its Tuesday board.
+    # EXPLICIT OPT-IN, not a default. config.yml ships `renderer: paper`, so
+    # the live post takes this path; a caller who hands build_board a bare cfg
+    # (every test, and any tool that only wants the classic render) never
+    # reaches for the network. `preview` is the local design loop -- it runs on
+    # canned data with no keys and must stay offline too.
+    if str(cfg.get("renderer", "")).lower() == "paper" and not preview:
+        from guild_board import paper_shot
+        manifest = paper_shot.load_parity_manifest()
+        try:
+            shot = paper_shot.shoot_paper(
+                url=(cfg.get("display") or {}).get("paper_url"),
+                manifest=manifest)
+            image_path = shot["fold"]        # the teaser leads the post
+            extra_paths = [shot["front"], shot["ladder"]]
+            logger.info("The paper is the post: %s", shot["manifest"]["shots"])
+        except paper_shot.ParityFailure:
+            raise
+        except Exception as exc:
+            logger.warning("Could not photograph the paper (%s); falling back "
+                           "to the classic renderer for this week.", exc)
+
+    if layout == "image_board" and not image_path:
         try:
             display_cfg = cfg.get("display") or {}
             board_args = (cfg, stats, standing, leaders, zone_name,
@@ -529,18 +568,42 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     # written on preview/dry-run too so the site can be tested offline.
     dump_web_stats(stats)
 
+    # THE WEEK'S OWN FACTS, kept. Kills, pulls, deaths, this week's timed
+    # keys and parse pools, the improvement pairs and the roast used to die
+    # with the run: the board rendered them into a PNG and nothing else ever
+    # saw them. They are persisted now so the same pipeline that carries the
+    # season data to the paper (web_data -> deliver_bundle -> contract) can
+    # carry the week as well. Built here, written only by a real post.
+    roast_cfg = (sections.get("roast_of_the_week")
+                 or cfg.get("roast_of_the_week") or {})
+    week_block = build_week_block(
+        stats=stats, start_dt=start_dt, end_dt=end_dt, week_label=streaks_week,
+        zone_name=zone_name,
+        difficulty=DIFFICULTY_NAMES.get((stats or {}).get("difficulty"))
+        or cfg.get("raid", {}).get("difficulty"),
+        mplus_results=mplus_results, mplus_weekly=mplus_weekly,
+        improvement=improvement, roast=roast_cfg,
+        top_n=int(cfg.get("top_n", 5)))
+
     if preview:
         return embed, image_path
 
     if not dry_run:
         webhook_url = require_env("DISCORD_WEBHOOK_URL")
+        # The paper posts as a set: the above-the-fold teaser first (it is the
+        # one Discord shows at embed width), then page one whole and page
+        # two's Season Ladder behind it.
+        extras = list(extra_paths)
+        if mobile_path:
+            extras.append(mobile_path)
         post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg,
-                        extra_image_paths=[mobile_path] if mobile_path else None)
+                        extra_image_paths=extras or None)
         logger.info("Board posted to Discord.")
         try:
             save_board_state(standing, mplus_season_scores, streaks=streaks,
                              records=records, streaks_week=streaks_week,
-                             streaks_started=streaks_started)
+                             streaks_started=streaks_started,
+                             week=week_block)
         except OSError as exc:
             logger.warning("Could not save board state: %s", exc)
 

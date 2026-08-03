@@ -237,16 +237,80 @@ def build_records_leaderboard(board_state, limit=None):
                 "is_new": bool(rec.get("new")),
             })
 
+    # The rank tiles on the Discord board have always carried an arrow: the
+    # standing ALONE is only half of what it shows. Carry the week the arrow
+    # is measured against so a consumer can print the same movement instead
+    # of re-deriving it (or, as the paper did, dropping it).
+    previous = (current.get("baseline") or {}).get("standing") or {}
+    standing = current.get("standing") or {}
+    delta = {}
+    for scope in ("realm", "region", "world"):
+        now, was = standing.get(scope), previous.get(scope)
+        if isinstance(now, int) and isinstance(was, int) and was:
+            delta[scope] = was - now      # positive = climbed
+
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
         "based_on": current.get("last_updated"),
         "standing": current.get("standing"),
+        "previous_standing": previous or None,
+        "standing_delta": delta or None,
         "headline_records": headline,
         "ladder": ladder,
         "ladder_size": len(ladder),
         "sortable_by": ["score", "delta_week", "streak_weeks", "rank"],
     }
+
+
+# ---------------------------------------------------------------------------
+# 2b. The weekly board's own week — the numbers that used to die with the run
+# ---------------------------------------------------------------------------
+
+def build_weekly_board(board_state=None):
+    """The WEEK the Discord board posts, as a data layer.
+
+    Kills, pulls, wipes, deaths, this week's timed keys, this week's raid and
+    Mythic+ parse pools, the most-improved pairs and the roast. These are
+    Warcraft-Logs facts that the board rendered straight into a PNG and never
+    published; `guild_board.state.build_week_block` now persists them into
+    board_state.json and this turns that into the delivered layer.
+
+    Degrades to `available: false` with an empty, documented shape rather
+    than inventing a zero — a week nobody could read the logs for is a gap in
+    the measurement, not a week in which nobody died.
+    """
+    week = (board_state or {}).get("week") or {}
+    have = any(k in week for k in ("kills", "pulls", "deaths_total",
+                                   "keys", "parses", "mplus_parses"))
+    out = {
+        "schema_version": SCHEMA_VERSION,
+        "generated_at": _now_iso(),
+        "available": bool(have),
+        "based_on": (board_state or {}).get("last_updated"),
+        "week_label": week.get("label"),
+        "week_start": week.get("start"),
+        "week_end": week.get("end"),
+        "zone": week.get("zone"),
+        "difficulty": week.get("difficulty"),
+        "kills": week.get("kills"),
+        "pulls": week.get("pulls"),
+        "wipes": week.get("wipes"),
+        "deaths_total": week.get("deaths_total"),
+        "deaths": week.get("deaths") or {},
+        "repair_estimate": week.get("repair_estimate"),
+        "keys": week.get("keys") or [],
+        "parses": week.get("parses") or {},
+        "mplus_parses": week.get("mplus_parses") or {},
+        "improvement": week.get("improvement") or {},
+        "roast": week.get("roast"),
+        "streaks": (board_state or {}).get("streaks") or {},
+        "streaks_week": (board_state or {}).get("streaks_week"),
+        "streaks_started": (board_state or {}).get("streaks_started"),
+    }
+    out["status"] = ("ok" if have else
+                     "pending: the weekly board has not posted a week yet")
+    return out
 
 
 # ---------------------------------------------------------------------------
@@ -830,6 +894,7 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
         "season": {"slug": season["slug"], "name": season["name"]},
         "recap_ribbon": build_recap_ribbon(board_state, transmog_changes=transmog),
         "records_leaderboard": build_records_leaderboard(board_state),
+        "weekly_board": build_weekly_board(board_state),
         "guild_achievements": build_guild_achievements(guild_achievements, season=season),
         "island_completion": build_island_completion(
             dungeon_bests, raid_progression,
@@ -856,17 +921,21 @@ _PARITY_SPEC = [
     ("guild_announcement", "records_leaderboard/guild_pulse", "Discord announcement channel (needs Discord bot access)"),
     ("guild_standing", "records_leaderboard.standing", None),
     ("overall_realm_rank", "records_leaderboard.standing", None),
-    ("mplus_weekly_keys", "competition.key_records", None),
+    ("rank_movement", "records_leaderboard.standing_delta", "the arrow beside each rank tile"),
+    ("mplus_weekly_keys", "weekly_board.keys / competition.key_records", None),
     ("mplus_season_scores", "competition.rankings", None),
     ("mplus_season_parses", "competition.characters[].best_runs", None),
-    ("top_dps_parses", "competition.parses.leaders", "full weekly list needs Warcraft Logs enrichment"),
-    ("top_healing_parses", "competition.parses.leaders", "full weekly list needs WCL creds"),
-    ("top_tank_parses", "competition.parses", "needs WCL creds"),
+    ("top_dps_parses", "weekly_board.parses.dps / competition.parses.leaders", "full weekly list needs Warcraft Logs enrichment"),
+    ("top_healing_parses", "weekly_board.parses.hps / competition.parses.leaders", "full weekly list needs WCL creds"),
+    ("top_tank_parses", "weekly_board.parses.tanks / competition.parses", "needs WCL creds"),
+    ("mplus_weekly_parses", "weekly_board.mplus_parses", "needs WCL creds"),
+    ("wipes_and_repair", "weekly_board.wipes / .repair_estimate", "needs WCL creds"),
     ("weekly_raid_boss_ranks", "island_completion.raid", "WCL realm/region ranks need WCL creds"),
     ("raid_progression", "island_completion.raid", None),
-    ("most_deaths", "competition (pending)", "needs WCL creds"),
-    ("most_improved", "competition.movement", None),
-    ("roast_of_the_week", "guild_pulse (pending)", "needs Discord bot access"),
+    ("most_deaths", "weekly_board.deaths", "needs WCL creds"),
+    ("most_improved", "weekly_board.improvement / competition.movement", None),
+    ("iron_attendance", "weekly_board.streaks", "needs a name-realm keyed ingestion"),
+    ("roast_of_the_week", "weekly_board.roast", "the officer's roast, carried from the weekly run"),
     ("guild_achievements", "guild_achievements", "needs BLIZZARD creds"),
 ]
 
@@ -879,24 +948,49 @@ def build_parity_map(site):
     raid = (site.get("island_completion") or {}).get("raid") or {}
     ach = site.get("guild_achievements") or {}
     parses = comp.get("parses") or {}
+    week = site.get("weekly_board") or {}
+    rl = site.get("records_leaderboard") or {}
 
     def _state(field):
         if field == "guild_standing" or field == "overall_realm_rank":
             return "live" if standing else "pending"
-        if field in ("mplus_weekly_keys", "mplus_season_scores",
-                     "mplus_season_parses", "most_improved"):
+        if field == "rank_movement":
+            return "live" if rl.get("standing_delta") else "pending"
+        if field == "mplus_weekly_keys":
+            if week.get("keys"):
+                return "live"
+            return "partial" if comp.get("available") else "pending"
+        if field in ("mplus_season_scores", "mplus_season_parses"):
             return "live" if comp.get("available") else "pending"
+        if field == "most_improved":
+            if (week.get("improvement") or {}):
+                return "live"
+            return "partial" if comp.get("available") else "pending"
         if field == "raid_progression":
             return "live" if raid.get("total_bosses") else "pending"
         if field in ("top_dps_parses", "top_healing_parses", "top_tank_parses"):
+            role = {"top_dps_parses": "dps", "top_healing_parses": "hps",
+                    "top_tank_parses": "tanks"}[field]
+            if (week.get("parses") or {}).get(role):
+                return "live"
             if parses.get("available") == "full":
                 return "live"
             return "partial" if parses.get("leaders") else "pending"
+        if field == "mplus_weekly_parses":
+            return "live" if (week.get("mplus_parses") or {}) else "pending"
+        if field == "wipes_and_repair":
+            return "live" if week.get("wipes") is not None else "pending"
+        if field == "most_deaths":
+            return "live" if (week.get("deaths") or {}) else "pending"
+        if field == "iron_attendance":
+            return "live" if (week.get("streaks") or {}) else "pending"
+        if field == "roast_of_the_week":
+            return "live" if (week.get("roast") or {}).get("roast") else "pending"
         if field == "guild_achievements":
             return "live" if ach.get("available") else "pending"
-        if field == "weekly_raid_boss_ranks" or field == "most_deaths":
+        if field == "weekly_raid_boss_ranks":
             return "pending"
-        if field in ("roast_of_the_week", "guild_announcement"):
+        if field == "guild_announcement":
             return "pending"
         return "pending"
 

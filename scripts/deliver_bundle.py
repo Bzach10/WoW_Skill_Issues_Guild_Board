@@ -56,7 +56,13 @@ DELIVERED = ("competition.json", "records_leaderboard.json",
 # the boss-kill endpoint blocks the delivery of six healthy files -- the
 # opposite of what a graceful layer is for. A bundle built before this file
 # existed still delivers cleanly for the same reason.
-OPTIONAL = ("raid_kills.json",)
+# weekly_board.json is the SAME kind of sidecar: the weekly Discord board's
+# own week (kills, pulls, wipes, deaths, this week's keys and parse pools, the
+# improvement pairs, the roast). It only exists once a credentialed weekly run
+# has posted, so a bundle built from a data refresh alone legitimately has no
+# copy -- and the consumer's paper prints an honest PENDING seam rather than a
+# zero. REQUIRED would mean the whole delivery refuses on a Tuesday morning.
+OPTIONAL = ("raid_kills.json", "weekly_board.json")
 
 DEFAULT_TO = "C:/dev/wipefest-redesign/data/source"
 

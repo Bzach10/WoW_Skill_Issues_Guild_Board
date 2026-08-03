@@ -294,15 +294,19 @@ def main(argv=None):
 
     # Combined envelope + one file per layer.
     _write(os.path.join(args.out, "site_data.json"), site)
-    layers = ("recap_ribbon", "records_leaderboard", "guild_achievements",
-              "island_completion", "transmog_changes", "guild_pulse",
-              "competition", "parses")
+    layers = ("recap_ribbon", "records_leaderboard", "weekly_board",
+              "guild_achievements", "island_completion", "transmog_changes",
+              "guild_pulse", "competition", "parses")
     for layer in layers:
         _write(os.path.join(args.out, f"{layer}.json"), site[layer])
 
     print(f"\nWrote {args.out}/site_data.json (+ {len(layers)} per-layer files)")
     print(f"  recap beats     : {site['recap_ribbon']['beat_count']}")
     print(f"  ladder rows     : {site['records_leaderboard']['ladder_size']}")
+    wk = site["weekly_board"]
+    print(f"  weekly board    : {'available' if wk['available'] else wk['status']}"
+          + (f" — week {wk['week_label']}, {wk['kills']} kills / {wk['pulls']} pulls"
+             if wk["available"] else ""))
     print(f"  achievements    : {'available' if site['guild_achievements']['available'] else site['guild_achievements']['status']}")
     print(f"  dungeon islands : {site['island_completion']['dungeons']['conquered']}/{site['island_completion']['dungeons']['total']} conquered")
     raid = site["island_completion"]["raid"]

@@ -46,9 +46,14 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # The standalone per-layer files build_site_data.py writes next to
 # site_data.json. Every one must exist and byte-match its embedded copy.
-LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
-          "island_completion", "transmog_changes", "guild_pulse",
-          "competition", "parses")
+LAYERS = ("recap_ribbon", "records_leaderboard", "weekly_board",
+          "guild_achievements", "island_completion", "transmog_changes",
+          "guild_pulse", "competition", "parses")
+
+# Layers younger than some bundles on disk. Their ABSENCE is a warning (a
+# bundle built before the layer existed is old, not split-brained); their
+# PRESENCE is held to the same parity rule as every other layer.
+YOUNG_LAYERS = frozenset({"weekly_board"})
 
 SCORE_TOLERANCE = 0.05  # scores are one-decimal floats; anything past
                         # rounding noise is real drift
@@ -115,6 +120,12 @@ def check_presence_and_parity(bundle, report):
         layer = bundle.get(name)
         if layer is None:
             detail = (bundle.get("_parse_errors") or {}).get(name, "missing")
+            if name in YOUNG_LAYERS and detail == "missing":
+                report.warn("presence",
+                            f"{name}.json: missing -- this bundle predates the "
+                            "layer; rebuild with scripts/build_site_data.py to "
+                            "add it. Consumers treat it as absent, not empty.")
+                continue
             report.error("presence", f"{name}.json: {detail}")
             continue
         if name not in site:

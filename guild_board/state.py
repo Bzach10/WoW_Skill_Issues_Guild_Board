@@ -54,8 +54,112 @@ def load_board_state(path=STATE_FILE):
         return {}
 
 
+def _top_parse_rows(pool, limit):
+    """The week's parse pool as a plain, ordered, JSON-safe list."""
+    ranked = sorted((pool or {}).items(),
+                    key=lambda kv: (kv[1] or {}).get("parse") or 0, reverse=True)
+    out = []
+    for name, info in ranked[:limit]:
+        info = info or {}
+        out.append({
+            "name": name,
+            "spec": info.get("spec") or "",
+            "cls": info.get("cls") or "",
+            "boss": info.get("boss") or "",
+            "parse": info.get("parse") or 0,
+            "amount": info.get("amount") or 0,
+            "difficulty": info.get("difficulty"),
+            "key_level": info.get("key_level"),
+        })
+    return out
+
+
+def build_week_block(stats=None, start_dt=None, end_dt=None, week_label=None,
+                     zone_name=None, difficulty=None, mplus_results=None,
+                     mplus_weekly=None, improvement=None, roast=None, top_n=5):
+    """The WEEK's own facts, in a shape the website can read.
+
+    Everything the weekly board renders from Warcraft Logs and dies with —
+    kills, pulls, deaths, this week's timed keys, this week's parse pools,
+    the improvement pairs and the roast — persisted so the pipeline that
+    feeds the site (web_data -> deliver_bundle -> the paper's contract) can
+    carry it. Nothing here is invented: a missing input produces a missing
+    key, never a zero standing in for a number nobody measured.
+    """
+    stats = stats or {}
+    deaths = {k: int(v) for k, v in (stats.get("deaths") or {}).items() if v}
+    kills = stats.get("kills")
+    pulls = stats.get("pulls")
+    block = {"label": week_label}
+    if start_dt is not None:
+        block["start"] = start_dt.date().isoformat()
+    if end_dt is not None:
+        block["end"] = end_dt.date().isoformat()
+    if zone_name:
+        block["zone"] = zone_name
+    if difficulty:
+        block["difficulty"] = str(difficulty)
+    if kills is not None:
+        block["kills"] = int(kills)
+    if pulls is not None:
+        block["pulls"] = int(pulls)
+    if kills is not None and pulls is not None:
+        block["wipes"] = max(int(pulls) - int(kills), 0)
+    if deaths:
+        block["deaths_total"] = sum(deaths.values())
+        block["deaths"] = dict(sorted(deaths.items(), key=lambda kv: kv[1],
+                                      reverse=True)[:top_n * 2])
+    # The board's own repair gag, computed from the SAME two real numbers it
+    # has always used. Carried as a number, labelled an estimate; the paper
+    # decides whether to print it.
+    if deaths and pulls is not None:
+        block["repair_estimate"] = sum(deaths.values()) * 57 + int(pulls) * 23
+    keys = []
+    for item in mplus_results or []:
+        if len(item) >= 3:
+            keys.append({"level": item[0], "dungeon": item[1], "name": item[2],
+                         "spec": item[3] if len(item) >= 5 else ""})
+    if keys:
+        block["keys"] = sorted(keys, key=lambda k: k["level"] or 0,
+                               reverse=True)[:top_n]
+    parses = {role: _top_parse_rows(stats.get(f"best_{role}"), top_n)
+              for role in ("dps", "hps", "tanks")}
+    parses = {k: v for k, v in parses.items() if v}
+    if parses:
+        block["parses"] = parses
+    weekly = {role: _top_parse_rows((mplus_weekly or {}).get(role), top_n)
+              for role in ("dps", "hps", "tanks")}
+    weekly = {k: v for k, v in weekly.items() if v}
+    if weekly:
+        block["mplus_parses"] = weekly
+    improved = {}
+    for role in ("dps", "hps"):
+        rows = (improvement or {}).get(role) or []
+        if rows:
+            improved[role] = [{
+                "name": e.get("name") or "",
+                "spec": e.get("spec") or "",
+                "cls": e.get("cls") or "",
+                "early_parse": e.get("early_parse"),
+                "late_parse": e.get("late_parse"),
+                "delta": e.get("delta"),
+                "early_amount": e.get("early_amount"),
+                "late_amount": e.get("late_amount"),
+                "difficulty": e.get("difficulty"),
+            } for e in rows[:top_n]]
+    if improved:
+        block["improvement"] = improved
+    roast = roast or {}
+    if roast.get("roast"):
+        block["roast"] = {"roast": roast.get("roast"),
+                          "winner": roast.get("winner") or "",
+                          "target": roast.get("target") or ""}
+    return block
+
+
 def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE,
-                     streaks_week=None, previous=None, streaks_started=None):
+                     streaks_week=None, previous=None, streaks_started=None,
+                     week=None):
     """Persist what this board showed, for next week's comparisons.
 
     Two-slot scheme: "baseline" holds the last COMPLETED week's finals
@@ -98,6 +202,14 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         "baseline": baseline,
         "records": records or {},
     }
+    # The week's own facts. A run that could not read the logs must not
+    # overwrite the last week that could -- an empty block is a gap in the
+    # measurement, not a week in which nobody died.
+    if week and any(k in week for k in ("kills", "pulls", "deaths_total",
+                                        "keys", "parses", "mplus_parses")):
+        state["week"] = week
+    elif prev.get("week"):
+        state["week"] = prev["week"]
     with open(path, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
     logger.info("Board state saved for next week's deltas.")

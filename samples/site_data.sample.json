@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-07-27T06:12:44.561351+00:00",
+  "generated_at": "2026-07-20T12:14:49+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561382+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "week_of": "2026-07-14",
     "based_on": "2026-07-20T12:14:49+00:00",
     "beats": [
@@ -75,12 +75,22 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561396+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "based_on": "2026-07-20T12:14:49+00:00",
     "standing": {
       "realm": 49,
       "region": 2219,
       "world": 6840
+    },
+    "previous_standing": {
+      "realm": 52,
+      "region": 2451,
+      "world": 6855
+    },
+    "standing_delta": {
+      "realm": 3,
+      "region": 232,
+      "world": 15
     },
     "headline_records": [
       {
@@ -178,9 +188,127 @@
       "rank"
     ]
   },
+  "weekly_board": {
+    "schema_version": 1,
+    "generated_at": "2026-07-20T12:14:49+00:00",
+    "available": true,
+    "based_on": "2026-07-20T12:14:49+00:00",
+    "week_label": "2026-07-14",
+    "week_start": "2026-07-13",
+    "week_end": "2026-07-20",
+    "zone": "Voidspire Sanctum",
+    "difficulty": "Mythic",
+    "kills": 6,
+    "pulls": 54,
+    "wipes": 48,
+    "deaths_total": 123,
+    "deaths": {
+      "maillo": 32,
+      "buchalter": 30,
+      "tommybravoo": 18,
+      "chokalock": 17,
+      "rakdisc": 11
+    },
+    "repair_estimate": 8253,
+    "keys": [
+      {
+        "level": 20,
+        "dungeon": "Pit of Saron",
+        "name": "Amrevenge",
+        "spec": "Beast Mastery Hunter"
+      },
+      {
+        "level": 19,
+        "dungeon": "Skyreach",
+        "name": "Tommybravoo",
+        "spec": "Unholy DK"
+      }
+    ],
+    "parses": {
+      "dps": [
+        {
+          "name": "Maillo",
+          "spec": "BeastMastery",
+          "cls": "Hunter",
+          "boss": "Chimaerus the Undreamt God",
+          "parse": 92,
+          "amount": 144000,
+          "difficulty": 5,
+          "key_level": null
+        }
+      ],
+      "hps": [
+        {
+          "name": "Phyrthepali",
+          "spec": "Holy",
+          "cls": "Paladin",
+          "boss": "Imperator Averzian",
+          "parse": 96,
+          "amount": 167000,
+          "difficulty": 5,
+          "key_level": null
+        }
+      ],
+      "tanks": [
+        {
+          "name": "Brewzleeh",
+          "spec": "Brewmaster",
+          "cls": "Monk",
+          "boss": "Chimaerus the Undreamt God",
+          "parse": 91,
+          "amount": 88000,
+          "difficulty": 5,
+          "key_level": null
+        }
+      ]
+    },
+    "mplus_parses": {
+      "dps": [
+        {
+          "name": "Brewzleeh",
+          "spec": "Windwalker",
+          "cls": "Monk",
+          "boss": "Pit of Saron",
+          "parse": 96,
+          "amount": 146000,
+          "difficulty": 10,
+          "key_level": 18
+        }
+      ]
+    },
+    "improvement": {
+      "dps": [
+        {
+          "name": "Tommybravoo",
+          "spec": "Unholy",
+          "cls": "DeathKnight",
+          "early_parse": 19,
+          "late_parse": 67,
+          "delta": 48,
+          "early_amount": 90000,
+          "late_amount": 127000,
+          "difficulty": 5
+        }
+      ]
+    },
+    "roast": {
+      "roast": "Healmates Sucks",
+      "winner": "Rakdaddy",
+      "target": "Healmates"
+    },
+    "streaks": {
+      "amrevenge": 2,
+      "tommybravoo": 3,
+      "rakdisc": 1,
+      "healmates": 3
+    },
+    "streaks_week": "2026-07-14",
+    "streaks_started": null,
+    "status": "ok"
+  },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561404+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -218,7 +346,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561419+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -415,7 +543,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561289+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "is_first_run": false,
     "changed": [
       {
@@ -438,7 +566,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561423+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "available": true,
     "status": "ok",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -1351,7 +1479,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-07-27T06:12:44.561349+00:00",
+    "generated_at": "2026-07-20T12:14:49+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
@@ -1599,10 +1727,10 @@
   "parity": {
     "schema_version": 1,
     "summary": {
-      "live": 11,
+      "live": 17,
       "partial": 0,
-      "pending": 4,
-      "total": 15
+      "pending": 2,
+      "total": 19
     },
     "fields": [
       {
@@ -1624,8 +1752,14 @@
         "note": null
       },
       {
+        "field": "rank_movement",
+        "served_by": "records_leaderboard.standing_delta",
+        "state": "live",
+        "note": "the arrow beside each rank tile"
+      },
+      {
         "field": "mplus_weekly_keys",
-        "served_by": "competition.key_records",
+        "served_by": "weekly_board.keys / competition.key_records",
         "state": "live",
         "note": null
       },
@@ -1643,19 +1777,31 @@
       },
       {
         "field": "top_dps_parses",
-        "served_by": "competition.parses.leaders",
+        "served_by": "weekly_board.parses.dps / competition.parses.leaders",
         "state": "live",
         "note": "full weekly list needs Warcraft Logs enrichment"
       },
       {
         "field": "top_healing_parses",
-        "served_by": "competition.parses.leaders",
+        "served_by": "weekly_board.parses.hps / competition.parses.leaders",
         "state": "live",
         "note": "full weekly list needs WCL creds"
       },
       {
         "field": "top_tank_parses",
-        "served_by": "competition.parses",
+        "served_by": "weekly_board.parses.tanks / competition.parses",
+        "state": "live",
+        "note": "needs WCL creds"
+      },
+      {
+        "field": "mplus_weekly_parses",
+        "served_by": "weekly_board.mplus_parses",
+        "state": "live",
+        "note": "needs WCL creds"
+      },
+      {
+        "field": "wipes_and_repair",
+        "served_by": "weekly_board.wipes / .repair_estimate",
         "state": "live",
         "note": "needs WCL creds"
       },
@@ -1673,21 +1819,27 @@
       },
       {
         "field": "most_deaths",
-        "served_by": "competition (pending)",
-        "state": "pending",
+        "served_by": "weekly_board.deaths",
+        "state": "live",
         "note": "needs WCL creds"
       },
       {
         "field": "most_improved",
-        "served_by": "competition.movement",
+        "served_by": "weekly_board.improvement / competition.movement",
         "state": "live",
         "note": null
       },
       {
+        "field": "iron_attendance",
+        "served_by": "weekly_board.streaks",
+        "state": "live",
+        "note": "needs a name-realm keyed ingestion"
+      },
+      {
         "field": "roast_of_the_week",
-        "served_by": "guild_pulse (pending)",
-        "state": "pending",
-        "note": "needs Discord bot access"
+        "served_by": "weekly_board.roast",
+        "state": "live",
+        "note": "the officer's roast, carried from the weekly run"
       },
       {
         "field": "guild_achievements",
@@ -1698,5 +1850,5 @@
     ]
   },
   "_sample": true,
-  "_note": "Illustrative values, production shapes. Generated by scripts/build_sample_site_data.py through the real guild_board.web_data producers."
+  "_note": "Illustrative values, production shapes. Generated by scripts/build_sample_site_data.py through the real guild_board.web_data producers. Every generated_at is the fixture week's stamp, not the run's."
 }
