@@ -16,12 +16,32 @@ lookback_days: 7
 # How many players shown per category (3, 4, or 5)
 top_n: 5
 
-# Board layout:
+# ============================================================
+#  WHAT THE WEEKLY POST SHOWS
+# ============================================================
+#   paper    THE PAPER IS THE POST. The website's own four-page newspaper
+#            (skill-issues-board.pages.dev/board/) is photographed and those
+#            photographs are the attachments: page one, an above-the-fold
+#            teaser cut for phones, and page two's Season Ladder. One
+#            composition, one set of numbers, nothing to drift.
+#   classic  the old behaviour: this repo renders its own board image from
+#            its own templates (see `display.renderer` below).
+#
+# The paper path is GATED: parity_manifest.yml lists every datum the board
+# used to publish, the run checks the fetched page for each one, and a post
+# that would ship a paper missing any of them is REFUSED with a loud log. A
+# browser or network fault is different -- that falls back to `classic` for
+# the week rather than skipping it, so the guild always gets a board.
+renderer: paper
+
+# Board layout (used by `classic`):
 #   image_board   — the whole board is rendered as one image (recommended:
 #                   real aligned columns, class colors, identical on mobile)
 #   single_column — plain text embed, one section per field
 #   two_column    — legacy inline-field columns (Discord misaligns these; avoid)
 display:
+  # Where the paper lives. Only read when renderer: paper.
+  paper_url: "https://skill-issues-board.pages.dev/board/"
   layout: image_board
   # Renderer: "html" screenshots the design's own HTML template in headless
   # Chromium (pixel-identical to the mockup); anything else, or any render

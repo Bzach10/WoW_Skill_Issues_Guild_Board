@@ -49,11 +49,47 @@ jobs:
       - name: Install fonts for board rendering
         run: sudo apt-get update -qq && sudo apt-get install -y -qq fonts-dejavu-core
 
-      - name: Install Chromium for the HTML renderer
+      # Chromium serves BOTH render paths: `paper` drives the live site to its
+      # flat put-down edition and photographs page one, the above-the-fold
+      # teaser and page two; `classic` screenshots this repo's own template.
+      - name: Install Chromium for the renderer
         run: python -m playwright install --with-deps chromium
 
       - name: Run tests
         run: pytest
+
+      # THE PARITY GATE, before any secret is in the environment.
+      # THE PAPER IS THE POST: the attachment is a photograph of the website's
+      # newspaper, which is built in another repo on another schedule. If a
+      # block quietly left that sheet, the shot would still succeed and the
+      # guild would simply stop being told something it used to be told. This
+      # step is the only thing that would notice. One GET, no browser, no
+      # credentials -- so a regressed paper kills the run early and loudly.
+      #
+      # Exit 1 = a kept datum vanished -> the job FAILS and nothing is posted.
+      # Exit 2 = the page could not be fetched -> a fetch fault is not a parity
+      #          verdict, so the run continues and leaderboard.py falls back to
+      #          the classic renderer for the week.
+      # Skipped entirely on `renderer: classic`.
+      - name: Parity gate - the paper still carries every kept datum
+        run: |
+          renderer=$(python -c "import yaml; print(yaml.safe_load(open('config.yml')).get('renderer', 'classic'))")
+          if [ "$renderer" != "paper" ]; then
+            echo "renderer: $renderer -- the paper is not the post this week; gate skipped."
+            exit 0
+          fi
+          set +e
+          python scripts/check_paper_parity.py
+          code=$?
+          set -e
+          if [ "$code" = "1" ]; then
+            echo "::error title=Paper parity::A datum the weekly board used to publish is no longer on the paper. See the log above; fix the site or move the entry to 'dropped' in parity_manifest.yml."
+            exit 1
+          fi
+          if [ "$code" = "2" ]; then
+            echo "::warning title=Paper unreachable::Could not fetch the paper; the post will fall back to the classic renderer."
+          fi
+          exit 0
 
       - name: Build and post the board
         env:

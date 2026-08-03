@@ -1,0 +1,312 @@
+# =============================================================================
+#  PARITY MANIFEST -- what the paper must still be carrying
+# =============================================================================
+# THE PAPER IS THE POST. The weekly dispatch stopped rendering its own board
+# image and started photographing the website's newspaper instead
+# (guild_board/paper_shot.py, renderer: paper in config.yml). One composition,
+# one set of numbers -- but ONE new failure mode: the paper is built in another
+# repo, on another schedule, by other hands, and it could quietly stop printing
+# something the board used to carry. Nobody would notice for weeks.
+#
+# This file is that noticing. Every datum listed under `kept` is one the board
+# used to publish and the paper is required to still publish. Before the post,
+# paper_shot.check_parity reads the fetched page's own text and matches every
+# `expect` pattern against it; a miss REFUSES the post and logs which datum
+# went and where it used to live. tests/test_paper_parity.py runs the same
+# check offline against a saved DOM snapshot, so a manifest that has rotted
+# fails in CI rather than at 13:00 UTC on a Tuesday.
+#
+#   datum   what it is, in the board's own vocabulary
+#   was     the section of the old Discord board it came from
+#   page    which leaf of the paper carries it now (1..4)
+#   anchor  the stable DOM selector a proof can bound it with
+#   expect  case-insensitive regex(es) matched against the page's innerText.
+#           STRUCTURE, NEVER VALUES: a heading, a column head, a label -- a
+#           pattern that matches this week's number is a gate that fails every
+#           other week for no reason.
+#   pending true = the berth is set but the ingestion has not filled it yet.
+#           Reported, never enforced -- an unfilled berth is not a regression.
+#
+# ADDING one: publish the datum on the paper first, then list it here.
+# REMOVING one: that is an editorial decision, and deleting the line is how it
+# is recorded. Do not silence a failure by deleting the entry it fired on
+# unless dropping the datum is what you actually meant.
+# =============================================================================
+
+url: https://skill-issues-board.pages.dev/board/
+snapshot: tests/fixtures/board_page_text.txt   # what the offline test reads
+
+kept:
+  # ---- the masthead: who, where, which week --------------------------------
+  - datum: masthead
+    was: board header art / guild nameplate
+    page: 1
+    anchor: "header.mh h1.mh__name"
+    expect: "The Weekly Wipe"
+
+  - datum: guild_and_realm
+    was: "nameplate: SKILL ISSUES / BLEEDING HOLLOW - US"
+    page: 1
+    anchor: "header.mh .mh__rule"
+    expect:
+      - "Skill Issues"
+      - "Bleeding Hollow"
+
+  - datum: edition_week
+    was: "info strip: Raid week: <start> - <end>"
+    page: 1
+    anchor: "header.mh .mh__rule"
+    expect: "Edition of the week of"
+
+  - datum: bearing_and_front
+    was: "info strip: <DIFFICULTY> - <zone>"
+    page: 1
+    anchor: "header.mh .mh__ear--l"
+    expect:
+      - "Bearing \\d"
+      - "The seas"
+
+  # ---- the week's story ----------------------------------------------------
+  - datum: headline
+    was: "hero band headline (record broken / rank climbed / bosses down)"
+    page: 1
+    anchor: "section.lead h2#lead-h"
+    expect: "From the News Coo desk"
+
+  - datum: raid_progression
+    was: "hero tiles KILLS; guild achievements / raid standing"
+    page: 1
+    anchor: "section.rblock--card table.agate (#raid-h)"
+    expect:
+      - "Order of battle"
+      - "Boss by boss"
+
+  # ---- the ladders ---------------------------------------------------------
+  - datum: board_top_ten
+    was: "SEASON M+ SCORES (top five)"
+    page: 1
+    anchor: "aside.rail section.railbox (#market-h)"
+    expect: "The Board, Top Ten"
+
+  - datum: season_mplus_scores
+    was: "SEASON M+ SCORES (the whole ladder)"
+    page: 2
+    anchor: "section.spo-standings table.agate--ladder (#ladder-h)"
+    expect:
+      - "The Season Ladder"
+      - "Marine threat"
+
+  - datum: season_score_week_delta
+    was: "SEASON M+ SCORES delta arrows"
+    page: 2
+    anchor: "table.agate--ladder td.n.wk"
+    expect: "\\bWk\\b"
+
+  - datum: closest_races
+    was: "CLOSEST RACES"
+    page: 2
+    anchor: "section.spo-standings p.races"
+    pending: true
+    note: >-
+      NEW on the paper (2026-08-03) and enforceable the moment the officer
+      deploys the site. A datum that has never been live cannot have vanished,
+      so gating on it before the deploy would refuse a Tuesday post for
+      something that is not a regression. Delete this `pending` line once
+      skill-issues-board.pages.dev/board/ is serving it.
+    expect: "The closest races"
+
+  - datum: biggest_climb
+    was: "WEEKLY AWARD - BIGGEST CLIMB"
+    page: 1
+    anchor: "section.newsbrief--a (#bounties-brief-h)"
+    expect:
+      - "Bounties Raised"
+      - "steepest climbs"
+
+  # ---- the record book -----------------------------------------------------
+  - datum: guild_records
+    was: "GUILD RECORDS - SEASON"
+    page: 1
+    anchor: "section.rblock--rec div.records (#records-h)"
+    expect:
+      - "The Record Book"
+      - "Biggest Timed Key"
+      - "Best DPS Raid Parse"
+      - "Best HPS Raid Parse"
+
+  - datum: best_season_runs
+    was: "BEST SEASON RUNS"
+    page: 3
+    anchor: "section.wg-well__col table.agate (#shipping-h)"
+    expect:
+      - "The Trade Lanes"
+      - "Lane record"
+
+  # ---- parses --------------------------------------------------------------
+  - datum: top_parses_by_role
+    was: "TOP DPS PARSES / TOP HEALING PARSES / TOP PARSES - ALL ROLES / TOP M+ TANKS"
+    page: 2
+    anchor: "section.gz-box table.crtable (#combat-h)"
+    expect: "Combat Record"
+
+  - datum: parse_leader_citation
+    was: "the board's single best parse of the week"
+    page: 2
+    anchor: "div.citation (#combat-h)"
+    expect: "Performance of the week"
+
+  # ---- the standing --------------------------------------------------------
+  - datum: guild_standing
+    was: "hero tiles REALM RANK / REGION RANK / WORLD RANK"
+    page: 3
+    anchor: "div.decree table.agate (#decree-box-h)"
+    expect:
+      - "Realm #"
+      - "Region #"
+      - "World #"
+
+  - datum: standing_week_movement
+    was: "the arrow beside each rank tile"
+    page: 3
+    anchor: "div.decree table.agate td.n.wk"
+    pending: true
+    note: >-
+      NEW on the paper (2026-08-03): the Wk column is set, and its VALUES fill
+      from records_leaderboard.standing_delta on the officer's next data
+      delivery. Enforceable once the site deploy is live; the values are a
+      second, separate step. Delete this `pending` line after the deploy.
+    expect: "Cleared at the bell[\\s\\S]{0,40}Standing[\\s\\S]{0,20}Wk"
+
+  # ---- the culture band ----------------------------------------------------
+  - datum: roast_of_the_week
+    was: "ROAST OF THE WEEK"
+    page: 3
+    anchor: "section.gz-civil__col blockquote.roast (#letters-h)"
+    expect: "Roast of the Week"
+
+  - datum: guild_announcement
+    was: "sections.announcement"
+    page: 4
+    anchor: "div.ad.ad--ann"
+    expect: "Guild Announcement"
+
+  - datum: raid_debuffs
+    was: "ACTIVE RAID DEBUFFS"
+    page: 4
+    anchor: "div.ad.ad--afflict ul.afflictions"
+    expect: "Ship.s Afflictions"
+
+  - datum: gambling_debt
+    was: "BREWZLEEH'S GAMBLING DEBT (footer card)"
+    page: 4
+    anchor: "div.ad.ad--debt"
+    expect: "Gambling Debt"
+
+  - datum: motd
+    was: "MOTD strip"
+    page: 4
+    anchor: "footer.colophon .colophon__motto"
+    expect: "ancient guild proverb"
+
+  - datum: guild_achievements
+    was: "GUILD ACHIEVEMENTS header / trophy count"
+    page: 4
+    anchor: "section.trophycase table.agate (#trophy-h)"
+    expect: "The Trophy Case"
+
+  # ---- berths that are set but not yet fed ---------------------------------
+  # These are the (b) gaps: the layout is on the sheet and the delivery chain
+  # is built (state.build_week_block -> web_data.build_weekly_board ->
+  # weekly_board.json -> deliver_bundle -> contract.weekly_board), but until a
+  # credentialed weekly run has posted, the paper prints a seam. Reported every
+  # week so the fill is visible; never enforced, because a seam is the honest
+  # state, not a regression.
+  - datum: wipes_and_repair_bill
+    was: "WIPES THIS WEEK / SEASON REPAIR BILL / GO AGANE COUNTER / hero tiles PULLS+DEATHS"
+    page: 3
+    anchor: "section.gz-civil__col (#week-h) table.agate"
+    pending: true
+    note: "fills from contract.weekly_board.kills/pulls/wipes/repair_estimate"
+    expect: "The Week.s Returns"
+
+  - datum: weekly_timed_keys
+    was: "TOP TIMED KEYS THIS WEEK"
+    page: 3
+    anchor: "section.gz-civil__col (#week-h)"
+    pending: true
+    note: "fills from contract.weekly_board.keys"
+    expect: "This week.s keys"
+
+  - datum: weekly_mplus_parses
+    was: "TOP M+ DPS / HPS / TANKS THIS WEEK"
+    page: 3
+    anchor: "section.gz-civil__col (#week-h)"
+    pending: true
+    note: "fills from contract.weekly_board.mplus_parses"
+    expect: "The week.s lane parses"
+
+  - datum: most_improved
+    was: "MOST IMPROVED DPS / MOST IMPROVED HEALERS"
+    page: 3
+    anchor: "section.gz-civil__col (#week-h)"
+    pending: true
+    note: "fills from contract.weekly_board.improvement"
+    expect: "Most improved"
+
+  - datum: iron_attendance
+    was: "WEEKLY AWARD - IRON ATTENDANCE"
+    page: 3
+    anchor: "section.gz-civil__col ul.seamlist (#seams-h)"
+    pending: true
+    note: >-
+      the paper refuses the board's bare-name streak tally and waits for a
+      name-realm keyed ingestion; the seam is deliberate
+    expect: "Iron Attendance"
+
+# =============================================================================
+#  DROPPED -- carried by the old board, deliberately NOT carried by the paper
+# =============================================================================
+# Under the owner's grant of 2026-08-03: "make sure we contain all the correct
+# information we currently have on the board plus or minus some of the items
+# that are goofy like the graves & guild items."
+#
+# Nothing here is gated. Each line is a one-sentence record of what left and
+# what it would take to bring it back, so a pardon is a small, obvious change
+# rather than an archaeology exercise.
+dropped:
+  - datum: graveyard_memorial
+    was: "GRAVEYARD CAMPERS MEMORIAL (four tombstones + reserved plot)"
+    why: >-
+      goofy, owner-named. The tombstone furniture does not survive the paper's
+      one-material rule and the paper's own back page already carries the gag
+      as a reserved-plot notice. PARDON: wire contract.weekly_board.deaths into
+      a column beside The Week's Returns.
+  - datum: graveyard_campers_column
+    was: "GRAVEYARD CAMPERS - <ZONE> (deaths per pull, five rows)"
+    why: >-
+      same class. The data (weekly_board.deaths) is now delivered and guarded;
+      only the column is withheld. PARDON: one table in the #week-h register.
+  - datum: guild_item_of_the_month
+    was: "GUILD ITEM OF THE MONTH (footer item card)"
+    why: >-
+      goofy, owner-named, and it was never data -- an officer hung a PNG. The
+      back page keeps the empty frame as a notice. PARDON: put the art back on
+      the frame in site/editorial.json.
+  - datum: compounding_gambling_debt
+    was: "BREWZLEEH'S GAMBLING DEBT - the compounding gold figure"
+    why: >-
+      the CARD stays (page four); the NUMBER does not. It was principal x
+      1.0999^week -- invented arithmetic, and the paper may not print an
+      invented figure beside certified ones. The back page prints the principal
+      and says it is a gag.
+  - datum: powered_by_watermark
+    was: "'Powered by Guild Board - github.com/...' corner watermark"
+    why: >-
+      a tool credit, not guild information. The paper's colophon carries its own
+      provenance line (raider.io + the contract's build stamp).
+  - datum: fake_debuff_stack_counts
+    was: "ACTIVE RAID DEBUFFS - the 'deaths' stack count"
+    why: >-
+      the debuff row itself is kept (Ship's Afflictions, page four); only the
+      stack number that was a real death count dressed as a gag is held back
+      until weekly_board.deaths_total is delivered.

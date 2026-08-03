@@ -43,9 +43,32 @@ produces them instead.
   when creds are absent.
 - Player specs drift over time; don't hardcode spec expectations in tests.
 
-## Layout & theming
+## THE PAPER IS THE POST (`renderer:` in config.yml)
 
-- Live layout is `image_board`, rendered via `guild_board/html_board.py`
+- `renderer: paper` (default, live): the weekly attachments are photographs
+  of the website's newspaper at <https://skill-issues-board.pages.dev/board/>
+  — page one, an above-the-fold teaser cut at the phone's measure, and page
+  two's Season Ladder. `guild_board/paper_shot.py` drives it to the flat
+  put-down edition (`data-paper=down` + `data-edition=spread`) and shoots.
+  The site repo holds the original of that script
+  (`wipefest-redesign/ops/press/post_front_page.py`); this is the vendored copy.
+- `renderer: classic` parks the old path (below) unchanged.
+- **The parity gate.** `parity_manifest.yml` lists every datum the board used
+  to publish and where it now lives on the paper. `scripts/check_paper_parity.py`
+  runs in the workflow BEFORE any secret is in the environment and refuses the
+  post if one has vanished; `paper_shot` re-checks the rendered DOM.
+  `tests/test_paper_post.py` runs the same check offline against
+  `tests/fixtures/board_page_text.txt`. Fails CLOSED on parity, OPEN on a
+  browser/network fault (the guild always gets a board).
+- Dropping a datum on purpose = move its entry from `kept` to `dropped` with a
+  reason. Never delete an entry to silence a failure.
+- The week's own numbers (kills/pulls/wipes/deaths/keys/parses/improvement/roast)
+  are persisted by `state.build_week_block` and delivered to the site as
+  `weekly_board.json` (web_data → deliver_bundle → the paper's contract).
+
+## Layout & theming (the `classic` renderer)
+
+- Legacy layout is `image_board`, rendered via `guild_board/html_board.py`
   (Jinja2 templates in `guild_board/templates/`) and screenshotted with
   Playwright. `board_image.py` is the Pillow renderer.
 - Visual knobs live in `theme.yml`; behavior/section knobs in `config.yml`.
