@@ -168,6 +168,9 @@ jobs:
                   if nm: out.append(nm)
               active = ((sp.get("active_specialization") or {}).get("name"))
               return {"known": out, "active": active}
+          def slim_keystone(k):
+              r = (k.get("current_mythic_rating") or {})
+              return {"rating": r.get("rating"), "color": r.get("color")}
           def slim_stats(st):
               st.pop("_links", None); st.pop("character", None)
               return st
@@ -178,7 +181,8 @@ jobs:
               row = {}
               for label, suffix, slim in [("profile","",slim_profile),
                                           ("statistics","/statistics",slim_stats),
-                                          ("specs","/specializations",slim_specs)]:
+                                          ("specs","/specializations",slim_specs),
+                                          ("keystone","/mythic-keystone-profile",slim_keystone)]:
                   try:
                       row[label] = slim(get(f"{realm}/{enc}{suffix}"))
                   except Exception as e:
