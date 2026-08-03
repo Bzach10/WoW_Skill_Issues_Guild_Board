@@ -106,11 +106,6 @@ kept:
     was: "CLOSEST RACES"
     page: 2
     anchor: "section.spo-standings p.races"
-      NEW on the paper (2026-08-03) and enforceable the moment the officer
-      deploys the site. A datum that has never been live cannot have vanished,
-      so gating on it before the deploy would refuse a Tuesday post for
-      something that is not a regression. Delete this `pending` line once
-      skill-issues-board.pages.dev/board/ is serving it.
     expect: "The closest races"
 
   - datum: biggest_climb
@@ -167,10 +162,6 @@ kept:
     was: "the arrow beside each rank tile"
     page: 3
     anchor: "div.decree table.agate td.n.wk"
-      NEW on the paper (2026-08-03): the Wk column is set, and its VALUES fill
-      from records_leaderboard.standing_delta on the officer's next data
-      delivery. Enforceable once the site deploy is live; the values are a
-      second, separate step. Delete this `pending` line after the deploy.
     expect: "Cleared at the bell[\\s\\S]{0,40}Standing[\\s\\S]{0,20}Wk"
 
   # ---- the culture band ----------------------------------------------------
