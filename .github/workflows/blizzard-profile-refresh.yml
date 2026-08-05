@@ -35,8 +35,9 @@ name: Blizzard Profile Refresh
 
 on:
   schedule:
-    # 15 minutes after the weekly board's Tuesday 13:00 UTC run, so this
-    # picks up that run's freshly-updated roster_cache.json.
+    # Tuesday 13:15 UTC: 15 minutes after the weekly board's 13:00 UTC run,
+    # so this picks up that run's freshly-updated roster_cache.json.
+    # Note: staggered before WCL Parse Refresh (14:00) to reduce conflicts
     - cron: "15 13 * * 2"
   workflow_dispatch:
     inputs:
@@ -59,6 +60,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -174,14 +177,26 @@ jobs:
             # runner — which is exactly what run 30332438237 did, and the same
             # failure daily-data-refresh.yml already carries this fix for.
             git checkout -- .
-            if git pull --rebase origin "$REF_NAME"; then
+            # Fetch to ensure we have the latest from origin
+            git fetch origin
+            if git pull --no-rebase origin "$REF_NAME"; then
+              # Fast-forward merge succeeded
               git push
             else
-              for f in $CACHES $CARDS; do
-                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
-              done
-              git add web_data_public
-              git rebase --continue
+              # Merge conflict occurred - resolve by keeping our version
+              # (freshly refreshed Blizzard data is authoritative)
+              echo "Merge conflict detected - resolving by keeping our Blizzard data..."
+              git merge --abort
+              # Pull with rebase strategy using 'ours' to prefer our changes
+              git pull --rebase -X ours origin "$REF_NAME" || {
+                # If rebase still fails, manually resolve by taking our version
+                echo "Rebase conflict - resolving conflicts by keeping our version..."
+                for f in $CACHES $CARDS; do
+                  git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+                done
+                git add web_data_public
+                git rebase --continue
+              }
               git push
             fi
           fi
