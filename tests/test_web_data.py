@@ -282,6 +282,16 @@ def test_roast_only_week_is_available():
     assert week["roast"]["roast"] == "Fresh roast"
 
 
+def test_improvement_only_week_is_available():
+    week = web_data.build_weekly_board({
+        "last_updated": "2026-08-04T13:00:00+00:00",
+        "week": {"label": "2026-08-04",
+                 "improvement": {"dps": [{"name": "A", "delta": 20}]}},
+    })
+    assert week["available"] is True
+    assert week["improvement"]["dps"][0]["delta"] == 20
+
+
 def test_build_site_data_assembles_all_layers():
     site = web_data.build_site_data(
         board_state=BOARD_STATE, manifest=MANIFEST,

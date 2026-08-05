@@ -656,6 +656,15 @@ def test_board_state_persists_a_roast_only_week(tmp_path):
     assert gb_state.load_board_state(path)["week"] == week
 
 
+def test_board_state_persists_an_improvement_only_week(tmp_path):
+    from guild_board import state as gb_state
+    path = str(tmp_path / "board_state.json")
+    week = {"label": "2026-08-04",
+            "improvement": {"dps": [{"name": "A", "delta": 20}]}}
+    gb_state.save_board_state({}, [], path=path, week=week)
+    assert gb_state.load_board_state(path)["week"] == week
+
+
 def test_hero_tiles_rank_deltas_and_stale():
     stats = {"kills": 1, "pulls": 13, "deaths": {"A": 3}}
     prev = {"standing": {"realm": 166, "region": 8018}}
@@ -1426,6 +1435,21 @@ def test_completed_raid_week_window_is_reset_aligned():
     assert end == datetime(
         2026, 7, 21, 14, 59, 59, 999999, tzinfo=timezone.utc)
     assert raid_week_label(end) == "2026-07-14"
+
+
+def test_completed_week_boundary_before_and_at_reset():
+    from guild_board.state import completed_raid_week_window
+    before_start, before_end = completed_raid_week_window(
+        datetime(2026, 7, 21, 14, 59, 59, tzinfo=timezone.utc))
+    at_start, at_end = completed_raid_week_window(
+        datetime(2026, 7, 21, 15, 0, tzinfo=timezone.utc))
+    assert before_start == datetime(
+        2026, 7, 7, 15, 0, tzinfo=timezone.utc)
+    assert before_end == datetime(
+        2026, 7, 14, 14, 59, 59, 999999, tzinfo=timezone.utc)
+    assert at_start == datetime(2026, 7, 14, 15, 0, tzinfo=timezone.utc)
+    assert at_end == datetime(
+        2026, 7, 21, 14, 59, 59, 999999, tzinfo=timezone.utc)
 
 
 def test_baseline_survives_reposts(tmp_path, monkeypatch):

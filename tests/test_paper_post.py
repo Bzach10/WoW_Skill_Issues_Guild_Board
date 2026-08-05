@@ -169,7 +169,7 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     assert embed["image"]["url"] == "attachment://weekly_post_fold.png"
     assert calls["url"] == "http://example.invalid/board/"
     assert calls["manifest"]["kept"]
-    assert calls["expected_week"]
+    assert calls["expected_week"] == main.raid_week_label(end)
     assert isinstance(calls["expected_weekly"], dict)
 
 

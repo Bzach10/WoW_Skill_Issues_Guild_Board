@@ -4,6 +4,8 @@ import shutil
 import sys
 from pathlib import Path
 
+import pytest
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
@@ -18,15 +20,19 @@ def _stage_samples(path):
                      path / f"{name}.json")
 
 
-def test_absent_optional_sidecar_removes_stale_consumer_copy(tmp_path):
+@pytest.mark.parametrize("filename", ["weekly_board.json", "raid_kills.json"])
+def test_absent_optional_sidecar_removes_stale_consumer_copy(
+        tmp_path, filename):
     source = tmp_path / "source"
     destination = tmp_path / "consumer"
     _stage_samples(source)
     destination.mkdir()
-    (source / "weekly_board.json").unlink()
-    (destination / "weekly_board.json").write_text(
+    optional_source = source / filename
+    if optional_source.exists():
+        optional_source.unlink()
+    (destination / filename).write_text(
         '{"week_label":"last-week"}', encoding="utf-8")
 
     assert deliver(str(source), str(destination)) == 0
-    assert not (destination / "weekly_board.json").exists()
+    assert not (destination / filename).exists()
     assert (destination / "DELIVERY.json").exists()
