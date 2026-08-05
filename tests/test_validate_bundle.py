@@ -102,6 +102,24 @@ def test_split_weekly_stamps_is_stamps_error(tmp_path):
     assert "stamps" in _sections(validate_bundle(d))
 
 
+def test_weekly_board_stamp_must_match_other_weekly_layers(tmp_path):
+    d = _stage(tmp_path)
+    old = "1999-01-01T00:00:00+00:00"
+    _rewrite(d, "weekly_board", lambda w: w.update(based_on=old))
+    _rewrite(d, "site_data",
+             lambda s: s["weekly_board"].update(based_on=old))
+    assert "stamps" in _sections(validate_bundle(d))
+
+
+def test_mixed_vintage_is_coherence_error(tmp_path):
+    d = _stage(tmp_path)
+    old = "1999-01-01T00:00:00+00:00"
+    _rewrite(d, "competition", lambda c: c.update(based_on=old))
+    _rewrite(d, "site_data",
+             lambda s: s["competition"].update(based_on=old))
+    assert "coherence" in _sections(validate_bundle(d))
+
+
 def test_gate_runs_standalone_without_pytest(tmp_path):
     # The script form is what the daily workflow calls; it must work with
     # nothing but the stdlib.

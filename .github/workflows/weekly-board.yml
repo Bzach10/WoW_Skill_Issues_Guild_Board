@@ -2,9 +2,9 @@ name: Weekly Guild Board
 
 on:
   schedule:
-    # Every Tuesday at 13:00 UTC (9 AM ET) — right before NA reset,
-    # so it captures the full previous raid week.
-    - cron: "0 13 * * 2"
+    # Every Tuesday at 16:00 UTC, after the 15:00 UTC NA reset. The command
+    # below uses exact reset-to-reset bounds for the completed raid week.
+    - cron: "0 16 * * 2"
   # This adds the "Run workflow" button so officers can post/repost
   # the board manually any time (e.g., after updating the roast).
   workflow_dispatch:
@@ -28,6 +28,10 @@ on:
         description: "Dry run only (do not post to Discord)"
         type: boolean
         required: false
+
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
 
 jobs:
   post-board:
@@ -109,6 +113,9 @@ jobs:
           IN_DRY_RUN: ${{ github.event.inputs.dry_run }}
         run: |
           args=()
+          if [ -z "$IN_LOOKBACK" ]; then
+            args+=(--completed-raid-week)
+          fi
           if [ -n "$IN_ROAST" ]; then
             args+=(--roast "$IN_ROAST")
           fi
@@ -129,13 +136,21 @@ jobs:
           fi
           python leaderboard.py "${args[@]}"
 
+      - name: Rebuild website bundle from the posted weekly state
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true'
+        run: |
+          python scripts/refresh_competition.py
+          python scripts/build_site_data.py --out web_data_public
+          python scripts/validate_bundle.py web_data_public
+
       - name: Publish web board to GitHub Pages
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true'
         env:
           WEB_BOARD_TOKEN: ${{ secrets.WEB_BOARD_TOKEN }}
         run: |
           if [ ! -f site/index.html ]; then
-            echo "No web board rendered this run; skipping publish."
-            exit 0
+            echo "::error::Web board publishing is enabled, but site/index.html was not rendered."
+            exit 1
           fi
           if [ -z "$WEB_BOARD_TOKEN" ]; then
             echo "WEB_BOARD_TOKEN secret not set; skipping web publish (see README 'Web board')."
@@ -184,7 +199,8 @@ jobs:
             echo "Web board published (archive week ${week})."
           fi
 
-      - name: Commit roster cache and board state
+      - name: Commit roster, board state, and website bundle
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.dry_run != 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Branch names may contain shell metacharacters; bind, don't splice.
@@ -195,10 +211,13 @@ jobs:
           git add roster_cache.json
           [ -f board_state.json ] && git add board_state.json
           [ -f web_stats.json ] && git add web_stats.json
+          [ -f competition_cache.json ] && git add competition_cache.json
+          [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
+          git add web_data_public
           if git diff --cached --quiet; then
             echo "No cache/state changes to commit."
           else
-            git commit -m "Update roster cache and board state [skip ci]"
+            git commit -m "Update weekly state and website bundle [skip ci]"
             # The run leaves other tracked files modified in the workspace
             # (roster_reconciliation.json is regenerated every board build).
             # Everything we want is committed above; drop the leftovers or
@@ -206,13 +225,13 @@ jobs:
             # runner — which is exactly how the 2026-07-27 roster refresh
             # was lost the first time.
             git checkout -- .
-            if git pull --rebase origin "$REF_NAME"; then
+            if git pull --rebase -X theirs origin "$REF_NAME"; then
               git push
             else
-              for f in roster_cache.json board_state.json web_stats.json; do
-                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+              for f in roster_cache.json board_state.json web_stats.json competition_cache.json raid_progression_cache.json web_data_public; do
+                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
               done
-              git rebase --continue
+              GIT_EDITOR=true git rebase --continue
               git push
             fi
           fi

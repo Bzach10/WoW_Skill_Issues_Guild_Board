@@ -37,6 +37,7 @@ import json
 import logging
 import os
 import re
+from datetime import date
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -155,6 +156,24 @@ def check_parity(page_text, manifest):
     return missing, checked
 
 
+def check_freshness(page_text, expected_week):
+    """Return whether the paper identifies the week this run is posting.
+
+    The consumer is deployed independently, so structural parity alone can
+    pass against an old edition. Accept the contract's ISO label or the
+    human-readable newspaper date, and reject an otherwise valid stale page.
+    """
+    if not expected_week:
+        return True
+    try:
+        week = date.fromisoformat(str(expected_week))
+    except (TypeError, ValueError):
+        return False
+    human = f"{week.strftime('%B')} {week.day}, {week.year}"
+    text = page_text or ""
+    return str(expected_week).lower() in text.lower() or human.lower() in text.lower()
+
+
 # ---------------------------------------------------------------------------
 # The shot
 # ---------------------------------------------------------------------------
@@ -200,7 +219,7 @@ def _open_flat(ctx, url, errors):
     return pg, state
 
 
-def shoot_paper(url=None, out_dir=".", manifest=None):
+def shoot_paper(url=None, out_dir=".", manifest=None, expected_week=None):
     """Shoot the paper and gate it. Returns a dict, or None if it cannot.
 
     dict keys: front, fold, ladder (paths), manifest (dict), parity
@@ -225,6 +244,10 @@ def shoot_paper(url=None, out_dir=".", manifest=None):
             if state.get("paper") != "down" or not state.get("leaves"):
                 raise RuntimeError(f"the paper never went down at {url} ({state})")
             page_text = pg.evaluate(PAGE_TEXT)
+            if not check_freshness(page_text, expected_week):
+                raise StalePaperError(
+                    f"paper at {url} does not identify expected week "
+                    f"{expected_week}; use the fresh classic render")
             for n, key, name in ((1, "front", "weekly_post_front.png"),
                                  (2, "ladder", "weekly_post_ladder.png")):
                 sel = f'.paper-table .paper-page[data-page-n="{n}"]'
@@ -307,3 +330,7 @@ def shoot_paper(url=None, out_dir=".", manifest=None):
 
 class ParityFailure(RuntimeError):
     """A datum the paper is required to carry is no longer on it."""
+
+
+class StalePaperError(RuntimeError):
+    """The paper is structurally valid but belongs to an older week."""

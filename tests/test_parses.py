@@ -33,6 +33,32 @@ def _blob(avg, median=None, kills=None):
     return out
 
 
+def test_gql_retries_rate_limits_using_retry_after(monkeypatch):
+    class Response:
+        def __init__(self, status, payload=None, headers=None):
+            self.status_code = status
+            self._payload = payload or {}
+            self.headers = headers or {}
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise AssertionError(f"unexpected final HTTP {self.status_code}")
+
+        def json(self):
+            return self._payload
+
+    responses = [
+        Response(429, headers={"Retry-After": "2"}),
+        Response(200, {"data": {"ok": True}}),
+    ]
+    sleeps = []
+    monkeypatch.setattr(wcl.requests, "post",
+                        lambda *a, **k: responses.pop(0))
+    monkeypatch.setattr(wcl.time, "sleep", sleeps.append)
+    assert wcl.gql("token", "query", {}) == {"ok": True}
+    assert sleeps == [2.0]
+
+
 # ---------------------------------------------------------------------------
 # normalize_character_parses — pure
 # ---------------------------------------------------------------------------

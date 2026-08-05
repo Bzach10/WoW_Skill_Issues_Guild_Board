@@ -282,7 +282,8 @@ def build_weekly_board(board_state=None):
     """
     week = (board_state or {}).get("week") or {}
     have = any(k in week for k in ("kills", "pulls", "deaths_total",
-                                   "keys", "parses", "mplus_parses"))
+                                   "keys", "parses", "mplus_parses",
+                                   "improvement", "roast"))
     out = {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
@@ -447,8 +448,8 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
                     guild-achievements API (see extract_raid_boss_kills).
                     When present, these are AUTHORITATIVE per-boss kills —
                     every listed boss is kill_confirmed with a first_kill_at,
-                    detail_source becomes "guild_achievements", and the
-                    pull-order inference is only used to fill gaps.
+                    detail_source names guild achievements plus aggregate
+                    progression when pull-order inference fills unnamed gaps.
 
     A dungeon island is "conquered" when someone timed it, "attempted" when
     run but not timed, "locked" when untouched. Raid bosses are confirmed
@@ -495,7 +496,8 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
 
     # Guild achievements, when present, are the authoritative per-boss source.
     have_achievements = bool(confirmed_boss_kills)
-    detail_source = "guild_achievements" if have_achievements else "raid_progression_count"
+    detail_source = ("guild_achievements+raid_progression_count"
+                     if have_achievements else "raid_progression_count")
 
     boss_islands = []
     for boss in raid["bosses"]:
@@ -513,9 +515,11 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
         # the DB-layer fix is DATABASE_DESIGN.md #7.3's kill_state, not yet
         # landed).
         confirmed = name in confirmed_boss_kills or name in record_bosses
-        # Inference (pull order vs kill count) only fills gaps, and only when
-        # we don't have the authoritative achievement list.
-        by_order = (not have_achievements) and boss["order"] <= highest_killed
+        # Achievements are authoritative for named confirmations but can be
+        # sparse (only Guild Run achievements). The aggregate still fills
+        # unnamed gaps as explicitly inferred, so islands cannot claim 2/9
+        # beside a truthful aggregate of 9 kills.
+        by_order = (not confirmed) and boss["order"] <= highest_killed
         boss_islands.append({
             "id": boss["slug"],
             "name": name,
@@ -552,9 +556,8 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
             },
             "total_bosses": len(raid["bosses"]),
             "islands": boss_islands,
-            # Provenance: "guild_achievements" = authoritative per-boss kills
-            # with first_kill_at dates; "raid_progression_count" = per-boss
-            # status inferred from the aggregate kill count by pull order.
+            # Provenance names both inputs when sparse achievement
+            # confirmations are supplemented by aggregate-order inference.
             "detail_source": detail_source,
         },
     }

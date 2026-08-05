@@ -66,14 +66,29 @@ Every post also includes a portrait phone-readable companion image and TL;DR
 callout lines in the message text, so the highlights land on mobile without
 pinch-zooming (toggle: `display.mobile_companion` in `config.yml`).
 
-## Web board (one-time setup, ~5 minutes)
+## Canonical website auto-deploy (one-time setup)
+
+Validated data commits trigger `.github/workflows/publish-website.yml`; the
+website no longer relies on a separate clock-based pickup.
+
+1. In the Cloudflare Pages project, create a deploy hook for the production
+   branch and save it in this repository as `WEBSITE_DEPLOY_HOOK_URL`.
+2. Have the website publish a small JSON health document containing
+   `source_generated_at` equal to the ingested
+   `web_data_public/site_data.json.generated_at`.
+3. Save that document's public URL as `WEBSITE_HEALTH_URL`.
+
+The publish workflow fails loudly if either secret is absent, the deploy hook
+fails, or the live health timestamp does not catch up within 15 minutes.
+
+## Legacy GitHub Pages board
 
 The post can carry a **📱 Web Board** button linking to a live, responsive
 website version of the board — real HTML that auto-scales to any screen
 (4 columns on a desktop, one column on a phone). CI renders it each week
 and publishes it to a **public** repo's GitHub Pages, so the private guild
-repo stays private. Until this setup is done, the publish step just skips —
-nothing breaks.
+repo stays private. This is now a fallback/archive; Discord links to the
+canonical Cloudflare newspaper.
 
 1. Have a public repo to host the page (e.g. `wow-guild-board`). In that
    repo: Settings → Pages → Source: "Deploy from a branch" → Branch:
@@ -85,8 +100,7 @@ nothing breaks.
    Read and write**. Copy the token.
 3. In THIS repo: Settings → Secrets and variables → Actions → New repository
    secret → name `WEB_BOARD_TOKEN`, paste the token.
-4. Check `display.web_board` in `config.yml` points at your repo and its
-   Pages URL (that URL is what the Discord button opens).
+4. Check `display.web_board.repo` in `config.yml` points at your public repo.
 
 Note the page is public to anyone with the link — it shows the same
 WCL/Raider.io stats that are already public, plus the roast. Once it's live,
@@ -188,4 +202,5 @@ This also means partial logs are handled gracefully — if the backup logger sta
 - **Mythic season starts?** Change `difficulty: heroic` to `mythic` in config.
 - **Add M+?** Set `mplus.enabled: true` and list your raiders in the roster.
 - **Monthly instead of weekly?** In `.github/workflows/weekly-board.yml`, change the cron line to `"0 13 1 * *"` (1st of each month) and set `lookback_days: 30` in config.
-- **Different post time?** Cron is in UTC. `0 13 * * 2` = Tuesday 13:00 UTC = 9 AM ET.
+- **Different post time?** Cron is in UTC. `0 16 * * 2` = Tuesday 16:00 UTC
+  and the run uses exact reset-to-reset bounds for the completed raid week.

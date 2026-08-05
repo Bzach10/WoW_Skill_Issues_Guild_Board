@@ -212,6 +212,18 @@ def test_raid_exposes_per_difficulty_counts():
     assert ic["raid"]["bosses_killed"] == 5
 
 
+def test_sparse_achievement_confirmations_do_not_underreport_aggregate():
+    ic = web_data.build_island_completion(
+        _dungeon_bests(), RAID_PROG, {},
+        confirmed_boss_kills={"Imperator Averzian": "2026-07-20"})
+    conquered = [b for b in ic["raid"]["islands"]
+                 if b["status"] == "conquered"]
+    assert len(conquered) >= ic["raid"]["bosses_killed"]
+    assert any(b["inferred_from_progress"] for b in conquered)
+    assert ic["raid"]["detail_source"] == (
+        "guild_achievements+raid_progression_count")
+
+
 def test_island_completion_empty_inputs_are_all_locked():
     ic = web_data.build_island_completion()
     assert ic["dungeons"]["conquered"] == 0
@@ -261,12 +273,23 @@ def test_transmog_new_character_is_not_a_change():
 
 # --- Assembler
 
-def test_build_site_data_assembles_all_five_layers():
+def test_roast_only_week_is_available():
+    week = web_data.build_weekly_board({
+        "last_updated": "2026-08-04T13:00:00+00:00",
+        "week": {"label": "2026-08-04",
+                 "roast": {"roast": "Fresh roast", "winner": "A", "target": "B"}},
+    })
+    assert week["available"] is True
+    assert week["roast"]["roast"] == "Fresh roast"
+
+
+def test_build_site_data_assembles_all_layers():
     site = web_data.build_site_data(
         board_state=BOARD_STATE, manifest=MANIFEST,
         dungeon_bests=_dungeon_bests(), raid_progression=RAID_PROG)
-    for layer in ("recap_ribbon", "records_leaderboard", "guild_achievements",
-                  "island_completion", "transmog_changes"):
+    for layer in ("recap_ribbon", "records_leaderboard", "weekly_board",
+                  "guild_achievements", "island_completion", "transmog_changes",
+                  "guild_pulse", "competition", "parses"):
         assert layer in site
         assert site[layer]["schema_version"] == web_data.SCHEMA_VERSION
     assert site["season"]["slug"] == "season-mn-1"

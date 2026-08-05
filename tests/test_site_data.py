@@ -53,3 +53,10 @@ def test_unknown_layer_name_raises():
     except ValueError:
         return
     raise AssertionError("expected ValueError for an unknown layer")
+
+
+def test_bundle_reads_every_current_contract_layer_from_samples():
+    got = site_data.bundle(
+        live_dir="does-not-exist",
+        sample_dir=site_data.SAMPLE_DIR)
+    assert set(got) == set(site_data.LAYERS)

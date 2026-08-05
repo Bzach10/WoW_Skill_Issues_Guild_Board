@@ -1,7 +1,6 @@
 """Consumer for the backend's web-data contract (WEB_DATA_CONTRACT.md).
 
-The backend emits five JSON layers (recap_ribbon, records_leaderboard,
-guild_achievements, island_completion, transmog_changes) as
+The backend emits its JSON layers as
 `web_data/<layer>.json`, with a committed `samples/<layer>.sample.json`
 for developing against populated states before a live run.
 
@@ -25,8 +24,9 @@ SCHEMA_VERSION = 1
 LIVE_DIR = Path("web_data")
 SAMPLE_DIR = Path("samples")
 
-LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
-          "island_completion", "transmog_changes")
+LAYERS = ("recap_ribbon", "records_leaderboard", "weekly_board",
+          "guild_achievements", "island_completion", "transmog_changes",
+          "guild_pulse", "competition", "parses")
 
 
 def _read(path):

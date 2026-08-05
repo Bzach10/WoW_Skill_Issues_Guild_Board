@@ -22,8 +22,8 @@ name: Blizzard Profile Refresh
 #
 # WHY THE CARD STEP LIVES ON THIS WEEKLY CRON, not the daily 11:30 job:
 # a card is a DATED SNAPSHOT — the game reads frozen printings, and printings
-# mint on the chapter boundary. Tuesday 13:15 UTC IS that boundary (it trails
-# the weekly board's 13:00 run). Cost is not the reason: the sweep is ~2,550
+# mint on the chapter boundary. Tuesday 15:30 UTC follows the NA reset and
+# the weekly board's data commit. Cost is not the reason: the sweep is ~2,550
 # requests, ~7% of one hour's client budget and ~90s of wall clock, so the
 # daily job could absorb it if the site ever wants a daily LIVE view beside
 # the weekly printings.
@@ -35,10 +35,8 @@ name: Blizzard Profile Refresh
 
 on:
   schedule:
-    # Tuesday 13:15 UTC: 15 minutes after the weekly board's 13:00 UTC run,
-    # so this picks up that run's freshly-updated roster_cache.json.
-    # Note: staggered before WCL Parse Refresh (14:00) to reduce conflicts
-    - cron: "15 13 * * 2"
+    # Tuesday 15:30 UTC, after reset and the weekly bundle rebuild.
+    - cron: "30 15 * * 2"
   workflow_dispatch:
     inputs:
       force:
@@ -51,6 +49,10 @@ on:
           run — 0 or blank means the whole roster). Digits only.
         type: string
         required: false
+
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
 
 jobs:
   refresh-blizzard-data:
@@ -187,15 +189,15 @@ jobs:
               # (freshly refreshed Blizzard data is authoritative)
               echo "Merge conflict detected - resolving by keeping our Blizzard data..."
               git merge --abort
-              # Pull with rebase strategy using 'ours' to prefer our changes
-              git pull --rebase -X ours origin "$REF_NAME" || {
+              # During a rebase, "theirs" is the refresh commit being replayed.
+              git pull --rebase -X theirs origin "$REF_NAME" || {
                 # If rebase still fails, manually resolve by taking our version
                 echo "Rebase conflict - resolving conflicts by keeping our version..."
                 for f in $CACHES $CARDS; do
-                  git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+                  git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
                 done
                 git add web_data_public
-                git rebase --continue
+                GIT_EDITOR=true git rebase --continue
               }
               git push
             fi

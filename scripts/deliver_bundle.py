@@ -126,6 +126,14 @@ def deliver(src_dir, dest_dir, dry_run=False):
             json.dump(manifest, fh, ensure_ascii=False, indent=1)
         for f in files + ("DELIVERY.json",):
             os.replace(os.path.join(staging, f), os.path.join(dest_dir, f))
+        # Optional means "the producer may honestly have no value", not
+        # "leave whatever old value the consumer already has". Retaining an
+        # absent weekly_board.json made a pending week look like last week.
+        for f in manifest["optional_absent"]:
+            try:
+                os.unlink(os.path.join(dest_dir, f))
+            except FileNotFoundError:
+                pass
     finally:
         shutil.rmtree(staging, ignore_errors=True)
 

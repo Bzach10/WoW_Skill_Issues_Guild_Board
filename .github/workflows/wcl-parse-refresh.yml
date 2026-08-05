@@ -11,10 +11,14 @@ name: WCL Parse Refresh
 
 on:
   schedule:
-    # Daily at 14:00 UTC: staggered after Blizzard Profile Refresh (13:15)
+    # Daily at 14:30 UTC, after the competition refresh.
     # to reduce merge conflicts on shared files like competition_cache.json
-    - cron: "0 14 * * *"
+    - cron: "30 14 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
 
 jobs:
   refresh-parses:
@@ -84,15 +88,15 @@ jobs:
               # Merge conflict occurred - resolve by keeping our version
               # (the freshly generated parse data is authoritative)
               echo "Merge conflict detected - resolving by keeping our parse data..."
-              git merge --abort
+              git merge --abort 2>/dev/null || true
               # Pull with rebase strategy - resolve conflicts automatically
-              git pull --rebase -X ours origin "$REF_NAME" || {
+              git pull --rebase -X theirs origin "$REF_NAME" || {
                 # If rebase still fails, manually resolve by taking our version
-                git checkout --ours parses_cache.json competition_cache.json web_data_public
-                [ -f raid_progression_cache.json ] && git checkout --ours raid_progression_cache.json
+                git checkout --theirs parses_cache.json competition_cache.json web_data_public
+                [ -f raid_progression_cache.json ] && git checkout --theirs raid_progression_cache.json
                 git add parses_cache.json competition_cache.json web_data_public
                 [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
-                git rebase --continue
+                GIT_EDITOR=true git rebase --continue
               }
               git push
             fi

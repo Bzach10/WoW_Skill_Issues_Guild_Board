@@ -1,0 +1,66 @@
+name: Publish Website
+
+# Data producers commit the validated bundle first. This workflow then wakes
+# the external Cloudflare project and verifies that its public health document
+# reports at least that bundle timestamp. It replaces the fragile independent
+# 13:00 pickup schedule.
+on:
+  workflow_run:
+    workflows:
+      - Daily Data Refresh
+      - Daily Competition Refresh
+      - WCL Parse Refresh
+      - Blizzard Profile Refresh
+      - Guild Pulse Refresh
+      - Weekly Guild Board
+    types: [completed]
+  workflow_dispatch:
+
+concurrency:
+  group: website-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.head_branch == 'main')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out the latest validated producer bundle
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Validate deployment configuration
+        env:
+          DEPLOY_HOOK: ${{ secrets.WEBSITE_DEPLOY_HOOK_URL }}
+          HEALTH_URL: ${{ secrets.WEBSITE_HEALTH_URL }}
+        run: |
+          if [ -z "$DEPLOY_HOOK" ]; then
+            echo "::error::Set WEBSITE_DEPLOY_HOOK_URL to the Cloudflare Pages deploy hook."
+            exit 1
+          fi
+          if [ -z "$HEALTH_URL" ]; then
+            echo "::error::Set WEBSITE_HEALTH_URL to the deployed bundle health JSON."
+            exit 1
+          fi
+
+      - name: Revalidate the exact bundle being deployed
+        run: python scripts/validate_bundle.py web_data_public
+
+      - name: Trigger Cloudflare website build
+        env:
+          DEPLOY_HOOK: ${{ secrets.WEBSITE_DEPLOY_HOOK_URL }}
+        run: curl --fail --show-error --silent --retry 4 --retry-all-errors -X POST "$DEPLOY_HOOK"
+
+      - name: Verify the deployed bundle is fresh
+        env:
+          HEALTH_URL: ${{ secrets.WEBSITE_HEALTH_URL }}
+        run: |
+          python scripts/check_website_freshness.py \
+            --url "$HEALTH_URL" \
+            --expected web_data_public/site_data.json

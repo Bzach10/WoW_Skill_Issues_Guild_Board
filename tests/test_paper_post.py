@@ -99,6 +99,14 @@ def test_empty_page_text_fails_every_enforced_datum():
     assert len(missing) == len(enforced)
 
 
+def test_freshness_accepts_iso_or_human_week_and_rejects_old_edition():
+    assert paper_shot.check_freshness("Edition 2026-08-04", "2026-08-04")
+    assert paper_shot.check_freshness(
+        "Edition of the week of Tuesday, August 4, 2026", "2026-08-04")
+    assert not paper_shot.check_freshness(
+        "Edition of the week of Tuesday, July 28, 2026", "2026-08-04")
+
+
 # --- the renderer switch ----------------------------------------------------
 
 def _cfg(renderer=None):
@@ -137,9 +145,10 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     calls = {}
 
-    def fake(url=None, out_dir=".", manifest=None):
+    def fake(url=None, out_dir=".", manifest=None, expected_week=None):
         calls["url"] = url
         calls["manifest"] = manifest
+        calls["expected_week"] = expected_week
         return _fake_shot(tmp_path)
 
     monkeypatch.setattr(paper_shot, "shoot_paper", fake)
@@ -152,6 +161,24 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     assert embed["image"]["url"] == "attachment://weekly_post_fold.png"
     assert calls["url"] == "http://example.invalid/board/"
     assert calls["manifest"]["kept"]
+    assert calls["expected_week"]
+
+
+def test_paper_renderer_still_generates_enabled_web_board(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = _cfg("paper")
+    cfg["display"]["web_board"]["enabled"] = True
+    calls = []
+
+    monkeypatch.setattr(paper_shot, "shoot_paper",
+                        lambda **kwargs: _fake_shot(tmp_path))
+    monkeypatch.setattr(paper_shot, "load_parity_manifest",
+                        lambda *a, **k: _manifest())
+    monkeypatch.setattr("guild_board.html_board.generate_web_board",
+                        lambda *a, **k: calls.append((a, k)))
+    start, end = _window()
+    main.build_board(cfg, start_dt=start, end_dt=end, dry_run=True)
+    assert len(calls) == 1
 
 
 def test_classic_renderer_leaves_the_old_path_alone(tmp_path, monkeypatch):

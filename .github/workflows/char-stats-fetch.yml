@@ -8,6 +8,11 @@ on:
   workflow_dispatch: {}
   schedule:
     - cron: "0 16 * * 2"
+
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
@@ -209,10 +214,10 @@ jobs:
             git fetch origin
             git pull --no-rebase origin "${GITHUB_REF_NAME}" && git push || {
               git merge --abort 2>/dev/null || true
-              git pull --rebase -X ours origin "${GITHUB_REF_NAME}" || {
-                git checkout --ours char_stats.json
+              git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" || {
+                git checkout --theirs char_stats.json
                 git add char_stats.json
-                git rebase --continue
+                GIT_EDITOR=true git rebase --continue
               }
               git push
             }

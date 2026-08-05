@@ -14,6 +14,10 @@ on:
     - cron: "0 14 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
+
 jobs:
   refresh-competition:
     runs-on: ubuntu-latest
@@ -74,12 +78,12 @@ jobs:
               # Merge conflict occurred - resolve by keeping our version
               echo "Merge conflict detected - resolving by keeping our data..."
               git merge --abort 2>/dev/null || true
-              # Pull with rebase strategy using 'ours' to prefer our changes
-              git pull --rebase -X ours origin "$REF_NAME" || {
+              # During a rebase, "theirs" is the refresh commit being replayed.
+              git pull --rebase -X theirs origin "$REF_NAME" || {
                 # If rebase still fails, manually resolve by taking our version
-                git checkout --ours competition_cache.json web_data_public raid_progression_cache.json 2>/dev/null || true
+                git checkout --theirs competition_cache.json web_data_public raid_progression_cache.json 2>/dev/null || true
                 git add competition_cache.json web_data_public raid_progression_cache.json
-                git rebase --continue
+                GIT_EDITOR=true git rebase --continue
               }
               git push
             fi

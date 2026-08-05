@@ -31,6 +31,22 @@ def raid_week_label(dt):
     return tuesday.isoformat()
 
 
+def completed_raid_week_window(dt):
+    """The exact most recently completed NA raid week.
+
+    Scheduled posts used a rolling seven-day lookback, which included two
+    hours from the wrong reset window when they ran before Tuesday's reset.
+    Return reset-to-reset bounds instead.
+    """
+    dt = dt.astimezone(timezone.utc)
+    days_since_tuesday = (dt.weekday() - 1) % 7
+    reset = (dt - timedelta(days=days_since_tuesday)).replace(
+        hour=15, minute=0, second=0, microsecond=0)
+    if reset > dt:
+        reset -= timedelta(days=7)
+    return reset - timedelta(days=7), reset - timedelta(microseconds=1)
+
+
 def baselines_view(state):
     """The state as delta displays must see it: standing/scores/records
     from the LAST COMPLETED week's final post, so mid-week reposts never
@@ -206,7 +222,8 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
     # overwrite the last week that could -- an empty block is a gap in the
     # measurement, not a week in which nobody died.
     if week and any(k in week for k in ("kills", "pulls", "deaths_total",
-                                        "keys", "parses", "mplus_parses")):
+                                        "keys", "parses", "mplus_parses",
+                                        "improvement", "roast")):
         state["week"] = week
     elif prev.get("week"):
         state["week"] = prev["week"]

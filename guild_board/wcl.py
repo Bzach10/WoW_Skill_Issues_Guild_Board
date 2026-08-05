@@ -169,12 +169,26 @@ def get_wcl_token(client_id, client_secret):
 
 
 def gql(token, query, variables):
-    resp = requests.post(
-        WCL_API_URL,
-        json={"query": query, "variables": variables},
-        headers={"Authorization": f"Bearer {token}"},
-        timeout=60,
-    )
+    resp = None
+    for attempt in range(5):
+        resp = requests.post(
+            WCL_API_URL,
+            json={"query": query, "variables": variables},
+            headers={"Authorization": f"Bearer {token}"},
+            timeout=60,
+        )
+        if resp.status_code != 429 and resp.status_code < 500:
+            break
+        retry_after = resp.headers.get("Retry-After")
+        try:
+            delay = float(retry_after) if retry_after else 2 ** attempt
+        except ValueError:
+            delay = 2 ** attempt
+        delay = min(max(delay, 0.5), 30)
+        logger.warning("WCL API returned HTTP %s; retrying in %.1fs (%d/5)",
+                       resp.status_code, delay, attempt + 1)
+        time.sleep(delay)
+    assert resp is not None
     resp.raise_for_status()
     payload = resp.json()
     if payload.get("errors"):

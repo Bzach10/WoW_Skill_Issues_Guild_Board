@@ -18,7 +18,7 @@ codepage chokes on them.
 
 ## Deploy flow — everything posts from `main` via Actions
 
-- `.github/workflows/weekly-board.yml` runs Tuesdays 13:00 UTC (pre-reset)
+- `.github/workflows/weekly-board.yml` runs Tuesdays 16:00 UTC (post-reset)
   and posts the board to Discord. `workflow_dispatch` supports overrides
   (roast, difficulty, lookback) and a `dry_run` input that skips the post.
 - `board-vote.yml` and `blizzard-profile-refresh.yml` are the other two

@@ -647,6 +647,15 @@ def test_board_state_round_trip(tmp_path, monkeypatch):
     assert gb_state.load_board_state(str(tmp_path / "missing.json")) == {}
 
 
+def test_board_state_persists_a_roast_only_week(tmp_path):
+    from guild_board import state as gb_state
+    path = str(tmp_path / "board_state.json")
+    week = {"label": "2026-08-04",
+            "roast": {"roast": "Fresh roast", "winner": "A", "target": "B"}}
+    gb_state.save_board_state({}, [], path=path, week=week)
+    assert gb_state.load_board_state(path)["week"] == week
+
+
 def test_hero_tiles_rank_deltas_and_stale():
     stats = {"kills": 1, "pulls": 13, "deaths": {"A": 3}}
     prev = {"standing": {"realm": 166, "region": 8018}}
@@ -1400,13 +1409,23 @@ def test_integrity_cli_on_state_file(tmp_path, monkeypatch):
 def test_raid_week_label_anchors_to_tuesday_reset():
     from guild_board.state import raid_week_label
     tz = timezone.utc
-    # Tuesday 13:00 UTC (the scheduled post, pre-reset) belongs to the PRIOR week
+    # Tuesday 13:00 UTC (pre-reset) belongs to the PRIOR week
     assert raid_week_label(datetime(2026, 7, 21, 13, 0, tzinfo=tz)) == "2026-07-14"
     # Tuesday 16:00 UTC (post-reset) starts the new week
     assert raid_week_label(datetime(2026, 7, 21, 16, 0, tzinfo=tz)) == "2026-07-21"
     # Sunday and Monday reposts stay in the same raid week (ISO week would split them)
     assert raid_week_label(datetime(2026, 7, 19, 22, 0, tzinfo=tz)) == "2026-07-14"
     assert raid_week_label(datetime(2026, 7, 20, 22, 0, tzinfo=tz)) == "2026-07-14"
+
+
+def test_completed_raid_week_window_is_reset_aligned():
+    from guild_board.state import completed_raid_week_window, raid_week_label
+    start, end = completed_raid_week_window(
+        datetime(2026, 7, 21, 16, 0, tzinfo=timezone.utc))
+    assert start == datetime(2026, 7, 14, 15, 0, tzinfo=timezone.utc)
+    assert end == datetime(
+        2026, 7, 21, 14, 59, 59, 999999, tzinfo=timezone.utc)
+    assert raid_week_label(end) == "2026-07-14"
 
 
 def test_baseline_survives_reposts(tmp_path, monkeypatch):

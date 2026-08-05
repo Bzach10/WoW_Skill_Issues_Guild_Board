@@ -17,7 +17,8 @@ from guild_board import web_data
 
 REPO = Path(__file__).resolve().parents[1]
 SAMPLES = REPO / "samples"
-LAYERS = ("recap_ribbon", "records_leaderboard", "guild_achievements",
+LAYERS = ("recap_ribbon", "records_leaderboard", "weekly_board",
+          "guild_achievements",
           "island_completion", "transmog_changes", "guild_pulse", "competition",
           "parses")
 
