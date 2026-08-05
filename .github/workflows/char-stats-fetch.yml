@@ -193,7 +193,7 @@ jobs:
           json.dump(out, open("char_stats.json","w"), ensure_ascii=False, indent=1)
           print("wrote", len(out), "characters")
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with: { name: char-stats, path: char_stats.json }
       - name: Commit the cache
         run: |
