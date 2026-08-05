@@ -240,8 +240,9 @@ def check_stamps(bundle, report):
     week = bundle.get("weekly_board") or {}
     comp = bundle.get("competition") or {}
 
-    weekly = {recap.get("based_on"), records.get("based_on"),
-              week.get("based_on")}
+    weekly = {stamp for stamp in (
+        recap.get("based_on"), records.get("based_on"), week.get("based_on"))
+        if stamp}
     if len(weekly) > 1:
         report.error("stamps", f"weekly layers carry different based_on stamps: {sorted(str(s) for s in weekly)}")
     weekly_stamp = next(iter(weekly), None)

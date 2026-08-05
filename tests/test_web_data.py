@@ -220,8 +220,7 @@ def test_sparse_achievement_confirmations_do_not_underreport_aggregate():
                  if b["status"] == "conquered"]
     assert len(conquered) >= ic["raid"]["bosses_killed"]
     assert any(b["inferred_from_progress"] for b in conquered)
-    assert ic["raid"]["detail_source"] == (
-        "guild_achievements+raid_progression_count")
+    assert ic["raid"]["detail_source"] == "guild_achievements"
 
 
 def test_island_completion_empty_inputs_are_all_locked():

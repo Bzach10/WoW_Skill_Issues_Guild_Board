@@ -448,8 +448,8 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
                     guild-achievements API (see extract_raid_boss_kills).
                     When present, these are AUTHORITATIVE per-boss kills —
                     every listed boss is kill_confirmed with a first_kill_at,
-                    detail_source names guild achievements plus aggregate
-                    progression when pull-order inference fills unnamed gaps.
+                    detail_source remains "guild_achievements"; per-island
+                    inference flags identify aggregate-filled unnamed gaps.
 
     A dungeon island is "conquered" when someone timed it, "attempted" when
     run but not timed, "locked" when untouched. Raid bosses are confirmed
@@ -496,8 +496,7 @@ def build_island_completion(dungeon_bests=None, raid_progression=None,
 
     # Guild achievements, when present, are the authoritative per-boss source.
     have_achievements = bool(confirmed_boss_kills)
-    detail_source = ("guild_achievements+raid_progression_count"
-                     if have_achievements else "raid_progression_count")
+    detail_source = "guild_achievements" if have_achievements else "raid_progression_count"
 
     boss_islands = []
     for boss in raid["bosses"]:
