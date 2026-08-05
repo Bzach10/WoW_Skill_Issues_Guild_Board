@@ -22,6 +22,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -63,12 +65,22 @@ jobs:
           else
             git commit -m "Refresh competition board [skip ci]"
             git checkout -- .
-            if git pull --rebase origin "$REF_NAME"; then
+            # Fetch to ensure we have the latest from origin
+            git fetch origin
+            if git pull --no-rebase origin "$REF_NAME"; then
+              # Fast-forward merge succeeded
               git push
             else
-              git checkout --ours competition_cache.json web_data_public raid_progression_cache.json
-              git add competition_cache.json web_data_public raid_progression_cache.json
-              git rebase --continue
+              # Merge conflict occurred - resolve by keeping our version
+              echo "Merge conflict detected - resolving by keeping our data..."
+              git merge --abort 2>/dev/null || true
+              # Pull with rebase strategy using 'ours' to prefer our changes
+              git pull --rebase -X ours origin "$REF_NAME" || {
+                # If rebase still fails, manually resolve by taking our version
+                git checkout --ours competition_cache.json web_data_public raid_progression_cache.json 2>/dev/null || true
+                git add competition_cache.json web_data_public raid_progression_cache.json
+                git rebase --continue
+              }
               git push
             fi
           fi
