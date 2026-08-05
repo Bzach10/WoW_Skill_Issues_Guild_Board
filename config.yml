@@ -68,16 +68,14 @@ display:
   # OFF: the web board (linked from the post title and text) replaces it,
   # and the second image cluttered the post. Flip back on any time.
   mobile_companion: false
-  # Responsive WEBSITE version of the board — a "📱 Web Board" button on
-  # the Discord post links to it, and it auto-scales to any screen.
-  # CI publishes site/index.html to the public repo below (needs the
-  # WEB_BOARD_TOKEN secret — see README "Web board" for the 5-minute
-  # one-time setup). Safe to leave enabled before setup: without the
-  # secret the publish step just skips.
+  # The "📱 Web Board" button on the Discord post links to the live site.
+  # It now points at the new Cloudflare Pages site — the same newspaper the
+  # `paper` renderer photographs. The old self-published GitHub Pages board
+  # (Bzach10/wow-guild-board) is RETIRED: CI no longer renders or publishes
+  # it, so there is no `repo`/WEB_BOARD_TOKEN to configure here anymore.
   web_board:
     enabled: true
-    repo: "Bzach10/wow-guild-board"                    # public repo that hosts the page
-    url: "https://bzach10.github.io/wow-guild-board/"  # where the button points
+    url: "https://skill-issues-board.pages.dev/"  # where the button points
   # NOTE: colors, backgrounds, fonts, header/footer modules and all the
   # gag text moved to theme.yml — see CUSTOMIZING.md. Any member can
   # safely edit that file.
