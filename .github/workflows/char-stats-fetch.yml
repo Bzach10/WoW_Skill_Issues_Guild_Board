@@ -19,7 +19,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0  # Full history for better merge detection
       - name: Fetch character sheets
@@ -33,7 +33,7 @@ jobs:
           tok_req = urllib.request.Request("https://oauth.battle.net/token",
               data=b"grant_type=client_credentials",
               headers={"Authorization": "Basic " + base64.b64encode(f"{cid}:{sec}".encode()).decode()})
-          tok = json.load(urllib.request.urlopen(tok_req))["access_token"]
+          tok = json.load(urllib.request.urlopen(tok_req, timeout=30))["access_token"]
           CHARS = [  # (realm_slug, lowercased name) x 118 from contract.json 2026-08-03
             ("aggramar","kirrá"),
             ("area-52","andika"),
@@ -157,7 +157,7 @@ jobs:
               url = (f"https://us.api.blizzard.com/profile/wow/character/{path}"
                      f"?namespace=profile-us&locale=en_US")
               req = urllib.request.Request(url, headers={"Authorization": "Bearer " + tok})
-              return json.load(urllib.request.urlopen(req))
+              return json.load(urllib.request.urlopen(req, timeout=30))
           def slim_profile(p):
               return {
                   "level": p.get("level"), "faction": (p.get("faction") or {}).get("name"),
@@ -200,7 +200,7 @@ jobs:
           json.dump(out, open("char_stats.json","w"), ensure_ascii=False, indent=1)
           print("wrote", len(out), "characters")
           PY
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with: { name: char-stats, path: char_stats.json }
       - name: Commit the cache
         run: |
@@ -212,13 +212,10 @@ jobs:
           else
             git commit -m "Refresh character sheets [skip ci]"
             git fetch origin
-            git pull --no-rebase origin "${GITHUB_REF_NAME}" && git push || {
-              git merge --abort 2>/dev/null || true
-              git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" || {
-                git checkout --theirs char_stats.json
-                git add char_stats.json
-                GIT_EDITOR=true git rebase --continue
-              }
-              git push
+            git pull --rebase -X theirs origin "${GITHUB_REF_NAME}" || {
+              git checkout --theirs char_stats.json
+              git add char_stats.json
+              GIT_EDITOR=true git rebase --continue
             }
+            git push
           fi

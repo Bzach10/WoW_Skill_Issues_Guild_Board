@@ -44,7 +44,7 @@ files (`roster_supplement.json`).
 Production does not depend on that local copy command. Every successful
 bundle-producing workflow wakes `.github/workflows/publish-website.yml`,
 which calls the Cloudflare Pages deploy hook and waits until the public
-health JSON reports the source bundle's `generated_at`. Configure
+copy of `site_data.json` byte-matches the source bundle. Configure
 `WEBSITE_DEPLOY_HOOK_URL` and `WEBSITE_HEALTH_URL` as repository secrets.
 The local delivery command remains the supported Windows development path.
 

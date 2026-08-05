@@ -33,12 +33,12 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -79,25 +79,14 @@ jobs:
             # a rebase onto a moved main cannot strand this commit on the
             # runner — the 2026-07-27 weekly-board failure mode.
             git checkout -- .
-            # Fetch to ensure we have the latest from origin
             git fetch origin
-            if git pull --no-rebase origin "$REF_NAME"; then
-              # Fast-forward merge succeeded
-              git push
-            else
-              # Merge conflict occurred - resolve by keeping our version
-              echo "Merge conflict detected - resolving by keeping our data..."
-              git merge --abort 2>/dev/null || true
-              # Pull with rebase strategy using 'theirs' to prefer our changes
-              # (in rebase context, --theirs means our commit being replayed)
-              git pull --rebase -X theirs origin "$REF_NAME" || {
-                # If rebase still fails, manually resolve by taking our version
-                echo "Rebase conflict - resolving conflicts by keeping our version..."
-                for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
-                  git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
-                done
-                GIT_EDITOR=true git rebase --continue
-              }
-              git push
-            fi
+            git pull --rebase -X theirs origin "$REF_NAME" || {
+              echo "Rebase conflict - resolving by keeping the validated refresh..."
+              for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
+                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
+              done
+              GIT_EDITOR=true git rebase --continue
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi

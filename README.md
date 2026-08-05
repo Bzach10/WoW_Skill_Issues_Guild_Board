@@ -73,13 +73,12 @@ website no longer relies on a separate clock-based pickup.
 
 1. In the Cloudflare Pages project, create a deploy hook for the production
    branch and save it in this repository as `WEBSITE_DEPLOY_HOOK_URL`.
-2. Have the website publish a small JSON health document containing
-   `source_generated_at` equal to the ingested
-   `web_data_public/site_data.json.generated_at`.
-3. Save that document's public URL as `WEBSITE_HEALTH_URL`.
+2. Have the website publish the ingested `site_data.json` byte-for-byte.
+3. Save that deployed file's public HTTPS URL as `WEBSITE_HEALTH_URL`.
 
 The publish workflow fails loudly if either secret is absent, the deploy hook
-fails, or the live health timestamp does not catch up within 15 minutes.
+fails, or the live file's SHA-256 does not exactly match the producer bundle
+within 15 minutes.
 
 ## Legacy GitHub Pages board
 

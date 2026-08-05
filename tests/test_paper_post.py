@@ -274,3 +274,13 @@ def test_fit_steps_an_oversized_capture_down(tmp_path, monkeypatch):
     assert paper_shot._fit(p) == paper_shot.STEPS[-1]
     with Image.open(p) as im:
         assert im.width < 900
+
+
+def test_browser_errors_are_bounded_and_workflow_command_safe():
+    errors = []
+    paper_shot._record_browser_error(
+        errors, "oops\n::error::forged\r\n" + "x" * 1000 + "%")
+    assert len(errors) == 1
+    assert "\n" not in errors[0] and "\r" not in errors[0]
+    assert len(errors[0]) <= 500
+    assert "%0A::error::" in errors[0]

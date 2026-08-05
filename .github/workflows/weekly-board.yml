@@ -40,10 +40,10 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -225,13 +225,12 @@ jobs:
             # runner — which is exactly how the 2026-07-27 roster refresh
             # was lost the first time.
             git checkout -- .
-            if git pull --rebase -X theirs origin "$REF_NAME"; then
-              git push
-            else
+            git pull --rebase -X theirs origin "$REF_NAME" || {
               for f in roster_cache.json board_state.json web_stats.json competition_cache.json raid_progression_cache.json web_data_public; do
                 git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
               done
               GIT_EDITOR=true git rebase --continue
-              git push
-            fi
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi

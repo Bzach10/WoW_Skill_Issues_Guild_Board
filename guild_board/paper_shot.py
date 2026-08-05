@@ -106,6 +106,15 @@ PAGE_TEXT = """() => {
 }"""
 
 
+def _record_browser_error(errors, message):
+    """Keep hostile page output from becoming Actions workflow commands."""
+    if len(errors) >= 20:
+        return
+    safe = str(message).replace("%", "%25").replace("\r", "%0D").replace(
+        "\n", "%0A")
+    errors.append(safe[:500])
+
+
 # ---------------------------------------------------------------------------
 # The parity gate
 # ---------------------------------------------------------------------------
@@ -225,8 +234,10 @@ def _meta(path):
 
 def _open_flat(ctx, url, errors):
     pg = ctx.new_page()
-    pg.on("pageerror", lambda e: errors.append(f"pageerror: {e}"))
-    pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+    pg.on("pageerror", lambda e: _record_browser_error(
+        errors, f"pageerror: {e}"))
+    pg.on("console", lambda m: _record_browser_error(errors, m.text)
+          if m.type == "error" else None)
     sep = "&" if "?" in url else "?"
     pg.goto(url + sep + "edition=spread", wait_until="networkidle", timeout=90_000)
     state = pg.evaluate(PUT_DOWN)

@@ -27,12 +27,12 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -79,25 +79,14 @@ jobs:
             git commit -m "Refresh WCL parse data [skip ci]"
             # Drop unstaged leftovers before the rebase to prevent conflicts
             git checkout -- .
-            # Fetch to ensure we have the latest from origin
             git fetch origin
-            if git pull --no-rebase origin "$REF_NAME"; then
-              # Fast-forward merge succeeded
-              git push
-            else
-              # Merge conflict occurred - resolve by keeping our version
-              # (the freshly generated parse data is authoritative)
-              echo "Merge conflict detected - resolving by keeping our parse data..."
-              git merge --abort 2>/dev/null || true
-              # Pull with rebase strategy - resolve conflicts automatically
-              git pull --rebase -X theirs origin "$REF_NAME" || {
-                # If rebase still fails, manually resolve by taking our version
-                git checkout --theirs parses_cache.json competition_cache.json web_data_public
-                [ -f raid_progression_cache.json ] && git checkout --theirs raid_progression_cache.json
-                git add parses_cache.json competition_cache.json web_data_public
-                [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
-                GIT_EDITOR=true git rebase --continue
-              }
-              git push
-            fi
+            git pull --rebase -X theirs origin "$REF_NAME" || {
+              git checkout --theirs parses_cache.json competition_cache.json web_data_public
+              [ -f raid_progression_cache.json ] && git checkout --theirs raid_progression_cache.json
+              git add parses_cache.json competition_cache.json web_data_public
+              [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
+              GIT_EDITOR=true git rebase --continue
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi

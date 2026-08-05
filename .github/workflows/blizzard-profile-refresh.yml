@@ -61,12 +61,12 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -179,26 +179,15 @@ jobs:
             # runner — which is exactly what run 30332438237 did, and the same
             # failure daily-data-refresh.yml already carries this fix for.
             git checkout -- .
-            # Fetch to ensure we have the latest from origin
             git fetch origin
-            if git pull --no-rebase origin "$REF_NAME"; then
-              # Fast-forward merge succeeded
-              git push
-            else
-              # Merge conflict occurred - resolve by keeping our version
-              # (freshly refreshed Blizzard data is authoritative)
-              echo "Merge conflict detected - resolving by keeping our Blizzard data..."
-              git merge --abort
-              # During a rebase, "theirs" is the refresh commit being replayed.
-              git pull --rebase -X theirs origin "$REF_NAME" || {
-                # If rebase still fails, manually resolve by taking our version
-                echo "Rebase conflict - resolving conflicts by keeping our version..."
-                for f in $CACHES $CARDS; do
-                  git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
-                done
-                git add web_data_public
-                GIT_EDITOR=true git rebase --continue
-              }
-              git push
-            fi
+            git pull --rebase -X theirs origin "$REF_NAME" || {
+              echo "Rebase conflict - resolving by keeping the validated refresh..."
+              for f in $CACHES $CARDS; do
+                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
+              done
+              git add web_data_public
+              GIT_EDITOR=true git rebase --continue
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi
