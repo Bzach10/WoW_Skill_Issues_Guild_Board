@@ -11,9 +11,9 @@ name: WCL Parse Refresh
 
 on:
   schedule:
-    # Daily at 13:30 UTC: after the weekly board's Tuesday 13:00 run, and
-    # before the 14:00 daily competition refresh rebuilds the bundle again.
-    - cron: "30 13 * * *"
+    # Daily at 14:00 UTC: staggered after Blizzard Profile Refresh (13:15)
+    # to reduce merge conflicts on shared files like competition_cache.json
+    - cron: "0 14 * * *"
   workflow_dispatch:
 
 jobs:
@@ -24,6 +24,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -71,13 +73,27 @@ jobs:
             echo "No parse changes to commit."
           else
             git commit -m "Refresh WCL parse data [skip ci]"
+            # Drop unstaged leftovers before the rebase to prevent conflicts
             git checkout -- .
-            if git pull --rebase origin "$REF_NAME"; then
+            # Fetch to ensure we have the latest from origin
+            git fetch origin
+            if git pull --no-rebase origin "$REF_NAME"; then
+              # Fast-forward merge succeeded
               git push
             else
-              git checkout --ours parses_cache.json web_data_public raid_progression_cache.json
-              git add parses_cache.json web_data_public raid_progression_cache.json
-              git rebase --continue
+              # Merge conflict occurred - resolve by keeping our version
+              # (the freshly generated parse data is authoritative)
+              echo "Merge conflict detected - resolving by keeping our parse data..."
+              git merge --abort
+              # Pull with rebase strategy - resolve conflicts automatically
+              git pull --rebase -X ours origin "$REF_NAME" || {
+                # If rebase still fails, manually resolve by taking our version
+                git checkout --ours parses_cache.json competition_cache.json web_data_public
+                [ -f raid_progression_cache.json ] && git checkout --ours raid_progression_cache.json
+                git add parses_cache.json competition_cache.json web_data_public
+                [ -f raid_progression_cache.json ] && git add raid_progression_cache.json
+                git rebase --continue
+              }
               git push
             fi
           fi
