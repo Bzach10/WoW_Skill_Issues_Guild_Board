@@ -156,7 +156,7 @@ def check_parity(page_text, manifest):
     return missing, checked
 
 
-def check_freshness(page_text, expected_week):
+def check_freshness(page_text, expected_week, expected_weekly=None):
     """Return whether the paper identifies the week this run is posting.
 
     The consumer is deployed independently, so structural parity alone can
@@ -171,7 +171,24 @@ def check_freshness(page_text, expected_week):
         return False
     human = f"{week.strftime('%B')} {week.day}, {week.year}"
     text = page_text or ""
-    return str(expected_week).lower() in text.lower() or human.lower() in text.lower()
+    if not (str(expected_week).lower() in text.lower()
+            or human.lower() in text.lower()):
+        return False
+    # A week label remains unchanged for seven days, so it cannot distinguish
+    # Tuesday morning's pending paper from the newly posted weekly contract.
+    # Pulls/wipes are uniquely weekly figures on the paper and close that gap.
+    weekly = expected_weekly or {}
+    for label in ("pulls", "wipes"):
+        value = weekly.get(label)
+        if value is None:
+            continue
+        patterns = (
+            rf"\b{re.escape(str(value))}\s+{label}\b",
+            rf"\b{label}\s*:?\s*{re.escape(str(value))}\b",
+        )
+        if not any(re.search(pattern, text, re.I) for pattern in patterns):
+            return False
+    return True
 
 
 # ---------------------------------------------------------------------------
@@ -219,7 +236,8 @@ def _open_flat(ctx, url, errors):
     return pg, state
 
 
-def shoot_paper(url=None, out_dir=".", manifest=None, expected_week=None):
+def shoot_paper(url=None, out_dir=".", manifest=None, expected_week=None,
+                expected_weekly=None):
     """Shoot the paper and gate it. Returns a dict, or None if it cannot.
 
     dict keys: front, fold, ladder (paths), manifest (dict), parity
@@ -244,7 +262,7 @@ def shoot_paper(url=None, out_dir=".", manifest=None, expected_week=None):
             if state.get("paper") != "down" or not state.get("leaves"):
                 raise RuntimeError(f"the paper never went down at {url} ({state})")
             page_text = pg.evaluate(PAGE_TEXT)
-            if not check_freshness(page_text, expected_week):
+            if not check_freshness(page_text, expected_week, expected_weekly):
                 raise StalePaperError(
                     f"paper at {url} does not identify expected week "
                     f"{expected_week}; use the fresh classic render")

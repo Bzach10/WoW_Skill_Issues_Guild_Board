@@ -105,6 +105,12 @@ def test_freshness_accepts_iso_or_human_week_and_rejects_old_edition():
         "Edition of the week of Tuesday, August 4, 2026", "2026-08-04")
     assert not paper_shot.check_freshness(
         "Edition of the week of Tuesday, July 28, 2026", "2026-08-04")
+    assert paper_shot.check_freshness(
+        "Edition 2026-08-04 · 40 pulls · 36 wipes", "2026-08-04",
+        {"pulls": 40, "wipes": 36})
+    assert not paper_shot.check_freshness(
+        "Edition 2026-08-04 · weekly tally pending", "2026-08-04",
+        {"pulls": 40, "wipes": 36})
 
 
 # --- the renderer switch ----------------------------------------------------
@@ -145,10 +151,12 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     calls = {}
 
-    def fake(url=None, out_dir=".", manifest=None, expected_week=None):
+    def fake(url=None, out_dir=".", manifest=None, expected_week=None,
+             expected_weekly=None):
         calls["url"] = url
         calls["manifest"] = manifest
         calls["expected_week"] = expected_week
+        calls["expected_weekly"] = expected_weekly
         return _fake_shot(tmp_path)
 
     monkeypatch.setattr(paper_shot, "shoot_paper", fake)
@@ -162,6 +170,7 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     assert calls["url"] == "http://example.invalid/board/"
     assert calls["manifest"]["kept"]
     assert calls["expected_week"]
+    assert isinstance(calls["expected_weekly"], dict)
 
 
 def test_paper_renderer_still_generates_enabled_web_board(tmp_path, monkeypatch):

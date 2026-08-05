@@ -445,6 +445,20 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                              season_key=season_key_record,
                              baseline_records=previous_view.get("records"))
 
+    # Build the persisted weekly contract before choosing a renderer. The
+    # paper freshness gate uses pulls/wipes from this exact block so an older
+    # page with the same week label falls back to the fresh classic render.
+    roast_cfg = (sections.get("roast_of_the_week")
+                 or cfg.get("roast_of_the_week") or {})
+    week_block = build_week_block(
+        stats=stats, start_dt=start_dt, end_dt=end_dt, week_label=streaks_week,
+        zone_name=zone_name,
+        difficulty=DIFFICULTY_NAMES.get((stats or {}).get("difficulty"))
+        or cfg.get("raid", {}).get("difficulty"),
+        mplus_results=mplus_results, mplus_weekly=mplus_weekly,
+        improvement=improvement, roast=roast_cfg,
+        top_n=int(cfg.get("top_n", 5)))
+
     # Diagnostic: the raw tank pool, so any board/text discrepancy can be
     # traced to the data rather than guessed at from the rendered image.
     if stats and "best_tanks" in stats:
@@ -483,7 +497,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         try:
             shot = paper_shot.shoot_paper(
                 url=(cfg.get("display") or {}).get("paper_url"),
-                manifest=manifest, expected_week=streaks_week)
+                manifest=manifest, expected_week=streaks_week,
+                expected_weekly=week_block)
             image_path = shot["fold"]        # the teaser leads the post
             extra_paths = [shot["front"], shot["ladder"]]
             logger.info("The paper is the post: %s", shot["manifest"]["shots"])
@@ -580,17 +595,6 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     # saw them. They are persisted now so the same pipeline that carries the
     # season data to the paper (web_data -> deliver_bundle -> contract) can
     # carry the week as well. Built here, written only by a real post.
-    roast_cfg = (sections.get("roast_of_the_week")
-                 or cfg.get("roast_of_the_week") or {})
-    week_block = build_week_block(
-        stats=stats, start_dt=start_dt, end_dt=end_dt, week_label=streaks_week,
-        zone_name=zone_name,
-        difficulty=DIFFICULTY_NAMES.get((stats or {}).get("difficulty"))
-        or cfg.get("raid", {}).get("difficulty"),
-        mplus_results=mplus_results, mplus_weekly=mplus_weekly,
-        improvement=improvement, roast=roast_cfg,
-        top_n=int(cfg.get("top_n", 5)))
-
     if preview:
         return embed, image_path
 
