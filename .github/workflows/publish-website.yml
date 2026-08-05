@@ -61,6 +61,7 @@ jobs:
         env:
           HEALTH_URL: ${{ secrets.WEBSITE_HEALTH_URL }}
         run: |
-          python scripts/check_website_freshness.py \
+          timeout --signal=TERM --kill-after=10s 16m \
+            python scripts/check_website_freshness.py \
             --url "$HEALTH_URL" \
             --expected web_data_public/site_data.json
