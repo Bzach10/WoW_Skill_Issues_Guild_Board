@@ -37,6 +37,8 @@ jobs:
     steps:
       - name: Check out repo
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
         uses: actions/setup-python@v6
@@ -80,18 +82,25 @@ jobs:
             # a rebase onto a moved main cannot strand this commit on the
             # runner — the 2026-07-27 weekly-board failure mode.
             git checkout -- .
-            if git pull --rebase origin "$REF_NAME"; then
+            # Fetch to ensure we have the latest from origin
+            git fetch origin
+            if git pull --no-rebase origin "$REF_NAME"; then
+              # Fast-forward merge succeeded
               git push
             else
-              # Rebase semantics: during a rebase, --theirs is THE COMMIT BEING
-              # REPLAYED (our freshly generated data); --ours is upstream's
-              # older copy. We always want the fresh generation to win for
-              # generated artifacts. And --continue needs an editor in CI, so
-              # pin GIT_EDITOR=true or it dies with "Terminal is dumb".
-              for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
-                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
-              done
-              GIT_EDITOR=true git rebase --continue
+              # Merge conflict occurred - resolve by keeping our version
+              echo "Merge conflict detected - resolving by keeping our data..."
+              git merge --abort 2>/dev/null || true
+              # Pull with rebase strategy using 'theirs' to prefer our changes
+              # (in rebase context, --theirs means our commit being replayed)
+              git pull --rebase -X theirs origin "$REF_NAME" || {
+                # If rebase still fails, manually resolve by taking our version
+                echo "Rebase conflict - resolving conflicts by keeping our version..."
+                for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
+                  git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
+                done
+                GIT_EDITOR=true git rebase --continue
+              }
               git push
             fi
           fi
