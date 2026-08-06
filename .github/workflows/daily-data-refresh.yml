@@ -104,3 +104,18 @@ jobs:
               git push
             fi
           fi
+
+      - name: Trigger wipefest-site cloud refresh
+        if: success()
+        env:
+          GH_TOKEN: ${{ secrets.SITE_DISPATCH_TOKEN }}
+        run: |
+          if [ -z "$GH_TOKEN" ]; then
+            echo "SITE_DISPATCH_TOKEN unset — skip site dispatch (set this secret to enable seamless site updates)"
+            exit 0
+          fi
+          gh api --method POST repos/Bzach10/wipefest-redesign/dispatches \
+            -H "Accept: application/vnd.github+json" \
+            -f event_type='site-refresh' \
+            -f client_payload[source]='daily-data-refresh' \
+            -f client_payload[sha]="$GITHUB_SHA"
