@@ -46,6 +46,45 @@ def canonical_role(role):
     return _ROLE_MAP.get((role or "").strip().lower(), "")
 
 
+# Raid-frame order used as the exact-tie break when two role scores match.
+_SCORE_ROLE_ORDER = ("tank", "healer", "dps")
+_SCORE_ROLE_DISP = {"tank": "Tank", "healer": "Healer", "dps": "DPS"}
+
+
+def main_role_from_scores(scores_by_role, fallback_role=""):
+    """Main role = highest Mythic+ score across tank / healer / dps.
+
+    Raider.io's `active_spec_role` is whatever spec is currently equipped —
+    not the role the season score is earned in. Dual-specs (Rakdisc Shadow
+    equipped, Disc healer score higher) must resolve to the score peak.
+
+    Tie-break: if the fallback (active spec) is among the tied max, keep it;
+    otherwise raid-frame order tank > healer > dps. When every role score is
+    zero, return the fallback (or "") so unscored members still carry an
+    active-spec role.
+    """
+    sbr = scores_by_role or {}
+    best_v = -1.0
+    tied = []
+    for key in _SCORE_ROLE_ORDER:
+        try:
+            v = float(sbr.get(key) or 0)
+        except (TypeError, ValueError):
+            v = 0.0
+        if v > best_v:
+            best_v = v
+            tied = [key]
+        elif v == best_v and v > 0:
+            tied.append(key)
+    if best_v <= 0 or not tied:
+        return canonical_role(fallback_role)
+    fallback = canonical_role(fallback_role)
+    fallback_key = next((k for k, d in _SCORE_ROLE_DISP.items() if d == fallback), "")
+    if fallback_key in tied:
+        return fallback
+    return _SCORE_ROLE_DISP[tied[0]]
+
+
 # ---------------------------------------------------------------------------
 # Live fetch
 # ---------------------------------------------------------------------------
@@ -84,6 +123,13 @@ def _normalize_character(entry_key, data, region="us"):
     realm_slug = entry_key.split("-", 1)[1].lower() if "-" in entry_key else realm.lower()
     name_slug = name.lower()
 
+    scores_by_role = {
+        "dps": round(scores.get("dps", 0) or 0, 1),
+        "healer": round(scores.get("healer", 0) or 0, 1),
+        "tank": round(scores.get("tank", 0) or 0, 1),
+    }
+    active_role = canonical_role(data.get("active_spec_role"))
+
     return {
         "name": name,
         "realm": realm,
@@ -95,14 +141,12 @@ def _normalize_character(entry_key, data, region="us"):
         "raiderio_url": f"https://raider.io/characters/{(region or 'us')}/{realm_slug}/{name_slug}",
         "warcraftlogs_url": f"https://www.warcraftlogs.com/character/{(region or 'us')}/{realm_slug}/{name_slug}",
         "class": data.get("class") or "",
+        # Spec stays the currently-equipped Raider.io active spec (honest about
+        # what they logged in as). Role is the season M+ main — highest score.
         "spec": clean_spec_name(data.get("active_spec_name"), data.get("class", "")),
-        "role": canonical_role(data.get("active_spec_role")),
+        "role": main_role_from_scores(scores_by_role, active_role),
         "score": round(scores.get("all", 0) or 0, 1),
-        "scores_by_role": {
-            "dps": round(scores.get("dps", 0) or 0, 1),
-            "healer": round(scores.get("healer", 0) or 0, 1),
-            "tank": round(scores.get("tank", 0) or 0, 1),
-        },
+        "scores_by_role": scores_by_role,
         "best_runs": best_runs,
         "ranks": {
             "realm_overall": (ranks.get("overall") or {}).get("realm"),
@@ -202,9 +246,13 @@ def build_competition(fetched=None, board_state=None, season=None,
         delta_week = round(score - prior, 1) if prior is not None else None
         prior_day = prev_day_scores.get(rec.get("key"))
         delta_day = round(score - prior_day, 1) if prior_day is not None else None
+        # Re-derive main role from scores_by_role even when the cached record
+        # still carries an active-spec role (pre-fix caches / fixtures).
+        role = main_role_from_scores(
+            rec.get("scores_by_role") or {}, canonical_role(rec.get("role")))
         detail.append({
             **rec,
-            "role": canonical_role(rec.get("role")),
+            "role": role,
             "score": score,
             "delta_week": delta_week,
             "delta_day": delta_day,

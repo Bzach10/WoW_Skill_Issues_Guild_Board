@@ -61,6 +61,39 @@ def test_normalize_character_canonicalizes_role():
     assert rec["score"] == 3529.2
 
 
+def test_normalize_character_main_role_is_highest_mplus_score():
+    """Equipped Shadow (DPS) must not beat a higher healer score (Rakdisc)."""
+    rec = _normalize_character("rakdisc-proudmoore", {
+        "name": "Rakdisc", "class": "Priest", "active_spec_name": "Shadow",
+        "active_spec_role": "DPS",
+        "mythic_plus_scores_by_season": [{
+            "scores": {"all": 3529.2, "dps": 3408.3, "healer": 3504.4, "tank": 0},
+        }],
+        "mythic_plus_best_runs": [], "mythic_plus_ranks": {}})
+    assert rec["spec"].startswith("Shadow")
+    assert rec["role"] == "Healer"
+    assert rec["scores_by_role"]["healer"] == 3504.4
+    assert rec["scores_by_role"]["dps"] == 3408.3
+
+
+def test_build_competition_rederives_main_role_from_cached_scores():
+    """Pre-fix caches still carry active-spec roles; rebuild must correct them."""
+    raw = {"characters": [{
+        "name": "Rakdisc", "realm": "Proudmoore", "key": "rakdisc-proudmoore",
+        "class": "Priest", "spec": "Shadow Priest", "role": "DPS",
+        "score": 3529.2,
+        "scores_by_role": {"dps": 3408.3, "healer": 3504.4, "tank": 0},
+        "best_runs": [], "ranks": {},
+    }]}
+    comp = build_competition(raw, {})
+    rak = comp["characters"][0]
+    assert rak["role"] == "Healer"
+    assert any(r["key"] == "rakdisc-proudmoore"
+               for r in comp["rankings"]["by_role"]["Healer"])
+    assert not any(r["key"] == "rakdisc-proudmoore"
+                   for r in comp["rankings"]["by_role"]["DPS"])
+
+
 def test_by_role_buckets_healers_from_raw_healing_cache():
     """A cache written with raw 'HEALING' must still bucket as Healer."""
     raw = {"characters": [_char("H", "h-r", "Priest", "Disc", "HEALING", 3000.0)]}
