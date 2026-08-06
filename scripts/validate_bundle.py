@@ -350,11 +350,16 @@ def check_raid_frame(bundle, report):
         return
     conquered = sum(1 for b in islands if b.get("status") == "conquered")
     killed = raid.get("bosses_killed")
+    detail = raid.get("detail_source")
+    # When islands were overlaid from raid_kills, conquered counts named kills
+    # and must not be compared to a higher aggregate as a soft failure.
+    if detail == "raid_kills":
+        return
     if isinstance(killed, int) and killed and conquered < killed:
         report.warn(
             "raid_frame",
             f"raid.islands marks {conquered} boss(es) conquered but bosses_killed "
-            f"= {killed} (detail_source={raid.get('detail_source')}). The named-kill "
+            f"= {killed} (detail_source={detail}). The named-kill "
             "source knows fewer kills than the aggregate; a consumer reading the "
             "islands list will under-report progress.")
 

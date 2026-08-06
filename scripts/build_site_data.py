@@ -288,6 +288,47 @@ def main(argv=None):
         }
     _write(os.path.join(args.out, "raid_kills.json"), raid_kills)
 
+    # Overlay named+dated raid_kills onto island_completion.raid.islands so
+    # consumers reading islands[] cannot under-report vs bosses_killed
+    # (guild_achievements only name Guild Run achievements — typically a
+    # subset of the aggregate). Sidecar remains authoritative; this makes
+    # the islands list match the headline.
+    if raid_kills.get("available"):
+        raid = site["island_completion"]["raid"]
+        by_slug = {b.get("slug"): b for b in (raid_kills.get("bosses") or [])}
+        conquered = 0
+        for island in raid.get("islands") or []:
+            boss = by_slug.get(island.get("id"))
+            if not boss:
+                continue
+            kills = boss.get("kills") or {}
+            # Prefer mythic date when present, else heroic, else normal.
+            when = None
+            for diff in ("mythic", "heroic", "normal"):
+                entry = kills.get(diff) or {}
+                if entry.get("defeated_at"):
+                    when = entry["defeated_at"]
+                    break
+            if when:
+                island["status"] = "conquered"
+                island["kill_confirmed"] = True
+                island["first_kill_at"] = when
+                conquered += 1
+            else:
+                island["status"] = "locked"
+                island["kill_confirmed"] = False
+        # Aggregate bosses_killed stays the progression count (heroic+);
+        # islands now name every kill raid_kills knows. Prefer heroic count
+        # for the islands conquered tally alignment when heroic is complete.
+        kbd = raid_kills.get("killed_by_difficulty") or {}
+        heroic_n = int(kbd.get("heroic") or 0)
+        if heroic_n and conquered >= heroic_n:
+            raid["bosses_killed"] = max(int(raid.get("bosses_killed") or 0), heroic_n)
+        raid["detail_source"] = "raid_kills"
+        raid["killed_by_difficulty"] = dict(kbd)
+        print(f"  raid islands    : overlaid from raid_kills "
+              f"({conquered} named conquered; detail_source=raid_kills)")
+
     # Persist the fresh transmog snapshot for next week's diff.
     with open(os.path.join(args.out, "transmog_snapshot.json"), "w", encoding="utf-8") as f:
         json.dump(site["transmog_changes"]["snapshot"], f, indent=2)
