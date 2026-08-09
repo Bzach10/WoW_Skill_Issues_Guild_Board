@@ -114,8 +114,20 @@ jobs:
             echo "SITE_DISPATCH_TOKEN unset — skip site dispatch (set this secret to enable seamless site updates)"
             exit 0
           fi
-          gh api --method POST repos/Bzach10/wipefest-redesign/dispatches \
-            -H "Accept: application/vnd.github+json" \
-            -f event_type='site-refresh' \
-            -f client_payload[source]='daily-data-refresh' \
-            -f client_payload[sha]="$GITHUB_SHA"
+          # FAIL-OPEN (2026-08-08): this is a CONVENIENCE nudge, not a data
+          # operation -- the site repo also refreshes on its own schedule and
+          # pulls board data at build time, so a missed dispatch costs latency,
+          # never correctness. It ran with a token that lacked dispatch scope
+          # ("Resource not accessible by personal access token", HTTP 403) and
+          # turned a wholly successful data refresh red every single day.
+          # Data steps fail closed; notifications and nudges fail open.
+          if gh api --method POST repos/Bzach10/wipefest-redesign/dispatches \
+              -H "Accept: application/vnd.github+json" \
+              -f event_type='site-refresh' \
+              -f client_payload[source]='daily-data-refresh' \
+              -f client_payload[sha]="$GITHUB_SHA"; then
+            echo "site dispatch sent"
+          else
+            echo "::warning::site dispatch failed (token scope?) — data is safe;"\
+                 "the site's own scheduled refresh will pick it up"
+          fi
