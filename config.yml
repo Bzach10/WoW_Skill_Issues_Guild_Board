@@ -282,6 +282,23 @@ discord_inputs:
   pulse_opt_out_marker: "[nofeed]"  # put this in a message to drop it
   pulse_blocklist: []            # substrings that drop any matching message
 
+  # --- THE SHIP'S ARTICLES: /claim, /unclaim, /revoke -------------------
+  # Members type `/claim <character>` in the claims channel to bind a
+  # character to their account (mains AND alts); `/unclaim <character>`
+  # releases one. `/revoke <character>` is honoured ONLY in an officer
+  # channel below — the channel's Discord permissions ARE the officer
+  # check, the same way announcement_channel_id already works.
+  #
+  # Leave claim_channel_ids empty to keep the articles closed. Nothing
+  # runs until this list, the DISCORD_BOT_TOKEN secret and the
+  # ACCOUNTS_ID_SALT secret all exist. See scripts/refresh_articles.py.
+  claim_channel_ids: []
+  #   - "123..."                 # the claims channel (any member may post)
+  officer_channel_ids: []        # /revoke is only obeyed from these
+  #   - "1528114032941207582"    # officers-only channel
+  claim_lookback_days: 30        # how far back the read looks
+  claim_max_per_run: 10          # commands honoured per account per run
+
 # Roster cache — keeps the auto-fetched guild roster between runs.
 # Refreshes automatically when older than max_age_days (new fetches are
 # UNIONED with the old cache, so members never silently vanish).

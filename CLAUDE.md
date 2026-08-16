@@ -29,10 +29,34 @@ codepage chokes on them.
 
 ## CI-owned files — do not hand-edit
 
-`board_state.json`, `roster_cache.json`, `weekly_state.json`, and
-`blizzard_profile_cache.json` are regenerated and committed by Actions with
-`[skip ci]`. A PreToolUse hook blocks edits to them. Change the code that
-produces them instead.
+`board_state.json`, `roster_cache.json`, `weekly_state.json`,
+`blizzard_profile_cache.json`, and `data/accounts.json` are regenerated and
+committed by Actions with `[skip ci]`. A PreToolUse hook blocks edits to
+them. Change the code that produces them instead.
+
+## THE SHIP'S ARTICLES — accounts (`guild_board/articles.py`)
+
+Every share, card and board downstream is keyed on an ACCOUNT, not a
+character. Members bind characters by typing `/claim <character>` in the
+allowlisted claims channel; there is no live bot process, so a "slash
+command" here is a MESSAGE the scheduled read picks up, exactly like the
+roast ballot. `scripts/refresh_articles.py` is the **only** writer.
+
+- **`data/accounts.json`** — the private ledger: `account_id →
+  {characters, main, claimed_at}` plus a character index, an audit log and
+  a message watermark. **No Discord id ever enters it.**
+- **`web_data_public/articles.json`** — the public projection the site bakes:
+  character key → `{account_id, is_main}`. Nothing else. An account's face on
+  the site is its MAIN CHARACTER'S NAME — never a Discord handle.
+- `account_id = HMAC-SHA256(ACCOUNTS_ID_SALT, discord_id)[:16]`. The salt is
+  a secret with **no default**: without it the digest is reversible from the
+  guild's member list, so the script refuses to write. Privacy fails CLOSED.
+- `/revoke` is honoured only from a channel in `officer_channel_ids` — the
+  channel's Discord permissions ARE the officer check, the same model
+  `announcement_channel_id` already uses. No roles table.
+- First claim wins; refusals are logged, never silent. A bare name that two
+  roster characters share (there are two Berobens) is refused as ambiguous,
+  never guessed.
 
 ## Data sources
 
