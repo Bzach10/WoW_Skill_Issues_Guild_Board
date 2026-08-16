@@ -70,7 +70,11 @@ def test_sample_is_regenerable_from_current_producers():
         transmog_snapshot=gen.TRANSMOG_SNAPSHOT, pulse_items=gen.PULSE_ITEMS,
         competition_fetched=gen.COMPETITION_FETCHED,
         parses_fetched=gen.PARSES_FETCHED,
-        difficulty_scale=gen.PARSES_DIFFICULTY_SCALE)
+        difficulty_scale=gen.PARSES_DIFFICULTY_SCALE,
+        # The same pin the generator uses. Without it this rebuilds the S1
+        # fixtures against whatever season the clock resolves to, and goes
+        # red on the rollover date with nobody having touched the code.
+        season=gen.SAMPLE_SEASON)
     committed = _load("site_data.sample.json")
 
     for layer in LAYERS:

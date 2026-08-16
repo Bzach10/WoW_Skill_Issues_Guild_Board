@@ -4,11 +4,18 @@ No network — build_competition is pure and _normalize_character is fed
 fixture payloads shaped like real Raider.io responses.
 """
 
+from guild_board import season
 from guild_board.competition import (
     _normalize_character,
     build_competition,
     canonical_role,
 )
+
+# build_competition filters runs against the CURRENT season's M+ pool, so
+# these come from that pool rather than S1 literals — otherwise the key
+# records below go vacuous (or red) the instant the season flips.
+DUNGEON_A = season.CURRENT_SEASON["dungeons"][0]["name"]
+DUNGEON_B = season.CURRENT_SEASON["dungeons"][1]["name"]
 
 
 def _char(name, key, cls, spec, role, score, delta_base=None, runs=None):
@@ -156,7 +163,7 @@ def test_day_delta_is_none_without_a_previous_snapshot():
 # --- browsable detail
 
 def test_every_character_has_full_browsable_detail():
-    runs = [{"dungeon": "Pit of Saron", "short": "POS", "level": 20,
+    runs = [{"dungeon": DUNGEON_B, "short": "POS", "level": 20,
              "timed": True, "upgrades": 1, "score": 492.2,
              "clear_ms": 1, "par_ms": 2}]
     fetched = {"characters": [_char("A", "a-r", "Hunter", "BM Hunter", "DPS",
@@ -164,7 +171,7 @@ def test_every_character_has_full_browsable_detail():
     comp = build_competition(fetched, BOARD_STATE)
     a = comp["characters"][0]
     # Full detail, not just a summary line.
-    assert a["best_runs"][0]["dungeon"] == "Pit of Saron"
+    assert a["best_runs"][0]["dungeon"] == DUNGEON_B
     assert a["best_runs"][0]["timed"] is True
     assert a["scores_by_role"]["dps"] == 3908.1
     assert a["ranks"]["realm_overall"] == 100
@@ -209,19 +216,19 @@ def test_cross_realm_urls_use_each_characters_own_realm():
 
 
 def test_key_records_are_highest_timed_per_dungeon():
-    runs = [{"dungeon": "Skyreach", "level": 18, "timed": True, "score": 1},
-            {"dungeon": "Pit of Saron", "level": 20, "timed": True, "score": 2}]
+    runs = [{"dungeon": DUNGEON_A, "level": 18, "timed": True, "score": 1},
+            {"dungeon": DUNGEON_B, "level": 20, "timed": True, "score": 2}]
     fetched = {"characters": [_char("A", "a-r", "Hunter", "BM", "DPS", 3000, runs=runs)]}
     comp = build_competition(fetched, {})
     kr = comp["key_records"]
     assert kr["highest_overall"]["level"] == 20
-    assert kr["highest_overall"]["dungeon"] == "Pit of Saron"
+    assert kr["highest_overall"]["dungeon"] == DUNGEON_B
     # Every current-season dungeon has a row (None where nobody timed it).
     assert len(kr["by_dungeon"]) == 8
 
 
 def test_depleted_keys_dont_count_as_cleared():
-    runs = [{"dungeon": "Skyreach", "level": 25, "timed": False, "score": 1}]
+    runs = [{"dungeon": DUNGEON_A, "level": 25, "timed": False, "score": 1}]
     fetched = {"characters": [_char("A", "a-r", "Hunter", "BM", "DPS", 3000, runs=runs)]}
     comp = build_competition(fetched, {})
     assert comp["key_records"]["highest_overall"] is None  # nothing timed

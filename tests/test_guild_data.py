@@ -8,13 +8,21 @@ that upgrade island completion from inferred to confirmed (layer 4).
 
 from guild_board import blizzard, season, web_data
 
+# The producers match achievements and raid progression against whatever
+# season is CURRENT, so these fixtures are built from that season's own
+# roster. Pinning them to S1 literals would turn the suite red the instant
+# the season flips (2026-08-18T15:00Z) with nobody having touched code.
+_BOSSES = season.boss_names()
+BOSS_FIRST, BOSS_SECOND, BOSS_LAST = _BOSSES[0], _BOSSES[1], _BOSSES[-1]
+RAID_SLUG = season.CURRENT_SEASON["raid"]["slug"]
+
 GUILD_ACHIEVEMENTS = {
     "total_quantity": 1655,
     "achievements": [
-        {"achievement": {"id": 15001, "name": "Ahead of the Curve: Imperator Averzian"},
+        {"achievement": {"id": 15001, "name": f"Ahead of the Curve: {BOSS_FIRST}"},
          "completed_timestamp": 1_772_500_000_000,
          "criteria": {"is_completed": True, "child_criteria": [{}, {}]}},
-        {"achievement": {"id": 15003, "name": "Vorasius"},
+        {"achievement": {"id": 15003, "name": BOSS_SECOND},
          "completed_timestamp": 1_773_000_000_000,
          "criteria": {"is_completed": True, "child_criteria": []}},
         {"achievement": {"id": 15010, "name": "Midnight Keystone Master: Season One"},
@@ -123,36 +131,37 @@ def test_refresh_guild_cache_keeps_old_on_empty_response(tmp_path, monkeypatch):
 def test_extract_raid_boss_kills_matches_by_name():
     kills = web_data.extract_raid_boss_kills(GUILD_ACHIEVEMENTS)
     # Both bosses named in achievements are found with their kill dates.
-    assert "Imperator Averzian" in kills
-    assert "Vorasius" in kills
-    assert kills["Imperator Averzian"].startswith("20")
+    assert BOSS_FIRST in kills
+    assert BOSS_SECOND in kills
+    assert kills[BOSS_FIRST].startswith("20")
     # A boss with no matching achievement is absent (not falsely confirmed).
-    assert "Midnight Falls" not in kills
+    assert BOSS_LAST not in kills
 
 
 def test_island_completion_upgrades_to_guild_achievements():
     kills = web_data.extract_raid_boss_kills(GUILD_ACHIEVEMENTS)
     ic = web_data.build_island_completion(
-        raid_progression={"tier-mn-1": {"summary": "3/9 M", "mythic_bosses_killed": 3}},
+        raid_progression={RAID_SLUG: {"summary": f"3/{len(_BOSSES)} M",
+                                      "mythic_bosses_killed": 3}},
         confirmed_boss_kills=kills)
     assert ic["raid"]["detail_source"] == "guild_achievements"
     by_name = {b["name"]: b for b in ic["raid"]["islands"]}
     # Confirmed with a real first-kill date, not inferred.
-    imp = by_name["Imperator Averzian"]
+    imp = by_name[BOSS_FIRST]
     assert imp["kill_confirmed"] is True
     assert imp["inferred_from_progress"] is False
     assert imp["first_kill_at"].startswith("20")
     # A boss NOT in achievements is locked, not inferred, once we have
     # the authoritative list.
-    assert by_name["Midnight Falls"]["status"] == "locked"
+    assert by_name[BOSS_LAST]["status"] == "locked"
 
 
 def test_island_completion_falls_back_to_inferred_without_achievements():
     ic = web_data.build_island_completion(
-        raid_progression={"tier-mn-1": {"mythic_bosses_killed": 3, "heroic_bosses_killed": 5}})
+        raid_progression={RAID_SLUG: {"mythic_bosses_killed": 3, "heroic_bosses_killed": 5}})
     assert ic["raid"]["detail_source"] == "raid_progression_count"
     by_name = {b["name"]: b for b in ic["raid"]["islands"]}
-    assert by_name["Vorasius"]["inferred_from_progress"] is True
+    assert by_name[BOSS_SECOND]["inferred_from_progress"] is True
 
 
 def test_build_site_data_threads_achievements_into_both_layers():
@@ -160,4 +169,7 @@ def test_build_site_data_threads_achievements_into_both_layers():
     assert site["guild_achievements"]["available"] is True
     assert site["guild_achievements"]["trophy_count"] == 3
     assert site["island_completion"]["raid"]["detail_source"] == "guild_achievements"
-    assert season.CURRENT_SEASON["raid"]["bosses"][0]["name"] == "Imperator Averzian"
+    # Pinned to S1 explicitly: GUILD_ACHIEVEMENTS above is S1 data, so this
+    # asserts the roster that fixture belongs to, not whichever season the
+    # clock happens to resolve to.
+    assert season.SEASON_MN_1["raid"]["bosses"][0]["name"] == "Imperator Averzian"
