@@ -43,6 +43,8 @@ import os
 import sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
 # The standalone per-layer files build_site_data.py writes next to
 # site_data.json. Every one must exist and byte-match its embedded copy.
@@ -416,6 +418,127 @@ def check_character_keying(bundle, report):
                 "stale roster cache.")
 
 
+def load_sidecar(bundle_dir, name):
+    """A sidecar layer (articles, shares) or None.
+
+    Sidecars are NOT part of the one-moment parity set -- nothing embeds them
+    in site_data.json -- and their absence is never a finding, because day one
+    of the economy legitimately has neither. When present they are held to
+    their own rules.
+    """
+    path = os.path.join(bundle_dir, f"{name}.json")
+    try:
+        with open(path, encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return None
+    except json.JSONDecodeError as e:
+        return {"_parse_error": str(e)}
+
+
+def check_shares(bundle_dir, report):
+    """The shares ledger's public projection tells the truth about itself.
+
+    Four things, each of which is a way a currency goes wrong quietly:
+
+    balance   an account's balance must be its earned minus its spent. A
+              stored total that drifts from the rows justifying it is how a
+              ledger stops being a ledger.
+    the card  every loop named in a week's earn must be on the published rate
+              card, and a loop the card prices at ZERO must never appear with
+              a payment. An unpublished rate is not a rate.
+    keying    every character under an account is a `name-realm` key. Two
+              roster characters are called Beroben; paying a bare name pays
+              one of two real people at random, silently, forever.
+    opacity   no Discord id, no email, no mention markup, anywhere in the
+              shipped bytes. Re-verified HERE as well as at the producer,
+              because a gate that only runs at the producer is a gate
+              somebody ships around.
+    """
+    shares_layer = load_sidecar(bundle_dir, "shares")
+    if shares_layer is None:
+        return  # the economy is not open yet; absence is not a finding
+    if shares_layer.get("_parse_error"):
+        report.error("shares", f"shares.json: {shares_layer['_parse_error']}")
+        return
+
+    try:
+        from guild_board import articles as articles_mod
+        from guild_board import shares as shares_mod
+    except ImportError as exc:      # pragma: no cover - repo layout guard
+        report.warn("shares", f"cannot import guild_board to check shares.json ({exc})")
+        return
+
+    known = set(shares_mod.LOOPS_BY_ID) | {shares_mod.STREAK_LOOP_ID}
+    zero_loops = {entry["id"] for entry in shares_mod.RATE_CARD["loops"]
+                  if not entry["pays"]}
+
+    card_version = shares_layer.get("rate_card_version")
+    if card_version != shares_mod.RATE_CARD_VERSION:
+        report.warn(
+            "shares",
+            f"shares.json was computed against rate card v{card_version} but "
+            f"this tree publishes v{shares_mod.RATE_CARD_VERSION} -- rerun "
+            "scripts/refresh_shares.py so the emitted card matches the rows.")
+
+    for account_id, account in (shares_layer.get("accounts") or {}).items():
+        earned = account.get("earned") or 0
+        spent = account.get("spent") or 0
+        if account.get("balance") != earned - spent:
+            report.error(
+                "shares",
+                f"account {account_id}: balance {account.get('balance')} != "
+                f"earned {earned} - spent {spent}. A balance is the sum of the "
+                "citations that justify it, never a number of its own.")
+        bad_keys = sorted(k for k in account.get("characters") or []
+                          if "-" not in str(k))
+        if bad_keys:
+            report.error(
+                "shares",
+                f"account {account_id} carries bare name(s) where a name-realm "
+                f"character key belongs: {', '.join(bad_keys[:5])}. Two roster "
+                "characters share the name Beroben.")
+        for loop_id, paid in (account.get("week") or {}).get("by_loop", {}).items():
+            if loop_id not in known:
+                report.error(
+                    "shares",
+                    f"account {account_id} was paid under '{loop_id}', which is "
+                    "not on the published rate card. An unpublished rate is "
+                    "not a rate.")
+            elif loop_id in zero_loops and paid:
+                report.error(
+                    "shares",
+                    f"account {account_id} was paid {paid} under '{loop_id}', "
+                    "which the rate card prices at ZERO with a stated reason. "
+                    "PvP in particular pays nothing until seats are "
+                    "authenticated.")
+        for deed in account.get("deeds") or []:
+            if not deed.get("deed_ref"):
+                report.error(
+                    "shares",
+                    f"account {account_id} holds a share with no deed_ref. "
+                    "Every share cites the deed that paid it.")
+                break
+
+    violations = articles_mod.find_identifiers(shares_layer)
+    if violations:
+        # Never echo the offending value: printing the id to prove the id
+        # leaked is its own leak.
+        report.error(
+            "shares",
+            f"shares.json carries {len(violations)} raw identifier(s) at "
+            f"{', '.join(p for p, _ in violations[:5])}. Discord ids never "
+            "enter shipped bytes.")
+
+    if shares_layer.get("available") and not (shares_layer.get("accounts") or {}):
+        report.error("shares", "shares.json says available:true with no accounts")
+    if not shares_layer.get("seams"):
+        report.warn(
+            "shares",
+            "shares.json carries no seams. The N-of-129-signed line and the "
+            "zero-paying loops are meant to be printed, not inferred.")
+
+
 def validate_bundle(bundle_dir):
     """Run every check; returns a Report."""
     report = Report()
@@ -427,6 +550,7 @@ def validate_bundle(bundle_dir):
     check_bundle_coherence(bundle, report)
     check_raid_frame(bundle, report)
     check_character_keying(bundle, report)
+    check_shares(bundle_dir, report)
     return report
 
 
