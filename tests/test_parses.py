@@ -566,10 +566,16 @@ def test_build_parses_passes_zones_swept_provenance_through():
     assert build_parses(None)["zones_swept"] == []
 
 
-def test_season_lists_sporefall_as_extra_raid():
+def test_every_season_lists_its_bonus_raid():
+    """The sweep's extra_zones come from `season["extra_raids"]`, and an
+    absent key is skipped SILENTLY (refresh_parses: `or []`) — so a season
+    that forgets its bonus raid loses it with no error. Assert per-season
+    rather than off CURRENT_SEASON, which moves with the clock."""
     from guild_board import season as season_mod
-    extras = {r["slug"]: r for r in season_mod.CURRENT_SEASON["extra_raids"]}
-    assert extras["sporefall"]["bosses"][0]["name"] == "Rotmire"
+    s1 = {r["slug"]: r for r in season_mod.SEASON_MN_1["extra_raids"]}
+    assert s1["sporefall"]["bosses"][0]["name"] == "Rotmire"
+    s2 = {r["slug"]: r for r in season_mod.SEASON_MN_2["extra_raids"]}
+    assert s2["the-tidebound-grotto"]["bosses"][0]["name"] == "Nymrissa Wavecaller"
 
 
 # ---------------------------------------------------------------------------

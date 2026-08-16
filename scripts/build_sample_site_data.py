@@ -124,7 +124,16 @@ TRANSMOG_SNAPSHOT = {
     "healyeah-queldorei": "SAME_FP_CCC",
 }
 
-# A full current-season dungeon sweep, so the islands show real states:
+# The season these fixtures describe. Pinned, NOT resolved from the clock:
+# every fixture below is hand-authored against the S1 pool (S1 dungeon
+# names, tier-mn-1, "3/9 M"), so building them against whatever season is
+# current would emit an incoherent sample — S2's pool with S1's dungeon
+# bests resolves to 0 conquered, and the sample's whole job is to show
+# populated states. Moving the sample to S2 means rewriting these fixture
+# inputs to S2 names and repointing this constant, deliberately, together.
+SAMPLE_SEASON = season_mod.SEASON_MN_1
+
+# A full sample-season dungeon sweep, so the islands show real states:
 # most conquered, one merely attempted, one still locked.
 DUNGEON_BESTS = {
     "Algeth'ar Academy": {"level": 21, "timed": True, "by": "Amrevenge"},
@@ -313,7 +322,7 @@ def main():
         parses_fetched=PARSES_FETCHED,
         difficulty_scale=PARSES_DIFFICULTY_SCALE,
         guild={"name": "Skill Issues", "realm": "bleeding-hollow", "region": "us"},
-        season=season_mod.CURRENT_SEASON)
+        season=SAMPLE_SEASON)
     # FIXTURE STAMPS, not wall-clock ones. The producers stamp generated_at
     # = now, but every other date in this bundle is a fixture from the sample
     # week -- so a sample regenerated any later day reads to the bundle
