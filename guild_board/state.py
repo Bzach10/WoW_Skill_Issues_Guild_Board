@@ -157,9 +157,37 @@ def build_week_block(stats=None, start_dt=None, end_dt=None, week_label=None,
     return block
 
 
+def attendance_for_state(attendance):
+    """JSON-safe form of the season attendance block main.py already builds.
+
+    The Most Improved sweep computes, per member, the set of raid weeks they
+    were in — for the WHOLE season, "at zero extra API cost" by its own
+    comment (main.py) — and then `streaks_from_attendance` collapses it to
+    one integer and the rest is dropped on the floor. Nothing is recomputed
+    here: this is the same data, written down instead of thrown away. JSON
+    has no set, so every set becomes a sorted list.
+
+    Returns None when the sweep produced nothing, so the caller can tell a
+    run that could not read the logs apart from a week nobody attended.
+    """
+    attendance = attendance or {}
+    weeks = {
+        str(name).strip().lower(): sorted(w)
+        for name, w in (attendance.get("weeks") or {}).items()
+        if name and w
+    }
+    if not weeks:
+        return None
+    return {
+        "weeks": weeks,
+        "scanned": sorted(attendance.get("scanned") or ()),
+        "all": sorted(attendance.get("all") or ()),
+    }
+
+
 def save_board_state(standing, season_scores, streaks=None, records=None, path=STATE_FILE,
                      streaks_week=None, previous=None, streaks_started=None,
-                     week=None):
+                     week=None, attendance=None):
     """Persist what this board showed, for next week's comparisons.
 
     Two-slot scheme: "baseline" holds the last COMPLETED week's finals
@@ -210,6 +238,15 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         state["week"] = week
     elif prev.get("week"):
         state["week"] = prev["week"]
+    # Season attendance, on exactly the same rule as the week block: a run
+    # that could not read the logs must not overwrite the last run that
+    # could. An empty sweep is a gap in the measurement, not a season in
+    # which nobody raided.
+    persisted_attendance = attendance_for_state(attendance)
+    if persisted_attendance:
+        state["attendance"] = persisted_attendance
+    elif prev.get("attendance"):
+        state["attendance"] = prev["attendance"]
     with open(path, "w", encoding="utf-8") as f:
         json.dump(state, f, indent=2)
     logger.info("Board state saved for next week's deltas.")

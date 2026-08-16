@@ -207,6 +207,12 @@ def main(argv=None):
     parses_fetched = _load_json(
         os.path.join(REPO_ROOT, "parses_cache.json"), None)
 
+    # The roster, purely as an identity index: Warcraft Logs hands the weekly
+    # board bare character names, and this is what turns them into name-realm
+    # keys. An absent cache leaves the keyed maps empty and flagged, never
+    # guessed.
+    roster, _roster_at = load_roster_cache(cfg)
+
     dungeon_cache = os.path.join(args.out, "dungeon_bests.json")
     if args.live_dungeons:
         print("Fetching per-dungeon bests from Raider.io (full roster)…")
@@ -247,7 +253,7 @@ def main(argv=None):
         difficulty_scale=(cfg.get("parses") or {}).get("difficulty_scale"),
         guild={"name": cfg["guild"]["name"], "realm": cfg["guild"]["realm_slug"],
                "region": cfg["guild"]["region"]},
-        season=season)
+        season=season, roster=roster)
 
     if not raid_progression:
         # The live fetch came back empty — see carry_forward_raid: the
@@ -348,6 +354,17 @@ def main(argv=None):
     print(f"  weekly board    : {'available' if wk['available'] else wk['status']}"
           + (f" — week {wk['week_label']}, {wk['kills']} kills / {wk['pulls']} pulls"
              if wk["available"] else ""))
+    cov = wk["attendance_coverage"]
+    print(f"  attendance      : {cov['characters']} character keys over "
+          f"{len(cov['weeks_scanned'])} scanned week(s)"
+          f"{', ' + str(len(cov['weeks_unknown'])) + ' week(s) unknown' if cov['weeks_unknown'] else ''}"
+          f"{'' if wk['keyed_against_roster'] else ' (NO ROSTER — keyed maps empty)'}")
+    for label, rows in (("attendance", wk["attendance_unresolved"]),
+                        ("streaks", wk["streaks_unresolved"]),
+                        ("deaths", wk["deaths_unresolved"])):
+        if rows:
+            print(f"    {label} unresolved: "
+                  + ", ".join(f"{r['name']} ({r['reason']})" for r in rows))
     print(f"  achievements    : {'available' if site['guild_achievements']['available'] else site['guild_achievements']['status']}")
     print(f"  dungeon islands : {site['island_completion']['dungeons']['conquered']}/{site['island_completion']['dungeons']['total']} conquered")
     raid = site["island_completion"]["raid"]

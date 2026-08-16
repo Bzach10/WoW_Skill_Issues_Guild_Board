@@ -603,7 +603,13 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             save_board_state(standing, mplus_season_scores, streaks=streaks,
                              records=records, streaks_week=streaks_week,
                              streaks_started=streaks_started,
-                             week=week_block)
+                             week=week_block,
+                             # The whole-season attendance the sweep above
+                             # already built. It used to end its life inside
+                             # streaks_from_attendance(); persisting it is
+                             # what lets the delivered bundle carry weeks per
+                             # character instead of one integer per name.
+                             attendance=season_attendance)
         except OSError as exc:
             logger.warning("Could not save board state: %s", exc)
 
