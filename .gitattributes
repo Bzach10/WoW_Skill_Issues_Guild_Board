@@ -1,0 +1,7 @@
+# The season ledger is APPEND-ONLY and is written by Linux CI and read on
+# Windows. Without this, a Windows checkout gets CRLF, an append writes LF,
+# and the file ends up with mixed endings — which turns "one commit added
+# these lines" into a diff nobody can read. LF in the working tree
+# everywhere keeps every append a pure addition.
+season_ledger/*.jsonl text eol=lf
+data/seasons/**/*.json text eol=lf

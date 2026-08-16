@@ -59,6 +59,10 @@ roast ballot. `scripts/refresh_articles.py` is the **only** writer.
   roster characters share (there are two Berobens) is refused as ambiguous,
   never guessed.
 
+`season_ledger/*.jsonl` and `data/seasons/**` are the same rule with a
+stronger reason: the ledger is APPEND-ONLY and a freeze is written ONCE.
+The hook blocks both directories.
+
 ## THE SHARES LEDGER — the currency (`guild_board/shares.py`)
 
 > **PAY THE DEED, NEVER THE RANK.**
@@ -95,6 +99,30 @@ ledger row records the version that paid it.
   is the public projection; `articles.assert_opaque` runs on it and on the
   ledger before either becomes bytes, and `validate_bundle.check_shares`
   re-runs it on the emitted file.
+
+## The season ledger and the season freeze
+
+`guild_board/season_ledger.py` writes one compact line per character per
+completed raid week to `season_ledger/<season-slug>.jsonl`, forever — the
+series `board_state.json`'s two slots throw away every run. It is keyed on
+`(season_slug, week_label, character_key)` and idempotent on that triple,
+so both the daily refresh (`--append` step) and the Tuesday board post
+(`main.py`, after `save_board_state`) can call it without coordinating.
+
+```bash
+python -m guild_board.season_ledger --dry-run       # what would be appended
+python -m guild_board.season_ledger --append        # what CI runs daily
+python -m guild_board.season_ledger --backfill      # reconstruct from git
+python -m guild_board.season_ledger --freeze season-mn-1 [--source-rev SHA]
+```
+
+Rules that are not negotiable: rows key on `characters[].key` (name-realm)
+— the roster holds two Berobens; `streak`/`attended` are `null` whenever
+the evidence is missing or the week was never scanned, never `false`; a
+week is only filed under the season it was played in; and `--freeze`
+refuses to overwrite an existing `data/seasons/<slug>/` or to freeze from
+a bundle of the wrong season's vintage. To redo a freeze, delete the
+directory in a reviewed commit.
 
 ## Data sources
 
