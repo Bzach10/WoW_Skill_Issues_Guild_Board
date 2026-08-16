@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-11T16:16:31.383361+00:00",
-  "based_on": "2026-08-04T19:18:52.800560+00:00",
+  "generated_at": "2026-08-16T11:57:54.464839+00:00",
+  "based_on": "2026-08-11T16:19:00.113849+00:00",
   "standing": {
     "realm": 35,
     "region": 1604,
@@ -9,13 +9,13 @@
   },
   "previous_standing": {
     "realm": 35,
-    "region": 1602,
-    "world": 5109
+    "region": 1604,
+    "world": 5119
   },
   "standing_delta": {
     "realm": 0,
-    "region": -2,
-    "world": -10
+    "region": 0,
+    "world": 0
   },
   "headline_records": [
     {
@@ -26,7 +26,7 @@
       "unit": "key_level",
       "context": "Pit of Saron",
       "spec": "Beast Mastery Hunter",
-      "is_new": true
+      "is_new": false
     },
     {
       "id": "best_dps_parse",
@@ -36,7 +36,7 @@
       "unit": "percentile",
       "context": "Chimaerus, the Undreamt God",
       "spec": "BeastMastery Hunter",
-      "is_new": true
+      "is_new": false
     },
     {
       "id": "best_hps_parse",
@@ -54,31 +54,40 @@
       "rank": 1,
       "name": "Amrevenge",
       "key": "amrevenge",
-      "score": 3917.7,
-      "delta_week": 9.6,
+      "score": 3943.9,
+      "delta_week": 26.2,
       "streak_weeks": 3,
       "is_new": false
     },
     {
       "rank": 2,
-      "name": "Enyò",
-      "key": "enyò",
-      "score": 3894.9,
-      "delta_week": 160.7,
-      "streak_weeks": 3,
-      "is_new": false
-    },
-    {
-      "rank": 3,
       "name": "Tommybravoo",
       "key": "tommybravoo",
-      "score": 3881.2,
-      "delta_week": 85.0,
+      "score": 3908.5,
+      "delta_week": 27.3,
       "streak_weeks": 4,
       "is_new": false
     },
     {
+      "rank": 3,
+      "name": "Enyò",
+      "key": "enyò",
+      "score": 3902,
+      "delta_week": 7.1,
+      "streak_weeks": 3,
+      "is_new": false
+    },
+    {
       "rank": 4,
+      "name": "Brewzleeh",
+      "key": "brewzleeh",
+      "score": 3704.6,
+      "delta_week": 13.7,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 5,
       "name": "Shadoxii",
       "key": "shadoxii",
       "score": 3692.2,
@@ -87,61 +96,88 @@
       "is_new": false
     },
     {
-      "rank": 5,
-      "name": "Brewzleeh",
-      "key": "brewzleeh",
-      "score": 3690.9,
-      "delta_week": 5.0,
-      "streak_weeks": 0,
-      "is_new": false
-    },
-    {
       "rank": 6,
-      "name": "Healyeah",
-      "key": "healyeah",
-      "score": 3555.3,
-      "delta_week": 157.1,
+      "name": "Emmastraszã",
+      "key": "emmastraszã",
+      "score": 3656.1,
+      "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": false
+      "is_new": true
     },
     {
       "rank": 7,
-      "name": "Glaiveshott",
-      "key": "glaiveshott",
-      "score": 3538.2,
-      "delta_week": 0.0,
-      "streak_weeks": 0,
-      "is_new": true
+      "name": "Nokori",
+      "key": "nokori",
+      "score": 3636.6,
+      "delta_week": 264.5,
+      "streak_weeks": 1,
+      "is_new": false
     },
     {
       "rank": 8,
-      "name": "Phyrthesham",
-      "key": "phyrthesham",
-      "score": 3529.9,
-      "delta_week": 0.0,
-      "streak_weeks": 1,
-      "is_new": true
+      "name": "Healyeah",
+      "key": "healyeah",
+      "score": 3587.7,
+      "delta_week": 32.4,
+      "streak_weeks": 0,
+      "is_new": false
     },
     {
       "rank": 9,
       "name": "Rakdisc",
       "key": "rakdisc",
-      "score": 3529.2,
-      "delta_week": 0.0,
+      "score": 3567.1,
+      "delta_week": 37.9,
       "streak_weeks": 0,
       "is_new": false
     },
     {
       "rank": 10,
-      "name": "Rhansìk",
-      "key": "rhansìk",
-      "score": 3521.8,
-      "delta_week": 12.2,
+      "name": "Emmastraszä",
+      "key": "emmastraszä",
+      "score": 3551.5,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
+      "is_new": true
+    },
+    {
+      "rank": 11,
+      "name": "Ellebasi",
+      "key": "ellebasi",
+      "score": 3548.1,
+      "delta_week": 111.5,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 12,
+      "name": "Glaiveshott",
+      "key": "glaiveshott",
+      "score": 3538.2,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 13,
+      "name": "Phyrthesham",
+      "key": "phyrthesham",
+      "score": 3529.9,
+      "delta_week": 0.0,
       "streak_weeks": 1,
       "is_new": false
     },
     {
-      "rank": 11,
+      "rank": 14,
+      "name": "Rhansìk",
+      "key": "rhansìk",
+      "score": 3521.8,
+      "delta_week": 0.0,
+      "streak_weeks": 1,
+      "is_new": false
+    },
+    {
+      "rank": 15,
       "name": "Phyrthepali",
       "key": "phyrthepali",
       "score": 3500.1,
@@ -150,34 +186,34 @@
       "is_new": false
     },
     {
-      "rank": 12,
+      "rank": 16,
       "name": "Healmates",
       "key": "healmates",
       "score": 3491.3,
-      "delta_week": 79.3,
+      "delta_week": 0.0,
       "streak_weeks": 1,
       "is_new": false
     },
     {
-      "rank": 13,
+      "rank": 17,
       "name": "Floofwall",
       "key": "floofwall",
-      "score": 3484.3,
-      "delta_week": 0.0,
+      "score": 3484.4,
+      "delta_week": 0.1,
       "streak_weeks": 0,
       "is_new": false
     },
     {
-      "rank": 14,
+      "rank": 18,
       "name": "Madreezus",
       "key": "madreezus",
       "score": 3454.7,
       "delta_week": 0.0,
       "streak_weeks": 1,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 15,
+      "rank": 19,
       "name": "Witherbear",
       "key": "witherbear",
       "score": 3440.4,
@@ -186,16 +222,7 @@
       "is_new": false
     },
     {
-      "rank": 16,
-      "name": "Ellebasi",
-      "key": "ellebasi",
-      "score": 3436.6,
-      "delta_week": 0.0,
-      "streak_weeks": 0,
-      "is_new": false
-    },
-    {
-      "rank": 17,
+      "rank": 20,
       "name": "Tommybravox",
       "key": "tommybravox",
       "score": 3434.5,
@@ -204,7 +231,7 @@
       "is_new": false
     },
     {
-      "rank": 18,
+      "rank": 21,
       "name": "Meowstal",
       "key": "meowstal",
       "score": 3430.2,
@@ -213,7 +240,16 @@
       "is_new": false
     },
     {
-      "rank": 19,
+      "rank": 22,
+      "name": "Buchalter",
+      "key": "buchalter",
+      "score": 3428.8,
+      "delta_week": 178.6,
+      "streak_weeks": 8,
+      "is_new": false
+    },
+    {
+      "rank": 23,
       "name": "Jovala",
       "key": "jovala",
       "score": 3428,
@@ -222,7 +258,7 @@
       "is_new": false
     },
     {
-      "rank": 20,
+      "rank": 24,
       "name": "Hellful",
       "key": "hellful",
       "score": 3418.7,
@@ -231,7 +267,7 @@
       "is_new": false
     },
     {
-      "rank": 21,
+      "rank": 25,
       "name": "Kegsmashroll",
       "key": "kegsmashroll",
       "score": 3414.3,
@@ -240,7 +276,7 @@
       "is_new": false
     },
     {
-      "rank": 22,
+      "rank": 26,
       "name": "Onessarain",
       "key": "onessarain",
       "score": 3414.3,
@@ -249,16 +285,7 @@
       "is_new": false
     },
     {
-      "rank": 23,
-      "name": "Nokori",
-      "key": "nokori",
-      "score": 3372.1,
-      "delta_week": 248.9,
-      "streak_weeks": 1,
-      "is_new": false
-    },
-    {
-      "rank": 24,
+      "rank": 27,
       "name": "Flogeron",
       "key": "flogeron",
       "score": 3355.6,
@@ -267,7 +294,7 @@
       "is_new": false
     },
     {
-      "rank": 25,
+      "rank": 28,
       "name": "Shadoxi",
       "key": "shadoxi",
       "score": 3333.5,
@@ -276,25 +303,25 @@
       "is_new": false
     },
     {
-      "rank": 26,
+      "rank": 29,
       "name": "Sewenity",
       "key": "sewenity",
       "score": 3332.2,
       "delta_week": 0.0,
       "streak_weeks": 1,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 27,
+      "rank": 30,
       "name": "Guloot",
       "key": "guloot",
       "score": 3297.1,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 28,
+      "rank": 31,
       "name": "Impkiller",
       "key": "impkiller",
       "score": 3268.3,
@@ -303,25 +330,16 @@
       "is_new": false
     },
     {
-      "rank": 29,
+      "rank": 32,
       "name": "Evangilism",
       "key": "evangilism",
       "score": 3256.2,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
-    },
-    {
-      "rank": 30,
-      "name": "Buchalter",
-      "key": "buchalter",
-      "score": 3250.2,
-      "delta_week": 42.3,
-      "streak_weeks": 8,
       "is_new": false
     },
     {
-      "rank": 31,
+      "rank": 33,
       "name": "Yur",
       "key": "yur",
       "score": 3245.1,
@@ -330,7 +348,7 @@
       "is_new": false
     },
     {
-      "rank": 32,
+      "rank": 34,
       "name": "Rexxhavocc",
       "key": "rexxhavocc",
       "score": 3224.9,
@@ -339,7 +357,16 @@
       "is_new": false
     },
     {
-      "rank": 33,
+      "rank": 35,
+      "name": "Boondocka",
+      "key": "boondocka",
+      "score": 3188.3,
+      "delta_week": 84.4,
+      "streak_weeks": 1,
+      "is_new": false
+    },
+    {
+      "rank": 36,
       "name": "Nixfallë",
       "key": "nixfallë",
       "score": 3157.6,
@@ -348,7 +375,16 @@
       "is_new": false
     },
     {
-      "rank": 34,
+      "rank": 37,
+      "name": "Marceau",
+      "key": "marceau",
+      "score": 3152.7,
+      "delta_week": 31.0,
+      "streak_weeks": 1,
+      "is_new": false
+    },
+    {
+      "rank": 38,
       "name": "Kelova",
       "key": "kelova",
       "score": 3142.9,
@@ -357,7 +393,7 @@
       "is_new": false
     },
     {
-      "rank": 35,
+      "rank": 39,
       "name": "Breaktheicee",
       "key": "breaktheicee",
       "score": 3141.9,
@@ -366,16 +402,25 @@
       "is_new": false
     },
     {
-      "rank": 36,
+      "rank": 40,
       "name": "Katesthio",
       "key": "katesthio",
       "score": 3128.5,
       "delta_week": 0.0,
       "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 41,
+      "name": "Satet",
+      "key": "satet",
+      "score": 3127.8,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
       "is_new": true
     },
     {
-      "rank": 37,
+      "rank": 42,
       "name": "Ohnomyais",
       "key": "ohnomyais",
       "score": 3125.7,
@@ -384,34 +429,25 @@
       "is_new": false
     },
     {
-      "rank": 38,
+      "rank": 43,
       "name": "Kirrá",
       "key": "kirrá",
       "score": 3125.2,
-      "delta_week": 2.0,
+      "delta_week": 0.0,
       "streak_weeks": 2,
       "is_new": false
     },
     {
-      "rank": 39,
-      "name": "Marceau",
-      "key": "marceau",
-      "score": 3121.7,
-      "delta_week": 0.0,
-      "streak_weeks": 1,
-      "is_new": true
-    },
-    {
-      "rank": 40,
+      "rank": 44,
       "name": "Mogaslst",
       "key": "mogaslst",
       "score": 3116,
       "delta_week": 0,
       "streak_weeks": 1,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 41,
+      "rank": 45,
       "name": "Holyx",
       "key": "holyx",
       "score": 3112.4,
@@ -420,7 +456,7 @@
       "is_new": false
     },
     {
-      "rank": 42,
+      "rank": 46,
       "name": "Aiime",
       "key": "aiime",
       "score": 3106,
@@ -429,16 +465,25 @@
       "is_new": false
     },
     {
-      "rank": 43,
-      "name": "Boondocka",
-      "key": "boondocka",
-      "score": 3103.9,
-      "delta_week": 0.0,
-      "streak_weeks": 1,
+      "rank": 47,
+      "name": "Redgicide",
+      "key": "redgicide",
+      "score": 3103.6,
+      "delta_week": 273.2,
+      "streak_weeks": 2,
       "is_new": false
     },
     {
-      "rank": 44,
+      "rank": 48,
+      "name": "Maillo",
+      "key": "maillo",
+      "score": 3094.7,
+      "delta_week": 61.3,
+      "streak_weeks": 3,
+      "is_new": false
+    },
+    {
+      "rank": 49,
       "name": "Martylol",
       "key": "martylol",
       "score": 3086.7,
@@ -447,7 +492,7 @@
       "is_new": false
     },
     {
-      "rank": 45,
+      "rank": 50,
       "name": "Jerbane",
       "key": "jerbane",
       "score": 3079.5,
@@ -456,7 +501,7 @@
       "is_new": false
     },
     {
-      "rank": 46,
+      "rank": 51,
       "name": "Arfas",
       "key": "arfas",
       "score": 3076.9,
@@ -465,16 +510,25 @@
       "is_new": false
     },
     {
-      "rank": 47,
-      "name": "Sosomage",
-      "key": "sosomage",
-      "score": 3075.6,
+      "rank": 52,
+      "name": "Emmastrasza",
+      "key": "emmastrasza",
+      "score": 3076.3,
       "delta_week": 0.0,
       "streak_weeks": 0,
       "is_new": true
     },
     {
-      "rank": 48,
+      "rank": 53,
+      "name": "Sosomage",
+      "key": "sosomage",
+      "score": 3075.6,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 54,
       "name": "Marvinah",
       "key": "marvinah",
       "score": 3065.4,
@@ -483,7 +537,7 @@
       "is_new": false
     },
     {
-      "rank": 49,
+      "rank": 55,
       "name": "Tinyx",
       "key": "tinyx",
       "score": 3058.3,
@@ -492,7 +546,7 @@
       "is_new": false
     },
     {
-      "rank": 50,
+      "rank": 56,
       "name": "Beastfriend",
       "key": "beastfriend",
       "score": 3051.8,
@@ -501,7 +555,7 @@
       "is_new": false
     },
     {
-      "rank": 51,
+      "rank": 57,
       "name": "Muramorn",
       "key": "muramorn",
       "score": 3034.4,
@@ -510,16 +564,7 @@
       "is_new": false
     },
     {
-      "rank": 52,
-      "name": "Maillo",
-      "key": "maillo",
-      "score": 3033.4,
-      "delta_week": 0.0,
-      "streak_weeks": 3,
-      "is_new": false
-    },
-    {
-      "rank": 53,
+      "rank": 58,
       "name": "Delusionz",
       "key": "delusionz",
       "score": 3026.8,
@@ -528,7 +573,7 @@
       "is_new": false
     },
     {
-      "rank": 54,
+      "rank": 59,
       "name": "Scounddrel",
       "key": "scounddrel",
       "score": 3023.6,
@@ -537,16 +582,16 @@
       "is_new": false
     },
     {
-      "rank": 55,
+      "rank": 60,
       "name": "Khorra",
       "key": "khorra",
       "score": 3022.7,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 56,
+      "rank": 61,
       "name": "Gandamar",
       "key": "gandamar",
       "score": 3021.6,
@@ -555,43 +600,70 @@
       "is_new": false
     },
     {
-      "rank": 57,
+      "rank": 62,
       "name": "Fuazy",
       "key": "fuazy",
       "score": 3018.9,
       "delta_week": 0.0,
       "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 63,
+      "name": "Hantt",
+      "key": "hantt",
+      "score": 3017.9,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
       "is_new": true
     },
     {
-      "rank": 58,
-      "name": "Andika",
-      "key": "andika",
-      "score": 3006.2,
-      "delta_week": 1158.9,
+      "rank": 64,
+      "name": "Grandsongor",
+      "key": "grandsongor",
+      "score": 3016.2,
+      "delta_week": 54.8,
       "streak_weeks": 0,
       "is_new": false
     },
     {
-      "rank": 59,
+      "rank": 65,
+      "name": "Andika",
+      "key": "andika",
+      "score": 3014.7,
+      "delta_week": 8.5,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 66,
+      "name": "Kao",
+      "key": "kao",
+      "score": 3009.8,
+      "delta_week": 169.1,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 67,
       "name": "Boltzaa",
       "key": "boltzaa",
       "score": 3004.9,
       "delta_week": 0.0,
       "streak_weeks": 1,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 60,
+      "rank": 68,
       "name": "Duskwolf",
       "key": "duskwolf",
       "score": 2997.8,
-      "delta_week": 10.6,
+      "delta_week": 0.0,
       "streak_weeks": 0,
       "is_new": false
     },
     {
-      "rank": 61,
+      "rank": 69,
       "name": "Rakell",
       "key": "rakell",
       "score": 2994.6,
@@ -600,7 +672,25 @@
       "is_new": false
     },
     {
-      "rank": 62,
+      "rank": 70,
+      "name": "Heximal",
+      "key": "heximal",
+      "score": 2989.3,
+      "delta_week": 109.6,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 71,
+      "name": "Onetruemorty",
+      "key": "onetruemorty",
+      "score": 2986.5,
+      "delta_week": 147.5,
+      "streak_weeks": 3,
+      "is_new": false
+    },
+    {
+      "rank": 72,
       "name": "Wabisukee",
       "key": "wabisukee",
       "score": 2976.8,
@@ -609,16 +699,7 @@
       "is_new": false
     },
     {
-      "rank": 63,
-      "name": "Grandsongor",
-      "key": "grandsongor",
-      "score": 2961.4,
-      "delta_week": 512.0,
-      "streak_weeks": 0,
-      "is_new": false
-    },
-    {
-      "rank": 64,
+      "rank": 73,
       "name": "Slicerdicer",
       "key": "slicerdicer",
       "score": 2953.1,
@@ -627,7 +708,7 @@
       "is_new": false
     },
     {
-      "rank": 65,
+      "rank": 74,
       "name": "Witherhoard",
       "key": "witherhoard",
       "score": 2928.7,
@@ -636,7 +717,7 @@
       "is_new": false
     },
     {
-      "rank": 66,
+      "rank": 75,
       "name": "Tommybravo",
       "key": "tommybravo",
       "score": 2881.9,
@@ -645,16 +726,7 @@
       "is_new": false
     },
     {
-      "rank": 67,
-      "name": "Heximal",
-      "key": "heximal",
-      "score": 2879.7,
-      "delta_week": 0.0,
-      "streak_weeks": 0,
-      "is_new": false
-    },
-    {
-      "rank": 68,
+      "rank": 76,
       "name": "Widowx",
       "key": "widowx",
       "score": 2879.3,
@@ -663,7 +735,25 @@
       "is_new": false
     },
     {
-      "rank": 69,
+      "rank": 77,
+      "name": "Miallo",
+      "key": "miallo",
+      "score": 2878.4,
+      "delta_week": 144.3,
+      "streak_weeks": 2,
+      "is_new": false
+    },
+    {
+      "rank": 78,
+      "name": "Beroben",
+      "key": "beroben",
+      "score": 2878.2,
+      "delta_week": 199.8,
+      "streak_weeks": 2,
+      "is_new": false
+    },
+    {
+      "rank": 79,
       "name": "Autable",
       "key": "autable",
       "score": 2873.8,
@@ -672,34 +762,25 @@
       "is_new": false
     },
     {
-      "rank": 70,
-      "name": "Danukira",
-      "key": "danukira",
+      "rank": 80,
+      "name": "Devana",
+      "key": "devana",
+      "score": 2860.1,
+      "delta_week": 372.6,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 81,
+      "name": "Shamshockz",
+      "key": "shamshockz",
       "score": 2857.8,
       "delta_week": 0.0,
       "streak_weeks": 0,
       "is_new": true
     },
     {
-      "rank": 71,
-      "name": "Kao",
-      "key": "kao",
-      "score": 2840.7,
-      "delta_week": 0.0,
-      "streak_weeks": 0,
-      "is_new": true
-    },
-    {
-      "rank": 72,
-      "name": "Onetruemorty",
-      "key": "onetruemorty",
-      "score": 2839,
-      "delta_week": 17.1,
-      "streak_weeks": 3,
-      "is_new": false
-    },
-    {
-      "rank": 73,
+      "rank": 82,
       "name": "Flemel",
       "key": "flemel",
       "score": 2836.1,
@@ -708,16 +789,7 @@
       "is_new": false
     },
     {
-      "rank": 74,
-      "name": "Redgicide",
-      "key": "redgicide",
-      "score": 2830.4,
-      "delta_week": 1224.8,
-      "streak_weeks": 2,
-      "is_new": false
-    },
-    {
-      "rank": 75,
+      "rank": 83,
       "name": "Glinkz",
       "key": "glinkz",
       "score": 2818.1,
@@ -726,7 +798,7 @@
       "is_new": false
     },
     {
-      "rank": 76,
+      "rank": 84,
       "name": "Paleghost",
       "key": "paleghost",
       "score": 2810.7,
@@ -735,7 +807,7 @@
       "is_new": false
     },
     {
-      "rank": 77,
+      "rank": 85,
       "name": "Dragoonx",
       "key": "dragoonx",
       "score": 2793.6,
@@ -744,7 +816,7 @@
       "is_new": false
     },
     {
-      "rank": 78,
+      "rank": 86,
       "name": "Rakbear",
       "key": "rakbear",
       "score": 2786.5,
@@ -753,7 +825,7 @@
       "is_new": false
     },
     {
-      "rank": 79,
+      "rank": 87,
       "name": "Chokalock",
       "key": "chokalock",
       "score": 2765.8,
@@ -762,16 +834,16 @@
       "is_new": false
     },
     {
-      "rank": 80,
+      "rank": 88,
       "name": "Wowimhealing",
       "key": "wowimhealing",
       "score": 2765,
       "delta_week": 0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 81,
+      "rank": 89,
       "name": "Chohno",
       "key": "chohno",
       "score": 2751.4,
@@ -780,16 +852,16 @@
       "is_new": false
     },
     {
-      "rank": 82,
+      "rank": 90,
       "name": "Kitzumi",
       "key": "kitzumi",
       "score": 2751.4,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 83,
+      "rank": 91,
       "name": "Skoala",
       "key": "skoala",
       "score": 2750.2,
@@ -798,43 +870,25 @@
       "is_new": false
     },
     {
-      "rank": 84,
-      "name": "Miallo",
-      "key": "miallo",
-      "score": 2734.1,
-      "delta_week": 243.4,
-      "streak_weeks": 2,
-      "is_new": false
-    },
-    {
-      "rank": 85,
-      "name": "Beroben",
-      "key": "beroben",
-      "score": 2678.4,
-      "delta_week": 0.0,
-      "streak_weeks": 2,
-      "is_new": false
-    },
-    {
-      "rank": 86,
+      "rank": 92,
       "name": "Rektarn",
       "key": "rektarn",
-      "score": 2670.3,
-      "delta_week": 0.0,
+      "score": 2701.9,
+      "delta_week": 31.6,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 87,
+      "rank": 93,
       "name": "Lycopersicum",
       "key": "lycopersicum",
       "score": 2635.8,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 88,
+      "rank": 94,
       "name": "Sidarien",
       "key": "sidarien",
       "score": 2632.1,
@@ -843,7 +897,7 @@
       "is_new": false
     },
     {
-      "rank": 89,
+      "rank": 95,
       "name": "Icyx",
       "key": "icyx",
       "score": 2624.6,
@@ -852,7 +906,7 @@
       "is_new": false
     },
     {
-      "rank": 90,
+      "rank": 96,
       "name": "Coned",
       "key": "coned",
       "score": 2599,
@@ -861,25 +915,34 @@
       "is_new": false
     },
     {
-      "rank": 91,
+      "rank": 97,
       "name": "Glaidaniss",
       "key": "glaidaniss",
       "score": 2588.7,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 92,
+      "rank": 98,
+      "name": "Fluffy",
+      "key": "fluffy",
+      "score": 2580.5,
+      "delta_week": 1010.3,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 99,
       "name": "Erosina",
       "key": "erosina",
       "score": 2496.9,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 93,
+      "rank": 100,
       "name": "Peeoncorpses",
       "key": "peeoncorpses",
       "score": 2492.5,
@@ -888,16 +951,7 @@
       "is_new": false
     },
     {
-      "rank": 94,
-      "name": "Devana",
-      "key": "devana",
-      "score": 2487.5,
-      "delta_week": 0.0,
-      "streak_weeks": 0,
-      "is_new": true
-    },
-    {
-      "rank": 95,
+      "rank": 101,
       "name": "Valkyrïe",
       "key": "valkyrïe",
       "score": 2483.6,
@@ -906,7 +960,7 @@
       "is_new": false
     },
     {
-      "rank": 96,
+      "rank": 102,
       "name": "Cptbenimaru",
       "key": "cptbenimaru",
       "score": 2477.6,
@@ -915,7 +969,7 @@
       "is_new": false
     },
     {
-      "rank": 97,
+      "rank": 103,
       "name": "Jilk",
       "key": "jilk",
       "score": 2396,
@@ -924,16 +978,16 @@
       "is_new": false
     },
     {
-      "rank": 98,
+      "rank": 104,
       "name": "Gener",
       "key": "gener",
       "score": 2355.6,
-      "delta_week": 111.0,
+      "delta_week": 0.0,
       "streak_weeks": 0,
       "is_new": false
     },
     {
-      "rank": 99,
+      "rank": 105,
       "name": "Azell",
       "key": "azell",
       "score": 2345.5,
@@ -942,7 +996,7 @@
       "is_new": false
     },
     {
-      "rank": 100,
+      "rank": 106,
       "name": "Viôlence",
       "key": "viôlence",
       "score": 2316.4,
@@ -951,7 +1005,7 @@
       "is_new": false
     },
     {
-      "rank": 101,
+      "rank": 107,
       "name": "Eponax",
       "key": "eponax",
       "score": 2222.1,
@@ -960,7 +1014,7 @@
       "is_new": false
     },
     {
-      "rank": 102,
+      "rank": 108,
       "name": "Huntlowx",
       "key": "huntlowx",
       "score": 2204,
@@ -969,7 +1023,7 @@
       "is_new": false
     },
     {
-      "rank": 103,
+      "rank": 109,
       "name": "Violënce",
       "key": "violënce",
       "score": 2192.9,
@@ -978,7 +1032,7 @@
       "is_new": false
     },
     {
-      "rank": 104,
+      "rank": 110,
       "name": "Thiccat",
       "key": "thiccat",
       "score": 2177.6,
@@ -987,7 +1041,7 @@
       "is_new": false
     },
     {
-      "rank": 105,
+      "rank": 111,
       "name": "Aime",
       "key": "aime",
       "score": 2175.4,
@@ -996,7 +1050,7 @@
       "is_new": false
     },
     {
-      "rank": 106,
+      "rank": 112,
       "name": "Kathrobbin",
       "key": "kathrobbin",
       "score": 2172.2,
@@ -1005,7 +1059,7 @@
       "is_new": false
     },
     {
-      "rank": 107,
+      "rank": 113,
       "name": "Nivella",
       "key": "nivella",
       "score": 2154.9,
@@ -1014,7 +1068,7 @@
       "is_new": false
     },
     {
-      "rank": 108,
+      "rank": 114,
       "name": "Milkbreath",
       "key": "milkbreath",
       "score": 2134.2,
@@ -1023,16 +1077,16 @@
       "is_new": false
     },
     {
-      "rank": 109,
+      "rank": 115,
       "name": "Carun",
       "key": "carun",
       "score": 2129,
       "delta_week": 0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     },
     {
-      "rank": 110,
+      "rank": 116,
       "name": "Fugaku",
       "key": "fugaku",
       "score": 1902.7,
@@ -1041,7 +1095,7 @@
       "is_new": false
     },
     {
-      "rank": 111,
+      "rank": 117,
       "name": "Anbux",
       "key": "anbux",
       "score": 1833.9,
@@ -1050,7 +1104,25 @@
       "is_new": false
     },
     {
-      "rank": 112,
+      "rank": 118,
+      "name": "Wirmati",
+      "key": "wirmati",
+      "score": 1812.2,
+      "delta_week": 327.3,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 119,
+      "name": "Ihatepugs",
+      "key": "ihatepugs",
+      "score": 1711.8,
+      "delta_week": 341.1,
+      "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 120,
       "name": "Junzolo",
       "key": "junzolo",
       "score": 1593.9,
@@ -1059,16 +1131,16 @@
       "is_new": false
     },
     {
-      "rank": 113,
-      "name": "Fluffy",
-      "key": "fluffy",
-      "score": 1570.2,
-      "delta_week": 1054.6,
+      "rank": 121,
+      "name": "Ricodandolo",
+      "key": "ricodandolo",
+      "score": 1578.5,
+      "delta_week": 1155.8,
       "streak_weeks": 0,
       "is_new": false
     },
     {
-      "rank": 114,
+      "rank": 122,
       "name": "Kitez",
       "key": "kitez",
       "score": 1522.4,
@@ -1077,25 +1149,16 @@
       "is_new": false
     },
     {
-      "rank": 115,
-      "name": "Wirmati",
-      "key": "wirmati",
-      "score": 1484.9,
+      "rank": 123,
+      "name": "Ranstar",
+      "key": "ranstar",
+      "score": 1367.7,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": false
+      "is_new": true
     },
     {
-      "rank": 116,
-      "name": "Ihatepugs",
-      "key": "ihatepugs",
-      "score": 1370.7,
-      "delta_week": 27.9,
-      "streak_weeks": 0,
-      "is_new": false
-    },
-    {
-      "rank": 117,
+      "rank": 124,
       "name": "Sinistrad",
       "key": "sinistrad",
       "score": 1175.2,
@@ -1104,7 +1167,16 @@
       "is_new": false
     },
     {
-      "rank": 118,
+      "rank": 125,
+      "name": "Meillo",
+      "key": "meillo",
+      "score": 1155.8,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
+      "is_new": true
+    },
+    {
+      "rank": 126,
       "name": "Critorical",
       "key": "critorical",
       "score": 1137.7,
@@ -1113,7 +1185,7 @@
       "is_new": false
     },
     {
-      "rank": 119,
+      "rank": 127,
       "name": "Grëywolf",
       "key": "grëywolf",
       "score": 1107.3,
@@ -1122,7 +1194,7 @@
       "is_new": false
     },
     {
-      "rank": 120,
+      "rank": 128,
       "name": "Wolfx",
       "key": "wolfx",
       "score": 1103.2,
@@ -1131,7 +1203,16 @@
       "is_new": false
     },
     {
-      "rank": 121,
+      "rank": 129,
+      "name": "Prideblade",
+      "key": "prideblade",
+      "score": 1093.3,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
+      "is_new": true
+    },
+    {
+      "rank": 130,
       "name": "Danethegreat",
       "key": "danethegreat",
       "score": 1053.4,
@@ -1140,7 +1221,7 @@
       "is_new": false
     },
     {
-      "rank": 122,
+      "rank": 131,
       "name": "Mushabi",
       "key": "mushabi",
       "score": 1036,
@@ -1149,7 +1230,7 @@
       "is_new": false
     },
     {
-      "rank": 123,
+      "rank": 132,
       "name": "Breakdruid",
       "key": "breakdruid",
       "score": 1022.2,
@@ -1158,7 +1239,7 @@
       "is_new": false
     },
     {
-      "rank": 124,
+      "rank": 133,
       "name": "Uddershock",
       "key": "uddershock",
       "score": 977.9,
@@ -1167,7 +1248,7 @@
       "is_new": false
     },
     {
-      "rank": 125,
+      "rank": 134,
       "name": "Ravokoflight",
       "key": "ravokoflight",
       "score": 953.4,
@@ -1176,7 +1257,7 @@
       "is_new": false
     },
     {
-      "rank": 126,
+      "rank": 135,
       "name": "Ranaria",
       "key": "ranaria",
       "score": 866.7,
@@ -1185,7 +1266,16 @@
       "is_new": false
     },
     {
-      "rank": 127,
+      "rank": 136,
+      "name": "Lørdøfßud",
+      "key": "lørdøfßud",
+      "score": 743.7,
+      "delta_week": 0.0,
+      "streak_weeks": 0,
+      "is_new": true
+    },
+    {
+      "rank": 137,
       "name": "Dathar",
       "key": "dathar",
       "score": 740.1,
@@ -1194,7 +1284,7 @@
       "is_new": false
     },
     {
-      "rank": 128,
+      "rank": 138,
       "name": "Zackoh",
       "key": "zackoh",
       "score": 671.6,
@@ -1203,7 +1293,7 @@
       "is_new": false
     },
     {
-      "rank": 129,
+      "rank": 139,
       "name": "Nythrael",
       "key": "nythrael",
       "score": 581.4,
@@ -1212,25 +1302,16 @@
       "is_new": false
     },
     {
-      "rank": 130,
+      "rank": 140,
       "name": "Néfèrtítì",
       "key": "néfèrtítì",
       "score": 473.8,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
-    },
-    {
-      "rank": 131,
-      "name": "Ricodandolo",
-      "key": "ricodandolo",
-      "score": 422.7,
-      "delta_week": 0.0,
-      "streak_weeks": 0,
       "is_new": false
     },
     {
-      "rank": 132,
+      "rank": 141,
       "name": "Padremort",
       "key": "padremort",
       "score": 224.7,
@@ -1239,16 +1320,25 @@
       "is_new": false
     },
     {
-      "rank": 133,
+      "rank": 142,
       "name": "Azerothia",
       "key": "azerothia",
       "score": 194.9,
       "delta_week": 0.0,
       "streak_weeks": 0,
+      "is_new": false
+    },
+    {
+      "rank": 143,
+      "name": "Meyllo",
+      "key": "meyllo",
+      "score": 170,
+      "delta_week": 0,
+      "streak_weeks": 0,
       "is_new": true
     },
     {
-      "rank": 134,
+      "rank": 144,
       "name": "Unholyx",
       "key": "unholyx",
       "score": 168.4,
@@ -1257,7 +1347,7 @@
       "is_new": false
     },
     {
-      "rank": 135,
+      "rank": 145,
       "name": "Sandgs",
       "key": "sandgs",
       "score": 166.8,
@@ -1266,7 +1356,7 @@
       "is_new": false
     },
     {
-      "rank": 136,
+      "rank": 146,
       "name": "Shadowhausen",
       "key": "shadowhausen",
       "score": 166.7,
@@ -1275,7 +1365,7 @@
       "is_new": false
     },
     {
-      "rank": 137,
+      "rank": 147,
       "name": "Xavira",
       "key": "xavira",
       "score": 158.9,
@@ -1284,16 +1374,16 @@
       "is_new": false
     },
     {
-      "rank": 138,
+      "rank": 148,
       "name": "Pällypocket",
       "key": "pällypocket",
       "score": 158.8,
       "delta_week": 0.0,
       "streak_weeks": 0,
-      "is_new": true
+      "is_new": false
     }
   ],
-  "ladder_size": 138,
+  "ladder_size": 148,
   "sortable_by": [
     "score",
     "delta_week",

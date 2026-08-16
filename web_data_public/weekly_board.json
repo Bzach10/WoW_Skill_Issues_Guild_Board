@@ -1,267 +1,181 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-11T16:16:31.383382+00:00",
+  "generated_at": "2026-08-16T11:57:54.464853+00:00",
   "available": true,
-  "based_on": "2026-08-04T19:18:52.800560+00:00",
-  "week_label": "2026-08-04",
-  "week_start": "2026-07-28",
-  "week_end": "2026-08-04",
-  "zone": "VS / DR / MQD",
-  "difficulty": "Mythic",
-  "kills": 4,
-  "pulls": 40,
-  "wipes": 36,
-  "deaths_total": 324,
-  "deaths": {
-    "Amrevenge": 22,
-    "Boltzaa": 22,
-    "Kirrá": 22,
-    "Madreezus": 21,
-    "Nokori": 20,
-    "Chokalock": 20,
-    "Tommybravoo": 19,
-    "Maillo": 17,
-    "Buchalter": 17,
-    "Ellebasi": 14
-  },
-  "repair_estimate": 19388,
-  "keys": [
-    {
-      "level": 10,
-      "dungeon": "Skyreach",
-      "name": "devana",
-      "spec": "Beast Mastery Hunter"
-    }
-  ],
-  "parses": {
+  "based_on": "2026-08-11T16:19:00.113849+00:00",
+  "week_label": "2026-08-11",
+  "week_start": "2026-08-04",
+  "week_end": "2026-08-11",
+  "zone": "Mythic+ Season 1",
+  "difficulty": "mythic",
+  "kills": null,
+  "pulls": null,
+  "wipes": null,
+  "deaths_total": null,
+  "deaths": {},
+  "repair_estimate": null,
+  "keys": [],
+  "parses": {},
+  "mplus_parses": {
     "dps": [
       {
-        "name": "Madreezus",
-        "spec": "Fury",
-        "cls": "Warrior",
-        "boss": "Fallen-King Salhadaar",
-        "parse": 91,
-        "amount": 149825.44992614,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Eldrym",
+        "spec": "Shadow",
+        "cls": "Priest",
+        "boss": "Skyreach",
+        "parse": 97,
+        "amount": 140449.36291998625,
+        "difficulty": 10,
+        "key_level": 19
       },
       {
-        "name": "Enyò",
-        "spec": "Devourer",
-        "cls": "DemonHunter",
-        "boss": "Vorasius",
-        "parse": 91,
-        "amount": 133528.07200848,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Sttealthy",
+        "spec": "Assassination",
+        "cls": "Rogue",
+        "boss": "Skyreach",
+        "parse": 97,
+        "amount": 144352.03731000423,
+        "difficulty": 10,
+        "key_level": 19
       },
       {
-        "name": "Amrevenge",
-        "spec": "BeastMastery",
-        "cls": "Hunter",
-        "boss": "Vorasius",
-        "parse": 90,
-        "amount": 134990.73680946,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Lackthebeast",
+        "spec": "Retribution",
+        "cls": "Paladin",
+        "boss": "Pit of Saron",
+        "parse": 97,
+        "amount": 190939.56300002337,
+        "difficulty": 10,
+        "key_level": 20
       },
       {
-        "name": "Rhansìk",
-        "spec": "BeastMastery",
-        "cls": "Hunter",
-        "boss": "Imperator Averzian",
-        "parse": 79,
-        "amount": 131360.64939455,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Togashi",
+        "spec": "Windwalker",
+        "cls": "Monk",
+        "boss": "Windrunner Spire",
+        "parse": 97,
+        "amount": 167570.89446997643,
+        "difficulty": 10,
+        "key_level": 18
       },
       {
-        "name": "Tommybravoo",
-        "spec": "Unholy",
-        "cls": "DeathKnight",
-        "boss": "Imperator Averzian",
-        "parse": 74,
-        "amount": 132144.04063196,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Nokori",
+        "spec": "Enhancement",
+        "cls": "Shaman",
+        "boss": "Pit of Saron",
+        "parse": 96,
+        "amount": 159768.92246997356,
+        "difficulty": 10,
+        "key_level": 20
       }
     ],
     "hps": [
       {
-        "name": "Sewenity",
+        "name": "Aëshalis",
         "spec": "Discipline",
         "cls": "Priest",
-        "boss": "Vorasius",
-        "parse": 95,
-        "amount": 195490.95279059,
-        "difficulty": 5,
-        "key_level": null
+        "boss": "Pit of Saron",
+        "parse": 98,
+        "amount": 101677.02052998543,
+        "difficulty": 10,
+        "key_level": 20
       },
       {
-        "name": "Healmates",
+        "name": "Domoavocado",
         "spec": "Holy",
         "cls": "Priest",
-        "boss": "Vorasius",
-        "parse": 87,
-        "amount": 152542.32676283,
-        "difficulty": 5,
-        "key_level": null
+        "boss": "Maisara Caverns",
+        "parse": 97,
+        "amount": 78013.13060998917,
+        "difficulty": 10,
+        "key_level": 17
       },
       {
-        "name": "Phyrthepali",
+        "name": "Chiquis",
+        "spec": "Holy",
+        "cls": "Priest",
+        "boss": "Magister's Terrace",
+        "parse": 97,
+        "amount": 87007.66302001476,
+        "difficulty": 10,
+        "key_level": 17
+      },
+      {
+        "name": "Coozington",
         "spec": "Holy",
         "cls": "Paladin",
-        "boss": "Rotmire",
-        "parse": 78,
-        "amount": 164701.71604629,
-        "difficulty": 5,
-        "key_level": null
+        "boss": "Maisara Caverns",
+        "parse": 97,
+        "amount": 92202.20599997044,
+        "difficulty": 10,
+        "key_level": 18
       },
       {
-        "name": "Hellful",
-        "spec": "Restoration",
-        "cls": "Shaman",
-        "boss": "Rotmire",
-        "parse": 6,
-        "amount": 110390.70206236,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Rakdisc",
+        "spec": "Discipline",
+        "cls": "Priest",
+        "boss": "Windrunner Spire",
+        "parse": 94,
+        "amount": 94979.26674002409,
+        "difficulty": 10,
+        "key_level": 18
       }
     ],
     "tanks": [
       {
-        "name": "Brewzleeh",
-        "spec": "Brewmaster",
-        "cls": "Monk",
-        "boss": "Rotmire",
-        "parse": 85,
-        "amount": 81187.929160845,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Pbainn",
+        "spec": "Protection",
+        "cls": "Paladin",
+        "boss": "Skyreach",
+        "parse": 99,
+        "amount": 77018.65516000986,
+        "difficulty": 10,
+        "key_level": 19
       },
       {
-        "name": "Meowstal",
-        "spec": "Vengeance",
-        "cls": "DemonHunter",
-        "boss": "Imperator Averzian",
-        "parse": 84,
-        "amount": 68219.622761393,
-        "difficulty": 5,
-        "key_level": null
+        "name": "Ostikchucon",
+        "spec": "Protection",
+        "cls": "Paladin",
+        "boss": "Skyreach",
+        "parse": 99,
+        "amount": 83591.34450000525,
+        "difficulty": 10,
+        "key_level": 18
       },
       {
-        "name": "Ellebasi",
-        "spec": "Guardian",
-        "cls": "Druid",
-        "boss": "Rotmire",
-        "parse": 52,
-        "amount": 67557.772762194,
-        "difficulty": 5,
-        "key_level": null
-      }
-    ]
-  },
-  "mplus_parses": {
-    "dps": [
+        "name": "Methodsus",
+        "spec": "Protection",
+        "cls": "Warrior",
+        "boss": "Pit of Saron",
+        "parse": 99,
+        "amount": 127884.80010998249,
+        "difficulty": 10,
+        "key_level": 20
+      },
       {
-        "name": "Nokori",
-        "spec": "Enhancement",
-        "cls": "Shaman",
+        "name": "Zugjobb",
+        "spec": "Protection",
+        "cls": "Warrior",
+        "boss": "Nexus-Point Xenas",
+        "parse": 99,
+        "amount": 93411.62787002325,
+        "difficulty": 10,
+        "key_level": 18
+      },
+      {
+        "name": "Lyreil",
+        "spec": "Protection",
+        "cls": "Paladin",
         "boss": "Algeth'ar Academy",
-        "parse": 89,
-        "amount": 127722.37092000246,
+        "parse": 99,
+        "amount": 75614.79662001133,
         "difficulty": 10,
-        "key_level": 17
-      },
-      {
-        "name": "Enyò",
-        "spec": "Devourer",
-        "cls": "DemonHunter",
-        "boss": "Seat of the Triumvirate",
-        "parse": 80,
-        "amount": 142960.15514999628,
-        "difficulty": 10,
-        "key_level": 17
+        "key_level": 18
       }
     ]
   },
-  "improvement": {
-    "dps": [
-      {
-        "name": "Nokori",
-        "spec": "Enhancement",
-        "cls": "Shaman",
-        "early_parse": 5,
-        "late_parse": 69,
-        "delta": 64,
-        "early_amount": 70416.078465572,
-        "late_amount": 118384.33195376,
-        "difficulty": 5
-      },
-      {
-        "name": "Tommybravoo",
-        "spec": "Unholy",
-        "cls": "DeathKnight",
-        "early_parse": 18,
-        "late_parse": 74,
-        "delta": 56,
-        "early_amount": 90420.84467541,
-        "late_amount": 132144.04063196,
-        "difficulty": 5
-      },
-      {
-        "name": "Buchalter",
-        "spec": "Frost",
-        "cls": "Mage",
-        "early_parse": 8,
-        "late_parse": 53,
-        "delta": 45,
-        "early_amount": 89102.393748706,
-        "late_amount": 109426.34774179,
-        "difficulty": 5
-      },
-      {
-        "name": "Boondocka",
-        "spec": "BeastMastery",
-        "cls": "Hunter",
-        "early_parse": 22,
-        "late_parse": 58,
-        "delta": 36,
-        "early_amount": 102658.95955347,
-        "late_amount": 115520.03824897,
-        "difficulty": 5
-      },
-      {
-        "name": "Healyeah",
-        "spec": "Augmentation",
-        "cls": "Evoker",
-        "early_parse": 6,
-        "late_parse": 35,
-        "delta": 29,
-        "early_amount": 71582.716049383,
-        "late_amount": 108486.19923375,
-        "difficulty": 5
-      }
-    ],
-    "hps": [
-      {
-        "name": "Healmates",
-        "spec": "Holy",
-        "cls": "Priest",
-        "early_parse": 19,
-        "late_parse": 87,
-        "delta": 68,
-        "early_amount": 97405.895997815,
-        "late_amount": 152542.32676283,
-        "difficulty": 5
-      }
-    ]
-  },
-  "roast": {
-    "roast": "BWahahaha imma double emperor",
-    "winner": "TheTrashPanda",
-    "target": ""
-  },
+  "improvement": {},
+  "roast": null,
   "streaks": {
     "buchalter": 8,
     "tommybravoo": 4,
@@ -289,7 +203,7 @@
     "marceau": 1,
     "redgicide": 2
   },
-  "streaks_week": "2026-08-04",
+  "streaks_week": "2026-08-11",
   "streaks_started": "2026-04-14",
   "status": "ok"
 }
