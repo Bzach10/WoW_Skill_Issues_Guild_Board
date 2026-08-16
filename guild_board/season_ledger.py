@@ -605,34 +605,65 @@ def previous_season_slug(root="."):
     return latest
 
 
+def ended_seasons(root=".", now=None):
+    """Seasons that have ended AND that this ledger actually recorded.
+
+    A season nobody kept a ledger for is not this module's to freeze; a
+    season with rows is one the pipeline lived through, so its finals are
+    ours to write down.
+    """
+    moment = _as_utc(now)
+    ended = []
+    for season in season_mod.SEASONS:
+        ends = season.get("ends_utc")
+        if not ends or _as_utc(ends) > moment:
+            continue
+        slug = season["slug"]
+        if os.path.exists(ledger_path(slug, root)):
+            ended.append(slug)
+    return ended
+
+
 def maybe_freeze_on_flip(root=".", bundle_dir=BUNDLE_DIR, now=None,
                          allow_git=True):
-    """Freeze the old season the first time a run sees a new one.
+    """Freeze an ended season the first time a run notices it ended.
 
-    The flip is detected by comparing the season the clock is in against
-    the season the ledger was last written for. On the first run after the
-    flip the working bundle has usually already been rebaked against the
-    new season, so the sources are fetched from the last commit whose bake
-    still reported the old one. Fails OPEN and loudly: no freeze is
-    written from doubtful bytes, and a data refresh is never taken down by
-    one.
+    The trigger is "ended, recorded, and not yet frozen" rather than "this
+    run's season differs from last run's". Those coincide on the flip
+    itself, but only the first one SELF-HEALS: if the flip-day run cannot
+    find sources of the right vintage, the very next row appended for the
+    new season would make a "did the season change since last time?" test
+    answer no forever, and the old season would never be frozen at all.
+
+    On the first run after a flip the working bundle has usually already
+    been rebaked against the new season, so the sources are re-read from
+    the last commit whose bake still reported the old one. Fails OPEN and
+    loudly: no freeze is ever written from doubtful bytes, and a data
+    refresh is never taken down by one.
     """
-    current = season_mod.season_for(now)["slug"]
-    previous = previous_season_slug(root)
-    if not previous or previous == current:
-        return {"frozen": False, "reason": "no flip", "season_slug": previous}
-    if is_frozen(previous, root):
-        return {"frozen": False, "reason": "already frozen", "season_slug": previous}
+    ended = ended_seasons(root, now)
+    if not ended:
+        return {"frozen": False, "reason": "no flip",
+                "season_slug": previous_season_slug(root)}
+    pending = [slug for slug in ended if not is_frozen(slug, root)]
+    if not pending:
+        return {"frozen": False, "reason": "already frozen",
+                "season_slug": ended[-1]}
+    if len(pending) > 1:
+        logger.info("season ledger: %d ended seasons await a freeze (%s); "
+                    "writing the oldest, the next run takes the next",
+                    len(pending), ", ".join(pending))
+    slug = pending[0]
 
     attempts = [None]
     if allow_git:
-        rev = find_season_rev(previous, root)
+        rev = find_season_rev(slug, root)
         if rev:
             attempts.append(rev)
     last_error = None
     for rev in attempts:
         try:
-            result = freeze_season(previous, root=root, bundle_dir=bundle_dir,
+            result = freeze_season(slug, root=root, bundle_dir=bundle_dir,
                                    source_rev=rev)
         except (FileExistsError, ValueError, OSError) as exc:
             last_error = exc
@@ -642,11 +673,12 @@ def maybe_freeze_on_flip(root=".", bundle_dir=BUNDLE_DIR, now=None,
         return result
     logger.warning(
         "season ledger: %s ended and no source of the right vintage was "
-        "found to freeze it from (%s). Run: python -m guild_board."
+        "found to freeze it from (%s). Nothing was written; this will be "
+        "retried on every run. To resolve it by hand: python -m guild_board."
         "season_ledger --freeze %s --source-rev <pre-flip sha>",
-        previous, last_error, previous)
+        slug, last_error, slug)
     return {"frozen": False, "reason": "no clean source",
-            "season_slug": previous, "error": str(last_error)}
+            "season_slug": slug, "error": str(last_error)}
 
 
 # ---------------------------------------------------------------------------

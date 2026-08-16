@@ -276,6 +276,31 @@ def test_the_flip_freezes_the_old_season_once_and_then_stops(tmp_path, monkeypat
     assert again["frozen"] is False and again["reason"] == "already frozen"
 
 
+def test_a_failed_freeze_is_retried_not_forgotten(tmp_path):
+    # The trap this avoids: the flip-day run finds no sources of the right
+    # vintage, the new season's first rows land, and a "has the season
+    # changed since last time?" test then answers no forever — leaving the
+    # old season unfrozen and nobody to notice.
+    root = str(tmp_path)
+    sl.append_for_run(root=root, competition=competition(),
+                      weekly_board=weekly_board(), week_label="2026-08-04")
+    _write_bundle(tmp_path, slug="season-mn-2",
+                  records_based_on="2026-08-25T16:19:00+00:00")
+    failed = sl.maybe_freeze_on_flip(root=root, now="2026-08-18T15:00:00+00:00",
+                                     allow_git=False)
+    assert failed["frozen"] is False and failed["reason"] == "no clean source"
+    # The new season is now the one being written to...
+    sl.append_for_run(root=root, competition=competition("season-mn-2"),
+                      weekly_board=weekly_board(), week_label="2026-08-18")
+    assert sl.previous_season_slug(root) == "season-mn-2"
+    # ...and the old one is STILL pending, and still freezes when a source
+    # of the right vintage turns up.
+    _write_bundle(tmp_path)
+    healed = sl.maybe_freeze_on_flip(root=root, now="2026-08-25T11:30:00+00:00",
+                                     allow_git=False)
+    assert healed["frozen"] is True and healed["season_slug"] == "season-mn-1"
+
+
 def test_no_flip_means_no_freeze(tmp_path):
     root = str(tmp_path)
     sl.append_for_run(root=root, competition=competition(),
