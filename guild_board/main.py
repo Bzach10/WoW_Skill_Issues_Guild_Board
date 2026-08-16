@@ -612,6 +612,18 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                              attendance=season_attendance)
         except OSError as exc:
             logger.warning("Could not save board state: %s", exc)
+        # THE SEASON LEDGER. The raid week this board just closed becomes
+        # one compact line per character in season_ledger/<slug>.jsonl,
+        # kept forever. Idempotent on (season, week, character key), so a
+        # daily refresh that already appended the week makes this a no-op
+        # and neither workflow needs to know about the other. Fails OPEN:
+        # the board has already posted, and the ledger is a record OF the
+        # run, never a precondition of it.
+        try:
+            from guild_board import season_ledger
+            season_ledger.append_for_run()
+        except Exception as exc:                       # noqa: BLE001
+            logger.warning("Could not append the season ledger: %s", exc)
 
     return embed, image_path
 
