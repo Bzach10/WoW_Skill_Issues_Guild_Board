@@ -30,9 +30,10 @@ codepage chokes on them.
 ## CI-owned files — do not hand-edit
 
 `board_state.json`, `roster_cache.json`, `weekly_state.json`,
-`blizzard_profile_cache.json`, and `data/accounts.json` are regenerated and
-committed by Actions with `[skip ci]`. A PreToolUse hook blocks edits to
-them. Change the code that produces them instead.
+`blizzard_profile_cache.json`, `data/accounts.json` and
+`data/shares_ledger.json` are regenerated and committed by Actions with
+`[skip ci]`. A PreToolUse hook blocks edits to them. Change the code that
+produces them instead.
 
 ## THE SHIP'S ARTICLES — accounts (`guild_board/articles.py`)
 
@@ -57,6 +58,43 @@ roast ballot. `scripts/refresh_articles.py` is the **only** writer.
 - First claim wins; refusals are logged, never silent. A bare name that two
   roster characters share (there are two Berobens) is refused as ambiguous,
   never guessed.
+
+## THE SHARES LEDGER — the currency (`guild_board/shares.py`)
+
+> **PAY THE DEED, NEVER THE RANK.**
+
+A published rate card, identical for every hand, paid for a thing you did.
+Your payout never depends on another member's number. `RATE_CARD` is DATA —
+eleven loops, each with a rate, a per-account weekly cap, a tier and (when it
+pays nothing) the reason. Bump `RATE_CARD_VERSION` on any change; every
+ledger row records the version that paid it.
+
+- **The ladder is never a faucet.** `score`, `rank`, `ranks`, `top5`,
+  `rankings`, `parse`, `percentile`, `standing`, `bounty` and the weekly
+  deltas are named in `LADDER_FIELDS`, and
+  `test_the_ladder_cannot_move_a_single_share` scrambles every one of them
+  in the input bundle and asserts the ledger comes out identical. A grep
+  would pass the moment one was read indirectly; a mutation cannot.
+- **Every cap is per `account_id`**, summed over the characters signed under
+  it. Alts change WHICH character earns, never HOW MUCH. An unsigned
+  character is absent from `articles.json` and earns nothing.
+- **Every share cites its deed.** `row_id = sha256(week|account|loop|deed_ref)`,
+  so a share with no citation cannot be minted and re-running a week is a
+  no-op instead of a second payment. **`data/shares_ledger.json` is
+  append-only** — rows are never edited or removed.
+- `balance = ledger rows − sinks`. Never stored; always recomputed from the
+  citations, so it cannot drift from what justifies it.
+- **Only T0/T1 loops pay.** T2 (needs Raider.io `run-details`, lane I4b-8)
+  and T3 loops ship on the card priced at zero **with a stated reason**, so a
+  loop that was deferred cannot be confused with a loop nobody thought of.
+  **PvP pays nothing until seats are authenticated** — the Worker's seat
+  identity is a client-typed slug, so a share off `/record` is a two-tab
+  exploit.
+- `scripts/refresh_shares.py` is the **only** writer. It needs no secret: it
+  reads only bytes the pipeline already published. `web_data_public/shares.json`
+  is the public projection; `articles.assert_opaque` runs on it and on the
+  ledger before either becomes bytes, and `validate_bundle.check_shares`
+  re-runs it on the emitted file.
 
 ## Data sources
 

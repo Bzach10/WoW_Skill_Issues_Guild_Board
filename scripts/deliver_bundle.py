@@ -68,7 +68,14 @@ DELIVERED = ("competition.json", "records_leaderboard.json",
 # one it is legitimately `available: false` with zero signatures. The site's
 # Ship's Articles leaf prints "N of 129 hands have signed" from it and prints
 # the seam when N is 0 -- so a missing file must never refuse six healthy ones.
-OPTIONAL = ("raid_kills.json", "weekly_board.json", "articles.json")
+# shares.json is the fourth: the shares ledger's public projection (opaque
+# account_id -> balance + this week's earn by loop) written by
+# scripts/refresh_shares.py. It is downstream of articles.json -- no
+# signatures, no shares -- and is computed only when a weekly_board with a
+# week window exists, so its absence is the normal state until the economy is
+# opened. REQUIRED would mean the currency's first week blocks the site's.
+OPTIONAL = ("raid_kills.json", "weekly_board.json", "articles.json",
+            "shares.json")
 
 DEFAULT_TO = "C:/dev/wipefest-redesign/data/source"
 

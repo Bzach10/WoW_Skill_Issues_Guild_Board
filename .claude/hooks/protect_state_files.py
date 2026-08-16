@@ -21,6 +21,13 @@ CI_OWNED = {
     # it forges a signature on the account<->character mapping that every
     # share, card and board is keyed on. Change the code, never the ledger.
     "accounts.json",
+    # data/shares_ledger.json — THE SHARES LEDGER. scripts/refresh_shares.py
+    # is its ONLY writer and it is APPEND-ONLY: every row cites the deed
+    # (run id / week / boss / record) that paid it, and a row's id is a
+    # digest of that citation. A hand edit does not just get overwritten —
+    # it mints or erases a share nobody did anything to earn or lose, and
+    # the citation that would have exposed it is the thing being edited.
+    "shares_ledger.json",
 }
 
 
