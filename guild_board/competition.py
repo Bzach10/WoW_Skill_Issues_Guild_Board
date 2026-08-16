@@ -31,9 +31,16 @@ from guild_board.config import clean_spec_name, load_roster_cache, split_name_re
 
 logger = logging.getLogger(__name__)
 
+# mythic_plus_recent_runs rides the SAME request as everything else here —
+# Raider.io's `fields` is one comma-joined list on one call per character, so
+# adding it costs zero extra requests against the same rate limit. It is not
+# a nicety: best_runs is a per-dungeon SEASON best and can be months old, so
+# "did you time a key this week" is unanswerable from it. The clock lives in
+# the recent list.
 RAIDERIO_FIELDS = ("class,active_spec_name,active_spec_role,"
                    "mythic_plus_scores_by_season:current,"
-                   "mythic_plus_best_runs,mythic_plus_ranks")
+                   "mythic_plus_best_runs,mythic_plus_recent_runs,"
+                   "mythic_plus_ranks")
 
 # Raider.io reports roles as TANK / HEALING / DPS — note "HEALING", not
 # "HEALER". Canonicalise so the by-role rankings actually bucket healers.
@@ -89,6 +96,63 @@ def main_role_from_scores(scores_by_role, fallback_role=""):
 # Live fetch
 # ---------------------------------------------------------------------------
 
+def _run_row(run):
+    """One Raider.io run object -> the delivered run row.
+
+    `completed_at` and `keystone_run_id` are in every run object we already
+    fetch and were dropped right here: the payload carries 18 keys and this
+    function kept 8. They are the two the earn design runs on — without the
+    clock "you timed a key THIS WEEK" is not measurable, and without the id
+    the run's five-person roster cannot be looked up at all
+    (mythic-plus/run-details?id=<keystone_run_id>, public, no credentials).
+
+    The clock is carried VERBATIM as Raider.io's own ISO-8601 string, never
+    re-parsed and never re-stamped, so a consumer compares it against its own
+    week boundary instead of inheriting this machine's timezone. The id is
+    coerced to int (Raider.io has sent it both ways) or None — never a
+    string that would silently fail to dedup against an int.
+    """
+    upgrades = run.get("num_keystone_upgrades", 0) or 0
+    try:
+        run_id = int(run.get("keystone_run_id"))
+    except (TypeError, ValueError):
+        run_id = None
+    return {
+        "dungeon": run.get("dungeon"),
+        "short": run.get("short_name"),
+        "level": run.get("mythic_level", 0),
+        "timed": upgrades > 0,
+        "upgrades": upgrades,
+        "score": round(run.get("score", 0) or 0, 1),
+        "clear_ms": run.get("clear_time_ms"),
+        "par_ms": run.get("par_time_ms"),
+        "completed_at": run.get("completed_at") or None,
+        "keystone_run_id": run_id,
+    }
+
+
+def _run_rows(raw):
+    """Map a Raider.io run list to delivered rows, DEDUPED BY RUN ID.
+
+    The id is the run's identity: the same keystone appears in more than one
+    Raider.io list (a dungeon best is usually also a recent run) and a
+    consumer that counts runs, or fans out one run-details request per row,
+    must not see it twice. Rows carrying no id cannot be deduped and are all
+    kept rather than collapsed into one — dropping a real run is a worse
+    failure than carrying a duplicate the consumer can see and count.
+    """
+    rows, seen = [], set()
+    for run in raw or []:
+        row = _run_row(run)
+        run_id = row["keystone_run_id"]
+        if run_id is not None:
+            if run_id in seen:
+                continue
+            seen.add(run_id)
+        rows.append(row)
+    return rows
+
+
 def _normalize_character(entry_key, data, region="us"):
     """One Raider.io profile response -> the normalized per-character record
     the builder consumes. Returns None if the character didn't resolve."""
@@ -100,20 +164,13 @@ def _normalize_character(entry_key, data, region="us"):
     scores = scores_season.get("scores") or {}
     ranks = data.get("mythic_plus_ranks") or {}
 
-    best_runs = []
-    for run in data.get("mythic_plus_best_runs") or []:
-        upgrades = run.get("num_keystone_upgrades", 0) or 0
-        best_runs.append({
-            "dungeon": run.get("dungeon"),
-            "short": run.get("short_name"),
-            "level": run.get("mythic_level", 0),
-            "timed": upgrades > 0,
-            "upgrades": upgrades,
-            "score": round(run.get("score", 0) or 0, 1),
-            "clear_ms": run.get("clear_time_ms"),
-            "par_ms": run.get("par_time_ms"),
-        })
+    best_runs = _run_rows(data.get("mythic_plus_best_runs"))
     best_runs.sort(key=lambda r: r["score"], reverse=True)
+    # The season best per dungeon answers "how high did you go"; this answers
+    # "when". Newest first, and a run with no clock sorts last rather than
+    # blowing up the comparison against a None.
+    recent_runs = _run_rows(data.get("mythic_plus_recent_runs"))
+    recent_runs.sort(key=lambda r: (r["completed_at"] or ""), reverse=True)
 
     # The roster slug is the authoritative per-character realm (e.g.
     # "proudmoore"), which is what cross-realm links MUST use. Raider.io's
@@ -148,6 +205,7 @@ def _normalize_character(entry_key, data, region="us"):
         "score": round(scores.get("all", 0) or 0, 1),
         "scores_by_role": scores_by_role,
         "best_runs": best_runs,
+        "recent_runs": recent_runs,
         "ranks": {
             "realm_overall": (ranks.get("overall") or {}).get("realm"),
             "realm_class": (ranks.get("class") or {}).get("realm"),
@@ -253,6 +311,11 @@ def build_competition(fetched=None, board_state=None, season=None,
         detail.append({
             **rec,
             "role": role,
+            # A competition_cache.json written before recent_runs existed has
+            # no such key. Default it here so the delivered shape is stable
+            # on the first run after this lands, rather than appearing for
+            # some characters and not others.
+            "recent_runs": rec.get("recent_runs") or [],
             "score": score,
             "delta_week": delta_week,
             "delta_day": delta_day,

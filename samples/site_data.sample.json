@@ -300,10 +300,80 @@
       "amrevenge": 2,
       "tommybravoo": 3,
       "rakdisc": 1,
-      "healmates": 3
+      "healmates": 3,
+      "beroben": 2
     },
     "streaks_week": "2026-07-14",
     "streaks_started": null,
+    "attendance": {
+      "amrevenge-stormrage": [
+        "2026-07-07",
+        "2026-07-14"
+      ],
+      "tommybravoo-bleeding-hollow": [
+        "2026-06-30",
+        "2026-07-07",
+        "2026-07-14"
+      ],
+      "rakdisc-proudmoore": [
+        "2026-07-14"
+      ],
+      "healmates-bleeding-hollow": [
+        "2026-06-30",
+        "2026-07-07",
+        "2026-07-14"
+      ]
+    },
+    "attendance_coverage": {
+      "weeks_scanned": [
+        "2026-06-30",
+        "2026-07-07",
+        "2026-07-14"
+      ],
+      "weeks_logged": [
+        "2026-06-23",
+        "2026-06-30",
+        "2026-07-07",
+        "2026-07-14"
+      ],
+      "weeks_unknown": [
+        "2026-06-23"
+      ],
+      "characters": 4,
+      "source_names": 6
+    },
+    "attendance_unresolved": [
+      {
+        "name": "beroben",
+        "reason": "ambiguous"
+      },
+      {
+        "name": "ghostofseasonspast",
+        "reason": "unknown"
+      }
+    ],
+    "streaks_by_key": {
+      "amrevenge-stormrage": 2,
+      "tommybravoo-bleeding-hollow": 3,
+      "rakdisc-proudmoore": 1,
+      "healmates-bleeding-hollow": 3
+    },
+    "streaks_unresolved": [
+      {
+        "name": "beroben",
+        "reason": "ambiguous"
+      }
+    ],
+    "deaths_by_key": {
+      "maillo-bleeding-hollow": 32,
+      "buchalter-area-52": 30,
+      "tommybravoo-bleeding-hollow": 18,
+      "chokalock-bleeding-hollow": 17,
+      "rakdisc-proudmoore": 11
+    },
+    "deaths_unresolved": [],
+    "keyed_against_roster": true,
+    "roster_size": 13,
     "status": "ok"
   },
   "guild_achievements": {
@@ -705,7 +775,35 @@
             "upgrades": 1,
             "score": 492.2,
             "clear_ms": 1456281,
-            "par_ms": 1800999
+            "par_ms": 1800999,
+            "completed_at": "2026-07-16T02:41:19.000Z",
+            "keystone_run_id": 42508722
+          }
+        ],
+        "recent_runs": [
+          {
+            "dungeon": "Skyreach",
+            "short": "SKY",
+            "level": 21,
+            "timed": false,
+            "upgrades": 0,
+            "score": 0.0,
+            "clear_ms": 1994003,
+            "par_ms": 1800999,
+            "completed_at": "2026-07-19T23:08:44.000Z",
+            "keystone_run_id": 42611904
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 20,
+            "timed": true,
+            "upgrades": 1,
+            "score": 492.2,
+            "clear_ms": 1456281,
+            "par_ms": 1800999,
+            "completed_at": "2026-07-16T02:41:19.000Z",
+            "keystone_run_id": 42508722
           }
         ],
         "ranks": {
@@ -770,6 +868,20 @@
           "tank": 0
         },
         "best_runs": [],
+        "recent_runs": [
+          {
+            "dungeon": "Skyreach",
+            "short": "SKY",
+            "level": 19,
+            "timed": true,
+            "upgrades": 1,
+            "score": 471.8,
+            "clear_ms": 1502117,
+            "par_ms": 1740000,
+            "completed_at": "2026-07-18T01:12:05.000Z",
+            "keystone_run_id": 42588140
+          }
+        ],
         "ranks": {
           "realm_overall": 800,
           "realm_class": 20
@@ -795,6 +907,7 @@
           "tank": 0
         },
         "best_runs": [],
+        "recent_runs": [],
         "ranks": {
           "realm_overall": 800,
           "realm_class": 20
@@ -820,6 +933,7 @@
           "tank": 3685.8
         },
         "best_runs": [],
+        "recent_runs": [],
         "ranks": {
           "realm_overall": 800,
           "realm_class": 20
@@ -845,6 +959,7 @@
           "tank": 0
         },
         "best_runs": [],
+        "recent_runs": [],
         "ranks": {
           "realm_overall": 800,
           "realm_class": 20
@@ -915,6 +1030,7 @@
           "tank": 3484.3
         },
         "best_runs": [],
+        "recent_runs": [],
         "ranks": {
           "realm_overall": 800,
           "realm_class": 20
@@ -964,6 +1080,7 @@
           "tank": 0
         },
         "best_runs": [],
+        "recent_runs": [],
         "ranks": {
           "realm_overall": 800,
           "realm_class": 20
@@ -1831,9 +1948,9 @@
       },
       {
         "field": "iron_attendance",
-        "served_by": "weekly_board.streaks",
+        "served_by": "weekly_board.attendance / .streaks_by_key",
         "state": "live",
-        "note": "needs a name-realm keyed ingestion"
+        "note": "season raid weeks per character key; the bare-name .streaks map is kept alongside for consumers that have not switched"
       },
       {
         "field": "roast_of_the_week",

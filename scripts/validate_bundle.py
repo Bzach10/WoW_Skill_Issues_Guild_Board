@@ -364,6 +364,58 @@ def check_raid_frame(bundle, report):
             "islands list will under-report progress.")
 
 
+def check_character_keying(bundle, report):
+    """Every map the bundle says is keyed on a character key really is.
+
+    A character key is `name-realm` ("beroben-emerald-dream"). A bare name is
+    not an identity: this roster carries TWO characters called Beroben, so a
+    consumer that credits, ranks or pays a bare name credits one of two real
+    people at random and nothing ever tells anyone. The bare-name maps
+    (`streaks`, `deaths`) are deliberately kept for the consumer that has not
+    switched yet and are NOT checked here; `attendance` and the `*_by_key`
+    maps are, because the keying is their whole reason to exist.
+
+    ERROR on a key with no realm. WARN on unresolved names, which are honest
+    (they ship as a named seam) but are a real hole in any ledger built here.
+    """
+    week = bundle.get("weekly_board")
+    if not isinstance(week, dict):
+        return
+    for field in ("attendance", "streaks_by_key", "deaths_by_key"):
+        bad = sorted(k for k in (week.get(field) or {}) if "-" not in str(k))
+        if bad:
+            report.error(
+                "keying",
+                f"weekly_board.{field} carries {len(bad)} bare name(s) where a "
+                f"name-realm character key belongs: {', '.join(bad[:5])}"
+                f"{' ...' if len(bad) > 5 else ''}. Two roster characters share "
+                "the name Beroben; a bare-name key credits the wrong person "
+                "silently.")
+    if week.get("attendance") and not week.get("keyed_against_roster"):
+        report.error(
+            "keying",
+            "weekly_board.attendance is populated but keyed_against_roster is "
+            "false -- those keys cannot have come from the roster.")
+    for field in ("attendance_unresolved", "streaks_unresolved",
+                  "deaths_unresolved"):
+        rows = week.get(field) or []
+        ambiguous = sorted(r.get("name") for r in rows if r.get("reason") == "ambiguous")
+        unknown = sorted(r.get("name") for r in rows if r.get("reason") == "unknown")
+        if ambiguous:
+            report.warn(
+                "keying",
+                f"weekly_board.{field}: {len(ambiguous)} name(s) match more than "
+                f"one roster character and ship unkeyed on purpose "
+                f"({', '.join(ambiguous[:5])}). A consumer must render these as "
+                "a seam, never pick one.")
+        if unknown:
+            report.warn(
+                "keying",
+                f"weekly_board.{field}: {len(unknown)} name(s) match no roster "
+                f"entry ({', '.join(unknown[:5])}) -- departed, renamed, or a "
+                "stale roster cache.")
+
+
 def validate_bundle(bundle_dir):
     """Run every check; returns a Report."""
     report = Report()
@@ -374,6 +426,7 @@ def validate_bundle(bundle_dir):
     check_stamps(bundle, report)
     check_bundle_coherence(bundle, report)
     check_raid_frame(bundle, report)
+    check_character_keying(bundle, report)
     return report
 
 

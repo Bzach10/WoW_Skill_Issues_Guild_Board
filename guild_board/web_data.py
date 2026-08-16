@@ -27,12 +27,38 @@ build_site_data() assembles all five into one envelope.
 from datetime import datetime, timezone
 
 from guild_board import season as season_mod
+from guild_board.config import index_roster_by_name, resolve_character_key
 
 SCHEMA_VERSION = 1
 
 
 def _now_iso():
     return datetime.now(timezone.utc).isoformat()
+
+
+def _rekey_by_character(mapping, index):
+    """Re-key a bare-name map onto character keys.
+
+    Returns (keyed, unresolved). `unresolved` carries one row per name that
+    could not become a key — {"name", "reason"} with reason "ambiguous" or
+    "unknown" — because a name the pipeline cannot resolve is a SEAM a
+    surface prints, not a row it quietly deletes and not a row it pays to a
+    guess. Ambiguity is real here: the roster holds two Berobens.
+
+    With no index at all there is nothing to resolve AGAINST, so nothing is
+    reported: calling every name "unknown" would claim the roster was
+    consulted and rejected them. `keyed_against_roster` carries that state.
+    """
+    if not index:
+        return {}, []
+    keyed, unresolved = {}, []
+    for name, value in (mapping or {}).items():
+        key, reason = resolve_character_key(name, index)
+        if key:
+            keyed[key] = value
+        else:
+            unresolved.append({"name": name, "reason": reason})
+    return keyed, sorted(unresolved, key=lambda row: row["name"])
 
 
 def _title(name):
@@ -267,7 +293,7 @@ def build_records_leaderboard(board_state, limit=None):
 # 2b. The weekly board's own week — the numbers that used to die with the run
 # ---------------------------------------------------------------------------
 
-def build_weekly_board(board_state=None):
+def build_weekly_board(board_state=None, roster=None):
     """The WEEK the Discord board posts, as a data layer.
 
     Kills, pulls, wipes, deaths, this week's timed keys, this week's raid and
@@ -279,10 +305,32 @@ def build_weekly_board(board_state=None):
     Degrades to `available: false` with an empty, documented shape rather
     than inventing a zero — a week nobody could read the logs for is a gap in
     the measurement, not a week in which nobody died.
+
+    roster: the roster cache's name-realm entries. Warcraft Logs names have
+    no realm, so `streaks` and `deaths` have always been keyed on a BARE
+    NAME — and this roster holds two characters called Beroben, i.e. two
+    people sharing one key. With a roster in hand this emits the same facts
+    keyed on the character key (`attendance`, `streaks_by_key`,
+    `deaths_by_key`) plus the names that could not be resolved. The bare-name
+    maps stay exactly as they were: they are what the live consumer reads
+    today, and breaking them here would take the site down before the
+    consumer has switched over.
     """
     week = (board_state or {}).get("week") or {}
     have = any(k in week for k in ("kills", "pulls", "deaths_total",
                                    "keys", "parses", "mplus_parses"))
+
+    index = index_roster_by_name(roster)
+    attendance_block = (board_state or {}).get("attendance") or {}
+    attendance, attendance_unresolved = _rekey_by_character(
+        attendance_block.get("weeks"), index)
+    streaks_by_key, streaks_unresolved = _rekey_by_character(
+        (board_state or {}).get("streaks"), index)
+    deaths_by_key, deaths_unresolved = _rekey_by_character(
+        week.get("deaths"), index)
+    scanned = list(attendance_block.get("scanned") or [])
+    logged = list(attendance_block.get("all") or [])
+
     out = {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
@@ -307,6 +355,31 @@ def build_weekly_board(board_state=None):
         "streaks": (board_state or {}).get("streaks") or {},
         "streaks_week": (board_state or {}).get("streaks_week"),
         "streaks_started": (board_state or {}).get("streaks_started"),
+        # --- keyed on the CHARACTER KEY (name-realm), never a bare name.
+        # `attendance` is the season's raid weeks per character: the sweep
+        # that feeds Most Improved has always known who was in which week and
+        # the pipeline threw it away after reducing it to a streak integer.
+        "attendance": attendance,
+        "attendance_coverage": {
+            "weeks_scanned": scanned,
+            "weeks_logged": logged,
+            # Weeks the guild logged but whose report details the sweep did
+            # not read. A streak cannot be counted through one of these, and
+            # a consumer must not read an absence in them as "did not raid".
+            "weeks_unknown": sorted(set(logged) - set(scanned)),
+            "characters": len(attendance),
+            "source_names": len(attendance_block.get("weeks") or {}),
+        },
+        "attendance_unresolved": attendance_unresolved,
+        "streaks_by_key": streaks_by_key,
+        "streaks_unresolved": streaks_unresolved,
+        "deaths_by_key": deaths_by_key,
+        "deaths_unresolved": deaths_unresolved,
+        # False means no roster reached this builder, so every *_by_key map
+        # above is empty BECAUSE IT COULD NOT BE BUILT — not because nobody
+        # raided. A consumer must branch on this before rendering a zero.
+        "keyed_against_roster": bool(index),
+        "roster_size": len(index),
     }
     out["status"] = ("ok" if have else
                      "pending: the weekly board has not posted a week yet")
@@ -869,12 +942,17 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
                     raid_progression=None, guild_achievements=None,
                     transmog_snapshot=None, pulse_items=None,
                     competition_fetched=None, parses_fetched=None,
-                    difficulty_scale=None, guild=None, season=None):
+                    difficulty_scale=None, guild=None, season=None,
+                    roster=None):
     """Assemble every layer into one envelope for the front-end.
 
     Any input may be omitted; the corresponding layer degrades to its
     documented empty/pending shape rather than raising, so a partial data
     refresh still produces a valid site_data.json.
+
+    roster: the roster cache entries (name-realm). Only the weekly board uses
+    it, and only to turn Warcraft Logs' bare names into character keys —
+    omitting it leaves the keyed maps empty and says so, it never invents.
     """
     from guild_board.competition import build_competition
     season = season or season_mod.CURRENT_SEASON
@@ -894,7 +972,7 @@ def build_site_data(board_state=None, manifest=None, dungeon_bests=None,
         "season": {"slug": season["slug"], "name": season["name"]},
         "recap_ribbon": build_recap_ribbon(board_state, transmog_changes=transmog),
         "records_leaderboard": build_records_leaderboard(board_state),
-        "weekly_board": build_weekly_board(board_state),
+        "weekly_board": build_weekly_board(board_state, roster=roster),
         "guild_achievements": build_guild_achievements(guild_achievements, season=season),
         "island_completion": build_island_completion(
             dungeon_bests, raid_progression,
@@ -934,7 +1012,9 @@ _PARITY_SPEC = [
     ("raid_progression", "island_completion.raid", None),
     ("most_deaths", "weekly_board.deaths", "needs WCL creds"),
     ("most_improved", "weekly_board.improvement / competition.movement", None),
-    ("iron_attendance", "weekly_board.streaks", "needs a name-realm keyed ingestion"),
+    ("iron_attendance", "weekly_board.attendance / .streaks_by_key",
+     "season raid weeks per character key; the bare-name .streaks map is kept "
+     "alongside for consumers that have not switched"),
     ("roast_of_the_week", "weekly_board.roast", "the officer's roast, carried from the weekly run"),
     ("guild_achievements", "guild_achievements", "needs BLIZZARD creds"),
 ]
@@ -983,7 +1063,12 @@ def build_parity_map(site):
         if field == "most_deaths":
             return "live" if (week.get("deaths") or {}) else "pending"
         if field == "iron_attendance":
-            return "live" if (week.get("streaks") or {}) else "pending"
+            if week.get("attendance"):
+                return "live"
+            # Streaks without the season attendance behind them are one
+            # integer per bare name: real, but not the keyed ingestion the
+            # ledger needs.
+            return "partial" if (week.get("streaks") or {}) else "pending"
         if field == "roast_of_the_week":
             return "live" if (week.get("roast") or {}).get("roast") else "pending"
         if field == "guild_achievements":

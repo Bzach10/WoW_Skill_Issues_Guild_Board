@@ -131,6 +131,62 @@ def normalize_roster_entry(entry):
     return (entry or "").strip().lower()
 
 
+def index_roster_by_name(roster):
+    """{bare lowercase name: sorted [character keys]} over the whole roster.
+
+    A LIST, not a key, because bare display names COLLIDE. This roster
+    carries `beroben-emerald-dream` AND `beroben-queldorei` — two different
+    real people who share a name. Warcraft Logs hands us names without
+    realms, so every layer fed from it (streaks, deaths, the improvement
+    pools) is keyed on something that is not an identity; a ledger built on
+    one of those keys credits whichever of the two sorted first, silently,
+    forever. This index is what makes the collision visible instead.
+    """
+    index = {}
+    for entry in roster or []:
+        key = normalize_roster_entry(entry)
+        if not key:
+            continue
+        name, _ = split_name_realm(key)
+        if not name:
+            continue
+        bucket = index.setdefault(name, [])
+        if key not in bucket:
+            bucket.append(key)
+    return {name: sorted(keys) for name, keys in index.items()}
+
+
+def resolve_character_key(name, index):
+    """Bare display name -> (character key or None, reason).
+
+    reason is "" on a clean resolve, "ambiguous" when the name belongs to
+    more than one roster character, "unknown" when it belongs to none.
+
+    NEVER guesses past an ambiguity, and that is the whole point. Two
+    characters called Beroben are two people; picking the higher-scored or
+    first-sorted one credits the wrong one and nothing ever says so. An
+    ambiguous name is returned as a named seam the surface can print — an
+    honest em-dash beats a confident wrong number.
+    """
+    bare = normalize_roster_entry(name)
+    if not bare:
+        return None, "unknown"
+    index = index or {}
+    if "-" in bare:
+        # Some sources already hand us a full name-realm key; accept it when
+        # the roster agrees, otherwise fall through on the name token.
+        head, _ = split_name_realm(bare)
+        if bare in (index.get(head) or ()):
+            return bare, ""
+        bare = head
+    matches = index.get(bare) or []
+    if len(matches) == 1:
+        return matches[0], ""
+    if not matches:
+        return None, "unknown"
+    return None, "ambiguous"
+
+
 def clean_spec_name(spec, class_name=""):
     """Return a clean 'Spec Class' display name from Raider.io/WCL spec data."""
     if isinstance(spec, dict):

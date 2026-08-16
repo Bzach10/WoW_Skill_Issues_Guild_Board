@@ -35,7 +35,29 @@ BOARD_STATE = {
     "season_scores": {"amrevenge": 3921.4, "shadoxii": 3692.2,
                       "tommybravoo": 3686.3, "rakdisc": 3560.1,
                       "floofwall": 3484.3, "newrecruit": 1802.0},
-    "streaks": {"amrevenge": 2, "tommybravoo": 3, "rakdisc": 1, "healmates": 3},
+    # Bare names, because Warcraft Logs reports names without realms.
+    # "beroben" is here on purpose: the live roster carries TWO characters by
+    # that name, so this row is the collision, in the fixture, where a test
+    # can see what the delivery does with it.
+    "streaks": {"amrevenge": 2, "tommybravoo": 3, "rakdisc": 1,
+                "healmates": 3, "beroben": 2},
+    # Season attendance: the raid weeks each member was actually in. The Most
+    # Improved sweep has always computed this and the pipeline discarded it
+    # after collapsing it into the streak integers above.
+    "attendance": {
+        "weeks": {
+            "amrevenge": ["2026-07-07", "2026-07-14"],
+            "tommybravoo": ["2026-06-30", "2026-07-07", "2026-07-14"],
+            "rakdisc": ["2026-07-14"],
+            "healmates": ["2026-06-30", "2026-07-07", "2026-07-14"],
+            "beroben": ["2026-07-07", "2026-07-14"],
+            "ghostofseasonspast": ["2026-06-30"],
+        },
+        "scanned": ["2026-06-30", "2026-07-07", "2026-07-14"],
+        # 2026-06-23 was logged but its report details were never read --
+        # an UNKNOWN week, not an absence.
+        "all": ["2026-06-23", "2026-06-30", "2026-07-07", "2026-07-14"],
+    },
     "records": {
         "highest_timed_key": {"name": "amrevenge", "level": 21,
                               "dungeon": "Skyreach",
@@ -199,29 +221,62 @@ PULSE_ITEMS = [
 
 # A small but complete competition fetch (real Raider.io shape) so the
 # WANTED BOARD renders with rankings, roles, movement and browsable detail.
-def _cchar(name, key, cls, spec, role, score, runs=None):
+def _cchar(name, key, cls, spec, role, score, runs=None, recent=None):
     return {"name": name, "realm": key.split("-", 1)[1], "key": key,
             "class": cls, "spec": spec, "role": role, "score": score,
             "scores_by_role": {"dps": score if role == "DPS" else 0,
                                "healer": score if role == "Healer" else 0,
                                "tank": score if role == "Tank" else 0},
-            "best_runs": runs or [], "ranks": {"realm_overall": 800, "realm_class": 20}}
+            "best_runs": runs or [], "recent_runs": recent or [],
+            "ranks": {"realm_overall": 800, "realm_class": 20}}
 
 
 COMPETITION_FETCHED = {"prev_day_scores": {
     "amrevenge-stormrage": 3902.0,        # +6.1 today
     "tommybravoo-bleeding-hollow": 3700.0,  # +53.4 today
 }, "characters": [
+    # completed_at + keystone_run_id are in EVERY Raider.io run object; the
+    # normalizer used to drop both. completed_at is Raider.io's own ISO
+    # string, verbatim; keystone_run_id is what mythic-plus/run-details?id=
+    # takes, and it is the only handle on who else was in the run.
     _cchar("Amrevenge", "amrevenge-stormrage", "Hunter", "Beast Mastery Hunter", "DPS", 3908.1,
            runs=[{"dungeon": "Pit of Saron", "short": "POS", "level": 20, "timed": True,
-                  "upgrades": 1, "score": 492.2, "clear_ms": 1456281, "par_ms": 1800999}]),
-    _cchar("Tommybravoo", "tommybravoo-bleeding-hollow", "DK", "Unholy DK", "DPS", 3753.4),
+                  "upgrades": 1, "score": 492.2, "clear_ms": 1456281, "par_ms": 1800999,
+                  "completed_at": "2026-07-16T02:41:19.000Z",
+                  "keystone_run_id": 42508722}],
+           recent=[{"dungeon": "Skyreach", "short": "SKY", "level": 21, "timed": False,
+                    "upgrades": 0, "score": 0.0, "clear_ms": 1994003, "par_ms": 1800999,
+                    "completed_at": "2026-07-19T23:08:44.000Z",
+                    "keystone_run_id": 42611904},
+                   {"dungeon": "Pit of Saron", "short": "POS", "level": 20, "timed": True,
+                    "upgrades": 1, "score": 492.2, "clear_ms": 1456281, "par_ms": 1800999,
+                    "completed_at": "2026-07-16T02:41:19.000Z",
+                    "keystone_run_id": 42508722}]),
+    _cchar("Tommybravoo", "tommybravoo-bleeding-hollow", "DK", "Unholy DK", "DPS", 3753.4,
+           recent=[{"dungeon": "Skyreach", "short": "SKY", "level": 19, "timed": True,
+                    "upgrades": 1, "score": 471.8, "clear_ms": 1502117, "par_ms": 1740000,
+                    "completed_at": "2026-07-18T01:12:05.000Z",
+                    "keystone_run_id": 42588140}]),
     _cchar("Shadoxii", "shadoxii-illidan", "Monk", "Mistweaver Monk", "Healer", 3692.2),
     _cchar("Brewzleeh", "brewzleeh-tichondrius", "Monk", "Brewmaster Monk", "Tank", 3685.8),
     _cchar("Rakdisc", "rakdisc-proudmoore", "Priest", "Discipline Priest", "Healer", 3529.2),
     _cchar("Floofwall", "floofwall-queldorei", "Monk", "Brewmaster Monk", "Tank", 3484.3),
     _cchar("Newrecruit", "newrecruit-area-52", "Mage", "Frost Mage", "DPS", 1802.0),
 ]}
+
+
+# The roster, as an IDENTITY INDEX for the weekly board's bare Warcraft Logs
+# names. Two Berobens on purpose — that is the live roster's real collision
+# (beroben-emerald-dream / beroben-queldorei), and the sample bundle has to
+# carry it or nothing downstream ever meets it before production does.
+SAMPLE_ROSTER = [
+    "amrevenge-stormrage", "tommybravoo-bleeding-hollow", "shadoxii-illidan",
+    "brewzleeh-tichondrius", "rakdisc-proudmoore", "floofwall-queldorei",
+    "newrecruit-area-52", "healmates-bleeding-hollow", "maillo-bleeding-hollow",
+    "buchalter-area-52", "chokalock-bleeding-hollow",
+    "phyrthepali-bleeding-hollow",
+    "beroben-emerald-dream", "beroben-queldorei",
+]
 
 
 # The credentialed WCL parse sweep (real parses_cache.json shape) so the
@@ -322,7 +377,7 @@ def main():
         parses_fetched=PARSES_FETCHED,
         difficulty_scale=PARSES_DIFFICULTY_SCALE,
         guild={"name": "Skill Issues", "realm": "bleeding-hollow", "region": "us"},
-        season=SAMPLE_SEASON)
+        season=SAMPLE_SEASON, roster=SAMPLE_ROSTER)
     # FIXTURE STAMPS, not wall-clock ones. The producers stamp generated_at
     # = now, but every other date in this bundle is a fixture from the sample
     # week -- so a sample regenerated any later day reads to the bundle
