@@ -195,6 +195,9 @@ jobs:
           git add roster_cache.json
           [ -f board_state.json ] && git add board_state.json
           [ -f web_stats.json ] && git add web_stats.json
+          # The season ledger line main.py appends after save_board_state.
+          # Append-only, so it never conflicts on the rebase below.
+          [ -d season_ledger ] && git add season_ledger
           if git diff --cached --quiet; then
             echo "No cache/state changes to commit."
           else
