@@ -99,6 +99,20 @@ def test_empty_page_text_fails_every_enforced_datum():
     assert len(missing) == len(enforced)
 
 
+def test_freshness_accepts_iso_or_human_week_and_rejects_old_edition():
+    assert paper_shot.check_freshness("Edition 2026-08-04", "2026-08-04")
+    assert paper_shot.check_freshness(
+        "Edition of the week of Tuesday, August 4, 2026", "2026-08-04")
+    assert not paper_shot.check_freshness(
+        "Edition of the week of Tuesday, July 28, 2026", "2026-08-04")
+    assert paper_shot.check_freshness(
+        "Edition 2026-08-04 · 40 pulls · 36 wipes", "2026-08-04",
+        {"pulls": 40, "wipes": 36})
+    assert not paper_shot.check_freshness(
+        "Edition 2026-08-04 · weekly tally pending", "2026-08-04",
+        {"pulls": 40, "wipes": 36})
+
+
 # --- the renderer switch ----------------------------------------------------
 
 def _cfg(renderer=None):
@@ -137,9 +151,12 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     monkeypatch.chdir(tmp_path)
     calls = {}
 
-    def fake(url=None, out_dir=".", manifest=None):
+    def fake(url=None, out_dir=".", manifest=None, expected_week=None,
+             expected_weekly=None):
         calls["url"] = url
         calls["manifest"] = manifest
+        calls["expected_week"] = expected_week
+        calls["expected_weekly"] = expected_weekly
         return _fake_shot(tmp_path)
 
     monkeypatch.setattr(paper_shot, "shoot_paper", fake)
@@ -152,6 +169,25 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     assert embed["image"]["url"] == "attachment://weekly_post_fold.png"
     assert calls["url"] == "http://example.invalid/board/"
     assert calls["manifest"]["kept"]
+    assert calls["expected_week"] == main.raid_week_label(end)
+    assert isinstance(calls["expected_weekly"], dict)
+
+
+def test_paper_renderer_still_generates_enabled_web_board(tmp_path, monkeypatch):
+    monkeypatch.chdir(tmp_path)
+    cfg = _cfg("paper")
+    cfg["display"]["web_board"]["enabled"] = True
+    calls = []
+
+    monkeypatch.setattr(paper_shot, "shoot_paper",
+                        lambda **kwargs: _fake_shot(tmp_path))
+    monkeypatch.setattr(paper_shot, "load_parity_manifest",
+                        lambda *a, **k: _manifest())
+    monkeypatch.setattr("guild_board.html_board.generate_web_board",
+                        lambda *a, **k: calls.append((a, k)))
+    start, end = _window()
+    main.build_board(cfg, start_dt=start, end_dt=end, dry_run=True)
+    assert len(calls) == 1
 
 
 def test_classic_renderer_leaves_the_old_path_alone(tmp_path, monkeypatch):
@@ -238,3 +274,13 @@ def test_fit_steps_an_oversized_capture_down(tmp_path, monkeypatch):
     assert paper_shot._fit(p) == paper_shot.STEPS[-1]
     with Image.open(p) as im:
         assert im.width < 900
+
+
+def test_browser_errors_are_bounded_and_workflow_command_safe():
+    errors = []
+    paper_shot._record_browser_error(
+        errors, "oops\n::error::forged\r\n" + "x" * 1000 + "%")
+    assert len(errors) == 1
+    assert "\n" not in errors[0] and "\r" not in errors[0]
+    assert len(errors[0]) <= 500
+    assert "%0A::error::" in errors[0]

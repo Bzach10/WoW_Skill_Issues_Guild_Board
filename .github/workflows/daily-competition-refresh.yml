@@ -14,6 +14,10 @@ on:
     - cron: "0 14 * * *"
   workflow_dispatch:
 
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
+
 jobs:
   refresh-competition:
     runs-on: ubuntu-latest
@@ -21,12 +25,12 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -65,22 +69,12 @@ jobs:
           else
             git commit -m "Refresh competition board [skip ci]"
             git checkout -- .
-            # Fetch to ensure we have the latest from origin
             git fetch origin
-            if git pull --no-rebase origin "$REF_NAME"; then
-              # Fast-forward merge succeeded
-              git push
-            else
-              # Merge conflict occurred - resolve by keeping our version
-              echo "Merge conflict detected - resolving by keeping our data..."
-              git merge --abort 2>/dev/null || true
-              # Pull with rebase strategy using 'ours' to prefer our changes
-              git pull --rebase -X ours origin "$REF_NAME" || {
-                # If rebase still fails, manually resolve by taking our version
-                git checkout --ours competition_cache.json web_data_public raid_progression_cache.json 2>/dev/null || true
-                git add competition_cache.json web_data_public raid_progression_cache.json
-                git rebase --continue
-              }
-              git push
-            fi
+            git pull --rebase -X theirs origin "$REF_NAME" || {
+              git checkout --theirs competition_cache.json web_data_public raid_progression_cache.json 2>/dev/null || true
+              git add competition_cache.json web_data_public raid_progression_cache.json
+              GIT_EDITOR=true git rebase --continue
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi

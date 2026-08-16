@@ -16,11 +16,13 @@ name: Guild Pulse Refresh
 # privacy model in guild_board/discord_inputs.py and WEB_DATA_CONTRACT.md.
 
 on:
-  schedule:
-    # Every 6 hours. Tune to taste — more frequent = more "live", but each
-    # run may add a commit.
-    - cron: "0 */6 * * *"
+  # Add the six-hour schedule back when pulse_channels is populated. Keeping
+  # a disabled feed scheduled only produced no-op deploy triggers.
   workflow_dispatch:
+
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
 
 jobs:
   refresh-guild-pulse:
@@ -29,22 +31,39 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Check whether Guild Pulse is configured
+        id: pulse-config
+        run: |
+          python - <<'PY'
+          import os
+          import yaml
+          cfg = yaml.safe_load(open("config.yml", encoding="utf-8")) or {}
+          discord = cfg.get("discord_inputs") or {}
+          enabled = bool(discord.get("enabled") and discord.get("pulse_channels"))
+          with open(os.environ["GITHUB_OUTPUT"], "a", encoding="utf-8") as out:
+              out.write(f"enabled={str(enabled).lower()}\n")
+          print("Guild Pulse configured." if enabled else
+                "Guild Pulse is disabled or has no channels; skipping bundle rewrite.")
+          PY
+
       - name: Refresh the guild pulse cache (allowlisted channels only)
+        if: steps.pulse-config.outputs.enabled == 'true'
         env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
         run: python scripts/refresh_guild_pulse.py
 
       - name: Refresh competition so the rebuilt bundle is ONE moment
+        if: steps.pulse-config.outputs.enabled == 'true'
         # THE 2026-07-28 FIX -- see blizzard-profile-refresh.yml for the full
         # note. This job runs every 6 hours and was the most frequent producer
         # of mixed-vintage bundles: four times a day it re-stamped every layer
@@ -53,14 +72,17 @@ jobs:
         run: python scripts/refresh_competition.py
 
       - name: Rebuild the site bundle (reuses committed data caches)
+        if: steps.pulse-config.outputs.enabled == 'true'
         # No --live-dungeons here: this is the frequent feed refresh, so it
         # reuses the dungeon/guild caches the weekly Blizzard Action committed.
         run: python scripts/build_site_data.py --out web_data_public
 
       - name: Validate the bundle (cross-layer consistency gate)
+        if: steps.pulse-config.outputs.enabled == 'true'
         run: python scripts/validate_bundle.py web_data_public
 
       - name: Commit refreshed pulse + bundle
+        if: steps.pulse-config.outputs.enabled == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Branch names may contain shell metacharacters; bind, don't splice.
@@ -82,13 +104,13 @@ jobs:
           else
             git commit -m "Refresh guild pulse feed [skip ci]"
             git checkout -- .
-            if git pull --rebase origin "$REF_NAME"; then
-              git push
-            else
-              for f in guild_pulse_cache.json web_data_public raid_progression_cache.json; do
-                git checkout --ours "$f" 2>/dev/null && git add "$f" || true
+            git fetch origin
+            git pull --rebase -X theirs origin "$REF_NAME" || {
+              for f in guild_pulse_cache.json competition_cache.json web_data_public raid_progression_cache.json; do
+                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
               done
-              git rebase --continue
-              git push
-            fi
+              GIT_EDITOR=true git rebase --continue
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi

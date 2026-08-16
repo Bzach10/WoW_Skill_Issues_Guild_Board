@@ -9,6 +9,7 @@ injected copy of the real 2026-07-23 defect class.
 import json
 import os
 import sys
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -100,6 +101,66 @@ def test_split_weekly_stamps_is_stamps_error(tmp_path):
     _rewrite(d, "site_data",
              lambda s: s["recap_ribbon"].update(based_on="1999-01-01T00:00:00+00:00"))
     assert "stamps" in _sections(validate_bundle(d))
+
+
+def test_weekly_board_stamp_must_match_other_weekly_layers(tmp_path):
+    d = _stage(tmp_path)
+    old = "1999-01-01T00:00:00+00:00"
+    _rewrite(d, "weekly_board", lambda w: w.update(based_on=old))
+    _rewrite(d, "site_data",
+             lambda s: s["weekly_board"].update(based_on=old))
+    assert "stamps" in _sections(validate_bundle(d))
+
+
+def test_mixed_vintage_is_coherence_error(tmp_path):
+    d = _stage(tmp_path)
+    old = "1999-01-01T00:00:00+00:00"
+    _rewrite(d, "competition", lambda c: c.update(based_on=old))
+    _rewrite(d, "site_data",
+             lambda s: s["competition"].update(based_on=old))
+    assert "coherence" in _sections(validate_bundle(d))
+
+
+@pytest.mark.parametrize(
+    ("target", "seconds", "is_error"),
+    [
+        ("site_data", 1800, False),
+        ("site_data", 1801, True),
+        ("competition", 1801, True),
+        ("island_completion", 1801, True),
+        ("records_leaderboard", 1801, True),
+        ("parses", 1801, True),
+    ],
+)
+def test_coherence_window_boundaries_across_stamped_layers(
+        tmp_path, target, seconds, is_error):
+    d = _stage(tmp_path)
+    base = datetime(2026, 8, 5, tzinfo=timezone.utc)
+    base_stamp = base.isoformat()
+    later = (base + timedelta(seconds=seconds)).isoformat()
+
+    _rewrite(d, "site_data", lambda s: s.update(generated_at=base_stamp))
+    for layer in ("island_completion", "records_leaderboard", "parses"):
+        _rewrite(d, layer, lambda obj: obj.update(generated_at=base_stamp))
+        _rewrite(d, "site_data",
+                 lambda s, name=layer: s[name].update(generated_at=base_stamp))
+    _rewrite(d, "competition", lambda c: c.update(based_on=base_stamp))
+    _rewrite(d, "site_data",
+             lambda s: s["competition"].update(based_on=base_stamp))
+
+    if target == "site_data":
+        _rewrite(d, "site_data", lambda s: s.update(generated_at=later))
+    elif target == "competition":
+        _rewrite(d, target, lambda obj: obj.update(based_on=later))
+        _rewrite(d, "site_data",
+                 lambda s: s[target].update(based_on=later))
+    else:
+        _rewrite(d, target, lambda obj: obj.update(generated_at=later))
+        _rewrite(d, "site_data",
+                 lambda s: s[target].update(generated_at=later))
+
+    sections = _sections(validate_bundle(d))
+    assert ("coherence" in sections) is is_error
 
 
 def test_gate_runs_standalone_without_pytest(tmp_path):

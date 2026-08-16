@@ -36,10 +36,17 @@ Three fixes, all on `main` now:
    ranks / no score drift), that the weekly layers tell one story (recap's
    climber vs the ladder's own delta column), and that stamps are coherent.
    Exit 1 = bundle refused.
-3. **`scripts/deliver_bundle.py`** — the only sanctioned hand-off to a
-   consumer. Validates first, delivers the complete set or nothing, writes a
-   `DELIVERY.json` provenance manifest, and never touches consumer-local
-   files (`roster_supplement.json`).
+3. **`scripts/deliver_bundle.py`** — the only sanctioned local hand-off to a
+consumer. Validates first, delivers the complete set or nothing, writes a
+`DELIVERY.json` provenance manifest, and never touches consumer-local
+files (`roster_supplement.json`).
+
+Production does not depend on that local copy command. Every successful
+bundle-producing workflow wakes `.github/workflows/publish-website.yml`,
+which calls the Cloudflare Pages deploy hook and waits until the public
+copy of `site_data.json` byte-matches the source bundle. Configure
+`WEBSITE_DEPLOY_HOOK_URL` and `WEBSITE_HEALTH_URL` as repository secrets.
+The local delivery command remains the supported Windows development path.
 
 ## The daily cycle (automated — GitHub Actions)
 
@@ -50,7 +57,7 @@ in one commit. A validation failure stops the run; nothing partial is ever
 committed. Requires no credentials for the refresh itself (Raider.io is
 public); `DISCORD_WEBHOOK_URL` only gates the optional post step.
 
-`.github/workflows/wcl-parse-refresh.yml`, cron `30 13 * * *` UTC +
+`.github/workflows/wcl-parse-refresh.yml`, cron `30 14 * * *` UTC +
 `workflow_dispatch`, is the credentialed sibling: `refresh_parses.py` pulls
 per-character current-tier parse averages from Warcraft Logs into
 `parses_cache.json` (the `parses` layer + `competition.characters[].parse`),

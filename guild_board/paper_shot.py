@@ -37,6 +37,7 @@ import json
 import logging
 import os
 import re
+from datetime import date
 from pathlib import Path
 
 logger = logging.getLogger(__name__)
@@ -105,6 +106,15 @@ PAGE_TEXT = """() => {
 }"""
 
 
+def _record_browser_error(errors, message):
+    """Keep hostile page output from becoming Actions workflow commands."""
+    if len(errors) >= 20:
+        return
+    safe = str(message).replace("%", "%25").replace("\r", "%0D").replace(
+        "\n", "%0A")
+    errors.append(safe[:500])
+
+
 # ---------------------------------------------------------------------------
 # The parity gate
 # ---------------------------------------------------------------------------
@@ -155,6 +165,41 @@ def check_parity(page_text, manifest):
     return missing, checked
 
 
+def check_freshness(page_text, expected_week, expected_weekly=None):
+    """Return whether the paper identifies the week this run is posting.
+
+    The consumer is deployed independently, so structural parity alone can
+    pass against an old edition. Accept the contract's ISO label or the
+    human-readable newspaper date, and reject an otherwise valid stale page.
+    """
+    if not expected_week:
+        return True
+    try:
+        week = date.fromisoformat(str(expected_week))
+    except (TypeError, ValueError):
+        return False
+    human = f"{week.strftime('%B')} {week.day}, {week.year}"
+    text = page_text or ""
+    if not (str(expected_week).lower() in text.lower()
+            or human.lower() in text.lower()):
+        return False
+    # A week label remains unchanged for seven days, so it cannot distinguish
+    # Tuesday morning's pending paper from the newly posted weekly contract.
+    # Pulls/wipes are uniquely weekly figures on the paper and close that gap.
+    weekly = expected_weekly or {}
+    for label in ("pulls", "wipes"):
+        value = weekly.get(label)
+        if value is None:
+            continue
+        patterns = (
+            rf"\b{re.escape(str(value))}\s+{label}\b",
+            rf"\b{label}\s*:?\s*{re.escape(str(value))}\b",
+        )
+        if not any(re.search(pattern, text, re.I) for pattern in patterns):
+            return False
+    return True
+
+
 # ---------------------------------------------------------------------------
 # The shot
 # ---------------------------------------------------------------------------
@@ -189,8 +234,10 @@ def _meta(path):
 
 def _open_flat(ctx, url, errors):
     pg = ctx.new_page()
-    pg.on("pageerror", lambda e: errors.append(f"pageerror: {e}"))
-    pg.on("console", lambda m: errors.append(m.text) if m.type == "error" else None)
+    pg.on("pageerror", lambda e: _record_browser_error(
+        errors, f"pageerror: {e}"))
+    pg.on("console", lambda m: _record_browser_error(errors, m.text)
+          if m.type == "error" else None)
     sep = "&" if "?" in url else "?"
     pg.goto(url + sep + "edition=spread", wait_until="networkidle", timeout=90_000)
     state = pg.evaluate(PUT_DOWN)
@@ -200,7 +247,8 @@ def _open_flat(ctx, url, errors):
     return pg, state
 
 
-def shoot_paper(url=None, out_dir=".", manifest=None):
+def shoot_paper(url=None, out_dir=".", manifest=None, expected_week=None,
+                expected_weekly=None):
     """Shoot the paper and gate it. Returns a dict, or None if it cannot.
 
     dict keys: front, fold, ladder (paths), manifest (dict), parity
@@ -225,6 +273,10 @@ def shoot_paper(url=None, out_dir=".", manifest=None):
             if state.get("paper") != "down" or not state.get("leaves"):
                 raise RuntimeError(f"the paper never went down at {url} ({state})")
             page_text = pg.evaluate(PAGE_TEXT)
+            if not check_freshness(page_text, expected_week, expected_weekly):
+                raise StalePaperError(
+                    f"paper at {url} does not identify expected week "
+                    f"{expected_week}; use the fresh classic render")
             for n, key, name in ((1, "front", "weekly_post_front.png"),
                                  (2, "ladder", "weekly_post_ladder.png")):
                 sel = f'.paper-table .paper-page[data-page-n="{n}"]'
@@ -307,3 +359,7 @@ def shoot_paper(url=None, out_dir=".", manifest=None):
 
 class ParityFailure(RuntimeError):
     """A datum the paper is required to carry is no longer on it."""
+
+
+class StalePaperError(RuntimeError):
+    """The paper is structurally valid but belongs to an older week."""

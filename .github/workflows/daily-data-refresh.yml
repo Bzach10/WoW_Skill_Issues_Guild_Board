@@ -2,14 +2,7 @@ name: Daily Data Refresh
 
 # THE FULL DAILY DATA PULL — data only, nothing posts anywhere.
 #
-# Owner's question (2026-07-27): "We're setup to do the full data pull on a
-# daily basis correct?" The honest answer was NO: the roster swept only in
-# weekly-board's Tuesday cron, and the daily competition (14:00 UTC) and
-# parse (13:30 UTC) refreshes both land AFTER the consumer site's own daily
-# pickup at 13:00 UTC — so the site always shipped yesterday's bundle.
-#
-# This workflow closes both gaps in one scheduled job, at 11:30 UTC —
-# comfortably before the 13:00 UTC site pickup:
+# This workflow performs one complete daily pull at 11:30 UTC:
 #   1. refresh_competition — LIVE two-way guild membership (joiners in,
 #      verified leavers to the departed ledger) + M+ scores/runs/ranks;
 #   2. refresh_parses — per-character WCL parse averages (active sweep
@@ -21,13 +14,17 @@ name: Daily Data Refresh
 # NO Discord steps here, by design: the weekly board post stays Tuesday's
 # (weekly-board.yml), and the daily WANTED-BOARD post remains gated off in
 # daily-competition-refresh.yml (config competition.daily_post: false).
-# The 13:30/14:00 crons stay as same-day refreshers; this job's only role
-# is a complete, fresh bundle BEFORE the site's daily delivery window.
+# The later competition/parse crons stay as same-day refreshers. Successful
+# runs trigger Publish Website; there is no independent consumer pickup race.
 
 on:
   schedule:
     - cron: "30 11 * * *"
   workflow_dispatch:
+
+concurrency:
+  group: website-data-writer
+  cancel-in-progress: false
 
 jobs:
   refresh-data:
@@ -36,12 +33,12 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
         with:
           fetch-depth: 0  # Full history for better merge detection
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.12"
 
@@ -58,7 +55,7 @@ jobs:
         run: python scripts/refresh_parses.py
 
       - name: Rebuild the site data bundle
-        run: python scripts/build_site_data.py --out web_data_public
+        run: python scripts/build_site_data.py --live-dungeons --out web_data_public
 
       - name: Validate the bundle (cross-layer consistency gate)
         run: python scripts/validate_bundle.py web_data_public
@@ -82,27 +79,16 @@ jobs:
             # a rebase onto a moved main cannot strand this commit on the
             # runner — the 2026-07-27 weekly-board failure mode.
             git checkout -- .
-            # Fetch to ensure we have the latest from origin
             git fetch origin
-            if git pull --no-rebase origin "$REF_NAME"; then
-              # Fast-forward merge succeeded
-              git push
-            else
-              # Merge conflict occurred - resolve by keeping our version
-              echo "Merge conflict detected - resolving by keeping our data..."
-              git merge --abort 2>/dev/null || true
-              # Pull with rebase strategy using 'theirs' to prefer our changes
-              # (in rebase context, --theirs means our commit being replayed)
-              git pull --rebase -X theirs origin "$REF_NAME" || {
-                # If rebase still fails, manually resolve by taking our version
-                echo "Rebase conflict - resolving conflicts by keeping our version..."
-                for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
-                  git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
-                done
-                GIT_EDITOR=true git rebase --continue
-              }
-              git push
-            fi
+            git pull --rebase -X theirs origin "$REF_NAME" || {
+              echo "Rebase conflict - resolving by keeping the validated refresh..."
+              for f in competition_cache.json parses_cache.json raid_progression_cache.json web_data_public; do
+                git checkout --theirs "$f" 2>/dev/null && git add "$f" || true
+              done
+              GIT_EDITOR=true git rebase --continue
+            }
+            python scripts/validate_bundle.py web_data_public
+            git push
           fi
 
       - name: Trigger wipefest-site cloud refresh

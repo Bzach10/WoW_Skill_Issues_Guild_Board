@@ -77,7 +77,10 @@ display:
   web_board:
     enabled: true
     repo: "Bzach10/wow-guild-board"                    # public repo that hosts the page
-    url: "https://bzach10.github.io/wow-guild-board/"  # where the button points
+    # The Discord link follows the canonical newspaper. The legacy gh-pages
+    # twin is still published as a fallback/archive, but is no longer allowed
+    # to send members to a second, potentially stale site.
+    url: "https://skill-issues-board.pages.dev/board/"
   # NOTE: colors, backgrounds, fonts, header/footer modules and all the
   # gag text moved to theme.yml — see CUSTOMIZING.md. Any member can
   # safely edit that file.

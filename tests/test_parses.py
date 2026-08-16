@@ -13,6 +13,9 @@ import os
 import subprocess
 import sys
 
+import pytest
+import requests
+
 from guild_board import config as gb_config
 from guild_board import wcl
 from guild_board.competition import build_competition, fetch_competition
@@ -31,6 +34,80 @@ def _blob(avg, median=None, kills=None):
     if kills is not None:
         out["totalKills"] = kills
     return out
+
+
+def test_gql_retries_rate_limits_using_retry_after(monkeypatch):
+    class Response:
+        def __init__(self, status, payload=None, headers=None):
+            self.status_code = status
+            self._payload = payload or {}
+            self.headers = headers or {}
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise AssertionError(f"unexpected final HTTP {self.status_code}")
+
+        def json(self):
+            return self._payload
+
+    responses = [
+        Response(429, headers={"Retry-After": "2"}),
+        Response(200, {"data": {"ok": True}}),
+    ]
+    sleeps = []
+    monkeypatch.setattr(wcl.requests, "post",
+                        lambda *a, **k: responses.pop(0))
+    monkeypatch.setattr(wcl.time, "sleep", sleeps.append)
+    assert wcl.gql("token", "query", {}) == {"ok": True}
+    assert sleeps == [2.0]
+
+
+@pytest.mark.parametrize("retry_after", [None, "not-a-number"])
+def test_gql_retries_server_errors_with_exponential_fallback(
+        monkeypatch, retry_after):
+    class Response:
+        status_code = 503
+        headers = ({"Retry-After": retry_after} if retry_after else {})
+
+        def raise_for_status(self):
+            raise requests.HTTPError("503")
+
+        def json(self):
+            return {}
+
+    responses = [Response(), type("OK", (), {
+        "status_code": 200,
+        "headers": {},
+        "raise_for_status": lambda self: None,
+        "json": lambda self: {"data": {"ok": True}},
+    })()]
+    sleeps = []
+    monkeypatch.setattr(wcl.requests, "post",
+                        lambda *a, **k: responses.pop(0))
+    monkeypatch.setattr(wcl.time, "sleep", sleeps.append)
+    assert wcl.gql("token", "query", {}) == {"ok": True}
+    assert sleeps == [1]
+
+
+def test_gql_raises_after_retry_budget_is_exhausted(monkeypatch):
+    class Response:
+        status_code = 503
+        headers = {}
+
+        def raise_for_status(self):
+            raise requests.HTTPError("503")
+
+        def json(self):
+            return {}
+
+    calls = []
+    monkeypatch.setattr(
+        wcl.requests, "post",
+        lambda *a, **k: calls.append(1) or Response())
+    monkeypatch.setattr(wcl.time, "sleep", lambda _: None)
+    with pytest.raises(requests.HTTPError):
+        wcl.gql("token", "query", {})
+    assert len(calls) == 5
 
 
 # ---------------------------------------------------------------------------

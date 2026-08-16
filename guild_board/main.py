@@ -24,6 +24,7 @@ from guild_board.raiderio import (
 from guild_board.state import (
     baselines_view,
     build_week_block,
+    completed_raid_week_window,
     load_board_state,
     raid_attendance_streaks,
     raid_week_label,
@@ -444,6 +445,20 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
                              season_key=season_key_record,
                              baseline_records=previous_view.get("records"))
 
+    # Build the persisted weekly contract before choosing a renderer. The
+    # paper freshness gate uses pulls/wipes from this exact block so an older
+    # page with the same week label falls back to the fresh classic render.
+    roast_cfg = (sections.get("roast_of_the_week")
+                 or cfg.get("roast_of_the_week") or {})
+    week_block = build_week_block(
+        stats=stats, start_dt=start_dt, end_dt=end_dt, week_label=streaks_week,
+        zone_name=zone_name,
+        difficulty=DIFFICULTY_NAMES.get((stats or {}).get("difficulty"))
+        or cfg.get("raid", {}).get("difficulty"),
+        mplus_results=mplus_results, mplus_weekly=mplus_weekly,
+        improvement=improvement, roast=roast_cfg,
+        top_n=int(cfg.get("top_n", 5)))
+
     # Diagnostic: the raw tank pool, so any board/text discrepancy can be
     # traced to the data rather than guessed at from the rendered image.
     if stats and "best_tanks" in stats:
@@ -453,6 +468,12 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     mobile_path = None
     extra_paths = []
+    display_cfg = cfg.get("display") or {}
+    board_args = (cfg, stats, standing, leaders, zone_name,
+                  mplus_results, mplus_season_scores, mplus_season_parses,
+                  start_dt, end_dt, no_logs)
+    board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
+                        previous=previous_view, streaks=streaks, records=records)
 
     # ---- THE PAPER IS THE POST ------------------------------------------
     # The website already prints this guild, this week and these numbers as a
@@ -476,7 +497,8 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         try:
             shot = paper_shot.shoot_paper(
                 url=(cfg.get("display") or {}).get("paper_url"),
-                manifest=manifest)
+                manifest=manifest, expected_week=streaks_week,
+                expected_weekly=week_block)
             image_path = shot["fold"]        # the teaser leads the post
             extra_paths = [shot["front"], shot["ladder"]]
             logger.info("The paper is the post: %s", shot["manifest"]["shots"])
@@ -488,12 +510,6 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
 
     if layout == "image_board" and not image_path:
         try:
-            display_cfg = cfg.get("display") or {}
-            board_args = (cfg, stats, standing, leaders, zone_name,
-                          mplus_results, mplus_season_scores, mplus_season_parses,
-                          start_dt, end_dt, no_logs)
-            board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
-                                previous=previous_view, streaks=streaks, records=records)
             animate = bool(display_cfg.get("animate", False))
             frames = int(display_cfg.get("animate_frames", 10))
             if display_cfg.get("renderer", "pillow") == "html":
@@ -518,15 +534,20 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if not image_path:
                 image_path = generate_board_image(
                     *board_args, output_path="board.png", **board_kwargs)
-            # The responsive web twin (published to GitHub Pages by CI —
-            # the auto-scaling companion the phone link button points at)
-            if (display_cfg.get("web_board") or {}).get("enabled", False):
-                from guild_board.html_board import generate_web_board
-                generate_web_board(*board_args, **board_kwargs)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.
             cfg.setdefault("display", {})["layout"] = "single_column"
+
+    # The responsive web twin is a separate publication target. Paper mode
+    # already has an image_path, which used to skip this and leave gh-pages
+    # frozen while the workflow still reported success.
+    if (display_cfg.get("web_board") or {}).get("enabled", False):
+        try:
+            from guild_board.html_board import generate_web_board
+            generate_web_board(*board_args, **board_kwargs)
+        except Exception as exc:
+            logger.warning("Web board generation failed: %s", exc)
 
     if image_path:
         from guild_board.formatters import tldr_lines
@@ -574,22 +595,17 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
     # saw them. They are persisted now so the same pipeline that carries the
     # season data to the paper (web_data -> deliver_bundle -> contract) can
     # carry the week as well. Built here, written only by a real post.
-    roast_cfg = (sections.get("roast_of_the_week")
-                 or cfg.get("roast_of_the_week") or {})
-    week_block = build_week_block(
-        stats=stats, start_dt=start_dt, end_dt=end_dt, week_label=streaks_week,
-        zone_name=zone_name,
-        difficulty=DIFFICULTY_NAMES.get((stats or {}).get("difficulty"))
-        or cfg.get("raid", {}).get("difficulty"),
-        mplus_results=mplus_results, mplus_weekly=mplus_weekly,
-        improvement=improvement, roast=roast_cfg,
-        top_n=int(cfg.get("top_n", 5)))
-
     if preview:
         return embed, image_path
 
     if not dry_run:
         webhook_url = require_env("DISCORD_WEBHOOK_URL")
+        # Persist first. If local state cannot be written, do not post a board
+        # whose weekly contract can never reach the website.
+        save_board_state(standing, mplus_season_scores, streaks=streaks,
+                         records=records, streaks_week=streaks_week,
+                         streaks_started=streaks_started,
+                         week=week_block)
         # The paper posts as a set: the above-the-fold teaser first (it is the
         # one Discord shows at embed width), then page one whole and page
         # two's Season Ladder behind it.
@@ -599,13 +615,6 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         post_to_discord(webhook_url, embed, image_path=image_path, cfg=cfg,
                         extra_image_paths=extras or None)
         logger.info("Board posted to Discord.")
-        try:
-            save_board_state(standing, mplus_season_scores, streaks=streaks,
-                             records=records, streaks_week=streaks_week,
-                             streaks_started=streaks_started,
-                             week=week_block)
-        except OSError as exc:
-            logger.warning("Could not save board state: %s", exc)
 
     return embed, image_path
 
@@ -617,6 +626,8 @@ def main(argv=None):
     parser.add_argument("--dry-run", action="store_true", help="Collect data and print embed but do not post")
     parser.add_argument("--date", help="End date for the board (YYYY-MM-DD)")
     parser.add_argument("--lookback", type=int, default=None, help="Override lookback days")
+    parser.add_argument("--completed-raid-week", action="store_true",
+                        help="Use exact Tuesday-reset bounds for the latest completed week")
     parser.add_argument("--difficulty", help="Override raid difficulty (normal/heroic/mythic)")
     parser.add_argument("--roast", help="Override roast of the week")
     parser.add_argument("--roast-winner", help="Override roast winner")
@@ -655,7 +666,10 @@ def main(argv=None):
         end_dt = datetime.strptime(args.date, "%Y-%m-%d").replace(tzinfo=timezone.utc)
     else:
         end_dt = datetime.now(timezone.utc)
-    start_dt = end_dt - timedelta(days=int(cfg.get("lookback_days", 7)))
+    if args.completed_raid_week:
+        start_dt, end_dt = completed_raid_week_window(end_dt)
+    else:
+        start_dt = end_dt - timedelta(days=int(cfg.get("lookback_days", 7)))
 
     embed, image_path = build_board(cfg, start_dt=start_dt, end_dt=end_dt, preview=args.preview, dry_run=args.dry_run)
 
