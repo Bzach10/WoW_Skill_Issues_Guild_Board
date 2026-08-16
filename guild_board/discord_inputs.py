@@ -377,6 +377,77 @@ def fetch_guild_pulse(bot_token, channels, since_ms, per_channel_limit=20,
     return all_items
 
 
+# ---------------------------------------------------------------------------
+# THE SHIP'S ARTICLES — /claim, /unclaim and the officers' /revoke.
+#
+# There is no live bot process in this project (see the module docstring), so
+# a "slash command" here is a MESSAGE in an allowlisted channel that the
+# scheduled read picks up — the same shape as the roast ballot above.
+#
+# PRIVACY MODEL:
+#   1. ALLOWLIST ONLY. Only config'd claim/officer channels are ever read.
+#   2. The author's numeric id is returned to the caller because
+#      guild_board.articles must hash it into an opaque account id — it is
+#      hashed immediately and NEVER written to a file, a log or a projection.
+#   3. No display name is returned at all. The articles ledger has no use for
+#      one, and a name it never receives is a name it cannot ship.
+#   4. `officer` is set by WHICH CHANNEL the message came from. Officer
+#      authority is Discord's channel permissions, exactly as config.yml's
+#      announcement_channel_id already assumes. No roles table, no new secret.
+# ---------------------------------------------------------------------------
+
+def fetch_claim_commands(bot_token, channel_ids, since_ms, officer_channel_ids=()):
+    """Raw command records from the claims channel(s) — including threads.
+
+    Returns [{message_id, author_id, content, timestamp, officer}] with bot
+    messages and anything older than since_ms dropped. Parsing, validation
+    and authorization all happen in guild_board.articles; this function only
+    fetches, and it never decides anything.
+    """
+    if isinstance(channel_ids, (str, int)):
+        channel_ids = [channel_ids]
+    officers = {str(c).strip() for c in (officer_channel_ids or ()) if str(c).strip()}
+
+    # An officer channel is also a command source: /revoke is typed there.
+    sources = []
+    for channel_id in list(channel_ids or []) + sorted(officers):
+        channel_id = str(channel_id).strip()
+        if channel_id and channel_id not in sources:
+            sources.append(channel_id)
+
+    commands = []
+    for channel_id in sources:
+        try:
+            messages = _collect_messages(bot_token, channel_id)
+        except requests.RequestException as exc:
+            # Fail loud, never silent: an unreadable claims channel looks
+            # exactly like a week nobody claimed anything.
+            logger.warning("Claims channel %s read failed: %s", channel_id, exc)
+            continue
+        for message in messages:
+            if (message.get("author") or {}).get("bot"):
+                continue
+            message_id = message.get("id")
+            if not message_id or _snowflake_ms(message_id) < since_ms:
+                continue
+            content = (message.get("content") or "").strip()
+            if not content:
+                continue
+            author_id = str((message.get("author") or {}).get("id") or "").strip()
+            if not author_id:
+                continue
+            commands.append({
+                "message_id": str(message_id),
+                "author_id": author_id,
+                "content": content,
+                "timestamp": _message_timestamp_iso(message),
+                "officer": channel_id in officers,
+            })
+
+    unique = {c["message_id"]: c for c in commands}
+    return sorted(unique.values(), key=lambda c: int(c["message_id"]))
+
+
 def fetch_latest_announcement(bot_token, channel_id):
     """Return the newest human-authored message in the announcement channel."""
     messages = _get_messages(bot_token, channel_id, limit=10)

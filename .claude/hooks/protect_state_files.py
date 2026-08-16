@@ -16,6 +16,11 @@ CI_OWNED = {
     "roster_cache.json",
     "weekly_state.json",
     "blizzard_profile_cache.json",
+    # data/accounts.json — the Ship's Articles. scripts/refresh_articles.py
+    # is its ONLY writer, and a hand edit here does not just get overwritten:
+    # it forges a signature on the account<->character mapping that every
+    # share, card and board is keyed on. Change the code, never the ledger.
+    "accounts.json",
 }
 
 

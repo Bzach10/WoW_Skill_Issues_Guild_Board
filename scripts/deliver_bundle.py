@@ -62,7 +62,13 @@ DELIVERED = ("competition.json", "records_leaderboard.json",
 # has posted, so a bundle built from a data refresh alone legitimately has no
 # copy -- and the consumer's paper prints an honest PENDING seam rather than a
 # zero. REQUIRED would mean the whole delivery refuses on a Tuesday morning.
-OPTIONAL = ("raid_kills.json", "weekly_board.json")
+# articles.json is the third: the public account <-> character projection
+# (character key -> {account_id, is_main}) written by scripts/refresh_articles.py.
+# It only exists once the articles are open and somebody has signed, and on day
+# one it is legitimately `available: false` with zero signatures. The site's
+# Ship's Articles leaf prints "N of 129 hands have signed" from it and prints
+# the seam when N is 0 -- so a missing file must never refuse six healthy ones.
+OPTIONAL = ("raid_kills.json", "weekly_board.json", "articles.json")
 
 DEFAULT_TO = "C:/dev/wipefest-redesign/data/source"
 
