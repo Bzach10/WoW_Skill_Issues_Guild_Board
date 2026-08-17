@@ -66,32 +66,21 @@ Every post also includes a portrait phone-readable companion image and TL;DR
 callout lines in the message text, so the highlights land on mobile without
 pinch-zooming (toggle: `display.mobile_companion` in `config.yml`).
 
-## Web board (one-time setup, ~5 minutes)
+## Web board
 
-The post can carry a **📱 Web Board** button linking to a live, responsive
-website version of the board — real HTML that auto-scales to any screen
-(4 columns on a desktop, one column on a phone). CI renders it each week
-and publishes it to a **public** repo's GitHub Pages, so the private guild
-repo stays private. Until this setup is done, the publish step just skips —
-nothing breaks.
+The post carries a **📱 Web Board** button linking to the live website —
+the same responsive newspaper the `paper` renderer photographs for the post.
+It points at the Cloudflare Pages site set in `display.web_board.url`
+(`config.yml`); change that one line to move where the button lands.
 
-1. Have a public repo to host the page (e.g. `wow-guild-board`). In that
-   repo: Settings → Pages → Source: "Deploy from a branch" → Branch:
-   `gh-pages` (created automatically by the first publish; you can set this
-   after the first run).
-2. Create a token that can push to it: GitHub → Settings → Developer
-   settings → Fine-grained personal access tokens → Generate new token.
-   Repository access: just the public repo. Permissions: **Contents:
-   Read and write**. Copy the token.
-3. In THIS repo: Settings → Secrets and variables → Actions → New repository
-   secret → name `WEB_BOARD_TOKEN`, paste the token.
-4. Check `display.web_board` in `config.yml` points at your repo and its
-   Pages URL (that URL is what the Discord button opens).
+> **Retired:** the bot used to render its own HTML board and self-publish it
+> to a public GitHub Pages repo (`Bzach10/wow-guild-board`) using a
+> `WEB_BOARD_TOKEN` secret. That publish step and token are gone — the live
+> site is now built and hosted separately. Nothing needs setting up here; just
+> keep `display.web_board.url` pointed at the site.
 
-Note the page is public to anyone with the link — it shows the same
-WCL/Raider.io stats that are already public, plus the roast. Once it's live,
-you can set `display.mobile_companion: false` to slim the Discord post back
-down to one image.
+With the web board carrying the highlights, you can keep
+`display.mobile_companion: false` to slim the Discord post down to one image.
 
 ## CLI & preview
 
