@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-17T12:18:53.661781+00:00",
+  "generated_at": "2026-08-17T14:27:49.277652+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.661918+00:00",
+    "generated_at": "2026-08-17T14:27:49.277780+00:00",
     "week_of": "2026-08-11",
     "based_on": "2026-08-11T16:19:00.113849+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.662232+00:00",
+    "generated_at": "2026-08-17T14:27:49.278076+00:00",
     "based_on": "2026-08-11T16:19:00.113849+00:00",
     "standing": {
       "realm": 35,
@@ -1459,7 +1459,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.662475+00:00",
+    "generated_at": "2026-08-17T14:27:49.278318+00:00",
     "available": true,
     "based_on": "2026-08-11T16:19:00.113849+00:00",
     "week_label": "2026-08-11",
@@ -1713,7 +1713,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.662723+00:00",
+    "generated_at": "2026-08-17T14:27:49.278587+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2714,7 +2714,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.662751+00:00",
+    "generated_at": "2026-08-17T14:27:49.278617+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -2911,7 +2911,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.660859+00:00",
+    "generated_at": "2026-08-17T14:27:49.276769+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2920,7 +2920,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.662759+00:00",
+    "generated_at": "2026-08-17T14:27:49.278623+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2935,7 +2935,7 @@
       "slug": "season-mn-1",
       "name": "Midnight Season 1"
     },
-    "based_on": "2026-08-17T12:16:38.522541+00:00",
+    "based_on": "2026-08-17T14:26:32.695989+00:00",
     "week_baseline_from": "2026-08-11T16:19:00.113849+00:00",
     "character_count": 159,
     "ranked_count": 124,
@@ -3822,27 +3822,247 @@
       },
       {
         "name": "Brewzleeh",
-        "key": "brewzleeh-tichondrius",
         "realm": "Tichondrius",
         "realm_slug": "tichondrius",
+        "key": "brewzleeh-tichondrius",
+        "raiderio_url": "https://raider.io/characters/us/tichondrius/brewzleeh",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/tichondrius/brewzleeh",
         "class": "Monk",
-        "spec": "Brewmaster",
+        "spec": "Brewmaster Monk",
         "role": "Tank",
         "score": 3704.6,
         "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
+          "dps": 871,
+          "healer": 3132.5,
+          "tank": 3704.6
         },
-        "best_runs": [],
+        "best_runs": [
+          {
+            "dungeon": "Magisters' Terrace",
+            "short": "MT",
+            "level": 19,
+            "timed": true,
+            "upgrades": 1,
+            "score": 473.3,
+            "clear_ms": 1860766,
+            "par_ms": 2040999,
+            "completed_at": "2026-06-17T17:25:37.000Z",
+            "keystone_run_id": 36168614
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 19,
+            "timed": true,
+            "upgrades": 1,
+            "score": 473.1,
+            "clear_ms": 1652057,
+            "par_ms": 1800999,
+            "completed_at": "2026-06-13T02:13:50.000Z",
+            "keystone_run_id": 35156512
+          },
+          {
+            "dungeon": "Algeth'ar Academy",
+            "short": "AA",
+            "level": 19,
+            "timed": true,
+            "upgrades": 1,
+            "score": 470.4,
+            "clear_ms": 1840632,
+            "par_ms": 1860999,
+            "completed_at": "2026-08-08T18:23:27.000Z",
+            "keystone_run_id": 42767500
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 459.2,
+            "clear_ms": 1493936,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-03T22:40:57.000Z",
+            "keystone_run_id": 42304297
+          },
+          {
+            "dungeon": "Windrunner Spire",
+            "short": "WS",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 458.3,
+            "clear_ms": 1808036,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-03T21:56:14.000Z",
+            "keystone_run_id": 42301960
+          },
+          {
+            "dungeon": "Seat of the Triumvirate",
+            "short": "SEAT",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 457.5,
+            "clear_ms": 1905598,
+            "par_ms": 2040999,
+            "completed_at": "2026-05-26T00:17:44.000Z",
+            "keystone_run_id": 30069440
+          },
+          {
+            "dungeon": "Maisara Caverns",
+            "short": "MC",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 457.5,
+            "clear_ms": 1851188,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-03T23:43:43.000Z",
+            "keystone_run_id": 42308500
+          },
+          {
+            "dungeon": "Nexus-Point Xenas",
+            "short": "NPX",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 455.4,
+            "clear_ms": 1781913,
+            "par_ms": 1800999,
+            "completed_at": "2026-05-26T02:19:28.000Z",
+            "keystone_run_id": 30088331
+          }
+        ],
+        "recent_runs": [
+          {
+            "dungeon": "Algeth'ar Academy",
+            "short": "AA",
+            "level": 19,
+            "timed": true,
+            "upgrades": 1,
+            "score": 470.4,
+            "clear_ms": 1840632,
+            "par_ms": 1860999,
+            "completed_at": "2026-08-08T18:23:27.000Z",
+            "keystone_run_id": 42767500
+          },
+          {
+            "dungeon": "Seat of the Triumvirate",
+            "short": "SEAT",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 456.7,
+            "clear_ms": 1947125,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-08T17:41:46.000Z",
+            "keystone_run_id": 42759056
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 459.2,
+            "clear_ms": 1494625,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-08T16:47:15.000Z",
+            "keystone_run_id": 42756027
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 458.6,
+            "clear_ms": 1628707,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-04T01:14:19.000Z",
+            "keystone_run_id": 42312373
+          },
+          {
+            "dungeon": "Maisara Caverns",
+            "short": "MC",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 457.5,
+            "clear_ms": 1851188,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-03T23:43:43.000Z",
+            "keystone_run_id": 42308500
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 459.2,
+            "clear_ms": 1493936,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-03T22:40:57.000Z",
+            "keystone_run_id": 42304297
+          },
+          {
+            "dungeon": "Windrunner Spire",
+            "short": "WS",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 458.3,
+            "clear_ms": 1808036,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-03T21:56:14.000Z",
+            "keystone_run_id": 42301960
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 12,
+            "timed": true,
+            "upgrades": 1,
+            "score": 371.2,
+            "clear_ms": 1505563,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-02T16:07:07.000Z",
+            "keystone_run_id": 42167036
+          },
+          {
+            "dungeon": "Seat of the Triumvirate",
+            "short": "SEAT",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 455.5,
+            "clear_ms": 2013340,
+            "par_ms": 2040999,
+            "completed_at": "2026-07-31T19:11:36.000Z",
+            "keystone_run_id": 41950168
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 18,
+            "timed": true,
+            "upgrades": 1,
+            "score": 456.1,
+            "clear_ms": 1746240,
+            "par_ms": 1800999,
+            "completed_at": "2026-07-28T22:27:01.000Z",
+            "keystone_run_id": 41664236
+          }
+        ],
         "ranks": {
-          "realm_overall": null,
-          "realm_class": null,
-          "region_overall": null
+          "realm_overall": 2173,
+          "realm_class": 292,
+          "region_overall": 28252
         },
-        "recent_runs": [],
         "delta_week": 13.7,
-        "delta_day": 0.0,
+        "delta_day": 3704.6,
         "is_new": false,
         "parse": {
           "best": 79.0,
@@ -8415,7 +8635,7 @@
         "ranks": {
           "realm_overall": 1616,
           "realm_class": 147,
-          "region_overall": 86821
+          "region_overall": 86822
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -8716,7 +8936,7 @@
         "ranks": {
           "realm_overall": 10147,
           "realm_class": 452,
-          "region_overall": 87872
+          "region_overall": 87873
         },
         "delta_week": 178.6,
         "delta_day": 0.0,
@@ -9006,9 +9226,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 8213,
+          "realm_overall": 8214,
           "realm_class": 1075,
-          "region_overall": 88390
+          "region_overall": 88391
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -9284,7 +9504,7 @@
         "ranks": {
           "realm_overall": 640,
           "realm_class": 67,
-          "region_overall": 96040
+          "region_overall": 96041
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -9577,9 +9797,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 9203,
+          "realm_overall": 9204,
           "realm_class": 1138,
-          "region_overall": 100193
+          "region_overall": 100195
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -9855,7 +10075,7 @@
         "ranks": {
           "realm_overall": 11275,
           "realm_class": 1184,
-          "region_overall": 100192
+          "region_overall": 100194
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10131,7 +10351,7 @@
         "ranks": {
           "realm_overall": 13907,
           "realm_class": 643,
-          "region_overall": 128465
+          "region_overall": 128466
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10407,7 +10627,7 @@
         "ranks": {
           "realm_overall": 14337,
           "realm_class": 1738,
-          "region_overall": 134210
+          "region_overall": 134211
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10683,7 +10903,7 @@
         "ranks": {
           "realm_overall": 273,
           "realm_class": 26,
-          "region_overall": 145039
+          "region_overall": 145040
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -10963,9 +11183,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 9634,
+          "realm_overall": 9635,
           "realm_class": 667,
-          "region_overall": 153634
+          "region_overall": 153635
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -11257,7 +11477,7 @@
         "ranks": {
           "realm_overall": 16933,
           "realm_class": 749,
-          "region_overall": 157611
+          "region_overall": 157612
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -11505,7 +11725,7 @@
         "ranks": {
           "realm_overall": 608,
           "realm_class": 46,
-          "region_overall": 161493
+          "region_overall": 161494
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -13199,7 +13419,7 @@
           }
         ],
         "ranks": {
-          "realm_overall": 20681,
+          "realm_overall": 20680,
           "realm_class": 1219,
           "region_overall": 204157
         },
@@ -14894,27 +15114,247 @@
       },
       {
         "name": "Aiime",
-        "key": "aiime-bleeding-hollow",
         "realm": "Bleeding Hollow",
         "realm_slug": "bleeding-hollow",
+        "key": "aiime-bleeding-hollow",
+        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/aiime",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/aiime",
         "class": "Shaman",
-        "spec": "Restoration",
+        "spec": "Restoration Shaman",
         "role": "Healer",
         "score": 3106,
         "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
+          "dps": 662.1,
+          "healer": 3106,
           "tank": 0
         },
-        "best_runs": [],
+        "best_runs": [
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 14,
+            "timed": true,
+            "upgrades": 2,
+            "score": 404,
+            "clear_ms": 1277276,
+            "par_ms": 1680999,
+            "completed_at": "2026-05-14T23:13:45.000Z",
+            "keystone_run_id": 25791153
+          },
+          {
+            "dungeon": "Magisters' Terrace",
+            "short": "MT",
+            "level": 14,
+            "timed": true,
+            "upgrades": 1,
+            "score": 400.2,
+            "clear_ms": 1755357,
+            "par_ms": 2040999,
+            "completed_at": "2026-05-20T23:14:01.000Z",
+            "keystone_run_id": 28078353
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 14,
+            "timed": true,
+            "upgrades": 1,
+            "score": 397.7,
+            "clear_ms": 1672133,
+            "par_ms": 1800999,
+            "completed_at": "2026-05-15T21:19:29.000Z",
+            "keystone_run_id": 26087618
+          },
+          {
+            "dungeon": "Nexus-Point Xenas",
+            "short": "NPX",
+            "level": 13,
+            "timed": true,
+            "upgrades": 1,
+            "score": 386.4,
+            "clear_ms": 1494164,
+            "par_ms": 1800999,
+            "completed_at": "2026-05-15T22:46:47.000Z",
+            "keystone_run_id": 26128054
+          },
+          {
+            "dungeon": "Seat of the Triumvirate",
+            "short": "SEAT",
+            "level": 13,
+            "timed": true,
+            "upgrades": 1,
+            "score": 385.2,
+            "clear_ms": 1757001,
+            "par_ms": 2040999,
+            "completed_at": "2026-05-13T21:56:42.000Z",
+            "keystone_run_id": 25239618
+          },
+          {
+            "dungeon": "Maisara Caverns",
+            "short": "MC",
+            "level": 12,
+            "timed": true,
+            "upgrades": 2,
+            "score": 379.8,
+            "clear_ms": 1198776,
+            "par_ms": 1980999,
+            "completed_at": "2026-05-22T22:43:48.000Z",
+            "keystone_run_id": 28919519
+          },
+          {
+            "dungeon": "Algeth'ar Academy",
+            "short": "AA",
+            "level": 12,
+            "timed": true,
+            "upgrades": 2,
+            "score": 376.6,
+            "clear_ms": 1283097,
+            "par_ms": 1860999,
+            "completed_at": "2026-05-12T19:04:49.000Z",
+            "keystone_run_id": 24806978
+          },
+          {
+            "dungeon": "Windrunner Spire",
+            "short": "WS",
+            "level": 12,
+            "timed": true,
+            "upgrades": 2,
+            "score": 376,
+            "clear_ms": 1399854,
+            "par_ms": 1980999,
+            "completed_at": "2026-05-14T23:54:25.000Z",
+            "keystone_run_id": 25749174
+          }
+        ],
+        "recent_runs": [
+          {
+            "dungeon": "Windrunner Spire",
+            "short": "WS",
+            "level": 14,
+            "timed": false,
+            "upgrades": 0,
+            "score": 0,
+            "clear_ms": 2808735,
+            "par_ms": 1980999,
+            "completed_at": "2026-06-08T16:10:46.000Z",
+            "keystone_run_id": 34204354
+          },
+          {
+            "dungeon": "Maisara Caverns",
+            "short": "MC",
+            "level": 11,
+            "timed": true,
+            "upgrades": 2,
+            "score": 347.9,
+            "clear_ms": 1301746,
+            "par_ms": 1980999,
+            "completed_at": "2026-06-08T01:45:21.000Z",
+            "keystone_run_id": 33994458
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 10,
+            "timed": true,
+            "upgrades": 3,
+            "score": 335,
+            "clear_ms": 869932,
+            "par_ms": 1800999,
+            "completed_at": "2026-06-02T21:46:14.000Z",
+            "keystone_run_id": 32637896
+          },
+          {
+            "dungeon": "Pit of Saron",
+            "short": "POS",
+            "level": 13,
+            "timed": true,
+            "upgrades": 2,
+            "score": 388,
+            "clear_ms": 1415165,
+            "par_ms": 1800999,
+            "completed_at": "2026-06-02T20:49:43.000Z",
+            "keystone_run_id": 32647889
+          },
+          {
+            "dungeon": "Maisara Caverns",
+            "short": "MC",
+            "level": 12,
+            "timed": true,
+            "upgrades": 1,
+            "score": 370.4,
+            "clear_ms": 1696632,
+            "par_ms": 1980999,
+            "completed_at": "2026-06-02T03:47:18.000Z",
+            "keystone_run_id": 32562560
+          },
+          {
+            "dungeon": "Seat of the Triumvirate",
+            "short": "SEAT",
+            "level": 14,
+            "timed": false,
+            "upgrades": 0,
+            "score": 319.6,
+            "clear_ms": 2062109,
+            "par_ms": 2040999,
+            "completed_at": "2026-06-01T02:50:10.000Z",
+            "keystone_run_id": 32104436
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 12,
+            "timed": true,
+            "upgrades": 2,
+            "score": 373.3,
+            "clear_ms": 1309944,
+            "par_ms": 1680999,
+            "completed_at": "2026-06-01T02:08:07.000Z",
+            "keystone_run_id": 32104429
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 12,
+            "timed": false,
+            "upgrades": 0,
+            "score": 0,
+            "clear_ms": 2458552,
+            "par_ms": 1680999,
+            "completed_at": "2026-06-01T01:17:56.000Z",
+            "keystone_run_id": 32111438
+          },
+          {
+            "dungeon": "Nexus-Point Xenas",
+            "short": "NPX",
+            "level": 13,
+            "timed": true,
+            "upgrades": 1,
+            "score": 380.1,
+            "clear_ms": 1794205,
+            "par_ms": 1800999,
+            "completed_at": "2026-06-01T00:33:14.000Z",
+            "keystone_run_id": 32074597
+          },
+          {
+            "dungeon": "Skyreach",
+            "short": "SR",
+            "level": 12,
+            "timed": false,
+            "upgrades": 0,
+            "score": 308.1,
+            "clear_ms": 2214989,
+            "par_ms": 1680999,
+            "completed_at": "2026-05-31T03:26:39.000Z",
+            "keystone_run_id": 31749809
+          }
+        ],
         "ranks": {
-          "realm_overall": null,
-          "realm_class": null,
-          "region_overall": null
+          "realm_overall": 4196,
+          "realm_class": 392,
+          "region_overall": 223704
         },
-        "recent_runs": [],
         "delta_week": 0,
-        "delta_day": 0,
+        "delta_day": 3106,
         "is_new": false,
         "parse": null,
         "rank": 44,
@@ -15725,7 +16165,7 @@
           }
         ],
         "ranks": {
-          "realm_overall": 23882,
+          "realm_overall": 23881,
           "realm_class": 2350,
           "region_overall": 241920
         },
@@ -16321,7 +16761,7 @@
           }
         ],
         "ranks": {
-          "realm_overall": 24076,
+          "realm_overall": 24075,
           "realm_class": 2592,
           "region_overall": 244364
         },
@@ -16845,7 +17285,7 @@
           }
         ],
         "ranks": {
-          "realm_overall": 24291,
+          "realm_overall": 24290,
           "realm_class": 1153,
           "region_overall": 246698
         },
@@ -17666,7 +18106,7 @@
         "ranks": {
           "realm_overall": 584,
           "realm_class": 57,
-          "region_overall": 299163
+          "region_overall": 299162
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -17958,7 +18398,7 @@
         "ranks": {
           "realm_overall": 11568,
           "realm_class": 1025,
-          "region_overall": 300518
+          "region_overall": 300517
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -18250,7 +18690,7 @@
         "ranks": {
           "realm_overall": 3484,
           "realm_class": 229,
-          "region_overall": 302185
+          "region_overall": 302184
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -18526,7 +18966,7 @@
         "ranks": {
           "realm_overall": 10887,
           "realm_class": 815,
-          "region_overall": 306317
+          "region_overall": 306316
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -18774,7 +19214,7 @@
         "ranks": {
           "realm_overall": 26347,
           "realm_class": 3185,
-          "region_overall": 307960
+          "region_overall": 307959
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -19066,7 +19506,7 @@
         "ranks": {
           "realm_overall": 31854,
           "realm_class": 2272,
-          "region_overall": 313293
+          "region_overall": 313292
         },
         "delta_week": 8.5,
         "delta_day": 0.0,
@@ -19342,7 +19782,7 @@
         "ranks": {
           "realm_overall": 740,
           "realm_class": 61,
-          "region_overall": 321912
+          "region_overall": 321911
         },
         "delta_week": 169.1,
         "delta_day": 0.0,
@@ -19590,7 +20030,7 @@
         "ranks": {
           "realm_overall": 11519,
           "realm_class": 853,
-          "region_overall": 330468
+          "region_overall": 330467
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -19882,7 +20322,7 @@
         "ranks": {
           "realm_overall": 1178,
           "realm_class": 34,
-          "region_overall": 339480
+          "region_overall": 339478
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -20130,7 +20570,7 @@
         "ranks": {
           "realm_overall": 9443,
           "realm_class": 785,
-          "region_overall": 340877
+          "region_overall": 340875
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -20422,7 +20862,7 @@
         "ranks": {
           "realm_overall": 2622,
           "realm_class": 293,
-          "region_overall": 343253
+          "region_overall": 343251
         },
         "delta_week": 109.6,
         "delta_day": 0.0,
@@ -20714,7 +21154,7 @@
         "ranks": {
           "realm_overall": 34630,
           "realm_class": 1847,
-          "region_overall": 344519
+          "region_overall": 344517
         },
         "delta_week": 147.5,
         "delta_day": 0.0,
@@ -21006,7 +21446,7 @@
         "ranks": {
           "realm_overall": 6710,
           "realm_class": 526,
-          "region_overall": 358795
+          "region_overall": 358793
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -21282,7 +21722,7 @@
         "ranks": {
           "realm_overall": 7244,
           "realm_class": 440,
-          "region_overall": 389270
+          "region_overall": 389267
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -21574,7 +22014,7 @@
         "ranks": {
           "realm_overall": 7267,
           "realm_class": 772,
-          "region_overall": 390507
+          "region_overall": 390504
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -21754,7 +22194,7 @@
         "ranks": {
           "realm_overall": 39082,
           "realm_class": 4286,
-          "region_overall": 390933
+          "region_overall": 390930
         },
         "delta_week": 144.3,
         "delta_day": 0.0,
@@ -22046,7 +22486,7 @@
         "ranks": {
           "realm_overall": 4019,
           "realm_class": 267,
-          "region_overall": 391013
+          "region_overall": 391010
         },
         "delta_week": 199.8,
         "delta_day": 0.0,
@@ -22352,7 +22792,7 @@
         "ranks": {
           "realm_overall": 4554,
           "realm_class": 342,
-          "region_overall": 393254
+          "region_overall": 393251
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -22628,7 +23068,7 @@
         "ranks": {
           "realm_overall": 2525,
           "realm_class": 194,
-          "region_overall": 399809
+          "region_overall": 399806
         },
         "delta_week": 372.6,
         "delta_day": 0.0,
@@ -22876,7 +23316,7 @@
         "ranks": {
           "realm_overall": 40966,
           "realm_class": 2959,
-          "region_overall": 411626
+          "region_overall": 411623
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -23152,7 +23592,7 @@
         "ranks": {
           "realm_overall": 4795,
           "realm_class": 316,
-          "region_overall": 420801
+          "region_overall": 420798
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -23444,7 +23884,7 @@
         "ranks": {
           "realm_overall": 16056,
           "realm_class": 1361,
-          "region_overall": 424536
+          "region_overall": 424533
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -23692,7 +24132,7 @@
         "ranks": {
           "realm_overall": 8077,
           "realm_class": 408,
-          "region_overall": 433547
+          "region_overall": 433544
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -23968,7 +24408,7 @@
         "ranks": {
           "realm_overall": 12062,
           "realm_class": 1395,
-          "region_overall": 437495
+          "region_overall": 437492
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -24095,7 +24535,7 @@
         "ranks": {
           "realm_overall": 16967,
           "realm_class": 1051,
-          "region_overall": 448932
+          "region_overall": 448928
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -24387,7 +24827,7 @@
         "ranks": {
           "realm_overall": 5588,
           "realm_class": 325,
-          "region_overall": 449403
+          "region_overall": 449399
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -24663,7 +25103,7 @@
         "ranks": {
           "realm_overall": 38218,
           "realm_class": 2320,
-          "region_overall": 457497
+          "region_overall": 457493
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -24909,9 +25349,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 41278,
+          "realm_overall": 41277,
           "realm_class": 4659,
-          "region_overall": 457478
+          "region_overall": 457474
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -25185,9 +25625,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3513,
+          "realm_overall": 3512,
           "realm_class": 302,
-          "region_overall": 458272
+          "region_overall": 458268
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -25479,7 +25919,7 @@
         "ranks": {
           "realm_overall": 865,
           "realm_class": 98,
-          "region_overall": 541781
+          "region_overall": 541778
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -25783,7 +26223,7 @@
         "ranks": {
           "realm_overall": 709,
           "realm_class": 102,
-          "region_overall": 544134
+          "region_overall": 544131
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -26031,7 +26471,7 @@
         "ranks": {
           "realm_overall": 10124,
           "realm_class": 698,
-          "region_overall": 548434
+          "region_overall": 548431
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -26307,7 +26747,7 @@
         "ranks": {
           "realm_overall": 7416,
           "realm_class": 497,
-          "region_overall": 560792
+          "region_overall": 560791
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -26583,7 +27023,7 @@
         "ranks": {
           "realm_overall": 10402,
           "realm_class": 716,
-          "region_overall": 565102
+          "region_overall": 565101
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -26710,7 +27150,7 @@
         "ranks": {
           "realm_overall": 5274,
           "realm_class": 459,
-          "region_overall": 568352
+          "region_overall": 568351
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -26958,7 +27398,7 @@
         "ranks": {
           "realm_overall": 3482,
           "realm_class": 228,
-          "region_overall": 597032
+          "region_overall": 597030
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -27204,9 +27644,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 51915,
+          "realm_overall": 51914,
           "realm_class": 1553,
-          "region_overall": 598252
+          "region_overall": 598250
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -27454,7 +27894,7 @@
         "ranks": {
           "realm_overall": 57500,
           "realm_class": 6311,
-          "region_overall": 602326
+          "region_overall": 602324
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -27700,9 +28140,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4929,
+          "realm_overall": 4928,
           "realm_class": 466,
-          "region_overall": 623899
+          "region_overall": 623896
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -27950,7 +28390,7 @@
         "ranks": {
           "realm_overall": 11654,
           "realm_class": 1152,
-          "region_overall": 637448
+          "region_overall": 637445
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -28232,7 +28672,7 @@
         "ranks": {
           "realm_overall": 12228,
           "realm_class": 1042,
-          "region_overall": 671189
+          "region_overall": 671185
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -28514,7 +28954,7 @@
         "ranks": {
           "realm_overall": 12288,
           "realm_class": 890,
-          "region_overall": 675408
+          "region_overall": 675404
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -28790,7 +29230,7 @@
         "ranks": {
           "realm_overall": 12410,
           "realm_class": 1376,
-          "region_overall": 682457
+          "region_overall": 682453
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -29066,7 +29506,7 @@
         "ranks": {
           "realm_overall": 25623,
           "realm_class": 2975,
-          "region_overall": 683241
+          "region_overall": 683237
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -29302,7 +29742,7 @@
         "ranks": {
           "realm_overall": 12555,
           "realm_class": 1393,
-          "region_overall": 692349
+          "region_overall": 692345
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -29524,9 +29964,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 19146,
+          "realm_overall": 19147,
           "realm_class": 1212,
-          "region_overall": 693551
+          "region_overall": 693547
         },
         "delta_week": 0,
         "delta_day": 0,
@@ -29762,7 +30202,7 @@
         "ranks": {
           "realm_overall": 13616,
           "realm_class": 910,
-          "region_overall": 755950
+          "region_overall": 755946
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -30014,7 +30454,7 @@
         "ranks": {
           "realm_overall": 73653,
           "realm_class": 8719,
-          "region_overall": 801862
+          "region_overall": 801859
         },
         "delta_week": 1155.8,
         "delta_day": 0.0,
@@ -30212,9 +30652,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 69132,
+          "realm_overall": 69131,
           "realm_class": 6188,
-          "region_overall": 837210
+          "region_overall": 837206
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -30366,7 +30806,7 @@
         "ranks": {
           "realm_overall": 70624,
           "realm_class": 8451,
-          "region_overall": 874118
+          "region_overall": 874114
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -30518,7 +30958,7 @@
         "ranks": {
           "realm_overall": 79588,
           "realm_class": 6804,
-          "region_overall": 877667
+          "region_overall": 877663
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -30704,9 +31144,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7488,
+          "realm_overall": 7487,
           "realm_class": 597,
-          "region_overall": 885703
+          "region_overall": 885699
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -30882,7 +31322,7 @@
         "ranks": {
           "realm_overall": 15817,
           "realm_class": 1422,
-          "region_overall": 886386
+          "region_overall": 886382
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -31074,7 +31514,7 @@
         "ranks": {
           "realm_overall": 13429,
           "realm_class": 1117,
-          "region_overall": 888073
+          "region_overall": 888069
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -31230,7 +31670,7 @@
         "ranks": {
           "realm_overall": 80880,
           "realm_class": 5155,
-          "region_overall": 895120
+          "region_overall": 895116
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -31418,7 +31858,7 @@
         "ranks": {
           "realm_overall": 81345,
           "realm_class": 8848,
-          "region_overall": 901239
+          "region_overall": 901235
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -31550,7 +31990,7 @@
         "ranks": {
           "realm_overall": 6693,
           "realm_class": 582,
-          "region_overall": 913996
+          "region_overall": 913992
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -31700,9 +32140,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7794,
+          "realm_overall": 7793,
           "realm_class": 1083,
-          "region_overall": 919181
+          "region_overall": 919177
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -31830,7 +32270,7 @@
         "ranks": {
           "realm_overall": 83935,
           "realm_class": 7188,
-          "region_overall": 935461
+          "region_overall": 935457
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -31946,7 +32386,7 @@
         "ranks": {
           "realm_overall": 17000,
           "realm_class": 1138,
-          "region_overall": 959527
+          "region_overall": 959523
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -32086,7 +32526,7 @@
         "ranks": {
           "realm_overall": 85703,
           "realm_class": 5520,
-          "region_overall": 960146
+          "region_overall": 960142
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32202,7 +32642,7 @@
         "ranks": {
           "realm_overall": 2254,
           "realm_class": 213,
-          "region_overall": 979335
+          "region_overall": 979331
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32308,9 +32748,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 53692,
-          "realm_class": 3648,
-          "region_overall": 1035168
+          "realm_overall": 53694,
+          "realm_class": 3649,
+          "region_overall": 1035163
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32364,9 +32804,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 57576,
+          "realm_overall": 57578,
           "realm_class": 4075,
-          "region_overall": 1117903
+          "region_overall": 1117898
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32422,7 +32862,7 @@
         "ranks": {
           "realm_overall": 97852,
           "realm_class": 8571,
-          "region_overall": 1126090
+          "region_overall": 1126085
         },
         "delta_week": null,
         "delta_day": 0,
@@ -32478,7 +32918,7 @@
         "ranks": {
           "realm_overall": 20089,
           "realm_class": 1629,
-          "region_overall": 1149628
+          "region_overall": 1149623
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32534,7 +32974,7 @@
         "ranks": {
           "realm_overall": 100055,
           "realm_class": 8770,
-          "region_overall": 1156682
+          "region_overall": 1156677
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32590,7 +33030,7 @@
         "ranks": {
           "realm_overall": 2813,
           "realm_class": 174,
-          "region_overall": 1157243
+          "region_overall": 1157238
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32644,9 +33084,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 31904,
+          "realm_overall": 31905,
           "realm_class": 2213,
-          "region_overall": 1175419
+          "region_overall": 1175413
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -32700,9 +33140,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 90364,
-          "realm_class": 9858,
-          "region_overall": 1175505
+          "realm_overall": 90361,
+          "realm_class": 9856,
+          "region_overall": 1175499
         },
         "delta_week": 0.0,
         "delta_day": 0.0,
@@ -37421,7 +37861,7 @@
     "departed_count": 43,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-17T12:16:38.522541+00:00",
+      "as_of": "2026-08-17T14:26:32.695989+00:00",
       "member_count": 158
     },
     "key_records": {
@@ -37539,11 +37979,11 @@
           "key": "brewzleeh-tichondrius",
           "score": 3704.6,
           "class": "Monk",
-          "spec": "Brewmaster",
+          "spec": "Brewmaster Monk",
           "role": "Tank",
           "top5": true,
           "delta_week": 13.7,
-          "delta_day": 0.0,
+          "delta_day": 3704.6,
           "is_new": false
         },
         {
@@ -38059,11 +38499,11 @@
           "key": "aiime-bleeding-hollow",
           "score": 3106,
           "class": "Shaman",
-          "spec": "Restoration",
+          "spec": "Restoration Shaman",
           "role": "Healer",
           "top5": false,
           "delta_week": 0,
-          "delta_day": 0,
+          "delta_day": 3106,
           "is_new": false
         },
         {
@@ -39115,11 +39555,11 @@
             "key": "brewzleeh-tichondrius",
             "score": 3704.6,
             "class": "Monk",
-            "spec": "Brewmaster",
+            "spec": "Brewmaster Monk",
             "role": "Tank",
             "top5": true,
             "delta_week": 13.7,
-            "delta_day": 0.0,
+            "delta_day": 3704.6,
             "is_new": false
           },
           {
@@ -39663,11 +40103,11 @@
             "key": "aiime-bleeding-hollow",
             "score": 3106,
             "class": "Shaman",
-            "spec": "Restoration",
+            "spec": "Restoration Shaman",
             "role": "Healer",
             "top5": false,
             "delta_week": 0,
-            "delta_day": 0,
+            "delta_day": 3106,
             "is_new": false
           },
           {
@@ -41501,11 +41941,11 @@
             "key": "brewzleeh-tichondrius",
             "score": 3704.6,
             "class": "Monk",
-            "spec": "Brewmaster",
+            "spec": "Brewmaster Monk",
             "role": "Tank",
             "top5": true,
             "delta_week": 13.7,
-            "delta_day": 0.0,
+            "delta_day": 3704.6,
             "is_new": false
           },
           {
@@ -42003,11 +42443,11 @@
             "key": "aiime-bleeding-hollow",
             "score": 3106,
             "class": "Shaman",
-            "spec": "Restoration",
+            "spec": "Restoration Shaman",
             "role": "Healer",
             "top5": false,
             "delta_week": 0,
-            "delta_day": 0,
+            "delta_day": 3106,
             "is_new": false
           },
           {
@@ -42413,11 +42853,11 @@
           "key": "brewzleeh-tichondrius",
           "score": 3704.6,
           "class": "Monk",
-          "spec": "Brewmaster",
+          "spec": "Brewmaster Monk",
           "role": "Tank",
           "top5": true,
           "delta_week": 13.7,
-          "delta_day": 0.0,
+          "delta_day": 3704.6,
           "is_new": false
         },
         {
@@ -42555,6 +42995,16 @@
       ],
       "climbers_today": [
         {
+          "name": "Brewzleeh",
+          "key": "brewzleeh-tichondrius",
+          "delta_day": 3704.6
+        },
+        {
+          "name": "Aiime",
+          "key": "aiime-bleeding-hollow",
+          "delta_day": 3106
+        },
+        {
           "name": "Beroben",
           "key": "beroben-queldorei",
           "delta_day": 2878.2
@@ -42638,9 +43088,9 @@
         "delta_week": 1155.8
       },
       "biggest_gain_today": {
-        "name": "Beroben",
-        "key": "beroben-queldorei",
-        "delta_day": 2878.2
+        "name": "Brewzleeh",
+        "key": "brewzleeh-tichondrius",
+        "delta_day": 3704.6
       }
     },
     "parses": {
@@ -42667,7 +43117,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-17T12:18:53.661775+00:00",
+    "generated_at": "2026-08-17T14:27:49.277645+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
