@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-18T11:58:25.958429+00:00",
+  "generated_at": "2026-08-18T12:20:34.151994+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.958560+00:00",
+    "generated_at": "2026-08-18T12:20:34.152118+00:00",
     "week_of": "2026-08-11",
     "based_on": "2026-08-11T16:19:00.113849+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.959708+00:00",
+    "generated_at": "2026-08-18T12:20:34.152321+00:00",
     "based_on": "2026-08-11T16:19:00.113849+00:00",
     "standing": {
       "realm": 35,
@@ -1459,7 +1459,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.960065+00:00",
+    "generated_at": "2026-08-18T12:20:34.152570+00:00",
     "available": true,
     "based_on": "2026-08-11T16:19:00.113849+00:00",
     "week_label": "2026-08-11",
@@ -1713,7 +1713,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.960465+00:00",
+    "generated_at": "2026-08-18T12:20:34.152839+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2714,7 +2714,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.960513+00:00",
+    "generated_at": "2026-08-18T12:20:34.152868+00:00",
     "season_slug": "season-mn-1",
     "season_name": "Midnight Season 1",
     "dungeons": {
@@ -2911,7 +2911,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.957137+00:00",
+    "generated_at": "2026-08-18T12:20:34.150789+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2920,7 +2920,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.960522+00:00",
+    "generated_at": "2026-08-18T12:20:34.152875+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2935,7 +2935,7 @@
       "slug": "season-mn-1",
       "name": "Midnight Season 1"
     },
-    "based_on": "2026-08-18T11:52:26.584082+00:00",
+    "based_on": "2026-08-18T12:18:46.642115+00:00",
     "week_baseline_from": "2026-08-11T16:19:00.113849+00:00",
     "character_count": 160,
     "ranked_count": 124,
@@ -31553,125 +31553,25 @@
       },
       {
         "name": "Danethegreat",
+        "key": "danethegreat-area-52",
         "realm": "Area 52",
         "realm_slug": "area-52",
-        "key": "danethegreat-area-52",
-        "raiderio_url": "https://raider.io/characters/us/area-52/danethegreat",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/danethegreat",
         "class": "Warrior",
-        "spec": "Arms Warrior",
+        "spec": "Arms",
         "role": "DPS",
         "score": 1053.4,
         "scores_by_role": {
-          "dps": 1053.4,
+          "dps": 0,
           "healer": 0,
           "tank": 0
         },
-        "best_runs": [
-          {
-            "dungeon": "Windrunner Spire",
-            "short": "WS",
-            "level": 9,
-            "timed": true,
-            "upgrades": 1,
-            "score": 296.7,
-            "clear_ms": 1628482,
-            "par_ms": 1980999,
-            "completed_at": "2026-07-03T00:36:35.000Z",
-            "keystone_run_id": 38564721
-          },
-          {
-            "dungeon": "Seat of the Triumvirate",
-            "short": "SEAT",
-            "level": 8,
-            "timed": false,
-            "upgrades": 0,
-            "score": 258.5,
-            "clear_ms": 2120019,
-            "par_ms": 2040999,
-            "completed_at": "2026-03-27T20:40:45.000Z",
-            "keystone_run_id": 2160770
-          },
-          {
-            "dungeon": "Nexus-Point Xenas",
-            "short": "NPX",
-            "level": 8,
-            "timed": false,
-            "upgrades": 0,
-            "score": 257.8,
-            "clear_ms": 1906178,
-            "par_ms": 1800999,
-            "completed_at": "2026-07-04T03:28:21.000Z",
-            "keystone_run_id": 38703605
-          },
-          {
-            "dungeon": "Pit of Saron",
-            "short": "POS",
-            "level": 6,
-            "timed": true,
-            "upgrades": 2,
-            "score": 240.4,
-            "clear_ms": 1301284,
-            "par_ms": 1800999,
-            "completed_at": "2026-03-27T19:56:58.000Z",
-            "keystone_run_id": 2126013
-          }
-        ],
-        "recent_runs": [
-          {
-            "dungeon": "Nexus-Point Xenas",
-            "short": "NPX",
-            "level": 8,
-            "timed": false,
-            "upgrades": 0,
-            "score": 257.8,
-            "clear_ms": 1906178,
-            "par_ms": 1800999,
-            "completed_at": "2026-07-04T03:28:21.000Z",
-            "keystone_run_id": 38703605
-          },
-          {
-            "dungeon": "Windrunner Spire",
-            "short": "WS",
-            "level": 9,
-            "timed": true,
-            "upgrades": 1,
-            "score": 296.7,
-            "clear_ms": 1628482,
-            "par_ms": 1980999,
-            "completed_at": "2026-07-03T00:36:35.000Z",
-            "keystone_run_id": 38564721
-          },
-          {
-            "dungeon": "Seat of the Triumvirate",
-            "short": "SEAT",
-            "level": 8,
-            "timed": false,
-            "upgrades": 0,
-            "score": 258.5,
-            "clear_ms": 2120019,
-            "par_ms": 2040999,
-            "completed_at": "2026-03-27T20:40:45.000Z",
-            "keystone_run_id": 2160770
-          },
-          {
-            "dungeon": "Pit of Saron",
-            "short": "POS",
-            "level": 6,
-            "timed": true,
-            "upgrades": 2,
-            "score": 240.4,
-            "clear_ms": 1301284,
-            "par_ms": 1800999,
-            "completed_at": "2026-03-27T19:56:58.000Z",
-            "keystone_run_id": 2126013
-          }
-        ],
+        "best_runs": [],
         "ranks": {
-          "realm_overall": 80880,
-          "realm_class": 5153,
-          "region_overall": 895107
+          "realm_overall": null,
+          "realm_class": null,
+          "region_overall": null
         },
+        "recent_runs": [],
         "delta_week": 0.0,
         "delta_day": 0.0,
         "is_new": false,
@@ -32748,7 +32648,7 @@
           }
         ],
         "ranks": {
-          "realm_overall": 53691,
+          "realm_overall": 53692,
           "realm_class": 3648,
           "region_overall": 1035154
         },
@@ -32804,7 +32704,7 @@
           }
         ],
         "ranks": {
-          "realm_overall": 57575,
+          "realm_overall": 57576,
           "realm_class": 4073,
           "region_overall": 1117874
         },
@@ -37898,7 +37798,7 @@
     "departed_count": 43,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-18T11:52:26.584082+00:00",
+      "as_of": "2026-08-18T12:18:46.642115+00:00",
       "member_count": 159
     },
     "key_records": {
@@ -39381,7 +39281,7 @@
           "key": "danethegreat-area-52",
           "score": 1053.4,
           "class": "Warrior",
-          "spec": "Arms Warrior",
+          "spec": "Arms",
           "role": "DPS",
           "top5": false,
           "delta_week": 0.0,
@@ -41052,7 +40952,7 @@
             "key": "danethegreat-area-52",
             "score": 1053.4,
             "class": "Warrior",
-            "spec": "Arms Warrior",
+            "spec": "Arms",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -42809,7 +42709,7 @@
             "key": "danethegreat-area-52",
             "score": 1053.4,
             "class": "Warrior",
-            "spec": "Arms Warrior",
+            "spec": "Arms",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -43144,7 +43044,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-18T11:58:25.958420+00:00",
+    "generated_at": "2026-08-18T12:20:34.151987+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
