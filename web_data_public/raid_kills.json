@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "fetched_at": "2026-08-18T14:34:25.951739+00:00",
+  "fetched_at": "2026-08-18T15:43:35.428973+00:00",
   "available": true,
   "status": "ok",
   "source": "https://raider.io/api/v1/guilds/boss-kill",
@@ -10,9 +10,9 @@
     "region": "us"
   },
   "raid": {
-    "slug": "tier-mn-1",
-    "display_name": "Voidspire Sanctum",
-    "total_bosses": 9
+    "slug": "the-venomous-abyss",
+    "display_name": "The Venomous Abyss",
+    "total_bosses": 8
   },
   "difficulties": [
     "normal",
@@ -21,114 +21,57 @@
   ],
   "killed_by_difficulty": {
     "normal": 0,
-    "heroic": 9,
-    "mythic": 5
+    "heroic": 0,
+    "mythic": 0
   },
   "bosses": [
     {
-      "slug": "imperator-averzian",
-      "name": "Imperator Averzian",
+      "slug": "nekzali-the-soulcoiler",
+      "name": "Nek'zali the Soulcoiler",
       "order": 1,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-18T01:52:24.961Z"
-        },
-        "mythic": {
-          "defeated_at": "2026-07-20T00:28:33.467Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "vorasius",
-      "name": "Vorasius",
+      "slug": "entombed-sentinels",
+      "name": "Entombed Sentinels",
       "order": 2,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-18T02:11:07.955Z"
-        },
-        "mythic": {
-          "defeated_at": "2026-07-20T00:50:30.453Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "fallenking-salhadaar",
-      "name": "Fallen-King Salhadaar",
+      "slug": "the-lost-explorers",
+      "name": "The Lost Explorers",
       "order": 3,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-18T02:20:48.597Z"
-        },
-        "mythic": {
-          "defeated_at": "2026-07-20T02:25:31.903Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "vaelgor-ezzorak",
-      "name": "Vaelgor & Ezzorak",
+      "slug": "vashnik-the-malignant",
+      "name": "Vashnik the Malignant",
       "order": 4,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-18T02:58:14.903Z"
-        },
-        "mythic": {
-          "defeated_at": "2026-07-27T04:00:35.203Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "lightblinded-vanguard",
-      "name": "Lightblinded Vanguard",
+      "slug": "sszorak",
+      "name": "Sszorak",
       "order": 5,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-23T02:00:01.386Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "crown-of-the-cosmos",
-      "name": "Crown of the Cosmos",
+      "slug": "the-twin-fangs",
+      "name": "The Twin Fangs",
       "order": 6,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-23T02:20:39.548Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "chimaerus-the-undreamt-god",
-      "name": "Chimaerus the Undreamt God",
+      "slug": "the-coiled-altar",
+      "name": "The Coiled Altar",
       "order": 7,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-23T03:30:49.469Z"
-        },
-        "mythic": {
-          "defeated_at": "2026-07-23T01:31:55.416Z"
-        }
-      }
+      "kills": {}
     },
     {
-      "slug": "beloren-child-of-alar",
-      "name": "Belo'ren, Child of Al'ar",
+      "slug": "ulatek",
+      "name": "Ula'tek",
       "order": 8,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-13T01:33:15.223Z"
-        }
-      }
-    },
-    {
-      "slug": "midnight-falls",
-      "name": "Midnight Falls",
-      "order": 9,
-      "kills": {
-        "heroic": {
-          "defeated_at": "2026-07-23T03:13:06.334Z"
-        }
-      }
+      "kills": {}
     }
   ]
 }

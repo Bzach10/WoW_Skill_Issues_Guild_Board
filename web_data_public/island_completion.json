@@ -1,195 +1,185 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-18T14:34:15.569044+00:00",
-  "season_slug": "season-mn-1",
-  "season_name": "Midnight Season 1",
+  "generated_at": "2026-08-18T15:43:27.360924+00:00",
+  "season_slug": "season-mn-2",
+  "season_name": "Midnight Season 2",
   "dungeons": {
     "islands": [
       {
-        "id": "algethar-academy",
-        "name": "Algeth'ar Academy",
+        "id": "altar-of-fangs",
+        "name": "Altar of Fangs",
         "kind": "dungeon",
-        "challenge_mode_id": 402,
-        "status": "conquered",
-        "best_level": 20,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 588,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "magisters-terrace",
-        "name": "Magisters' Terrace",
+        "id": "den-of-nalorakk",
+        "name": "Den of Nalorakk",
         "kind": "dungeon",
-        "challenge_mode_id": 558,
-        "status": "conquered",
-        "best_level": 21,
-        "timed": true,
-        "held_by": "Tommybravoo"
+        "challenge_mode_id": 586,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "maisara-caverns",
-        "name": "Maisara Caverns",
+        "id": "kings-rest",
+        "name": "Kings' Rest",
         "kind": "dungeon",
-        "challenge_mode_id": 560,
-        "status": "conquered",
-        "best_level": 20,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 249,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "nexuspoint-xenas",
-        "name": "Nexus-Point Xenas",
+        "id": "murder-row",
+        "name": "Murder Row",
         "kind": "dungeon",
-        "challenge_mode_id": 559,
-        "status": "conquered",
-        "best_level": 21,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 587,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "pit-of-saron",
-        "name": "Pit of Saron",
+        "id": "ruby-life-pools",
+        "name": "Ruby Life Pools",
         "kind": "dungeon",
-        "challenge_mode_id": 556,
-        "status": "conquered",
-        "best_level": 21,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 399,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "seat-of-the-triumvirate",
-        "name": "Seat of the Triumvirate",
+        "id": "temple-of-sethraliss",
+        "name": "Temple of Sethraliss",
         "kind": "dungeon",
-        "challenge_mode_id": 239,
-        "status": "conquered",
-        "best_level": 20,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 250,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "skyreach",
-        "name": "Skyreach",
+        "id": "the-blinding-vale",
+        "name": "The Blinding Vale",
         "kind": "dungeon",
-        "challenge_mode_id": 161,
-        "status": "conquered",
-        "best_level": 21,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 584,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       },
       {
-        "id": "windrunner-spire",
-        "name": "Windrunner Spire",
+        "id": "voidscar-arena",
+        "name": "Voidscar Arena",
         "kind": "dungeon",
-        "challenge_mode_id": 557,
-        "status": "conquered",
-        "best_level": 20,
-        "timed": true,
-        "held_by": "Amrevenge"
+        "challenge_mode_id": 585,
+        "status": "locked",
+        "best_level": null,
+        "timed": false,
+        "held_by": null
       }
     ],
-    "conquered": 8,
+    "conquered": 0,
     "total": 8
   },
   "raid": {
-    "slug": "tier-mn-1",
-    "display_name": "Voidspire Sanctum",
-    "summary": "5/9 M",
-    "bosses_killed": 9,
+    "slug": "the-venomous-abyss",
+    "display_name": "The Venomous Abyss",
+    "summary": "0/8 N",
+    "bosses_killed": 0,
     "killed_by_difficulty": {
       "normal": 0,
-      "heroic": 9,
-      "mythic": 5
+      "heroic": 0,
+      "mythic": 0
     },
-    "total_bosses": 9,
+    "total_bosses": 8,
     "islands": [
       {
-        "id": "imperator-averzian",
-        "name": "Imperator Averzian",
+        "id": "nekzali-the-soulcoiler",
+        "name": "Nek'zali the Soulcoiler",
         "kind": "raid_boss",
         "order": 1,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-20T00:28:33.467Z"
+        "first_kill_at": null
       },
       {
-        "id": "vorasius",
-        "name": "Vorasius",
+        "id": "entombed-sentinels",
+        "name": "Entombed Sentinels",
         "kind": "raid_boss",
         "order": 2,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-20T00:50:30.453Z"
+        "first_kill_at": null
       },
       {
-        "id": "fallenking-salhadaar",
-        "name": "Fallen-King Salhadaar",
+        "id": "the-lost-explorers",
+        "name": "The Lost Explorers",
         "kind": "raid_boss",
         "order": 3,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-20T02:25:31.903Z"
+        "first_kill_at": null
       },
       {
-        "id": "vaelgor-ezzorak",
-        "name": "Vaelgor & Ezzorak",
+        "id": "vashnik-the-malignant",
+        "name": "Vashnik the Malignant",
         "kind": "raid_boss",
         "order": 4,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-27T04:00:35.203Z"
+        "first_kill_at": null
       },
       {
-        "id": "lightblinded-vanguard",
-        "name": "Lightblinded Vanguard",
+        "id": "sszorak",
+        "name": "Sszorak",
         "kind": "raid_boss",
         "order": 5,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-23T02:00:01.386Z"
+        "first_kill_at": null
       },
       {
-        "id": "crown-of-the-cosmos",
-        "name": "Crown of the Cosmos",
+        "id": "the-twin-fangs",
+        "name": "The Twin Fangs",
         "kind": "raid_boss",
         "order": 6,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-23T02:20:39.548Z"
+        "first_kill_at": null
       },
       {
-        "id": "chimaerus-the-undreamt-god",
-        "name": "Chimaerus the Undreamt God",
+        "id": "the-coiled-altar",
+        "name": "The Coiled Altar",
         "kind": "raid_boss",
         "order": 7,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-23T01:31:55.416Z"
+        "first_kill_at": null
       },
       {
-        "id": "beloren-child-of-alar",
-        "name": "Belo'ren, Child of Al'ar",
+        "id": "ulatek",
+        "name": "Ula'tek",
         "kind": "raid_boss",
         "order": 8,
-        "status": "conquered",
-        "kill_confirmed": true,
+        "status": "locked",
+        "kill_confirmed": false,
         "inferred_from_progress": false,
-        "first_kill_at": "2026-07-13T01:33:15.223Z"
-      },
-      {
-        "id": "midnight-falls",
-        "name": "Midnight Falls",
-        "kind": "raid_boss",
-        "order": 9,
-        "status": "conquered",
-        "kill_confirmed": true,
-        "inferred_from_progress": false,
-        "first_kill_at": "2026-07-23T03:13:06.334Z"
+        "first_kill_at": null
       }
     ],
     "detail_source": "raid_kills"
