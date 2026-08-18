@@ -43,10 +43,13 @@ crew_board_doll.html
 # Generated website data bundle (build with scripts/build_site_data.py)
 web_data/
 
-# Front-end: rendered per-player pages, season views, bounty output
-p/
-seasons/
-bounty/
+# Front-end: rendered per-player pages, season views, bounty output (ROOT only —
+# `seasons/` unanchored also swallowed data/seasons/, the write-once season
+# freeze, and killed daily-data-refresh's commit step on the S2 flip 2026-08-18)
+/p/
+/seasons/
+/bounty/
+!data/seasons/
 
 # local admin tool output — never publish
 config.yml.tmp
