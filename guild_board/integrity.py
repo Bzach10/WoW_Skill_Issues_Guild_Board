@@ -159,6 +159,33 @@ def check_standing(standing, messages):
             standing.pop(key, None)
 
 
+def check_standing_memory(standing, remembered, messages=None):
+    """A rank the guild HELD does not vanish because one lookup flaked.
+
+    The realm/region/world tiles come from a live lookup every run. When it
+    comes back empty the ranks were written away as {} -- which also
+    destroyed the memory the NEXT run would have fallen back on, so one
+    flaked lookup silently cost the board its standing tiles for good. An
+    empty standing is a gap in the measurement, not a fall off the ladder
+    (the same rule state.py already applies to the week's own facts).
+
+    Heal: carry the last known ranks forward. Returns the standing to keep.
+    """
+    messages = [] if messages is None else messages
+    remembered = {k: v for k, v in (remembered or {}).items()
+                  if k in ("realm", "region", "world") and v}
+    if not remembered:
+        return standing
+    if any((standing or {}).get(k) for k in ("realm", "region", "world")):
+        return standing
+    _warn(messages, "standing came back empty; carried the last known ranks "
+                    "forward (" + ", ".join(f"{k} #{v:,}" if isinstance(v, int)
+                                            else f"{k} #{v}"
+                                            for k, v in sorted(remembered.items()))
+                    + ")")
+    return remembered
+
+
 def run_all(context=None, records=None, standing=None, theme=None):
     """Run every applicable check, healing in place. Returns the warning
     list — empty means a clean bill of health."""
@@ -189,6 +216,10 @@ def main():
         return 1
     messages = run_all(records=state.get("records"), standing=state.get("standing"))
     check_streaks(state, messages)
+    # Read-only here: report a standing the committed state has lost but its
+    # own baseline still remembers. The heal itself happens at write time.
+    check_standing_memory(state.get("standing"),
+                          (state.get("baseline") or {}).get("standing"), messages)
     hard = [m for m in messages
             if "clamped" in m or "dropped" in m or "unreadable" in m or "inflation" in m]
     print(f"integrity: {len(messages)} finding(s), {len(hard)} needing attention")

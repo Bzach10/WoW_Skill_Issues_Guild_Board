@@ -1430,6 +1430,46 @@ def test_baseline_survives_reposts(tmp_path, monkeypatch):
     assert view["season_scores"] == {"amrevenge": 3838}  # ▲70 survives the repost
 
 
+def test_standing_survives_a_flaked_lookup(tmp_path, monkeypatch):
+    """An empty standing is a gap in the measurement, not a fall off the
+    ladder — and the memory must survive more than one miss in a row.
+
+    Seen live 2026-08-18: the weekly run wrote "standing": {} over realm 35 /
+    region 1604 / world 5119, which also erased what the next run's fallback
+    reads, so the board's rank tiles would have gone dark for good."""
+    from guild_board.state import load_board_state, save_board_state
+    monkeypatch.chdir(tmp_path)
+    path = str(tmp_path / "board_state.json")
+    ranks = {"realm": 35, "region": 1604, "world": 5119}
+    save_board_state(ranks, [], streaks={}, records={}, path=path,
+                     streaks_week="2026-08-11")
+    # the lookup flakes: last week's ranks carry forward instead of {}
+    save_board_state({}, [], streaks={}, records={}, path=path,
+                     streaks_week="2026-08-18")
+    assert load_board_state(path)["standing"] == ranks
+    # and it flakes AGAIN — the baseline still remembers, so they hold
+    save_board_state(None, [], streaks={}, records={}, path=path,
+                     streaks_week="2026-08-25")
+    assert load_board_state(path)["standing"] == ranks
+    # a real new rank always wins over the memory
+    save_board_state({"realm": 31}, [], streaks={}, records={}, path=path,
+                     streaks_week="2026-09-01")
+    assert load_board_state(path)["standing"] == {"realm": 31}
+
+
+def test_integrity_reports_a_standing_the_state_lost(tmp_path):
+    """The caretaker CLI must SEE the artifact, not just heal it silently."""
+    from guild_board import integrity
+    msgs = []
+    kept = integrity.check_standing_memory(
+        {}, {"realm": 35, "region": 1604, "world": 5119}, msgs)
+    assert kept == {"realm": 35, "region": 1604, "world": 5119}
+    assert any("carried the last known ranks forward" in m for m in msgs)
+    # nothing remembered, nothing to say
+    assert integrity.check_standing_memory({}, {}, msgs := []) == {}
+    assert msgs == []
+
+
 def test_record_new_badge_survives_repost():
     from guild_board.state import update_records
     sweep = {"dps": {"name": "Amrevenge", "parse": 97, "boss": "Salhadaar",

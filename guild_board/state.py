@@ -204,6 +204,12 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         k: v for k, v in (standing or {}).items()
         if k in ("realm", "region", "world") and v
     }
+    # Never let a flaked lookup erase the ranks -- and fall back to the
+    # baseline when the previous run already wrote an empty one, so the
+    # memory survives a miss rather than only the first one.
+    clean_standing = integrity.check_standing_memory(
+        clean_standing,
+        prev.get("standing") or (prev.get("baseline") or {}).get("standing"))
     if streaks_week and prev.get("streaks_week") == streaks_week:
         # Same raid week: the baseline must not move, or reposts would
         # compare this week against itself and zero every delta.
