@@ -486,14 +486,15 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             logger.warning("Could not photograph the paper (%s); falling back "
                            "to the classic renderer for this week.", exc)
 
+    board_args = (cfg, stats, standing, leaders, zone_name,
+                  mplus_results, mplus_season_scores, mplus_season_parses,
+                  start_dt, end_dt, no_logs)
+    board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
+                        previous=previous_view, streaks=streaks, records=records)
+
     if layout == "image_board" and not image_path:
         try:
             display_cfg = cfg.get("display") or {}
-            board_args = (cfg, stats, standing, leaders, zone_name,
-                          mplus_results, mplus_season_scores, mplus_season_parses,
-                          start_dt, end_dt, no_logs)
-            board_kwargs = dict(improvement=improvement, mplus_weekly=mplus_weekly,
-                                previous=previous_view, streaks=streaks, records=records)
             animate = bool(display_cfg.get("animate", False))
             frames = int(display_cfg.get("animate_frames", 10))
             if display_cfg.get("renderer", "pillow") == "html":
@@ -518,15 +519,22 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if not image_path:
                 image_path = generate_board_image(
                     *board_args, output_path="board.png", **board_kwargs)
-            # The responsive web twin (published to GitHub Pages by CI —
-            # the auto-scaling companion the phone link button points at)
-            if (display_cfg.get("web_board") or {}).get("enabled", False):
-                from guild_board.html_board import generate_web_board
-                generate_web_board(*board_args, **board_kwargs)
         except Exception as exc:
             logger.warning("Board image generation failed; falling back to text embed: %s", exc)
             # two_column is unreadable in Discord; fall back to plain fields.
             cfg.setdefault("display", {})["layout"] = "single_column"
+
+    # The responsive web twin (templates/web.html.j2 -> site/index.html, which
+    # CI publishes to GitHub Pages). This is the page the post's own "Open the
+    # Web Board" link points at, so it must be rendered on EVERY path that
+    # posts -- including `renderer: paper`, which sets image_path above and
+    # skips the classic block entirely. It did not, and the published site and
+    # its week archive sat frozen at 2026-07-28 for three editions while every
+    # Tuesday post kept linking to them. Best-effort by contract: it renders
+    # pure HTML, needs no browser, and never raises into the posting flow.
+    if ((cfg.get("display") or {}).get("web_board") or {}).get("enabled", False):
+        from guild_board.html_board import generate_web_board
+        generate_web_board(*board_args, **board_kwargs)
 
     if image_path:
         from guild_board.formatters import tldr_lines

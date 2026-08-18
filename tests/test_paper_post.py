@@ -20,7 +20,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from guild_board import main, paper_shot
+from guild_board import html_board, main, paper_shot
 
 REPO = Path(__file__).resolve().parents[1]
 MANIFEST = REPO / "parity_manifest.yml"
@@ -152,6 +152,26 @@ def test_paper_renderer_posts_the_papers_photographs(tmp_path, monkeypatch):
     assert embed["image"]["url"] == "attachment://weekly_post_fold.png"
     assert calls["url"] == "http://example.invalid/board/"
     assert calls["manifest"]["kept"]
+
+
+def test_paper_renderer_still_renders_the_web_twin(tmp_path, monkeypatch):
+    """The post LINKS the web board, so the paper path must keep publishing it.
+
+    `renderer: paper` sets image_path before the classic block and skips it --
+    and the web twin used to be rendered inside that block. The published site
+    and its week archive froze at 2026-07-28 for three editions while every
+    Tuesday post kept pointing the guild at them."""
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setattr(paper_shot, "shoot_paper", lambda **k: _fake_shot(tmp_path))
+    monkeypatch.setattr(paper_shot, "load_parity_manifest", lambda *a, **k: _manifest())
+    rendered = []
+    monkeypatch.setattr(html_board, "generate_web_board",
+                        lambda *a, **k: rendered.append(a) or "site/index.html")
+    cfg = _cfg("paper")
+    cfg["display"]["web_board"] = {"enabled": True}
+    start, end = _window()
+    main.build_board(cfg, start_dt=start, end_dt=end, dry_run=True)
+    assert rendered, "renderer: paper skipped the web board render"
 
 
 def test_classic_renderer_leaves_the_old_path_alone(tmp_path, monkeypatch):

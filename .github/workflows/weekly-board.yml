@@ -134,7 +134,9 @@ jobs:
           WEB_BOARD_TOKEN: ${{ secrets.WEB_BOARD_TOKEN }}
         run: |
           if [ ! -f site/index.html ]; then
-            echo "No web board rendered this run; skipping publish."
+            # LOUD, not silent: this skip once went unnoticed for three weeks
+            # while every Tuesday post kept linking to the frozen edition.
+            echo "::warning title=Web board::No site/index.html rendered this run; the published board and its week archive stay at their previous edition."
             exit 0
           fi
           if [ -z "$WEB_BOARD_TOKEN" ]; then
