@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-19T12:21:55.430642+00:00",
+  "generated_at": "2026-08-19T14:32:57.778686+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.430749+00:00",
+    "generated_at": "2026-08-19T14:32:57.779009+00:00",
     "week_of": "2026-08-11",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.430911+00:00",
+    "generated_at": "2026-08-19T14:32:57.779362+00:00",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "standing": {},
     "previous_standing": {
@@ -1442,7 +1442,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.431200+00:00",
+    "generated_at": "2026-08-19T14:32:57.779778+00:00",
     "available": true,
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "week_label": "2026-08-11",
@@ -1696,7 +1696,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.431418+00:00",
+    "generated_at": "2026-08-19T14:32:57.780278+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2733,7 +2733,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.431441+00:00",
+    "generated_at": "2026-08-19T14:32:57.780322+00:00",
     "season_slug": "season-mn-2",
     "season_name": "Midnight Season 2",
     "dungeons": {
@@ -2920,7 +2920,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.429688+00:00",
+    "generated_at": "2026-08-19T14:32:57.776705+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2929,7 +2929,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.431446+00:00",
+    "generated_at": "2026-08-19T14:32:57.780332+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2944,7 +2944,7 @@
       "slug": "season-mn-2",
       "name": "Midnight Season 2"
     },
-    "based_on": "2026-08-19T12:18:42.447048+00:00",
+    "based_on": "2026-08-19T14:31:50.137457+00:00",
     "week_baseline_from": "2026-08-18T13:49:34.087997+00:00",
     "character_count": 135,
     "ranked_count": 113,
@@ -5101,11 +5101,13 @@
       },
       {
         "name": "Scounddrel",
-        "key": "scounddrel-maelstrom",
         "realm": "Maelstrom",
         "realm_slug": "maelstrom",
+        "key": "scounddrel-maelstrom",
+        "raiderio_url": "https://raider.io/characters/us/maelstrom/scounddrel",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/maelstrom/scounddrel",
         "class": "Hunter",
-        "spec": "Marksmanship",
+        "spec": "Marksmanship Hunter",
         "role": "DPS",
         "score": 3023.6,
         "scores_by_role": {
@@ -5114,12 +5116,12 @@
           "tank": 0
         },
         "best_runs": [],
-        "ranks": {
-          "realm_overall": null,
-          "realm_class": null,
-          "region_overall": null
-        },
         "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
         "delta_week": 0.0,
         "delta_day": 3023.6,
         "is_new": false,
@@ -7005,12 +7007,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 291,
-          "realm_class": 14,
-          "region_overall": 3851
+          "realm_overall": 324,
+          "realm_class": 19,
+          "region_overall": 4254
         },
         "delta_week": -1343.4,
-        "delta_day": 697.2,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 89.6,
@@ -7387,9 +7389,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1335,
-          "realm_class": 96,
-          "region_overall": 9488
+          "realm_overall": 1395,
+          "realm_class": 103,
+          "region_overall": 10228
         },
         "delta_week": -1613.0,
         "delta_day": 0.0,
@@ -7682,9 +7684,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 178,
-          "realm_class": 11,
-          "region_overall": 9987
+          "realm_overall": 186,
+          "realm_class": 12,
+          "region_overall": 10757
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -7930,12 +7932,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 265,
+          "realm_overall": 274,
           "realm_class": 12,
-          "region_overall": 10477
+          "region_overall": 11273
         },
         "delta_week": null,
-        "delta_day": 34.5,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 68,
@@ -8095,11 +8097,13 @@
       },
       {
         "name": "Carun",
-        "key": "carun-proudmoore",
         "realm": "Proudmoore",
         "realm_slug": "proudmoore",
+        "key": "carun-proudmoore",
+        "raiderio_url": "https://raider.io/characters/us/proudmoore/carun",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/proudmoore/carun",
         "class": "Warrior",
-        "spec": "Arms",
+        "spec": "Arms Warrior",
         "role": "DPS",
         "score": 2129,
         "scores_by_role": {
@@ -8108,12 +8112,12 @@
           "tank": 0
         },
         "best_runs": [],
-        "ranks": {
-          "realm_overall": null,
-          "realm_class": null,
-          "region_overall": null
-        },
         "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
         "delta_week": 0,
         "delta_day": 2129,
         "is_new": false,
@@ -8380,12 +8384,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1307,
-          "realm_class": 118,
-          "region_overall": 28704
+          "realm_overall": 1359,
+          "realm_class": 123,
+          "region_overall": 30052
         },
         "delta_week": -1493.5,
-        "delta_day": 101.0,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 51.8,
@@ -8685,12 +8689,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 169,
-          "realm_class": 20,
-          "region_overall": 35991
+          "realm_overall": 171,
+          "realm_class": 21,
+          "region_overall": 37534
         },
         "delta_week": null,
-        "delta_day": 203.6,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 76,
@@ -8879,9 +8883,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 388,
+          "realm_overall": 396,
           "realm_class": 48,
-          "region_overall": 42679
+          "region_overall": 44369
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -9055,12 +9059,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 324,
-          "realm_class": 40,
-          "region_overall": 44272
+          "realm_overall": 332,
+          "realm_class": 41,
+          "region_overall": 45974
         },
         "delta_week": -2170.8,
-        "delta_day": 1014.5,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 84.0,
@@ -9278,12 +9282,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1586,
-          "realm_class": 152,
-          "region_overall": 44273
+          "realm_overall": 1629,
+          "realm_class": 156,
+          "region_overall": 45979
         },
         "delta_week": null,
-        "delta_day": 1014.5,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 80,
@@ -9406,12 +9410,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5238,
-          "realm_class": 769,
-          "region_overall": 47952
+          "realm_overall": 5349,
+          "realm_class": 778,
+          "region_overall": 49698
         },
         "delta_week": null,
-        "delta_day": 278.4,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 81,
@@ -9722,12 +9726,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 299,
-          "realm_class": 25,
-          "region_overall": 54096
+          "realm_overall": 311,
+          "realm_class": 26,
+          "region_overall": 56028
         },
         "delta_week": -2060.6,
-        "delta_day": 284.6,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 85.3,
@@ -10048,12 +10052,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 334,
-          "realm_class": 16,
-          "region_overall": 61353
+          "realm_overall": 353,
+          "realm_class": 17,
+          "region_overall": 63458
         },
         "delta_week": null,
-        "delta_day": 698.1,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 90,
@@ -10212,12 +10216,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2370,
-          "realm_class": 133,
-          "region_overall": 63491
+          "realm_overall": 2430,
+          "realm_class": 134,
+          "region_overall": 65659
         },
         "delta_week": -2106.5,
-        "delta_day": 162.2,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 69.0,
@@ -10426,9 +10430,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3011,
-          "realm_class": 405,
-          "region_overall": 73901
+          "realm_overall": 3063,
+          "realm_class": 411,
+          "region_overall": 76286
         },
         "delta_week": -2383.4,
         "delta_day": 0.0,
@@ -10582,9 +10586,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 6726,
-          "realm_class": 1050,
-          "region_overall": 74972
+          "realm_overall": 6866,
+          "realm_class": 1072,
+          "region_overall": 77359
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10698,9 +10702,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 8481,
-          "realm_class": 494,
-          "region_overall": 75232
+          "realm_overall": 8615,
+          "realm_class": 516,
+          "region_overall": 77639
         },
         "delta_week": -2812.0,
         "delta_day": 0.0,
@@ -10882,12 +10886,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 8533,
-          "realm_class": 643,
-          "region_overall": 75869
+          "realm_overall": 8668,
+          "realm_class": 649,
+          "region_overall": 78280
         },
         "delta_week": -2036.1,
-        "delta_day": 698,
+        "delta_day": 0,
         "is_new": false,
         "parse": {
           "best": 56.5,
@@ -11054,9 +11058,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7870,
-          "realm_class": 1149,
-          "region_overall": 78493
+          "realm_overall": 7997,
+          "realm_class": 1168,
+          "region_overall": 80975
         },
         "delta_week": 512.6,
         "delta_day": 0.0,
@@ -11158,9 +11162,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7864,
-          "realm_class": 738,
-          "region_overall": 88884
+          "realm_overall": 8020,
+          "realm_class": 750,
+          "region_overall": 91566
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11262,9 +11266,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1658,
-          "realm_class": 190,
-          "region_overall": 89474
+          "realm_overall": 1683,
+          "realm_class": 193,
+          "region_overall": 92165
         },
         "delta_week": -3341.2,
         "delta_day": 0,
@@ -11416,9 +11420,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 240,
+          "realm_overall": 241,
           "realm_class": 23,
-          "region_overall": 106837
+          "region_overall": 109832
         },
         "delta_week": -2501.7,
         "delta_day": 0,
@@ -11496,12 +11500,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1408,
-          "realm_class": 89,
-          "region_overall": 110326
+          "realm_overall": 1436,
+          "realm_class": 92,
+          "region_overall": 113459
         },
         "delta_week": -2434.9,
-        "delta_day": 160.8,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 47.5,
@@ -11604,12 +11608,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11493,
-          "realm_class": 1035,
-          "region_overall": 110493
+          "realm_overall": 11650,
+          "realm_class": 1048,
+          "region_overall": 113625
         },
         "delta_week": -2920.8,
-        "delta_day": 329.4,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 76.3,
@@ -11704,9 +11708,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10428,
-          "realm_class": 596,
-          "region_overall": 112119
+          "realm_overall": 10557,
+          "realm_class": 602,
+          "region_overall": 115324
         },
         "delta_week": null,
         "delta_day": 0,
@@ -11760,12 +11764,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4737,
-          "realm_class": 401,
-          "region_overall": 112938
+          "realm_overall": 4839,
+          "realm_class": 410,
+          "region_overall": 116180
         },
         "delta_week": null,
-        "delta_day": null,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 105,
@@ -11816,9 +11820,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 238,
+          "realm_overall": 245,
           "realm_class": 40,
-          "region_overall": 116934
+          "region_overall": 120165
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11902,9 +11906,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2325,
-          "realm_class": 203,
-          "region_overall": 124615
+          "realm_overall": 2373,
+          "realm_class": 209,
+          "region_overall": 127907
         },
         "delta_week": null,
         "delta_day": 0,
@@ -11945,11 +11949,13 @@
       },
       {
         "name": "Sandgs",
-        "key": "sandgs-area-52",
         "realm": "Area 52",
         "realm_slug": "area-52",
+        "key": "sandgs-area-52",
+        "raiderio_url": "https://raider.io/characters/us/area-52/sandgs",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/sandgs",
         "class": "Demon Hunter",
-        "spec": "Devourer",
+        "spec": "Devourer DH",
         "role": "DPS",
         "score": 166.8,
         "scores_by_role": {
@@ -11958,12 +11964,12 @@
           "tank": 0
         },
         "best_runs": [],
-        "ranks": {
-          "realm_overall": null,
-          "realm_class": null,
-          "region_overall": null
-        },
         "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
         "delta_week": 0.0,
         "delta_day": 166.8,
         "is_new": false,
@@ -12046,9 +12052,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5385,
-          "realm_class": 480,
-          "region_overall": 132216
+          "realm_overall": 5475,
+          "realm_class": 488,
+          "region_overall": 135605
         },
         "delta_week": -2910.0,
         "delta_day": 0.0,
@@ -17211,7 +17217,7 @@
     "departed_count": 71,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-19T12:18:42.447048+00:00",
+      "as_of": "2026-08-19T14:31:50.137457+00:00",
       "member_count": 135
     },
     "key_records": {
@@ -17706,7 +17712,7 @@
           "key": "scounddrel-maelstrom",
           "score": 3023.6,
           "class": "Hunter",
-          "spec": "Marksmanship",
+          "spec": "Marksmanship Hunter",
           "role": "DPS",
           "top5": false,
           "delta_week": 0.0,
@@ -18087,7 +18093,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -1343.4,
-          "delta_day": 697.2,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18165,7 +18171,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 34.5,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -18213,7 +18219,7 @@
           "key": "carun-proudmoore",
           "score": 2129,
           "class": "Warrior",
-          "spec": "Arms",
+          "spec": "Arms Warrior",
           "role": "DPS",
           "top5": false,
           "delta_week": 0,
@@ -18243,7 +18249,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -1493.5,
-          "delta_day": 101.0,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18269,7 +18275,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 203.6,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -18308,7 +18314,7 @@
           "role": "Healer",
           "top5": false,
           "delta_week": -2170.8,
-          "delta_day": 1014.5,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18321,7 +18327,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 1014.5,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -18334,7 +18340,7 @@
           "role": "Healer",
           "top5": false,
           "delta_week": null,
-          "delta_day": 278.4,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -18399,7 +18405,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -2060.6,
-          "delta_day": 284.6,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18451,7 +18457,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 698.1,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -18464,7 +18470,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -2106.5,
-          "delta_day": 162.2,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18529,7 +18535,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -2036.1,
-          "delta_day": 698,
+          "delta_day": 0,
           "is_new": false
         },
         {
@@ -18607,7 +18613,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -2434.9,
-          "delta_day": 160.8,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18620,7 +18626,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -2920.8,
-          "delta_day": 329.4,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
@@ -18646,7 +18652,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": null,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -18707,7 +18713,7 @@
           "key": "sandgs-area-52",
           "score": 166.8,
           "class": "Demon Hunter",
-          "spec": "Devourer",
+          "spec": "Devourer DH",
           "role": "DPS",
           "top5": false,
           "delta_week": 0.0,
@@ -19197,7 +19203,7 @@
             "role": "Healer",
             "top5": false,
             "delta_week": -2170.8,
-            "delta_day": 1014.5,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -19210,7 +19216,7 @@
             "role": "Healer",
             "top5": false,
             "delta_week": null,
-            "delta_day": 278.4,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -19468,7 +19474,7 @@
             "key": "scounddrel-maelstrom",
             "score": 3023.6,
             "class": "Hunter",
-            "spec": "Marksmanship",
+            "spec": "Marksmanship Hunter",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -19771,7 +19777,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1343.4,
-            "delta_day": 697.2,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -19823,7 +19829,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 34.5,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -19858,7 +19864,7 @@
             "key": "carun-proudmoore",
             "score": 2129,
             "class": "Warrior",
-            "spec": "Arms",
+            "spec": "Arms Warrior",
             "role": "DPS",
             "top5": false,
             "delta_week": 0,
@@ -19888,7 +19894,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1493.5,
-            "delta_day": 101.0,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -19914,7 +19920,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 203.6,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -19940,7 +19946,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 1014.5,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -19979,7 +19985,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2060.6,
-            "delta_day": 284.6,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -20018,7 +20024,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 698.1,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -20031,7 +20037,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2106.5,
-            "delta_day": 162.2,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -20070,7 +20076,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2036.1,
-            "delta_day": 698,
+            "delta_day": 0,
             "is_new": false
           },
           {
@@ -20109,7 +20115,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2434.9,
-            "delta_day": 160.8,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -20122,7 +20128,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2920.8,
-            "delta_day": 329.4,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -20135,7 +20141,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": null,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -20183,7 +20189,7 @@
             "key": "sandgs-area-52",
             "score": 166.8,
             "class": "Demon Hunter",
-            "spec": "Devourer",
+            "spec": "Devourer DH",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -20475,7 +20481,7 @@
             "key": "sandgs-area-52",
             "score": 166.8,
             "class": "Demon Hunter",
-            "spec": "Devourer",
+            "spec": "Devourer DH",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -20611,7 +20617,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2036.1,
-            "delta_day": 698,
+            "delta_day": 0,
             "is_new": false
           },
           {
@@ -20624,7 +20630,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": null,
+            "delta_day": 0.0,
             "is_new": true
           }
         ],
@@ -20702,7 +20708,7 @@
             "key": "scounddrel-maelstrom",
             "score": 3023.6,
             "class": "Hunter",
-            "spec": "Marksmanship",
+            "spec": "Marksmanship Hunter",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -20745,7 +20751,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1343.4,
-            "delta_day": 697.2,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -20771,7 +20777,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2060.6,
-            "delta_day": 284.6,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -20877,7 +20883,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2920.8,
-            "delta_day": 329.4,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -21089,7 +21095,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 203.6,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -21102,7 +21108,7 @@
             "role": "Healer",
             "top5": false,
             "delta_week": null,
-            "delta_day": 278.4,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -21234,7 +21240,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2434.9,
-            "delta_day": 160.8,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -21288,7 +21294,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 34.5,
+            "delta_day": 0.0,
             "is_new": true
           }
         ],
@@ -21407,7 +21413,7 @@
             "role": "Healer",
             "top5": false,
             "delta_week": -2170.8,
-            "delta_day": 1014.5,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -21565,7 +21571,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 698.1,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -21578,7 +21584,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -2106.5,
-            "delta_day": 162.2,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -21641,7 +21647,7 @@
             "key": "carun-proudmoore",
             "score": 2129,
             "class": "Warrior",
-            "spec": "Arms",
+            "spec": "Arms Warrior",
             "role": "DPS",
             "top5": false,
             "delta_week": 0,
@@ -21658,7 +21664,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1493.5,
-            "delta_day": 101.0,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -21671,7 +21677,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 1014.5,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -22261,16 +22267,6 @@
           "delta_day": 1022.2
         },
         {
-          "name": "Hellful",
-          "key": "hellful-lightnings-blade",
-          "delta_day": 1014.5
-        },
-        {
-          "name": "Kirrax",
-          "key": "kirrax-thrall",
-          "delta_day": 1014.5
-        },
-        {
           "name": "Uddershock",
           "key": "uddershock-queldorei",
           "delta_day": 977.9
@@ -22286,44 +22282,9 @@
           "delta_day": 740.1
         },
         {
-          "name": "Codedgar",
-          "key": "codedgar-queldorei",
-          "delta_day": 698.1
-        },
-        {
-          "name": "Miallo",
-          "key": "miallo-area-52",
-          "delta_day": 698
-        },
-        {
-          "name": "Amrevenge",
-          "key": "amrevenge-stormrage",
-          "delta_day": 697.2
-        },
-        {
           "name": "Néfèrtítì",
           "key": "néfèrtítì-tichondrius",
           "delta_day": 473.8
-        },
-        {
-          "name": "Buchalter",
-          "key": "buchalter-area-52",
-          "delta_day": 329.4
-        },
-        {
-          "name": "Boondocka",
-          "key": "boondocka-hydraxis",
-          "delta_day": 284.6
-        },
-        {
-          "name": "Emmastrasza",
-          "key": "emmastrasza-illidan",
-          "delta_day": 278.4
-        },
-        {
-          "name": "Riias",
-          "key": "riias-senjin",
-          "delta_day": 203.6
         },
         {
           "name": "Azerothia",
@@ -22346,29 +22307,9 @@
           "delta_day": 166.7
         },
         {
-          "name": "Boltzaa",
-          "key": "boltzaa-thrall",
-          "delta_day": 162.2
-        },
-        {
-          "name": "Wowimhealing",
-          "key": "wowimhealing-azgalor",
-          "delta_day": 160.8
-        },
-        {
           "name": "Xavira",
           "key": "xavira-proudmoore",
           "delta_day": 158.9
-        },
-        {
-          "name": "Marceau",
-          "key": "marceau-malganis",
-          "delta_day": 101.0
-        },
-        {
-          "name": "Rakella",
-          "key": "rakella-proudmoore",
-          "delta_day": 34.5
         }
       ],
       "new_to_board": [
@@ -22513,7 +22454,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-19T12:21:55.430637+00:00",
+    "generated_at": "2026-08-19T14:32:57.778674+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
