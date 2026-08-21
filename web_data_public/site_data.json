@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-21T06:23:49.394561+00:00",
+  "generated_at": "2026-08-21T12:21:01.059013+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.394647+00:00",
+    "generated_at": "2026-08-21T12:21:01.059107+00:00",
     "week_of": "2026-08-11",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.394776+00:00",
+    "generated_at": "2026-08-21T12:21:01.059256+00:00",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "standing": {},
     "previous_standing": {
@@ -1442,7 +1442,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.394935+00:00",
+    "generated_at": "2026-08-21T12:21:01.059454+00:00",
     "available": true,
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "week_label": "2026-08-11",
@@ -1696,7 +1696,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.395113+00:00",
+    "generated_at": "2026-08-21T12:21:01.059638+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2733,7 +2733,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.395134+00:00",
+    "generated_at": "2026-08-21T12:21:01.059658+00:00",
     "season_slug": "season-mn-2",
     "season_name": "Midnight Season 2",
     "dungeons": {
@@ -2920,7 +2920,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.393784+00:00",
+    "generated_at": "2026-08-21T12:21:01.058184+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2929,7 +2929,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.395138+00:00",
+    "generated_at": "2026-08-21T12:21:01.059663+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2944,11 +2944,11 @@
       "slug": "season-mn-2",
       "name": "Midnight Season 2"
     },
-    "based_on": "2026-08-21T06:22:44.111075+00:00",
+    "based_on": "2026-08-21T12:19:54.150868+00:00",
     "week_baseline_from": "2026-08-18T13:49:34.087997+00:00",
-    "character_count": 164,
-    "ranked_count": 132,
-    "unranked_count": 32,
+    "character_count": 156,
+    "ranked_count": 125,
+    "unranked_count": 31,
     "characters": [
       {
         "name": "Brewzleeh",
@@ -4002,64 +4002,6 @@
         "top5": false
       },
       {
-        "name": "Kegsmashroll",
-        "realm": "Stormrage",
-        "realm_slug": "stormrage",
-        "key": "kegsmashroll-stormrage",
-        "raiderio_url": "https://raider.io/characters/us/stormrage/kegsmashroll",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/stormrage/kegsmashroll",
-        "class": "Monk",
-        "spec": "Brewmaster Monk",
-        "role": "Tank",
-        "score": 3414.3,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 3414.3,
-        "is_new": false,
-        "parse": {
-          "best": 78.7,
-          "scaled": 63.0,
-          "by_role": {
-            "Tank": {
-              "best_perf_avg": 78.7
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "heroic": {
-              "best_perf_avg": 78.7,
-              "by_role": {
-                "Tank": {
-                  "best_perf_avg": 78.7
-                }
-              },
-              "metric": "dps",
-              "by_metric": {
-                "dps": 78.7,
-                "hps": 55.9
-              },
-              "median_perf_avg": 71.3,
-              "scaled_perf_avg": 63.0,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 16,
-        "top5": false
-      },
-      {
         "name": "Onessarain",
         "realm": "Area 52",
         "realm_slug": "area-52",
@@ -4114,7 +4056,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 17,
+        "rank": 16,
         "top5": false
       },
       {
@@ -4172,7 +4114,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 18,
+        "rank": 17,
         "top5": false
       },
       {
@@ -4230,7 +4172,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 19,
+        "rank": 18,
         "top5": false
       },
       {
@@ -4294,7 +4236,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 20,
+        "rank": 19,
         "top5": false
       },
       {
@@ -4368,7 +4310,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 21,
+        "rank": 20,
         "top5": false
       },
       {
@@ -4398,7 +4340,7 @@
         "delta_day": 3256.2,
         "is_new": false,
         "parse": null,
-        "rank": 22,
+        "rank": 21,
         "top5": false
       },
       {
@@ -4472,7 +4414,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 23,
+        "rank": 22,
         "top5": false
       },
       {
@@ -4555,7 +4497,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 24,
+        "rank": 23,
         "top5": false
       },
       {
@@ -4613,7 +4555,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 25,
+        "rank": 24,
         "top5": false
       },
       {
@@ -4687,7 +4629,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 26,
+        "rank": 25,
         "top5": false
       },
       {
@@ -4717,65 +4659,7 @@
         "delta_day": 3128.5,
         "is_new": false,
         "parse": null,
-        "rank": 27,
-        "top5": false
-      },
-      {
-        "name": "Ohnomyais",
-        "realm": "Area 52",
-        "realm_slug": "area-52",
-        "key": "ohnomyais-area-52",
-        "raiderio_url": "https://raider.io/characters/us/area-52/ohnomyais",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/ohnomyais",
-        "class": "Warrior",
-        "spec": "Arms Warrior",
-        "role": "DPS",
-        "score": 3125.7,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 3125.7,
-        "is_new": false,
-        "parse": {
-          "best": 54.0,
-          "scaled": 43.2,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 39.2
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "heroic": {
-              "best_perf_avg": 54.0,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 39.2
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 39.2,
-                "hps": 54.0
-              },
-              "median_perf_avg": 40.1,
-              "scaled_perf_avg": 43.2,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 28,
+        "rank": 26,
         "top5": false
       },
       {
@@ -4849,7 +4733,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 29,
+        "rank": 27,
         "top5": false
       },
       {
@@ -4929,7 +4813,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 30,
+        "rank": 28,
         "top5": false
       },
       {
@@ -4959,7 +4843,7 @@
         "delta_day": 3106,
         "is_new": false,
         "parse": null,
-        "rank": 31,
+        "rank": 29,
         "top5": false
       },
       {
@@ -5017,7 +4901,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 32,
+        "rank": 30,
         "top5": false
       },
       {
@@ -5091,7 +4975,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 33,
+        "rank": 31,
         "top5": false
       },
       {
@@ -5171,7 +5055,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 34,
+        "rank": 32,
         "top5": false
       },
       {
@@ -5251,7 +5135,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 35,
+        "rank": 33,
         "top5": false
       },
       {
@@ -5309,7 +5193,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 36,
+        "rank": 34,
         "top5": false
       },
       {
@@ -5386,7 +5270,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 37,
+        "rank": 35,
         "top5": false
       },
       {
@@ -5460,7 +5344,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 38,
+        "rank": 36,
         "top5": false
       },
       {
@@ -5518,7 +5402,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 39,
+        "rank": 37,
         "top5": false
       },
       {
@@ -5548,7 +5432,7 @@
         "delta_day": 3018.9,
         "is_new": false,
         "parse": null,
-        "rank": 40,
+        "rank": 38,
         "top5": false
       },
       {
@@ -5578,7 +5462,7 @@
         "delta_day": 2997.8,
         "is_new": false,
         "parse": null,
-        "rank": 41,
+        "rank": 39,
         "top5": false
       },
       {
@@ -5652,7 +5536,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 42,
+        "rank": 40,
         "top5": false
       },
       {
@@ -5726,7 +5610,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 43,
+        "rank": 41,
         "top5": false
       },
       {
@@ -5800,7 +5684,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 44,
+        "rank": 42,
         "top5": false
       },
       {
@@ -5858,7 +5742,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 45,
+        "rank": 43,
         "top5": false
       },
       {
@@ -5932,7 +5816,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 46,
+        "rank": 44,
         "top5": false
       },
       {
@@ -6015,7 +5899,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 47,
+        "rank": 45,
         "top5": false
       },
       {
@@ -6073,7 +5957,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 48,
+        "rank": 46,
         "top5": false
       },
       {
@@ -6103,65 +5987,7 @@
         "delta_day": 2878.2,
         "is_new": false,
         "parse": null,
-        "rank": 49,
-        "top5": false
-      },
-      {
-        "name": "Autable",
-        "realm": "Gurubashi",
-        "realm_slug": "gurubashi",
-        "key": "autable-gurubashi",
-        "raiderio_url": "https://raider.io/characters/us/gurubashi/autable",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/gurubashi/autable",
-        "class": "Demon Hunter",
-        "spec": "Havoc DH",
-        "role": "DPS",
-        "score": 2873.8,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 2873.8,
-        "is_new": false,
-        "parse": {
-          "best": 27.3,
-          "scaled": 21.8,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 20.9
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "heroic": {
-              "best_perf_avg": 27.3,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 20.9
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 20.9,
-                "hps": 27.3
-              },
-              "median_perf_avg": 24.8,
-              "scaled_perf_avg": 21.8,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 50,
+        "rank": 47,
         "top5": false
       },
       {
@@ -6401,12 +6227,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 381,
-          "realm_class": 30,
-          "region_overall": 2187
+          "realm_overall": 466,
+          "realm_class": 35,
+          "region_overall": 2812
         },
         "delta_week": -1030.7,
-        "delta_day": 143.7,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 87.6,
@@ -6456,7 +6282,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 51,
+        "rank": 48,
         "top5": false
       },
       {
@@ -6486,7 +6312,7 @@
         "delta_day": 2860.1,
         "is_new": false,
         "parse": null,
-        "rank": 52,
+        "rank": 49,
         "top5": false
       },
       {
@@ -6544,7 +6370,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 53,
+        "rank": 50,
         "top5": false
       },
       {
@@ -6618,37 +6444,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 54,
-        "top5": false
-      },
-      {
-        "name": "Paleghost",
-        "realm": "Sargeras",
-        "realm_slug": "sargeras",
-        "key": "paleghost-sargeras",
-        "raiderio_url": "https://raider.io/characters/us/sargeras/paleghost",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/sargeras/paleghost",
-        "class": "Death Knight",
-        "spec": "Unholy DK",
-        "role": "DPS",
-        "score": 2810.7,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 2810.7,
-        "is_new": false,
-        "parse": null,
-        "rank": 55,
+        "rank": 51,
         "top5": false
       },
       {
@@ -6706,7 +6502,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 56,
+        "rank": 52,
         "top5": false
       },
       {
@@ -6736,7 +6532,7 @@
         "delta_day": 2786.5,
         "is_new": false,
         "parse": null,
-        "rank": 57,
+        "rank": 53,
         "top5": false
       },
       {
@@ -6855,6 +6651,18 @@
         ],
         "recent_runs": [
           {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 12,
+            "timed": false,
+            "upgrades": 0,
+            "score": 309.8,
+            "clear_ms": 2139394,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-21T06:43:21.000Z",
+            "keystone_run_id": 939227
+          },
+          {
             "dungeon": "Altar of Fangs",
             "short": "AOF",
             "level": 11,
@@ -6961,27 +6769,15 @@
             "par_ms": 2040999,
             "completed_at": "2026-08-20T21:10:27.000Z",
             "keystone_run_id": 783584
-          },
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 11,
-            "timed": true,
-            "upgrades": 2,
-            "score": 344.8,
-            "clear_ms": 1332402,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T20:26:31.000Z",
-            "keystone_run_id": 776911
           }
         ],
         "ranks": {
-          "realm_overall": 63,
-          "realm_class": 7,
-          "region_overall": 4321
+          "realm_overall": 76,
+          "realm_class": 10,
+          "region_overall": 5252
         },
         "delta_week": -1109.1,
-        "delta_day": 192.4,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 90.9,
@@ -7028,7 +6824,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 58,
+        "rank": 54,
         "top5": false
       },
       {
@@ -7102,7 +6898,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 59,
+        "rank": 55,
         "top5": false
       },
       {
@@ -7132,7 +6928,7 @@
         "delta_day": 2751.4,
         "is_new": false,
         "parse": null,
-        "rank": 60,
+        "rank": 56,
         "top5": false
       },
       {
@@ -7190,7 +6986,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 61,
+        "rank": 57,
         "top5": false
       },
       {
@@ -7264,7 +7060,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 62,
+        "rank": 58,
         "top5": false
       },
       {
@@ -7504,12 +7300,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1125,
-          "realm_class": 51,
-          "region_overall": 10865
+          "realm_overall": 1252,
+          "realm_class": 57,
+          "region_overall": 12440
         },
         "delta_week": -1240.1,
-        "delta_day": 43.2,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 89.6,
@@ -7556,7 +7352,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 63,
+        "rank": 59,
         "top5": false
       },
       {
@@ -7642,7 +7438,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 64,
+        "rank": 60,
         "top5": false
       },
       {
@@ -7672,7 +7468,7 @@
         "delta_day": 2632.1,
         "is_new": false,
         "parse": null,
-        "rank": 65,
+        "rank": 61,
         "top5": false
       },
       {
@@ -7730,7 +7526,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 66,
+        "rank": 62,
         "top5": false
       },
       {
@@ -7788,7 +7584,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 67,
+        "rank": 63,
         "top5": false
       },
       {
@@ -7907,6 +7703,30 @@
         ],
         "recent_runs": [
           {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 8,
+            "timed": true,
+            "upgrades": 2,
+            "score": 286.9,
+            "clear_ms": 1391668,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T08:06:51.000Z",
+            "keystone_run_id": 952815
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 9,
+            "timed": true,
+            "upgrades": 2,
+            "score": 299.7,
+            "clear_ms": 1465994,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-21T05:42:58.000Z",
+            "keystone_run_id": 935101
+          },
+          {
             "dungeon": "Temple of Sethraliss",
             "short": "TOS",
             "level": 11,
@@ -8001,39 +7821,15 @@
             "par_ms": 1980999,
             "completed_at": "2026-08-20T05:33:30.000Z",
             "keystone_run_id": 576738
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 10,
-            "timed": true,
-            "upgrades": 2,
-            "score": 330.6,
-            "clear_ms": 1206514,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-20T04:36:43.000Z",
-            "keystone_run_id": 574778
-          },
-          {
-            "dungeon": "The Blinding Vale",
-            "short": "BV",
-            "level": 11,
-            "timed": true,
-            "upgrades": 1,
-            "score": 339.3,
-            "clear_ms": 1592706,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T04:07:21.000Z",
-            "keystone_run_id": 534378
           }
         ],
         "ranks": {
-          "realm_overall": 140,
-          "realm_class": 22,
-          "region_overall": 20386
+          "realm_overall": 146,
+          "realm_class": 23,
+          "region_overall": 22485
         },
         "delta_week": -820.8,
-        "delta_day": 201.6,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 84.0,
@@ -8083,7 +7879,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 68,
+        "rank": 64,
         "top5": false
       },
       {
@@ -8113,7 +7909,294 @@
         "delta_day": 2588.7,
         "is_new": false,
         "parse": null,
-        "rank": 69,
+        "rank": 65,
+        "top5": false
+      },
+      {
+        "name": "Marceau",
+        "realm": "Mal'Ganis",
+        "realm_slug": "malganis",
+        "key": "marceau-malganis",
+        "raiderio_url": "https://raider.io/characters/us/malganis/marceau",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/malganis/marceau",
+        "class": "Warrior",
+        "spec": "Arms Warrior",
+        "role": "DPS",
+        "score": 2548.4,
+        "scores_by_role": {
+          "dps": 2548.4,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 12,
+            "timed": true,
+            "upgrades": 1,
+            "score": 365.8,
+            "clear_ms": 1997450,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T05:15:45.000Z",
+            "keystone_run_id": 967526
+          },
+          {
+            "dungeon": "Temple of Sethraliss",
+            "short": "TOS",
+            "level": 11,
+            "timed": true,
+            "upgrades": 1,
+            "score": 337.3,
+            "clear_ms": 1802453,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-21T04:32:09.000Z",
+            "keystone_run_id": 967515
+          },
+          {
+            "dungeon": "Voidscar Arena",
+            "short": "VSA",
+            "level": 10,
+            "timed": true,
+            "upgrades": 2,
+            "score": 327.9,
+            "clear_ms": 1423060,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T05:04:13.000Z",
+            "keystone_run_id": 567437
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 10,
+            "timed": true,
+            "upgrades": 2,
+            "score": 327.7,
+            "clear_ms": 1573647,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-20T23:56:09.000Z",
+            "keystone_run_id": 837362
+          },
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 11,
+            "timed": false,
+            "upgrades": 0,
+            "score": 304.7,
+            "clear_ms": 1694933,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-19T06:14:25.000Z",
+            "keystone_run_id": 114489
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 10,
+            "timed": false,
+            "upgrades": 0,
+            "score": 300.8,
+            "clear_ms": 2135324,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-20T07:37:46.000Z",
+            "keystone_run_id": 566308
+          },
+          {
+            "dungeon": "Altar of Fangs",
+            "short": "AOF",
+            "level": 9,
+            "timed": true,
+            "upgrades": 2,
+            "score": 297.6,
+            "clear_ms": 1435915,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T06:51:26.000Z",
+            "keystone_run_id": 566315
+          },
+          {
+            "dungeon": "The Blinding Vale",
+            "short": "BV",
+            "level": 8,
+            "timed": true,
+            "upgrades": 2,
+            "score": 286.6,
+            "clear_ms": 1242059,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-19T20:33:09.000Z",
+            "keystone_run_id": 378745
+          }
+        ],
+        "recent_runs": [
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 12,
+            "timed": false,
+            "upgrades": 0,
+            "score": 0,
+            "clear_ms": 2818873,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-21T06:06:47.000Z",
+            "keystone_run_id": 928778
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 12,
+            "timed": true,
+            "upgrades": 1,
+            "score": 365.8,
+            "clear_ms": 1997450,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T05:15:45.000Z",
+            "keystone_run_id": 967526
+          },
+          {
+            "dungeon": "Temple of Sethraliss",
+            "short": "TOS",
+            "level": 11,
+            "timed": true,
+            "upgrades": 1,
+            "score": 337.3,
+            "clear_ms": 1802453,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-21T04:32:09.000Z",
+            "keystone_run_id": 967515
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 10,
+            "timed": true,
+            "upgrades": 2,
+            "score": 327.7,
+            "clear_ms": 1573647,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-20T23:56:09.000Z",
+            "keystone_run_id": 837362
+          },
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 11,
+            "timed": false,
+            "upgrades": 0,
+            "score": 301.2,
+            "clear_ms": 1850858,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-20T23:19:13.000Z",
+            "keystone_run_id": 833549
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 2,
+            "timed": true,
+            "upgrades": 2,
+            "score": 169.1,
+            "clear_ms": 1238615,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-20T18:11:04.000Z",
+            "keystone_run_id": 743574
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 10,
+            "timed": false,
+            "upgrades": 0,
+            "score": 300.8,
+            "clear_ms": 2135324,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-20T07:37:46.000Z",
+            "keystone_run_id": 566308
+          },
+          {
+            "dungeon": "Altar of Fangs",
+            "short": "AOF",
+            "level": 9,
+            "timed": true,
+            "upgrades": 2,
+            "score": 297.6,
+            "clear_ms": 1435915,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T06:51:26.000Z",
+            "keystone_run_id": 566315
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 12,
+            "timed": false,
+            "upgrades": 0,
+            "score": 309.7,
+            "clear_ms": 2602056,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-20T06:14:11.000Z",
+            "keystone_run_id": 565856
+          },
+          {
+            "dungeon": "Voidscar Arena",
+            "short": "VSA",
+            "level": 10,
+            "timed": true,
+            "upgrades": 2,
+            "score": 327.9,
+            "clear_ms": 1423060,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T05:04:13.000Z",
+            "keystone_run_id": 567437
+          }
+        ],
+        "ranks": {
+          "realm_overall": 1332,
+          "realm_class": 114,
+          "region_overall": 26438
+        },
+        "delta_week": -573.3,
+        "delta_day": 95.1,
+        "is_new": false,
+        "parse": {
+          "best": 51.8,
+          "scaled": 41.4,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 51.8
+            }
+          },
+          "difficulty": 4,
+          "by_difficulty": {
+            "mythic": {
+              "best_perf_avg": 12.3,
+              "by_role": {},
+              "metric": "hps",
+              "by_metric": {
+                "hps": 12.3
+              },
+              "median_perf_avg": 12.3,
+              "scaled_perf_avg": 12.3,
+              "difficulty_scale": 1.0
+            },
+            "heroic": {
+              "best_perf_avg": 51.8,
+              "by_role": {
+                "DPS": {
+                  "best_perf_avg": 51.8
+                }
+              },
+              "metric": "dps",
+              "by_metric": {
+                "dps": 51.8,
+                "hps": 49.8
+              },
+              "median_perf_avg": 51.8,
+              "scaled_perf_avg": 41.4,
+              "difficulty_scale": 0.8
+            }
+          },
+          "source": "wcl_zone_rankings"
+        },
+        "rank": 66,
         "top5": false
       },
       {
@@ -8143,7 +8226,7 @@
         "delta_day": 2496.9,
         "is_new": false,
         "parse": null,
-        "rank": 70,
+        "rank": 67,
         "top5": false
       },
       {
@@ -8173,7 +8256,7 @@
         "delta_day": 2492.5,
         "is_new": false,
         "parse": null,
-        "rank": 71,
+        "rank": 68,
         "top5": false
       },
       {
@@ -8203,7 +8286,7 @@
         "delta_day": 2477.6,
         "is_new": false,
         "parse": null,
-        "rank": 72,
+        "rank": 69,
         "top5": false
       },
       {
@@ -8443,302 +8526,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 762,
-          "realm_class": 34,
-          "region_overall": 29028
+          "realm_overall": 852,
+          "realm_class": 36,
+          "region_overall": 31664
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 73,
-        "top5": false
-      },
-      {
-        "name": "Marceau",
-        "realm": "Mal'Ganis",
-        "realm_slug": "malganis",
-        "key": "marceau-malganis",
-        "raiderio_url": "https://raider.io/characters/us/malganis/marceau",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/malganis/marceau",
-        "class": "Warrior",
-        "spec": "Arms Warrior",
-        "role": "DPS",
-        "score": 2453.3,
-        "scores_by_role": {
-          "dps": 2453.3,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 10,
-            "timed": true,
-            "upgrades": 2,
-            "score": 327.9,
-            "clear_ms": 1423060,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T05:04:13.000Z",
-            "keystone_run_id": 567437
-          },
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 10,
-            "timed": true,
-            "upgrades": 2,
-            "score": 327.7,
-            "clear_ms": 1573647,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-20T23:56:09.000Z",
-            "keystone_run_id": 837362
-          },
-          {
-            "dungeon": "Murder Row",
-            "short": "MR",
-            "level": 12,
-            "timed": false,
-            "upgrades": 0,
-            "score": 309.7,
-            "clear_ms": 2602056,
-            "par_ms": 2040999,
-            "completed_at": "2026-08-20T06:14:11.000Z",
-            "keystone_run_id": 565856
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 11,
-            "timed": false,
-            "upgrades": 0,
-            "score": 304.7,
-            "clear_ms": 1694933,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-19T06:14:25.000Z",
-            "keystone_run_id": 114489
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 10,
-            "timed": false,
-            "upgrades": 0,
-            "score": 300.8,
-            "clear_ms": 2135324,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-20T07:37:46.000Z",
-            "keystone_run_id": 566308
-          },
-          {
-            "dungeon": "Temple of Sethraliss",
-            "short": "TOS",
-            "level": 9,
-            "timed": true,
-            "upgrades": 2,
-            "score": 298.3,
-            "clear_ms": 1494611,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-19T05:36:32.000Z",
-            "keystone_run_id": 105799
-          },
-          {
-            "dungeon": "Altar of Fangs",
-            "short": "AOF",
-            "level": 9,
-            "timed": true,
-            "upgrades": 2,
-            "score": 297.6,
-            "clear_ms": 1435915,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T06:51:26.000Z",
-            "keystone_run_id": 566315
-          },
-          {
-            "dungeon": "The Blinding Vale",
-            "short": "BV",
-            "level": 8,
-            "timed": true,
-            "upgrades": 2,
-            "score": 286.6,
-            "clear_ms": 1242059,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-19T20:33:09.000Z",
-            "keystone_run_id": 378745
-          }
-        ],
-        "recent_runs": [
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 12,
-            "timed": false,
-            "upgrades": 0,
-            "score": 0,
-            "clear_ms": 2818873,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-21T06:06:47.000Z",
-            "keystone_run_id": 928778
-          },
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 10,
-            "timed": true,
-            "upgrades": 2,
-            "score": 327.7,
-            "clear_ms": 1573647,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-20T23:56:09.000Z",
-            "keystone_run_id": 837362
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 11,
-            "timed": false,
-            "upgrades": 0,
-            "score": 301.2,
-            "clear_ms": 1850858,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-20T23:19:13.000Z",
-            "keystone_run_id": 833549
-          },
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 2,
-            "timed": true,
-            "upgrades": 2,
-            "score": 169.1,
-            "clear_ms": 1238615,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-20T18:11:04.000Z",
-            "keystone_run_id": 743574
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 10,
-            "timed": false,
-            "upgrades": 0,
-            "score": 300.8,
-            "clear_ms": 2135324,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-20T07:37:46.000Z",
-            "keystone_run_id": 566308
-          },
-          {
-            "dungeon": "Altar of Fangs",
-            "short": "AOF",
-            "level": 9,
-            "timed": true,
-            "upgrades": 2,
-            "score": 297.6,
-            "clear_ms": 1435915,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T06:51:26.000Z",
-            "keystone_run_id": 566315
-          },
-          {
-            "dungeon": "Murder Row",
-            "short": "MR",
-            "level": 12,
-            "timed": false,
-            "upgrades": 0,
-            "score": 309.7,
-            "clear_ms": 2602056,
-            "par_ms": 2040999,
-            "completed_at": "2026-08-20T06:14:11.000Z",
-            "keystone_run_id": 565856
-          },
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 10,
-            "timed": true,
-            "upgrades": 2,
-            "score": 327.9,
-            "clear_ms": 1423060,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T05:04:13.000Z",
-            "keystone_run_id": 567437
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 8,
-            "timed": true,
-            "upgrades": 2,
-            "score": 285.4,
-            "clear_ms": 1387263,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-20T04:33:43.000Z",
-            "keystone_run_id": 567454
-          },
-          {
-            "dungeon": "Murder Row",
-            "short": "MR",
-            "level": 5,
-            "timed": true,
-            "upgrades": 3,
-            "score": 230,
-            "clear_ms": 990466,
-            "par_ms": 2040999,
-            "completed_at": "2026-08-20T04:04:14.000Z",
-            "keystone_run_id": 567462
-          }
-        ],
-        "ranks": {
-          "realm_overall": 1473,
-          "realm_class": 128,
-          "region_overall": 29861
-        },
-        "delta_week": -668.4,
-        "delta_day": 0.0,
-        "is_new": false,
-        "parse": {
-          "best": 51.8,
-          "scaled": 41.4,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 51.8
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "mythic": {
-              "best_perf_avg": 12.3,
-              "by_role": {},
-              "metric": "hps",
-              "by_metric": {
-                "hps": 12.3
-              },
-              "median_perf_avg": 12.3,
-              "scaled_perf_avg": 12.3,
-              "difficulty_scale": 1.0
-            },
-            "heroic": {
-              "best_perf_avg": 51.8,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 51.8
-                }
-              },
-              "metric": "dps",
-              "by_metric": {
-                "dps": 51.8,
-                "hps": 49.8
-              },
-              "median_perf_avg": 51.8,
-              "scaled_perf_avg": 41.4,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 74,
+        "rank": 70,
         "top5": false
       },
       {
@@ -8768,7 +8564,7 @@
         "delta_day": 2396,
         "is_new": false,
         "parse": null,
-        "rank": 75,
+        "rank": 71,
         "top5": false
       },
       {
@@ -9008,79 +8804,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 616,
-          "realm_class": 36,
-          "region_overall": 33043
+          "realm_overall": 672,
+          "realm_class": 38,
+          "region_overall": 35983
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 76,
-        "top5": false
-      },
-      {
-        "name": "Azell",
-        "realm": "Bleeding Hollow",
-        "realm_slug": "bleeding-hollow",
-        "key": "azell-bleeding-hollow",
-        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/azell",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/azell",
-        "class": "Monk",
-        "spec": "Brewmaster Monk",
-        "role": "Tank",
-        "score": 2345.5,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 2345.5,
-        "is_new": false,
-        "parse": {
-          "best": 33.8,
-          "scaled": 27.0,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 8.1
-            },
-            "Tank": {
-              "best_perf_avg": 30.3
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "heroic": {
-              "best_perf_avg": 33.8,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 8.1
-                },
-                "Tank": {
-                  "best_perf_avg": 30.3
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 12.5,
-                "hps": 33.8
-              },
-              "median_perf_avg": 33.8,
-              "scaled_perf_avg": 27.0,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 77,
+        "rank": 72,
         "top5": false
       },
       {
@@ -9296,15 +9028,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5087,
-          "realm_class": 737,
-          "region_overall": 43433
+          "realm_overall": 5407,
+          "realm_class": 778,
+          "region_overall": 46774
         },
         "delta_week": null,
-        "delta_day": 646.5,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 78,
+        "rank": 73,
         "top5": false
       },
       {
@@ -9368,7 +9100,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 79,
+        "rank": 74,
         "top5": false
       },
       {
@@ -9426,7 +9158,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 80,
+        "rank": 75,
         "top5": false
       },
       {
@@ -9439,13 +9171,25 @@
         "class": "Warlock",
         "spec": "Demonology Warlock",
         "role": "DPS",
-        "score": 2188,
+        "score": 2194.6,
         "scores_by_role": {
-          "dps": 2188,
+          "dps": 2194.6,
           "healer": 0,
           "tank": 0
         },
         "best_runs": [
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 10,
+            "timed": false,
+            "upgrades": 0,
+            "score": 303.9,
+            "clear_ms": 1729893,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-21T06:53:22.000Z",
+            "keystone_run_id": 944221
+          },
           {
             "dungeon": "Murder Row",
             "short": "MR",
@@ -9469,18 +9213,6 @@
             "par_ms": 1800999,
             "completed_at": "2026-08-19T21:44:35.000Z",
             "keystone_run_id": 407567
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 9,
-            "timed": true,
-            "upgrades": 1,
-            "score": 297.3,
-            "clear_ms": 1352772,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-19T22:28:07.000Z",
-            "keystone_run_id": 463364
           },
           {
             "dungeon": "Voidscar Arena",
@@ -9544,6 +9276,18 @@
           }
         ],
         "recent_runs": [
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 10,
+            "timed": false,
+            "upgrades": 0,
+            "score": 303.9,
+            "clear_ms": 1729893,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-21T06:53:22.000Z",
+            "keystone_run_id": 944221
+          },
           {
             "dungeon": "Altar of Fangs",
             "short": "AOF",
@@ -9651,27 +9395,15 @@
             "par_ms": 2040999,
             "completed_at": "2026-08-19T19:00:43.000Z",
             "keystone_run_id": 379351
-          },
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 7,
-            "timed": true,
-            "upgrades": 1,
-            "score": 265.8,
-            "clear_ms": 1673339,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-19T18:16:30.000Z",
-            "keystone_run_id": 378575
           }
         ],
         "ranks": {
-          "realm_overall": 1755,
-          "realm_class": 89,
-          "region_overall": 47479
+          "realm_overall": 1852,
+          "realm_class": 93,
+          "region_overall": 50552
         },
-        "delta_week": -816.9,
-        "delta_day": 0,
+        "delta_week": -810.3,
+        "delta_day": 6.6,
         "is_new": false,
         "parse": {
           "best": 69.0,
@@ -9718,7 +9450,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 81,
+        "rank": 76,
         "top5": false
       },
       {
@@ -9946,9 +9678,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 411,
-          "realm_class": 27,
-          "region_overall": 47778
+          "realm_overall": 441,
+          "realm_class": 28,
+          "region_overall": 51295
         },
         "delta_week": -580.8,
         "delta_day": 0.0,
@@ -9982,7 +9714,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 82,
+        "rank": 77,
         "top5": false
       },
       {
@@ -10040,37 +9772,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 83,
-        "top5": false
-      },
-      {
-        "name": "Kathrobbin",
-        "realm": "Zul'jin",
-        "realm_slug": "zuljin",
-        "key": "kathrobbin-zuljin",
-        "raiderio_url": "https://raider.io/characters/us/zuljin/kathrobbin",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/zuljin/kathrobbin",
-        "class": "Paladin",
-        "spec": "Holy Paladin",
-        "role": "Healer",
-        "score": 2172.2,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 2172.2,
-        "is_new": false,
-        "parse": null,
-        "rank": 84,
+        "rank": 78,
         "top5": false
       },
       {
@@ -10100,7 +9802,7 @@
         "delta_day": 2134.2,
         "is_new": false,
         "parse": null,
-        "rank": 85,
+        "rank": 79,
         "top5": false
       },
       {
@@ -10130,7 +9832,255 @@
         "delta_day": 2129,
         "is_new": false,
         "parse": null,
-        "rank": 86,
+        "rank": 80,
+        "top5": false
+      },
+      {
+        "name": "Kirrax",
+        "realm": "Thrall",
+        "realm_slug": "thrall",
+        "key": "kirrax-thrall",
+        "raiderio_url": "https://raider.io/characters/us/thrall/kirrax",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/thrall/kirrax",
+        "class": "Warrior",
+        "spec": "Arms Warrior",
+        "role": "DPS",
+        "score": 2103.5,
+        "scores_by_role": {
+          "dps": 2103.5,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [
+          {
+            "dungeon": "Temple of Sethraliss",
+            "short": "TOS",
+            "level": 10,
+            "timed": false,
+            "upgrades": 0,
+            "score": 302.2,
+            "clear_ms": 2066700,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-21T02:17:53.000Z",
+            "keystone_run_id": 889450
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 9,
+            "timed": true,
+            "upgrades": 2,
+            "score": 299.7,
+            "clear_ms": 1465994,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-21T05:42:58.000Z",
+            "keystone_run_id": 935101
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 8,
+            "timed": true,
+            "upgrades": 2,
+            "score": 286.9,
+            "clear_ms": 1391668,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T08:06:51.000Z",
+            "keystone_run_id": 952815
+          },
+          {
+            "dungeon": "Altar of Fangs",
+            "short": "AOF",
+            "level": 8,
+            "timed": true,
+            "upgrades": 1,
+            "score": 280.9,
+            "clear_ms": 1516590,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T07:58:29.000Z",
+            "keystone_run_id": 574883
+          },
+          {
+            "dungeon": "Voidscar Arena",
+            "short": "VSA",
+            "level": 7,
+            "timed": true,
+            "upgrades": 2,
+            "score": 270.9,
+            "clear_ms": 1275575,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T06:39:44.000Z",
+            "keystone_run_id": 559485
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 7,
+            "timed": false,
+            "upgrades": 0,
+            "score": 238,
+            "clear_ms": 2280906,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-19T21:39:31.000Z",
+            "keystone_run_id": 412167
+          },
+          {
+            "dungeon": "The Blinding Vale",
+            "short": "BV",
+            "level": 5,
+            "timed": true,
+            "upgrades": 2,
+            "score": 229.9,
+            "clear_ms": 1083482,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-19T07:08:43.000Z",
+            "keystone_run_id": 151067
+          },
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 4,
+            "timed": true,
+            "upgrades": 2,
+            "score": 194.9,
+            "clear_ms": 1238928,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-19T05:22:37.000Z",
+            "keystone_run_id": 125765
+          }
+        ],
+        "recent_runs": [
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 8,
+            "timed": true,
+            "upgrades": 2,
+            "score": 286.9,
+            "clear_ms": 1391668,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T08:06:51.000Z",
+            "keystone_run_id": 952815
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 9,
+            "timed": true,
+            "upgrades": 2,
+            "score": 299.7,
+            "clear_ms": 1465994,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-21T05:42:58.000Z",
+            "keystone_run_id": 935101
+          },
+          {
+            "dungeon": "Temple of Sethraliss",
+            "short": "TOS",
+            "level": 10,
+            "timed": false,
+            "upgrades": 0,
+            "score": 302.2,
+            "clear_ms": 2066700,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-21T02:17:53.000Z",
+            "keystone_run_id": 889450
+          },
+          {
+            "dungeon": "Altar of Fangs",
+            "short": "AOF",
+            "level": 8,
+            "timed": true,
+            "upgrades": 1,
+            "score": 280.9,
+            "clear_ms": 1516590,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T07:58:29.000Z",
+            "keystone_run_id": 574883
+          },
+          {
+            "dungeon": "Voidscar Arena",
+            "short": "VSA",
+            "level": 7,
+            "timed": true,
+            "upgrades": 2,
+            "score": 270.9,
+            "clear_ms": 1275575,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T06:39:44.000Z",
+            "keystone_run_id": 559485
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 5,
+            "timed": true,
+            "upgrades": 2,
+            "score": 228.7,
+            "clear_ms": 1219938,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-20T06:07:01.000Z",
+            "keystone_run_id": 559487
+          },
+          {
+            "dungeon": "Kings' Rest",
+            "short": "KR",
+            "level": 2,
+            "timed": true,
+            "upgrades": 3,
+            "score": 170,
+            "clear_ms": 1024971,
+            "par_ms": 1980999,
+            "completed_at": "2026-08-20T05:33:30.000Z",
+            "keystone_run_id": 576738
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 7,
+            "timed": false,
+            "upgrades": 0,
+            "score": 238,
+            "clear_ms": 2280906,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-19T21:39:31.000Z",
+            "keystone_run_id": 412167
+          },
+          {
+            "dungeon": "Voidscar Arena",
+            "short": "VSA",
+            "level": 5,
+            "timed": true,
+            "upgrades": 2,
+            "score": 228.7,
+            "clear_ms": 1140718,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-19T20:51:22.000Z",
+            "keystone_run_id": 441492
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 5,
+            "timed": true,
+            "upgrades": 2,
+            "score": 227.5,
+            "clear_ms": 1281022,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-19T07:44:47.000Z",
+            "keystone_run_id": 159151
+          }
+        ],
+        "ranks": {
+          "realm_overall": 2120,
+          "realm_class": 184,
+          "region_overall": 57021
+        },
+        "delta_week": null,
+        "delta_day": 416.7,
+        "is_new": true,
+        "parse": null,
+        "rank": 81,
         "top5": false
       },
       {
@@ -10143,9 +10093,9 @@
         "class": "Paladin",
         "spec": "Retribution Paladin",
         "role": "DPS",
-        "score": 1995.7,
+        "score": 2066,
         "scores_by_role": {
-          "dps": 1995.7,
+          "dps": 2066,
           "healer": 0,
           "tank": 0
         },
@@ -10185,6 +10135,18 @@
             "par_ms": 2040999,
             "completed_at": "2026-08-20T14:45:08.000Z",
             "keystone_run_id": 681796
+          },
+          {
+            "dungeon": "Temple of Sethraliss",
+            "short": "TOS",
+            "level": 7,
+            "timed": true,
+            "upgrades": 1,
+            "score": 264.1,
+            "clear_ms": 1713438,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-20T21:42:35.000Z",
+            "keystone_run_id": 953828
           },
           {
             "dungeon": "Den of Nalorakk",
@@ -10233,21 +10195,21 @@
             "par_ms": 1800999,
             "completed_at": "2026-08-19T15:08:23.000Z",
             "keystone_run_id": 295466
-          },
-          {
-            "dungeon": "Temple of Sethraliss",
-            "short": "TOS",
-            "level": 4,
-            "timed": true,
-            "upgrades": 2,
-            "score": 193.7,
-            "clear_ms": 1473986,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-19T00:34:16.000Z",
-            "keystone_run_id": 120844
           }
         ],
         "recent_runs": [
+          {
+            "dungeon": "Temple of Sethraliss",
+            "short": "TOS",
+            "level": 7,
+            "timed": true,
+            "upgrades": 1,
+            "score": 264.1,
+            "clear_ms": 1713438,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-20T21:42:35.000Z",
+            "keystone_run_id": 953828
+          },
           {
             "dungeon": "Ruby Life Pools",
             "short": "RLP",
@@ -10355,30 +10317,18 @@
             "par_ms": 1800999,
             "completed_at": "2026-08-19T15:40:52.000Z",
             "keystone_run_id": 295420
-          },
-          {
-            "dungeon": "Altar of Fangs",
-            "short": "AOF",
-            "level": 5,
-            "timed": true,
-            "upgrades": 2,
-            "score": 228.9,
-            "clear_ms": 1132063,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-19T15:08:23.000Z",
-            "keystone_run_id": 295466
           }
         ],
         "ranks": {
-          "realm_overall": 313,
-          "realm_class": 50,
-          "region_overall": 60766
+          "realm_overall": 295,
+          "realm_class": 43,
+          "region_overall": 59625
         },
         "delta_week": null,
-        "delta_day": 0.0,
+        "delta_day": 70.3,
         "is_new": true,
         "parse": null,
-        "rank": 87,
+        "rank": 82,
         "top5": false
       },
       {
@@ -10582,9 +10532,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2796,
-          "realm_class": 327,
-          "region_overall": 65192
+          "realm_overall": 2938,
+          "realm_class": 340,
+          "region_overall": 69276
         },
         "delta_week": -1119.6,
         "delta_day": 0.0,
@@ -10634,7 +10584,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 88,
+        "rank": 83,
         "top5": false
       },
       {
@@ -10862,12 +10812,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 339,
-          "realm_class": 22,
-          "region_overall": 65260
+          "realm_overall": 366,
+          "realm_class": 23,
+          "region_overall": 69379
         },
         "delta_week": -1203.3,
-        "delta_day": 639.1,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 85.3,
@@ -10914,7 +10864,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 89,
+        "rank": 84,
         "top5": false
       },
       {
@@ -10972,7 +10922,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 90,
+        "rank": 85,
         "top5": false
       },
       {
@@ -11188,12 +11138,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 8318,
-          "realm_class": 766,
-          "region_overall": 71093
+          "realm_overall": 8690,
+          "realm_class": 793,
+          "region_overall": 75421
         },
         "delta_week": -1475.2,
-        "delta_day": 1014.7,
+        "delta_day": 0,
         "is_new": false,
         "parse": {
           "best": 76.3,
@@ -11240,7 +11190,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 91,
+        "rank": 86,
         "top5": false
       },
       {
@@ -11480,12 +11430,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3018,
-          "realm_class": 425,
-          "region_overall": 71434
+          "realm_overall": 3145,
+          "realm_class": 447,
+          "region_overall": 75729
         },
         "delta_week": -1347.1,
-        "delta_day": 192.9,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": {
           "best": 46.3,
@@ -11516,7 +11466,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 92,
+        "rank": 87,
         "top5": false
       },
       {
@@ -11756,251 +11706,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 151,
-          "realm_class": 17,
-          "region_overall": 75178
+          "realm_overall": 162,
+          "realm_class": 19,
+          "region_overall": 79647
         },
         "delta_week": -1150.8,
-        "delta_day": 138.3,
+        "delta_day": 0.0,
         "is_new": false,
         "parse": null,
-        "rank": 93,
-        "top5": false
-      },
-      {
-        "name": "Kirrax",
-        "realm": "Thrall",
-        "realm_slug": "thrall",
-        "key": "kirrax-thrall",
-        "raiderio_url": "https://raider.io/characters/us/thrall/kirrax",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/thrall/kirrax",
-        "class": "Warrior",
-        "spec": "Arms Warrior",
-        "role": "DPS",
-        "score": 1686.8,
-        "scores_by_role": {
-          "dps": 1686.8,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [
-          {
-            "dungeon": "Temple of Sethraliss",
-            "short": "TOS",
-            "level": 10,
-            "timed": false,
-            "upgrades": 0,
-            "score": 302.2,
-            "clear_ms": 2066700,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-21T02:17:53.000Z",
-            "keystone_run_id": 889450
-          },
-          {
-            "dungeon": "Altar of Fangs",
-            "short": "AOF",
-            "level": 8,
-            "timed": true,
-            "upgrades": 1,
-            "score": 280.9,
-            "clear_ms": 1516590,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T07:58:29.000Z",
-            "keystone_run_id": 574883
-          },
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 7,
-            "timed": true,
-            "upgrades": 2,
-            "score": 270.9,
-            "clear_ms": 1275575,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T06:39:44.000Z",
-            "keystone_run_id": 559485
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 7,
-            "timed": false,
-            "upgrades": 0,
-            "score": 238,
-            "clear_ms": 2280906,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-19T21:39:31.000Z",
-            "keystone_run_id": 412167
-          },
-          {
-            "dungeon": "The Blinding Vale",
-            "short": "BV",
-            "level": 5,
-            "timed": true,
-            "upgrades": 2,
-            "score": 229.9,
-            "clear_ms": 1083482,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-19T07:08:43.000Z",
-            "keystone_run_id": 151067
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 4,
-            "timed": true,
-            "upgrades": 2,
-            "score": 194.9,
-            "clear_ms": 1238928,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-19T05:22:37.000Z",
-            "keystone_run_id": 125765
-          },
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 2,
-            "timed": true,
-            "upgrades": 3,
-            "score": 170,
-            "clear_ms": 1024971,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-20T05:33:30.000Z",
-            "keystone_run_id": 576738
-          }
-        ],
-        "recent_runs": [
-          {
-            "dungeon": "Temple of Sethraliss",
-            "short": "TOS",
-            "level": 10,
-            "timed": false,
-            "upgrades": 0,
-            "score": 302.2,
-            "clear_ms": 2066700,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-21T02:17:53.000Z",
-            "keystone_run_id": 889450
-          },
-          {
-            "dungeon": "Altar of Fangs",
-            "short": "AOF",
-            "level": 8,
-            "timed": true,
-            "upgrades": 1,
-            "score": 280.9,
-            "clear_ms": 1516590,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T07:58:29.000Z",
-            "keystone_run_id": 574883
-          },
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 7,
-            "timed": true,
-            "upgrades": 2,
-            "score": 270.9,
-            "clear_ms": 1275575,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-20T06:39:44.000Z",
-            "keystone_run_id": 559485
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 5,
-            "timed": true,
-            "upgrades": 2,
-            "score": 228.7,
-            "clear_ms": 1219938,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-20T06:07:01.000Z",
-            "keystone_run_id": 559487
-          },
-          {
-            "dungeon": "Kings' Rest",
-            "short": "KR",
-            "level": 2,
-            "timed": true,
-            "upgrades": 3,
-            "score": 170,
-            "clear_ms": 1024971,
-            "par_ms": 1980999,
-            "completed_at": "2026-08-20T05:33:30.000Z",
-            "keystone_run_id": 576738
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 7,
-            "timed": false,
-            "upgrades": 0,
-            "score": 238,
-            "clear_ms": 2280906,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-19T21:39:31.000Z",
-            "keystone_run_id": 412167
-          },
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 5,
-            "timed": true,
-            "upgrades": 2,
-            "score": 228.7,
-            "clear_ms": 1140718,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-19T20:51:22.000Z",
-            "keystone_run_id": 441492
-          },
-          {
-            "dungeon": "Den of Nalorakk",
-            "short": "DON",
-            "level": 5,
-            "timed": true,
-            "upgrades": 2,
-            "score": 227.5,
-            "clear_ms": 1281022,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-19T07:44:47.000Z",
-            "keystone_run_id": 159151
-          },
-          {
-            "dungeon": "The Blinding Vale",
-            "short": "BV",
-            "level": 5,
-            "timed": true,
-            "upgrades": 2,
-            "score": 229.9,
-            "clear_ms": 1083482,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-19T07:08:43.000Z",
-            "keystone_run_id": 151067
-          },
-          {
-            "dungeon": "Temple of Sethraliss",
-            "short": "TOS",
-            "level": 4,
-            "timed": true,
-            "upgrades": 2,
-            "score": 193.4,
-            "clear_ms": 1489134,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-19T06:31:00.000Z",
-            "keystone_run_id": 145817
-          }
-        ],
-        "ranks": {
-          "realm_overall": 2822,
-          "realm_class": 234,
-          "region_overall": 75343
-        },
-        "delta_week": null,
-        "delta_day": 108.7,
-        "is_new": true,
-        "parse": null,
-        "rank": 94,
+        "rank": 88,
         "top5": false
       },
       {
@@ -12228,15 +11942,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 710,
-          "realm_class": 82,
-          "region_overall": 77861
+          "realm_overall": 766,
+          "realm_class": 88,
+          "region_overall": 82466
         },
         "delta_week": null,
-        "delta_day": 363.1,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 95,
+        "rank": 89,
         "top5": false
       },
       {
@@ -12266,7 +11980,7 @@
         "delta_day": 1578.5,
         "is_new": false,
         "parse": null,
-        "rank": 96,
+        "rank": 90,
         "top5": false
       },
       {
@@ -12422,15 +12136,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3706,
-          "realm_class": 306,
-          "region_overall": 81844
+          "realm_overall": 3848,
+          "realm_class": 317,
+          "region_overall": 86541
         },
         "delta_week": null,
-        "delta_day": 1243.9,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 97,
+        "rank": 91,
         "top5": false
       },
       {
@@ -12460,7 +12174,7 @@
         "delta_day": 1367.7,
         "is_new": true,
         "parse": null,
-        "rank": 98,
+        "rank": 92,
         "top5": false
       },
       {
@@ -12616,9 +12330,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10397,
-          "realm_class": 652,
-          "region_overall": 94298
+          "realm_overall": 10776,
+          "realm_class": 679,
+          "region_overall": 99285
         },
         "delta_week": -2168.4,
         "delta_day": 0.0,
@@ -12668,7 +12382,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 99,
+        "rank": 93,
         "top5": false
       },
       {
@@ -12698,7 +12412,7 @@
         "delta_day": 1175.2,
         "is_new": false,
         "parse": null,
-        "rank": 100,
+        "rank": 94,
         "top5": false
       },
       {
@@ -12728,7 +12442,7 @@
         "delta_day": 1155.8,
         "is_new": true,
         "parse": null,
-        "rank": 101,
+        "rank": 95,
         "top5": false
       },
       {
@@ -12896,15 +12610,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10695,
-          "realm_class": 1589,
-          "region_overall": 110123
+          "realm_overall": 11112,
+          "realm_class": 1649,
+          "region_overall": 115390
         },
         "delta_week": 953.6,
         "delta_day": 0.0,
         "is_new": false,
         "parse": null,
-        "rank": 102,
+        "rank": 96,
         "top5": false
       },
       {
@@ -12934,7 +12648,7 @@
         "delta_day": 1107.3,
         "is_new": false,
         "parse": null,
-        "rank": 103,
+        "rank": 97,
         "top5": false
       },
       {
@@ -12992,7 +12706,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 104,
+        "rank": 98,
         "top5": false
       },
       {
@@ -13050,7 +12764,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 105,
+        "rank": 99,
         "top5": false
       },
       {
@@ -13230,15 +12944,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 694,
-          "realm_class": 35,
-          "region_overall": 111938
+          "realm_overall": 735,
+          "realm_class": 37,
+          "region_overall": 117249
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 106,
+        "rank": 100,
         "top5": false
       },
       {
@@ -13268,7 +12982,7 @@
         "delta_day": 1053.4,
         "is_new": false,
         "parse": null,
-        "rank": 107,
+        "rank": 101,
         "top5": false
       },
       {
@@ -13326,7 +13040,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 108,
+        "rank": 102,
         "top5": false
       },
       {
@@ -13422,15 +13136,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 12374,
-          "realm_class": 1505,
-          "region_overall": 117686
+          "realm_overall": 12761,
+          "realm_class": 1536,
+          "region_overall": 123050
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 109,
+        "rank": 103,
         "top5": false
       },
       {
@@ -13460,7 +13174,7 @@
         "delta_day": 977.9,
         "is_new": false,
         "parse": null,
-        "rank": 110,
+        "rank": 104,
         "top5": false
       },
       {
@@ -13490,7 +13204,7 @@
         "delta_day": 953.4,
         "is_new": false,
         "parse": null,
-        "rank": 111,
+        "rank": 105,
         "top5": false
       },
       {
@@ -13646,9 +13360,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 13247,
-          "realm_class": 1021,
-          "region_overall": 128368
+          "realm_overall": 13639,
+          "realm_class": 1055,
+          "region_overall": 133757
         },
         "delta_week": -1867.1,
         "delta_day": 0,
@@ -13698,7 +13412,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 112,
+        "rank": 106,
         "top5": false
       },
       {
@@ -13728,7 +13442,7 @@
         "delta_day": 866.7,
         "is_new": false,
         "parse": null,
-        "rank": 113,
+        "rank": 107,
         "top5": false
       },
       {
@@ -13758,7 +13472,7 @@
         "delta_day": 740.1,
         "is_new": false,
         "parse": null,
-        "rank": 114,
+        "rank": 108,
         "top5": false
       },
       {
@@ -13878,73 +13592,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11945,
-          "realm_class": 1862,
-          "region_overall": 139615
+          "realm_overall": 12260,
+          "realm_class": 1913,
+          "region_overall": 145106
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 115,
-        "top5": false
-      },
-      {
-        "name": "Zackoh",
-        "realm": "Bloodhoof",
-        "realm_slug": "bloodhoof",
-        "key": "zackoh-bloodhoof",
-        "raiderio_url": "https://raider.io/characters/us/bloodhoof/zackoh",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bloodhoof/zackoh",
-        "class": "Hunter",
-        "spec": "Beast Mastery Hunter",
-        "role": "DPS",
-        "score": 671.6,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": 0.0,
-        "delta_day": 671.6,
-        "is_new": false,
-        "parse": {
-          "best": 45.8,
-          "scaled": 36.6,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 4.6
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "heroic": {
-              "best_perf_avg": 45.8,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 4.6
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 4.6,
-                "hps": 45.8
-              },
-              "median_perf_avg": 45.8,
-              "scaled_perf_avg": 36.6,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 116,
+        "rank": 109,
         "top5": false
       },
       {
@@ -14003,6 +13659,18 @@
         ],
         "recent_runs": [
           {
+            "dungeon": "Altar of Fangs",
+            "short": "AOF",
+            "level": 2,
+            "timed": true,
+            "upgrades": 2,
+            "score": 166.8,
+            "clear_ms": 1232143,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-20T22:14:43.000Z",
+            "keystone_run_id": 958941
+          },
+          {
             "dungeon": "Temple of Sethraliss",
             "short": "TOS",
             "level": 5,
@@ -14040,15 +13708,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 327,
-          "realm_class": 51,
-          "region_overall": 147500
+          "realm_overall": 342,
+          "realm_class": 55,
+          "region_overall": 153116
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 117,
+        "rank": 110,
         "top5": false
       },
       {
@@ -14144,15 +13812,147 @@
           }
         ],
         "ranks": {
-          "realm_overall": 13114,
-          "realm_class": 1185,
-          "region_overall": 155760
+          "realm_overall": 13477,
+          "realm_class": 1222,
+          "region_overall": 161398
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 118,
+        "rank": 111,
+        "top5": false
+      },
+      {
+        "name": "Andika",
+        "realm": "Area 52",
+        "realm_slug": "area-52",
+        "key": "andika-area-52",
+        "raiderio_url": "https://raider.io/characters/us/area-52/andika",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/andika",
+        "class": "Hunter",
+        "spec": "Marksmanship Hunter",
+        "role": "DPS",
+        "score": 488.9,
+        "scores_by_role": {
+          "dps": 488.9,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 2,
+            "timed": true,
+            "upgrades": 2,
+            "score": 167.1,
+            "clear_ms": 1140382,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-21T04:59:01.000Z",
+            "keystone_run_id": 920054
+          },
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 2,
+            "timed": true,
+            "upgrades": 1,
+            "score": 161,
+            "clear_ms": 1613378,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-21T06:26:50.000Z",
+            "keystone_run_id": 936321
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 2,
+            "timed": true,
+            "upgrades": 1,
+            "score": 160.8,
+            "clear_ms": 1723539,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T05:40:24.000Z",
+            "keystone_run_id": 923716
+          }
+        ],
+        "recent_runs": [
+          {
+            "dungeon": "Den of Nalorakk",
+            "short": "DON",
+            "level": 2,
+            "timed": true,
+            "upgrades": 1,
+            "score": 161,
+            "clear_ms": 1613378,
+            "par_ms": 1920999,
+            "completed_at": "2026-08-21T06:26:50.000Z",
+            "keystone_run_id": 936321
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 2,
+            "timed": true,
+            "upgrades": 1,
+            "score": 160.8,
+            "clear_ms": 1723539,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-21T05:40:24.000Z",
+            "keystone_run_id": 923716
+          },
+          {
+            "dungeon": "Ruby Life Pools",
+            "short": "RLP",
+            "level": 2,
+            "timed": true,
+            "upgrades": 2,
+            "score": 167.1,
+            "clear_ms": 1140382,
+            "par_ms": 1680999,
+            "completed_at": "2026-08-21T04:59:01.000Z",
+            "keystone_run_id": 920054
+          }
+        ],
+        "ranks": {
+          "realm_overall": 16429,
+          "realm_class": 1072,
+          "region_overall": 169063
+        },
+        "delta_week": -2517.3,
+        "delta_day": 161.0,
+        "is_new": false,
+        "parse": {
+          "best": 69.5,
+          "scaled": 55.6,
+          "by_role": {
+            "DPS": {
+              "best_perf_avg": 23.2
+            }
+          },
+          "difficulty": 4,
+          "by_difficulty": {
+            "heroic": {
+              "best_perf_avg": 69.5,
+              "by_role": {
+                "DPS": {
+                  "best_perf_avg": 23.2
+                }
+              },
+              "metric": "hps",
+              "by_metric": {
+                "dps": 23.2,
+                "hps": 69.5
+              },
+              "median_perf_avg": 66.2,
+              "scaled_perf_avg": 55.6,
+              "difficulty_scale": 0.8
+            }
+          },
+          "source": "wcl_zone_rankings"
+        },
+        "rank": 112,
         "top5": false
       },
       {
@@ -14182,7 +13982,7 @@
         "delta_day": 473.8,
         "is_new": false,
         "parse": null,
-        "rank": 119,
+        "rank": 113,
         "top5": false
       },
       {
@@ -14254,15 +14054,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3088,
-          "realm_class": 277,
-          "region_overall": 167580
+          "realm_overall": 3162,
+          "realm_class": 283,
+          "region_overall": 173451
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 120,
+        "rank": 114,
         "top5": false
       },
       {
@@ -14334,123 +14134,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1573,
-          "realm_class": 87,
-          "region_overall": 172143
+          "realm_overall": 1639,
+          "realm_class": 88,
+          "region_overall": 177972
         },
         "delta_week": null,
         "delta_day": 0.0,
         "is_new": true,
         "parse": null,
-        "rank": 121,
-        "top5": false
-      },
-      {
-        "name": "Andika",
-        "realm": "Area 52",
-        "realm_slug": "area-52",
-        "key": "andika-area-52",
-        "raiderio_url": "https://raider.io/characters/us/area-52/andika",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/andika",
-        "class": "Hunter",
-        "spec": "Marksmanship Hunter",
-        "role": "DPS",
-        "score": 327.9,
-        "scores_by_role": {
-          "dps": 327.9,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 2,
-            "timed": true,
-            "upgrades": 2,
-            "score": 167.1,
-            "clear_ms": 1140382,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-21T04:59:01.000Z",
-            "keystone_run_id": 920054
-          },
-          {
-            "dungeon": "Murder Row",
-            "short": "MR",
-            "level": 2,
-            "timed": true,
-            "upgrades": 1,
-            "score": 160.8,
-            "clear_ms": 1723539,
-            "par_ms": 2040999,
-            "completed_at": "2026-08-21T05:40:24.000Z",
-            "keystone_run_id": 923716
-          }
-        ],
-        "recent_runs": [
-          {
-            "dungeon": "Murder Row",
-            "short": "MR",
-            "level": 2,
-            "timed": true,
-            "upgrades": 1,
-            "score": 160.8,
-            "clear_ms": 1723539,
-            "par_ms": 2040999,
-            "completed_at": "2026-08-21T05:40:24.000Z",
-            "keystone_run_id": 923716
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 2,
-            "timed": true,
-            "upgrades": 2,
-            "score": 167.1,
-            "clear_ms": 1140382,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-21T04:59:01.000Z",
-            "keystone_run_id": 920054
-          }
-        ],
-        "ranks": {
-          "realm_overall": 17498,
-          "realm_class": 1163,
-          "region_overall": 181739
-        },
-        "delta_week": -2678.3,
-        "delta_day": 327.9,
-        "is_new": false,
-        "parse": {
-          "best": 69.5,
-          "scaled": 55.6,
-          "by_role": {
-            "DPS": {
-              "best_perf_avg": 23.2
-            }
-          },
-          "difficulty": 4,
-          "by_difficulty": {
-            "heroic": {
-              "best_perf_avg": 69.5,
-              "by_role": {
-                "DPS": {
-                  "best_perf_avg": 23.2
-                }
-              },
-              "metric": "hps",
-              "by_metric": {
-                "dps": 23.2,
-                "hps": 69.5
-              },
-              "median_perf_avg": 66.2,
-              "scaled_perf_avg": 55.6,
-              "difficulty_scale": 0.8
-            }
-          },
-          "source": "wcl_zone_rankings"
-        },
-        "rank": 122,
+        "rank": 115,
         "top5": false
       },
       {
@@ -14498,15 +14190,15 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15788,
-          "realm_class": 898,
-          "region_overall": 183576
+          "realm_overall": 16231,
+          "realm_class": 930,
+          "region_overall": 189724
         },
         "delta_week": null,
         "delta_day": 0,
         "is_new": true,
         "parse": null,
-        "rank": 123,
+        "rank": 116,
         "top5": false
       },
       {
@@ -14578,9 +14270,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15289,
-          "realm_class": 2393,
-          "region_overall": 184608
+          "realm_overall": 15679,
+          "realm_class": 2443,
+          "region_overall": 190802
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14630,7 +14322,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 124,
+        "rank": 117,
         "top5": false
       },
       {
@@ -14660,7 +14352,7 @@
         "delta_day": 194.9,
         "is_new": false,
         "parse": null,
-        "rank": 125,
+        "rank": 118,
         "top5": false
       },
       {
@@ -14708,12 +14400,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1105,
-          "realm_class": 82,
-          "region_overall": 196726
+          "realm_overall": 1135,
+          "realm_class": 86,
+          "region_overall": 203004
         },
         "delta_week": -3284.7,
-        "delta_day": 170,
+        "delta_day": 0,
         "is_new": false,
         "parse": {
           "best": 93.0,
@@ -14760,7 +14452,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 126,
+        "rank": 119,
         "top5": false
       },
       {
@@ -14790,7 +14482,7 @@
         "delta_day": 170,
         "is_new": true,
         "parse": null,
-        "rank": 127,
+        "rank": 120,
         "top5": false
       },
       {
@@ -14820,7 +14512,7 @@
         "delta_day": 168.4,
         "is_new": false,
         "parse": null,
-        "rank": 128,
+        "rank": 121,
         "top5": false
       },
       {
@@ -14850,7 +14542,7 @@
         "delta_day": 166.8,
         "is_new": false,
         "parse": null,
-        "rank": 129,
+        "rank": 122,
         "top5": false
       },
       {
@@ -14880,7 +14572,7 @@
         "delta_day": 166.7,
         "is_new": false,
         "parse": null,
-        "rank": 130,
+        "rank": 123,
         "top5": false
       },
       {
@@ -14928,9 +14620,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 7987,
-          "realm_class": 686,
-          "region_overall": 207924
+          "realm_overall": 8171,
+          "realm_class": 700,
+          "region_overall": 214369
         },
         "delta_week": -2910.0,
         "delta_day": 0.0,
@@ -14964,7 +14656,7 @@
           },
           "source": "wcl_zone_rankings"
         },
-        "rank": 131,
+        "rank": 124,
         "top5": false
       },
       {
@@ -14994,7 +14686,7 @@
         "delta_day": 158.9,
         "is_new": false,
         "parse": null,
-        "rank": 132,
+        "rank": 125,
         "top5": false
       },
       {
@@ -15305,8 +14997,8 @@
         "raiderio_url": "https://raider.io/characters/us/area-52/maello",
         "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/maello",
         "class": "Warlock",
-        "spec": "Warlock",
-        "role": "",
+        "spec": "Destruction Warlock",
+        "role": "DPS",
         "score": 0,
         "scores_by_role": {
           "dps": 0,
@@ -15748,36 +15440,6 @@
         "top5": false
       },
       {
-        "name": "Tarvos",
-        "realm": "Bleeding Hollow",
-        "realm_slug": "bleeding-hollow",
-        "key": "tarvos-bleeding-hollow",
-        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/tarvos",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/tarvos",
-        "class": "Death Knight",
-        "spec": "Unholy DK",
-        "role": "DPS",
-        "score": 0,
-        "scores_by_role": {
-          "dps": 0,
-          "healer": 0,
-          "tank": 0
-        },
-        "best_runs": [],
-        "recent_runs": [],
-        "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
-        },
-        "delta_week": null,
-        "delta_day": 0,
-        "is_new": false,
-        "parse": null,
-        "rank": null,
-        "top5": false
-      },
-      {
         "name": "Tommybravoox",
         "realm": "Bleeding Hollow",
         "realm_slug": "bleeding-hollow",
@@ -16033,8 +15695,8 @@
         "name": "Maello",
         "key": "maello-area-52",
         "class": "Warlock",
-        "spec": "Warlock",
-        "role": ""
+        "spec": "Destruction Warlock",
+        "role": "DPS"
       },
       {
         "name": "Orx",
@@ -16135,13 +15797,6 @@
         "role": "Tank"
       },
       {
-        "name": "Tarvos",
-        "key": "tarvos-bleeding-hollow",
-        "class": "Death Knight",
-        "spec": "Unholy DK",
-        "role": "DPS"
-      },
-      {
         "name": "Tommybravoox",
         "key": "tommybravoox-bleeding-hollow",
         "class": "Warlock",
@@ -16185,6 +15840,68 @@
       }
     ],
     "departed": [
+      {
+        "name": "Autable",
+        "realm": "Gurubashi",
+        "realm_slug": "gurubashi",
+        "key": "autable-gurubashi",
+        "raiderio_url": "https://raider.io/characters/us/gurubashi/autable",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/gurubashi/autable",
+        "class": "Demon Hunter",
+        "spec": "Havoc DH",
+        "role": "DPS",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
+        }
+      },
+      {
+        "name": "Azell",
+        "realm": "Bleeding Hollow",
+        "realm_slug": "bleeding-hollow",
+        "key": "azell-bleeding-hollow",
+        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/azell",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/azell",
+        "class": "Monk",
+        "spec": "Brewmaster Monk",
+        "role": "Tank",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
+        }
+      },
       {
         "name": "Beastfriend",
         "realm": "Thrall",
@@ -17326,6 +17043,68 @@
         }
       },
       {
+        "name": "Kathrobbin",
+        "realm": "Zul'jin",
+        "realm_slug": "zuljin",
+        "key": "kathrobbin-zuljin",
+        "raiderio_url": "https://raider.io/characters/us/zuljin/kathrobbin",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/zuljin/kathrobbin",
+        "class": "Paladin",
+        "spec": "Holy Paladin",
+        "role": "Healer",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
+        }
+      },
+      {
+        "name": "Kegsmashroll",
+        "realm": "Stormrage",
+        "realm_slug": "stormrage",
+        "key": "kegsmashroll-stormrage",
+        "raiderio_url": "https://raider.io/characters/us/stormrage/kegsmashroll",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/stormrage/kegsmashroll",
+        "class": "Monk",
+        "spec": "Brewmaster Monk",
+        "role": "Tank",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
+        }
+      },
+      {
         "name": "Kitez",
         "realm": "Cenarion Circle",
         "realm_slug": "cenarion-circle",
@@ -18020,6 +17799,37 @@
         }
       },
       {
+        "name": "Ohnomyais",
+        "realm": "Area 52",
+        "realm_slug": "area-52",
+        "key": "ohnomyais-area-52",
+        "raiderio_url": "https://raider.io/characters/us/area-52/ohnomyais",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/area-52/ohnomyais",
+        "class": "Warrior",
+        "spec": "Arms Warrior",
+        "role": "DPS",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
+        }
+      },
+      {
         "name": "Omikogo",
         "realm": "Bleeding Hollow",
         "realm_slug": "bleeding-hollow",
@@ -18128,6 +17938,37 @@
           "status": "left",
           "guild": "Devils Forces",
           "checked_at": "2026-07-27T06:25:28.111106+00:00"
+        }
+      },
+      {
+        "name": "Paleghost",
+        "realm": "Sargeras",
+        "realm_slug": "sargeras",
+        "key": "paleghost-sargeras",
+        "raiderio_url": "https://raider.io/characters/us/sargeras/paleghost",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/sargeras/paleghost",
+        "class": "Death Knight",
+        "spec": "Unholy DK",
+        "role": "DPS",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
         }
       },
       {
@@ -18662,6 +18503,37 @@
           "status": "left",
           "guild": "Devils Forces",
           "checked_at": "2026-07-27T06:25:28.111106+00:00"
+        }
+      },
+      {
+        "name": "Tarvos",
+        "realm": "Bleeding Hollow",
+        "realm_slug": "bleeding-hollow",
+        "key": "tarvos-bleeding-hollow",
+        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/tarvos",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/tarvos",
+        "class": "Death Knight",
+        "spec": "Unholy DK",
+        "role": "DPS",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
         }
       },
       {
@@ -19621,13 +19493,44 @@
           "guild": "Echoes of Nevermore",
           "checked_at": "2026-08-01T17:38:38.282801+00:00"
         }
+      },
+      {
+        "name": "Zackoh",
+        "realm": "Bloodhoof",
+        "realm_slug": "bloodhoof",
+        "key": "zackoh-bloodhoof",
+        "raiderio_url": "https://raider.io/characters/us/bloodhoof/zackoh",
+        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bloodhoof/zackoh",
+        "class": "Hunter",
+        "spec": "Beast Mastery Hunter",
+        "role": "DPS",
+        "score": 0,
+        "scores_by_role": {
+          "dps": 0,
+          "healer": 0,
+          "tank": 0
+        },
+        "best_runs": [],
+        "recent_runs": [],
+        "ranks": {
+          "realm_overall": 0,
+          "realm_class": 0,
+          "region_overall": 0
+        },
+        "departed_at": "2026-08-21T12:19:54.150868+00:00",
+        "departure_check": {
+          "method": "raider.io character profile",
+          "status": "left",
+          "guild": null,
+          "checked_at": "2026-08-21T12:19:54.150868+00:00"
+        }
       }
     ],
-    "departed_count": 44,
+    "departed_count": 52,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-21T06:22:44.111075+00:00",
-      "member_count": 164
+      "as_of": "2026-08-21T12:19:54.150868+00:00",
+      "member_count": 156
     },
     "key_records": {
       "highest_overall": {
@@ -19661,9 +19564,9 @@
         {
           "dungeon": "Murder Row",
           "level": 12,
-          "name": "Satet",
-          "key": "satet-area-52",
-          "score": 365.6
+          "name": "Marceau",
+          "key": "marceau-malganis",
+          "score": 365.8
         },
         {
           "dungeon": "Ruby Life Pools",
@@ -19896,19 +19799,6 @@
         },
         {
           "rank": 16,
-          "name": "Kegsmashroll",
-          "key": "kegsmashroll-stormrage",
-          "score": 3414.3,
-          "class": "Monk",
-          "spec": "Brewmaster Monk",
-          "role": "Tank",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 3414.3,
-          "is_new": false
-        },
-        {
-          "rank": 17,
           "name": "Onessarain",
           "key": "onessarain-area-52",
           "score": 3414.3,
@@ -19921,7 +19811,7 @@
           "is_new": false
         },
         {
-          "rank": 18,
+          "rank": 17,
           "name": "Flogeron",
           "key": "flogeron-area-52",
           "score": 3355.6,
@@ -19934,7 +19824,7 @@
           "is_new": false
         },
         {
-          "rank": 19,
+          "rank": 18,
           "name": "Shadoxi",
           "key": "shadoxi-illidan",
           "score": 3333.5,
@@ -19947,7 +19837,7 @@
           "is_new": false
         },
         {
-          "rank": 20,
+          "rank": 19,
           "name": "Guloot",
           "key": "guloot-shadow-council",
           "score": 3297.1,
@@ -19960,7 +19850,7 @@
           "is_new": false
         },
         {
-          "rank": 21,
+          "rank": 20,
           "name": "Impkiller",
           "key": "impkiller-tichondrius",
           "score": 3268.3,
@@ -19973,7 +19863,7 @@
           "is_new": false
         },
         {
-          "rank": 22,
+          "rank": 21,
           "name": "Evangilism",
           "key": "evangilism-area-52",
           "score": 3256.2,
@@ -19986,7 +19876,7 @@
           "is_new": false
         },
         {
-          "rank": 23,
+          "rank": 22,
           "name": "Yur",
           "key": "yur-whisperwind",
           "score": 3245.1,
@@ -19999,7 +19889,7 @@
           "is_new": false
         },
         {
-          "rank": 24,
+          "rank": 23,
           "name": "Nixfallë",
           "key": "nixfallë-area-52",
           "score": 3157.6,
@@ -20012,7 +19902,7 @@
           "is_new": false
         },
         {
-          "rank": 25,
+          "rank": 24,
           "name": "Kelova",
           "key": "kelova-stormrage",
           "score": 3142.9,
@@ -20025,7 +19915,7 @@
           "is_new": false
         },
         {
-          "rank": 26,
+          "rank": 25,
           "name": "Breaktheicee",
           "key": "breaktheicee-illidan",
           "score": 3141.9,
@@ -20038,7 +19928,7 @@
           "is_new": false
         },
         {
-          "rank": 27,
+          "rank": 26,
           "name": "Katesthio",
           "key": "katesthio-zuljin",
           "score": 3128.5,
@@ -20051,20 +19941,7 @@
           "is_new": false
         },
         {
-          "rank": 28,
-          "name": "Ohnomyais",
-          "key": "ohnomyais-area-52",
-          "score": 3125.7,
-          "class": "Warrior",
-          "spec": "Arms Warrior",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 3125.7,
-          "is_new": false
-        },
-        {
-          "rank": 29,
+          "rank": 27,
           "name": "Kirrá",
           "key": "kirrá-aggramar",
           "score": 3125.2,
@@ -20077,7 +19954,7 @@
           "is_new": false
         },
         {
-          "rank": 30,
+          "rank": 28,
           "name": "Holyx",
           "key": "holyx-bleeding-hollow",
           "score": 3112.4,
@@ -20090,7 +19967,7 @@
           "is_new": false
         },
         {
-          "rank": 31,
+          "rank": 29,
           "name": "Aiime",
           "key": "aiime-bleeding-hollow",
           "score": 3106,
@@ -20103,7 +19980,7 @@
           "is_new": false
         },
         {
-          "rank": 32,
+          "rank": 30,
           "name": "Redgicide",
           "key": "redgicide-hydraxis",
           "score": 3103.6,
@@ -20116,7 +19993,7 @@
           "is_new": false
         },
         {
-          "rank": 33,
+          "rank": 31,
           "name": "Maillo",
           "key": "maillo-area-52",
           "score": 3094.7,
@@ -20129,7 +20006,7 @@
           "is_new": false
         },
         {
-          "rank": 34,
+          "rank": 32,
           "name": "Jerbane",
           "key": "jerbane-illidan",
           "score": 3079.5,
@@ -20142,7 +20019,7 @@
           "is_new": false
         },
         {
-          "rank": 35,
+          "rank": 33,
           "name": "Arfas",
           "key": "arfas-queldorei",
           "score": 3076.9,
@@ -20155,7 +20032,7 @@
           "is_new": false
         },
         {
-          "rank": 36,
+          "rank": 34,
           "name": "Marvinah",
           "key": "marvinah-queldorei",
           "score": 3065.4,
@@ -20168,7 +20045,7 @@
           "is_new": false
         },
         {
-          "rank": 37,
+          "rank": 35,
           "name": "Tinyx",
           "key": "tinyx-bleeding-hollow",
           "score": 3058.3,
@@ -20181,7 +20058,7 @@
           "is_new": false
         },
         {
-          "rank": 38,
+          "rank": 36,
           "name": "Scounddrel",
           "key": "scounddrel-maelstrom",
           "score": 3023.6,
@@ -20194,7 +20071,7 @@
           "is_new": false
         },
         {
-          "rank": 39,
+          "rank": 37,
           "name": "Gandamar",
           "key": "gandamar-azgalor",
           "score": 3021.6,
@@ -20207,7 +20084,7 @@
           "is_new": false
         },
         {
-          "rank": 40,
+          "rank": 38,
           "name": "Fuazy",
           "key": "fuazy-malganis",
           "score": 3018.9,
@@ -20220,7 +20097,7 @@
           "is_new": false
         },
         {
-          "rank": 41,
+          "rank": 39,
           "name": "Duskwolf",
           "key": "duskwolf-azuremyst",
           "score": 2997.8,
@@ -20233,7 +20110,7 @@
           "is_new": false
         },
         {
-          "rank": 42,
+          "rank": 40,
           "name": "Rakell",
           "key": "rakell-proudmoore",
           "score": 2994.6,
@@ -20246,7 +20123,7 @@
           "is_new": false
         },
         {
-          "rank": 43,
+          "rank": 41,
           "name": "Heximal",
           "key": "heximal-hydraxis",
           "score": 2989.3,
@@ -20259,7 +20136,7 @@
           "is_new": false
         },
         {
-          "rank": 44,
+          "rank": 42,
           "name": "Onetruemorty",
           "key": "onetruemorty-area-52",
           "score": 2986.5,
@@ -20272,7 +20149,7 @@
           "is_new": false
         },
         {
-          "rank": 45,
+          "rank": 43,
           "name": "Slicerdicer",
           "key": "slicerdicer-bleeding-hollow",
           "score": 2953.1,
@@ -20285,7 +20162,7 @@
           "is_new": false
         },
         {
-          "rank": 46,
+          "rank": 44,
           "name": "Tommybravo",
           "key": "tommybravo-bleeding-hollow",
           "score": 2881.9,
@@ -20298,7 +20175,7 @@
           "is_new": false
         },
         {
-          "rank": 47,
+          "rank": 45,
           "name": "Widowx",
           "key": "widowx-bleeding-hollow",
           "score": 2879.3,
@@ -20311,7 +20188,7 @@
           "is_new": false
         },
         {
-          "rank": 48,
+          "rank": 46,
           "name": "Beroben",
           "key": "beroben-emerald-dream",
           "score": 2878.2,
@@ -20324,7 +20201,7 @@
           "is_new": false
         },
         {
-          "rank": 49,
+          "rank": 47,
           "name": "Beroben",
           "key": "beroben-queldorei",
           "score": 2878.2,
@@ -20337,20 +20214,7 @@
           "is_new": false
         },
         {
-          "rank": 50,
-          "name": "Autable",
-          "key": "autable-gurubashi",
-          "score": 2873.8,
-          "class": "Demon Hunter",
-          "spec": "Havoc DH",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 2873.8,
-          "is_new": false
-        },
-        {
-          "rank": 51,
+          "rank": 48,
           "name": "Enyò",
           "key": "enyò-area-52",
           "score": 2864.2,
@@ -20359,11 +20223,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -1030.7,
-          "delta_day": 143.7,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 52,
+          "rank": 49,
           "name": "Devana",
           "key": "devana-bloodscalp",
           "score": 2860.1,
@@ -20376,7 +20240,7 @@
           "is_new": false
         },
         {
-          "rank": 53,
+          "rank": 50,
           "name": "Flemel",
           "key": "flemel-area-52",
           "score": 2836.1,
@@ -20389,7 +20253,7 @@
           "is_new": false
         },
         {
-          "rank": 54,
+          "rank": 51,
           "name": "Glinkz",
           "key": "glinkz-wyrmrest-accord",
           "score": 2818.1,
@@ -20402,20 +20266,7 @@
           "is_new": false
         },
         {
-          "rank": 55,
-          "name": "Paleghost",
-          "key": "paleghost-sargeras",
-          "score": 2810.7,
-          "class": "Death Knight",
-          "spec": "Unholy DK",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 2810.7,
-          "is_new": false
-        },
-        {
-          "rank": 56,
+          "rank": 52,
           "name": "Dragoonx",
           "key": "dragoonx-bleeding-hollow",
           "score": 2793.6,
@@ -20428,7 +20279,7 @@
           "is_new": false
         },
         {
-          "rank": 57,
+          "rank": 53,
           "name": "Rakbear",
           "key": "rakbear-proudmoore",
           "score": 2786.5,
@@ -20441,7 +20292,7 @@
           "is_new": false
         },
         {
-          "rank": 58,
+          "rank": 54,
           "name": "Tommybravoo",
           "key": "tommybravoo-bleeding-hollow",
           "score": 2772.1,
@@ -20450,11 +20301,11 @@
           "role": "Tank",
           "top5": false,
           "delta_week": -1109.1,
-          "delta_day": 192.4,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 59,
+          "rank": 55,
           "name": "Chokalock",
           "key": "chokalock-sargeras",
           "score": 2765.8,
@@ -20467,7 +20318,7 @@
           "is_new": false
         },
         {
-          "rank": 60,
+          "rank": 56,
           "name": "Chohno",
           "key": "chohno-stormrage",
           "score": 2751.4,
@@ -20480,7 +20331,7 @@
           "is_new": false
         },
         {
-          "rank": 61,
+          "rank": 57,
           "name": "Kitzumi",
           "key": "kitzumi-illidan",
           "score": 2751.4,
@@ -20493,7 +20344,7 @@
           "is_new": false
         },
         {
-          "rank": 62,
+          "rank": 58,
           "name": "Skoala",
           "key": "skoala-frostwolf",
           "score": 2750.2,
@@ -20506,7 +20357,7 @@
           "is_new": false
         },
         {
-          "rank": 63,
+          "rank": 59,
           "name": "Amrevenge",
           "key": "amrevenge-stormrage",
           "score": 2677.6,
@@ -20515,11 +20366,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -1240.1,
-          "delta_day": 43.2,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 64,
+          "rank": 60,
           "name": "Lycopersicum",
           "key": "lycopersicum-silver-hand",
           "score": 2635.8,
@@ -20532,7 +20383,7 @@
           "is_new": false
         },
         {
-          "rank": 65,
+          "rank": 61,
           "name": "Sidarien",
           "key": "sidarien-eitrigg",
           "score": 2632.1,
@@ -20545,7 +20396,7 @@
           "is_new": false
         },
         {
-          "rank": 66,
+          "rank": 62,
           "name": "Icyx",
           "key": "icyx-bleeding-hollow",
           "score": 2624.6,
@@ -20558,7 +20409,7 @@
           "is_new": false
         },
         {
-          "rank": 67,
+          "rank": 63,
           "name": "Coned",
           "key": "coned-azgalor",
           "score": 2599,
@@ -20571,7 +20422,7 @@
           "is_new": false
         },
         {
-          "rank": 68,
+          "rank": 64,
           "name": "Hellful",
           "key": "hellful-lightnings-blade",
           "score": 2597.9,
@@ -20580,11 +20431,11 @@
           "role": "Healer",
           "top5": false,
           "delta_week": -820.8,
-          "delta_day": 201.6,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 69,
+          "rank": 65,
           "name": "Glaidaniss",
           "key": "glaidaniss-bleeding-hollow",
           "score": 2588.7,
@@ -20597,7 +20448,20 @@
           "is_new": false
         },
         {
-          "rank": 70,
+          "rank": 66,
+          "name": "Marceau",
+          "key": "marceau-malganis",
+          "score": 2548.4,
+          "class": "Warrior",
+          "spec": "Arms Warrior",
+          "role": "DPS",
+          "top5": false,
+          "delta_week": -573.3,
+          "delta_day": 95.1,
+          "is_new": false
+        },
+        {
+          "rank": 67,
           "name": "Erosina",
           "key": "erosina-laughing-skull",
           "score": 2496.9,
@@ -20610,7 +20474,7 @@
           "is_new": false
         },
         {
-          "rank": 71,
+          "rank": 68,
           "name": "Peeoncorpses",
           "key": "peeoncorpses-illidan",
           "score": 2492.5,
@@ -20623,7 +20487,7 @@
           "is_new": false
         },
         {
-          "rank": 72,
+          "rank": 69,
           "name": "Cptbenimaru",
           "key": "cptbenimaru-area-52",
           "score": 2477.6,
@@ -20636,7 +20500,7 @@
           "is_new": false
         },
         {
-          "rank": 73,
+          "rank": 70,
           "name": "Rakella",
           "key": "rakella-proudmoore",
           "score": 2468.2,
@@ -20649,20 +20513,7 @@
           "is_new": true
         },
         {
-          "rank": 74,
-          "name": "Marceau",
-          "key": "marceau-malganis",
-          "score": 2453.3,
-          "class": "Warrior",
-          "spec": "Arms Warrior",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": -668.4,
-          "delta_day": 0.0,
-          "is_new": false
-        },
-        {
-          "rank": 75,
+          "rank": 71,
           "name": "Jilk",
           "key": "jilk-eldrethalas",
           "score": 2396,
@@ -20675,7 +20526,7 @@
           "is_new": false
         },
         {
-          "rank": 76,
+          "rank": 72,
           "name": "Phyrdapriest",
           "key": "phyrdapriest-bleeding-hollow",
           "score": 2395.6,
@@ -20688,20 +20539,7 @@
           "is_new": true
         },
         {
-          "rank": 77,
-          "name": "Azell",
-          "key": "azell-bleeding-hollow",
-          "score": 2345.5,
-          "class": "Monk",
-          "spec": "Brewmaster Monk",
-          "role": "Tank",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 2345.5,
-          "is_new": false
-        },
-        {
-          "rank": 78,
+          "rank": 73,
           "name": "Emmastrasza",
           "key": "emmastrasza-illidan",
           "score": 2246.1,
@@ -20710,11 +20548,11 @@
           "role": "Healer",
           "top5": false,
           "delta_week": null,
-          "delta_day": 646.5,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
-          "rank": 79,
+          "rank": 74,
           "name": "Eponax",
           "key": "eponax-bleeding-hollow",
           "score": 2222.1,
@@ -20727,7 +20565,7 @@
           "is_new": false
         },
         {
-          "rank": 80,
+          "rank": 75,
           "name": "Huntlowx",
           "key": "huntlowx-bleeding-hollow",
           "score": 2204,
@@ -20740,20 +20578,20 @@
           "is_new": false
         },
         {
-          "rank": 81,
+          "rank": 76,
           "name": "Boltzaa",
           "key": "boltzaa-thrall",
-          "score": 2188,
+          "score": 2194.6,
           "class": "Warlock",
           "spec": "Demonology Warlock",
           "role": "DPS",
           "top5": false,
-          "delta_week": -816.9,
-          "delta_day": 0,
+          "delta_week": -810.3,
+          "delta_day": 6.6,
           "is_new": false
         },
         {
-          "rank": 82,
+          "rank": 77,
           "name": "Wowimhealing",
           "key": "wowimhealing-azgalor",
           "score": 2184.2,
@@ -20766,7 +20604,7 @@
           "is_new": false
         },
         {
-          "rank": 83,
+          "rank": 78,
           "name": "Aime",
           "key": "aime-bleeding-hollow",
           "score": 2175.4,
@@ -20779,20 +20617,7 @@
           "is_new": false
         },
         {
-          "rank": 84,
-          "name": "Kathrobbin",
-          "key": "kathrobbin-zuljin",
-          "score": 2172.2,
-          "class": "Paladin",
-          "spec": "Holy Paladin",
-          "role": "Healer",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 2172.2,
-          "is_new": false
-        },
-        {
-          "rank": 85,
+          "rank": 79,
           "name": "Milkbreath",
           "key": "milkbreath-bleeding-hollow",
           "score": 2134.2,
@@ -20805,7 +20630,7 @@
           "is_new": false
         },
         {
-          "rank": 86,
+          "rank": 80,
           "name": "Carun",
           "key": "carun-proudmoore",
           "score": 2129,
@@ -20818,20 +20643,33 @@
           "is_new": false
         },
         {
-          "rank": 87,
+          "rank": 81,
+          "name": "Kirrax",
+          "key": "kirrax-thrall",
+          "score": 2103.5,
+          "class": "Warrior",
+          "spec": "Arms Warrior",
+          "role": "DPS",
+          "top5": false,
+          "delta_week": null,
+          "delta_day": 416.7,
+          "is_new": true
+        },
+        {
+          "rank": 82,
           "name": "Riias",
           "key": "riias-senjin",
-          "score": 1995.7,
+          "score": 2066,
           "class": "Paladin",
           "spec": "Retribution Paladin",
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 0.0,
+          "delta_day": 70.3,
           "is_new": true
         },
         {
-          "rank": 88,
+          "rank": 83,
           "name": "Khorra",
           "key": "khorra-sargeras",
           "score": 1903.1,
@@ -20844,7 +20682,7 @@
           "is_new": false
         },
         {
-          "rank": 89,
+          "rank": 84,
           "name": "Boondocka",
           "key": "boondocka-hydraxis",
           "score": 1900.6,
@@ -20853,11 +20691,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -1203.3,
-          "delta_day": 639.1,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 90,
+          "rank": 85,
           "name": "Anbux",
           "key": "anbux-bleeding-hollow",
           "score": 1833.9,
@@ -20870,7 +20708,7 @@
           "is_new": false
         },
         {
-          "rank": 91,
+          "rank": 86,
           "name": "Buchalter",
           "key": "buchalter-area-52",
           "score": 1775,
@@ -20879,11 +20717,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -1475.2,
-          "delta_day": 1014.7,
+          "delta_day": 0,
           "is_new": false
         },
         {
-          "rank": 92,
+          "rank": 87,
           "name": "Mogaslst",
           "key": "mogaslst-malganis",
           "score": 1768.9,
@@ -20892,11 +20730,11 @@
           "role": "Healer",
           "top5": false,
           "delta_week": -1347.1,
-          "delta_day": 192.9,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 93,
+          "rank": 88,
           "name": "Kao",
           "key": "kao-kalecgos",
           "score": 1689.9,
@@ -20905,24 +20743,11 @@
           "role": "Tank",
           "top5": false,
           "delta_week": -1150.8,
-          "delta_day": 138.3,
+          "delta_day": 0.0,
           "is_new": false
         },
         {
-          "rank": 94,
-          "name": "Kirrax",
-          "key": "kirrax-thrall",
-          "score": 1686.8,
-          "class": "Warrior",
-          "spec": "Arms Warrior",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": null,
-          "delta_day": 108.7,
-          "is_new": true
-        },
-        {
-          "rank": 95,
+          "rank": 89,
           "name": "Knitereaver",
           "key": "knitereaver-hyjal",
           "score": 1642.3,
@@ -20931,11 +20756,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 363.1,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
-          "rank": 96,
+          "rank": 90,
           "name": "Ricodandolo",
           "key": "ricodandolo-area-52",
           "score": 1578.5,
@@ -20948,7 +20773,7 @@
           "is_new": false
         },
         {
-          "rank": 97,
+          "rank": 91,
           "name": "Kerrosane",
           "key": "kerrosane-zuljin",
           "score": 1573.1,
@@ -20957,11 +20782,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 1243.9,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
-          "rank": 98,
+          "rank": 92,
           "name": "Ranstar",
           "key": "ranstar-illidan",
           "score": 1367.7,
@@ -20974,7 +20799,7 @@
           "is_new": true
         },
         {
-          "rank": 99,
+          "rank": 93,
           "name": "Rhansìk",
           "key": "rhansìk-area-52",
           "score": 1353.4,
@@ -20987,7 +20812,7 @@
           "is_new": false
         },
         {
-          "rank": 100,
+          "rank": 94,
           "name": "Sinistrad",
           "key": "sinistrad-stormrage",
           "score": 1175.2,
@@ -21000,7 +20825,7 @@
           "is_new": false
         },
         {
-          "rank": 101,
+          "rank": 95,
           "name": "Meillo",
           "key": "meillo-area-52",
           "score": 1155.8,
@@ -21013,7 +20838,7 @@
           "is_new": true
         },
         {
-          "rank": 102,
+          "rank": 96,
           "name": "Pällypocket",
           "key": "pällypocket-illidan",
           "score": 1112.4,
@@ -21026,7 +20851,7 @@
           "is_new": false
         },
         {
-          "rank": 103,
+          "rank": 97,
           "name": "Grëywolf",
           "key": "grëywolf-eldrethalas",
           "score": 1107.3,
@@ -21039,7 +20864,7 @@
           "is_new": false
         },
         {
-          "rank": 104,
+          "rank": 98,
           "name": "Wolfx",
           "key": "wolfx-bleeding-hollow",
           "score": 1103.2,
@@ -21052,7 +20877,7 @@
           "is_new": false
         },
         {
-          "rank": 105,
+          "rank": 99,
           "name": "Prideblade",
           "key": "prideblade-azgalor",
           "score": 1093.3,
@@ -21065,7 +20890,7 @@
           "is_new": true
         },
         {
-          "rank": 106,
+          "rank": 100,
           "name": "Codedgar",
           "key": "codedgar-queldorei",
           "score": 1081.6,
@@ -21078,7 +20903,7 @@
           "is_new": true
         },
         {
-          "rank": 107,
+          "rank": 101,
           "name": "Danethegreat",
           "key": "danethegreat-area-52",
           "score": 1053.4,
@@ -21091,7 +20916,7 @@
           "is_new": false
         },
         {
-          "rank": 108,
+          "rank": 102,
           "name": "Breakdruid",
           "key": "breakdruid-area-52",
           "score": 1022.2,
@@ -21104,7 +20929,7 @@
           "is_new": false
         },
         {
-          "rank": 109,
+          "rank": 103,
           "name": "Satet",
           "key": "satet-area-52",
           "score": 999.8,
@@ -21117,7 +20942,7 @@
           "is_new": true
         },
         {
-          "rank": 110,
+          "rank": 104,
           "name": "Uddershock",
           "key": "uddershock-queldorei",
           "score": 977.9,
@@ -21130,7 +20955,7 @@
           "is_new": false
         },
         {
-          "rank": 111,
+          "rank": 105,
           "name": "Ravokoflight",
           "key": "ravokoflight-eldrethalas",
           "score": 953.4,
@@ -21143,7 +20968,7 @@
           "is_new": false
         },
         {
-          "rank": 112,
+          "rank": 106,
           "name": "Miallo",
           "key": "miallo-area-52",
           "score": 867,
@@ -21156,7 +20981,7 @@
           "is_new": false
         },
         {
-          "rank": 113,
+          "rank": 107,
           "name": "Ranaria",
           "key": "ranaria-area-52",
           "score": 866.7,
@@ -21169,7 +20994,7 @@
           "is_new": false
         },
         {
-          "rank": 114,
+          "rank": 108,
           "name": "Dathar",
           "key": "dathar-area-52",
           "score": 740.1,
@@ -21182,7 +21007,7 @@
           "is_new": false
         },
         {
-          "rank": 115,
+          "rank": 109,
           "name": "Tonnk",
           "key": "tonnk-stormrage",
           "score": 714.9,
@@ -21195,20 +21020,7 @@
           "is_new": true
         },
         {
-          "rank": 116,
-          "name": "Zackoh",
-          "key": "zackoh-bloodhoof",
-          "score": 671.6,
-          "class": "Hunter",
-          "spec": "Beast Mastery Hunter",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": 0.0,
-          "delta_day": 671.6,
-          "is_new": false
-        },
-        {
-          "rank": 117,
+          "rank": 110,
           "name": "Wolfmato",
           "key": "wolfmato-duskwood",
           "score": 643.1,
@@ -21221,7 +21033,7 @@
           "is_new": true
         },
         {
-          "rank": 118,
+          "rank": 111,
           "name": "Loafz",
           "key": "loafz-stormrage",
           "score": 552.1,
@@ -21234,7 +21046,20 @@
           "is_new": true
         },
         {
-          "rank": 119,
+          "rank": 112,
+          "name": "Andika",
+          "key": "andika-area-52",
+          "score": 488.9,
+          "class": "Hunter",
+          "spec": "Marksmanship Hunter",
+          "role": "DPS",
+          "top5": false,
+          "delta_week": -2517.3,
+          "delta_day": 161.0,
+          "is_new": false
+        },
+        {
+          "rank": 113,
           "name": "Néfèrtítì",
           "key": "néfèrtítì-tichondrius",
           "score": 473.8,
@@ -21247,7 +21072,7 @@
           "is_new": false
         },
         {
-          "rank": 120,
+          "rank": 114,
           "name": "Lørdøfßud",
           "key": "lørdøfßud-bleeding-hollow",
           "score": 408.5,
@@ -21260,7 +21085,7 @@
           "is_new": true
         },
         {
-          "rank": 121,
+          "rank": 115,
           "name": "Monkmates",
           "key": "monkmates-korgath",
           "score": 364.2,
@@ -21273,20 +21098,7 @@
           "is_new": true
         },
         {
-          "rank": 122,
-          "name": "Andika",
-          "key": "andika-area-52",
-          "score": 327.9,
-          "class": "Hunter",
-          "spec": "Marksmanship Hunter",
-          "role": "DPS",
-          "top5": false,
-          "delta_week": -2678.3,
-          "delta_day": 327.9,
-          "is_new": false
-        },
-        {
-          "rank": 123,
+          "rank": 116,
           "name": "Pøçkëts",
           "key": "pøçkëts-illidan",
           "score": 322,
@@ -21299,7 +21111,7 @@
           "is_new": true
         },
         {
-          "rank": 124,
+          "rank": 117,
           "name": "Hantt",
           "key": "hantt-stormrage",
           "score": 304.3,
@@ -21312,7 +21124,7 @@
           "is_new": true
         },
         {
-          "rank": 125,
+          "rank": 118,
           "name": "Azerothia",
           "key": "azerothia-tichondrius",
           "score": 194.9,
@@ -21325,7 +21137,7 @@
           "is_new": false
         },
         {
-          "rank": 126,
+          "rank": 119,
           "name": "Madreezus",
           "key": "madreezus-elune",
           "score": 170,
@@ -21334,11 +21146,11 @@
           "role": "DPS",
           "top5": false,
           "delta_week": -3284.7,
-          "delta_day": 170,
+          "delta_day": 0,
           "is_new": false
         },
         {
-          "rank": 127,
+          "rank": 120,
           "name": "Meyllo",
           "key": "meyllo-area-52",
           "score": 170,
@@ -21351,7 +21163,7 @@
           "is_new": true
         },
         {
-          "rank": 128,
+          "rank": 121,
           "name": "Unholyx",
           "key": "unholyx-bleeding-hollow",
           "score": 168.4,
@@ -21364,7 +21176,7 @@
           "is_new": false
         },
         {
-          "rank": 129,
+          "rank": 122,
           "name": "Sandgs",
           "key": "sandgs-area-52",
           "score": 166.8,
@@ -21377,7 +21189,7 @@
           "is_new": false
         },
         {
-          "rank": 130,
+          "rank": 123,
           "name": "Shadowhausen",
           "key": "shadowhausen-bloodhoof",
           "score": 166.7,
@@ -21390,7 +21202,7 @@
           "is_new": false
         },
         {
-          "rank": 131,
+          "rank": 124,
           "name": "Sosomage",
           "key": "sosomage-zuljin",
           "score": 165.6,
@@ -21403,7 +21215,7 @@
           "is_new": false
         },
         {
-          "rank": 132,
+          "rank": 125,
           "name": "Xavira",
           "key": "xavira-proudmoore",
           "score": 158.9,
@@ -21498,19 +21310,6 @@
           },
           {
             "rank": 7,
-            "name": "Kegsmashroll",
-            "key": "kegsmashroll-stormrage",
-            "score": 3414.3,
-            "class": "Monk",
-            "spec": "Brewmaster Monk",
-            "role": "Tank",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 3414.3,
-            "is_new": false
-          },
-          {
-            "rank": 8,
             "name": "Yur",
             "key": "yur-whisperwind",
             "score": 3245.1,
@@ -21523,7 +21322,7 @@
             "is_new": false
           },
           {
-            "rank": 9,
+            "rank": 8,
             "name": "Kelova",
             "key": "kelova-stormrage",
             "score": 3142.9,
@@ -21536,7 +21335,7 @@
             "is_new": false
           },
           {
-            "rank": 10,
+            "rank": 9,
             "name": "Jerbane",
             "key": "jerbane-illidan",
             "score": 3079.5,
@@ -21549,7 +21348,7 @@
             "is_new": false
           },
           {
-            "rank": 11,
+            "rank": 10,
             "name": "Beroben",
             "key": "beroben-queldorei",
             "score": 2878.2,
@@ -21562,7 +21361,7 @@
             "is_new": false
           },
           {
-            "rank": 12,
+            "rank": 11,
             "name": "Rakbear",
             "key": "rakbear-proudmoore",
             "score": 2786.5,
@@ -21575,7 +21374,7 @@
             "is_new": false
           },
           {
-            "rank": 13,
+            "rank": 12,
             "name": "Tommybravoo",
             "key": "tommybravoo-bleeding-hollow",
             "score": 2772.1,
@@ -21584,11 +21383,11 @@
             "role": "Tank",
             "top5": false,
             "delta_week": -1109.1,
-            "delta_day": 192.4,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 14,
+            "rank": 13,
             "name": "Chohno",
             "key": "chohno-stormrage",
             "score": 2751.4,
@@ -21601,7 +21400,7 @@
             "is_new": false
           },
           {
-            "rank": 15,
+            "rank": 14,
             "name": "Lycopersicum",
             "key": "lycopersicum-silver-hand",
             "score": 2635.8,
@@ -21614,7 +21413,7 @@
             "is_new": false
           },
           {
-            "rank": 16,
+            "rank": 15,
             "name": "Sidarien",
             "key": "sidarien-eitrigg",
             "score": 2632.1,
@@ -21627,20 +21426,7 @@
             "is_new": false
           },
           {
-            "rank": 17,
-            "name": "Azell",
-            "key": "azell-bleeding-hollow",
-            "score": 2345.5,
-            "class": "Monk",
-            "spec": "Brewmaster Monk",
-            "role": "Tank",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2345.5,
-            "is_new": false
-          },
-          {
-            "rank": 18,
+            "rank": 16,
             "name": "Milkbreath",
             "key": "milkbreath-bleeding-hollow",
             "score": 2134.2,
@@ -21653,7 +21439,7 @@
             "is_new": false
           },
           {
-            "rank": 19,
+            "rank": 17,
             "name": "Kao",
             "key": "kao-kalecgos",
             "score": 1689.9,
@@ -21662,11 +21448,11 @@
             "role": "Tank",
             "top5": false,
             "delta_week": -1150.8,
-            "delta_day": 138.3,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 20,
+            "rank": 18,
             "name": "Ranstar",
             "key": "ranstar-illidan",
             "score": 1367.7,
@@ -21679,7 +21465,7 @@
             "is_new": true
           },
           {
-            "rank": 21,
+            "rank": 19,
             "name": "Sinistrad",
             "key": "sinistrad-stormrage",
             "score": 1175.2,
@@ -21692,7 +21478,7 @@
             "is_new": false
           },
           {
-            "rank": 22,
+            "rank": 20,
             "name": "Meillo",
             "key": "meillo-area-52",
             "score": 1155.8,
@@ -21705,7 +21491,7 @@
             "is_new": true
           },
           {
-            "rank": 23,
+            "rank": 21,
             "name": "Ravokoflight",
             "key": "ravokoflight-eldrethalas",
             "score": 953.4,
@@ -21718,7 +21504,7 @@
             "is_new": false
           },
           {
-            "rank": 24,
+            "rank": 22,
             "name": "Tonnk",
             "key": "tonnk-stormrage",
             "score": 714.9,
@@ -21731,7 +21517,7 @@
             "is_new": true
           },
           {
-            "rank": 25,
+            "rank": 23,
             "name": "Hantt",
             "key": "hantt-stormrage",
             "score": 304.3,
@@ -21911,7 +21697,7 @@
             "role": "Healer",
             "top5": false,
             "delta_week": -820.8,
-            "delta_day": 201.6,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -21963,24 +21749,11 @@
             "role": "Healer",
             "top5": false,
             "delta_week": null,
-            "delta_day": 646.5,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
             "rank": 18,
-            "name": "Kathrobbin",
-            "key": "kathrobbin-zuljin",
-            "score": 2172.2,
-            "class": "Paladin",
-            "spec": "Holy Paladin",
-            "role": "Healer",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2172.2,
-            "is_new": false
-          },
-          {
-            "rank": 19,
             "name": "Mogaslst",
             "key": "mogaslst-malganis",
             "score": 1768.9,
@@ -21989,11 +21762,11 @@
             "role": "Healer",
             "top5": false,
             "delta_week": -1347.1,
-            "delta_day": 192.9,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 20,
+            "rank": 19,
             "name": "Pällypocket",
             "key": "pällypocket-illidan",
             "score": 1112.4,
@@ -22006,7 +21779,7 @@
             "is_new": false
           },
           {
-            "rank": 21,
+            "rank": 20,
             "name": "Wolfx",
             "key": "wolfx-bleeding-hollow",
             "score": 1103.2,
@@ -22019,7 +21792,7 @@
             "is_new": false
           },
           {
-            "rank": 22,
+            "rank": 21,
             "name": "Satet",
             "key": "satet-area-52",
             "score": 999.8,
@@ -22032,7 +21805,7 @@
             "is_new": true
           },
           {
-            "rank": 23,
+            "rank": 22,
             "name": "Wolfmato",
             "key": "wolfmato-duskwood",
             "score": 643.1,
@@ -22045,7 +21818,7 @@
             "is_new": true
           },
           {
-            "rank": 24,
+            "rank": 23,
             "name": "Monkmates",
             "key": "monkmates-korgath",
             "score": 364.2,
@@ -22058,7 +21831,7 @@
             "is_new": true
           },
           {
-            "rank": 25,
+            "rank": 24,
             "name": "Pøçkëts",
             "key": "pøçkëts-illidan",
             "score": 322,
@@ -22191,19 +21964,6 @@
           },
           {
             "rank": 10,
-            "name": "Ohnomyais",
-            "key": "ohnomyais-area-52",
-            "score": 3125.7,
-            "class": "Warrior",
-            "spec": "Arms Warrior",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 3125.7,
-            "is_new": false
-          },
-          {
-            "rank": 11,
             "name": "Kirrá",
             "key": "kirrá-aggramar",
             "score": 3125.2,
@@ -22216,7 +21976,7 @@
             "is_new": false
           },
           {
-            "rank": 12,
+            "rank": 11,
             "name": "Holyx",
             "key": "holyx-bleeding-hollow",
             "score": 3112.4,
@@ -22229,7 +21989,7 @@
             "is_new": false
           },
           {
-            "rank": 13,
+            "rank": 12,
             "name": "Maillo",
             "key": "maillo-area-52",
             "score": 3094.7,
@@ -22242,7 +22002,7 @@
             "is_new": false
           },
           {
-            "rank": 14,
+            "rank": 13,
             "name": "Arfas",
             "key": "arfas-queldorei",
             "score": 3076.9,
@@ -22255,7 +22015,7 @@
             "is_new": false
           },
           {
-            "rank": 15,
+            "rank": 14,
             "name": "Marvinah",
             "key": "marvinah-queldorei",
             "score": 3065.4,
@@ -22268,7 +22028,7 @@
             "is_new": false
           },
           {
-            "rank": 16,
+            "rank": 15,
             "name": "Tinyx",
             "key": "tinyx-bleeding-hollow",
             "score": 3058.3,
@@ -22281,7 +22041,7 @@
             "is_new": false
           },
           {
-            "rank": 17,
+            "rank": 16,
             "name": "Scounddrel",
             "key": "scounddrel-maelstrom",
             "score": 3023.6,
@@ -22294,7 +22054,7 @@
             "is_new": false
           },
           {
-            "rank": 18,
+            "rank": 17,
             "name": "Gandamar",
             "key": "gandamar-azgalor",
             "score": 3021.6,
@@ -22307,7 +22067,7 @@
             "is_new": false
           },
           {
-            "rank": 19,
+            "rank": 18,
             "name": "Fuazy",
             "key": "fuazy-malganis",
             "score": 3018.9,
@@ -22320,7 +22080,7 @@
             "is_new": false
           },
           {
-            "rank": 20,
+            "rank": 19,
             "name": "Duskwolf",
             "key": "duskwolf-azuremyst",
             "score": 2997.8,
@@ -22333,7 +22093,7 @@
             "is_new": false
           },
           {
-            "rank": 21,
+            "rank": 20,
             "name": "Rakell",
             "key": "rakell-proudmoore",
             "score": 2994.6,
@@ -22346,7 +22106,7 @@
             "is_new": false
           },
           {
-            "rank": 22,
+            "rank": 21,
             "name": "Heximal",
             "key": "heximal-hydraxis",
             "score": 2989.3,
@@ -22359,7 +22119,7 @@
             "is_new": false
           },
           {
-            "rank": 23,
+            "rank": 22,
             "name": "Onetruemorty",
             "key": "onetruemorty-area-52",
             "score": 2986.5,
@@ -22372,7 +22132,7 @@
             "is_new": false
           },
           {
-            "rank": 24,
+            "rank": 23,
             "name": "Slicerdicer",
             "key": "slicerdicer-bleeding-hollow",
             "score": 2953.1,
@@ -22385,7 +22145,7 @@
             "is_new": false
           },
           {
-            "rank": 25,
+            "rank": 24,
             "name": "Tommybravo",
             "key": "tommybravo-bleeding-hollow",
             "score": 2881.9,
@@ -22398,7 +22158,7 @@
             "is_new": false
           },
           {
-            "rank": 26,
+            "rank": 25,
             "name": "Beroben",
             "key": "beroben-emerald-dream",
             "score": 2878.2,
@@ -22411,20 +22171,7 @@
             "is_new": false
           },
           {
-            "rank": 27,
-            "name": "Autable",
-            "key": "autable-gurubashi",
-            "score": 2873.8,
-            "class": "Demon Hunter",
-            "spec": "Havoc DH",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2873.8,
-            "is_new": false
-          },
-          {
-            "rank": 28,
+            "rank": 26,
             "name": "Enyò",
             "key": "enyò-area-52",
             "score": 2864.2,
@@ -22433,11 +22180,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1030.7,
-            "delta_day": 143.7,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 29,
+            "rank": 27,
             "name": "Devana",
             "key": "devana-bloodscalp",
             "score": 2860.1,
@@ -22450,7 +22197,7 @@
             "is_new": false
           },
           {
-            "rank": 30,
+            "rank": 28,
             "name": "Flemel",
             "key": "flemel-area-52",
             "score": 2836.1,
@@ -22463,7 +22210,7 @@
             "is_new": false
           },
           {
-            "rank": 31,
+            "rank": 29,
             "name": "Glinkz",
             "key": "glinkz-wyrmrest-accord",
             "score": 2818.1,
@@ -22476,20 +22223,7 @@
             "is_new": false
           },
           {
-            "rank": 32,
-            "name": "Paleghost",
-            "key": "paleghost-sargeras",
-            "score": 2810.7,
-            "class": "Death Knight",
-            "spec": "Unholy DK",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2810.7,
-            "is_new": false
-          },
-          {
-            "rank": 33,
+            "rank": 30,
             "name": "Dragoonx",
             "key": "dragoonx-bleeding-hollow",
             "score": 2793.6,
@@ -22502,7 +22236,7 @@
             "is_new": false
           },
           {
-            "rank": 34,
+            "rank": 31,
             "name": "Chokalock",
             "key": "chokalock-sargeras",
             "score": 2765.8,
@@ -22515,7 +22249,7 @@
             "is_new": false
           },
           {
-            "rank": 35,
+            "rank": 32,
             "name": "Kitzumi",
             "key": "kitzumi-illidan",
             "score": 2751.4,
@@ -22528,7 +22262,7 @@
             "is_new": false
           },
           {
-            "rank": 36,
+            "rank": 33,
             "name": "Skoala",
             "key": "skoala-frostwolf",
             "score": 2750.2,
@@ -22541,7 +22275,7 @@
             "is_new": false
           },
           {
-            "rank": 37,
+            "rank": 34,
             "name": "Amrevenge",
             "key": "amrevenge-stormrage",
             "score": 2677.6,
@@ -22550,11 +22284,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1240.1,
-            "delta_day": 43.2,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 38,
+            "rank": 35,
             "name": "Icyx",
             "key": "icyx-bleeding-hollow",
             "score": 2624.6,
@@ -22567,7 +22301,7 @@
             "is_new": false
           },
           {
-            "rank": 39,
+            "rank": 36,
             "name": "Coned",
             "key": "coned-azgalor",
             "score": 2599,
@@ -22580,7 +22314,7 @@
             "is_new": false
           },
           {
-            "rank": 40,
+            "rank": 37,
             "name": "Glaidaniss",
             "key": "glaidaniss-bleeding-hollow",
             "score": 2588.7,
@@ -22593,7 +22327,20 @@
             "is_new": false
           },
           {
-            "rank": 41,
+            "rank": 38,
+            "name": "Marceau",
+            "key": "marceau-malganis",
+            "score": 2548.4,
+            "class": "Warrior",
+            "spec": "Arms Warrior",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": -573.3,
+            "delta_day": 95.1,
+            "is_new": false
+          },
+          {
+            "rank": 39,
             "name": "Erosina",
             "key": "erosina-laughing-skull",
             "score": 2496.9,
@@ -22606,7 +22353,7 @@
             "is_new": false
           },
           {
-            "rank": 42,
+            "rank": 40,
             "name": "Peeoncorpses",
             "key": "peeoncorpses-illidan",
             "score": 2492.5,
@@ -22619,7 +22366,7 @@
             "is_new": false
           },
           {
-            "rank": 43,
+            "rank": 41,
             "name": "Rakella",
             "key": "rakella-proudmoore",
             "score": 2468.2,
@@ -22632,20 +22379,7 @@
             "is_new": true
           },
           {
-            "rank": 44,
-            "name": "Marceau",
-            "key": "marceau-malganis",
-            "score": 2453.3,
-            "class": "Warrior",
-            "spec": "Arms Warrior",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": -668.4,
-            "delta_day": 0.0,
-            "is_new": false
-          },
-          {
-            "rank": 45,
+            "rank": 42,
             "name": "Eponax",
             "key": "eponax-bleeding-hollow",
             "score": 2222.1,
@@ -22658,7 +22392,7 @@
             "is_new": false
           },
           {
-            "rank": 46,
+            "rank": 43,
             "name": "Huntlowx",
             "key": "huntlowx-bleeding-hollow",
             "score": 2204,
@@ -22671,20 +22405,20 @@
             "is_new": false
           },
           {
-            "rank": 47,
+            "rank": 44,
             "name": "Boltzaa",
             "key": "boltzaa-thrall",
-            "score": 2188,
+            "score": 2194.6,
             "class": "Warlock",
             "spec": "Demonology Warlock",
             "role": "DPS",
             "top5": false,
-            "delta_week": -816.9,
-            "delta_day": 0,
+            "delta_week": -810.3,
+            "delta_day": 6.6,
             "is_new": false
           },
           {
-            "rank": 48,
+            "rank": 45,
             "name": "Wowimhealing",
             "key": "wowimhealing-azgalor",
             "score": 2184.2,
@@ -22697,7 +22431,7 @@
             "is_new": false
           },
           {
-            "rank": 49,
+            "rank": 46,
             "name": "Aime",
             "key": "aime-bleeding-hollow",
             "score": 2175.4,
@@ -22710,7 +22444,7 @@
             "is_new": false
           },
           {
-            "rank": 50,
+            "rank": 47,
             "name": "Carun",
             "key": "carun-proudmoore",
             "score": 2129,
@@ -22723,20 +22457,33 @@
             "is_new": false
           },
           {
-            "rank": 51,
+            "rank": 48,
+            "name": "Kirrax",
+            "key": "kirrax-thrall",
+            "score": 2103.5,
+            "class": "Warrior",
+            "spec": "Arms Warrior",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": null,
+            "delta_day": 416.7,
+            "is_new": true
+          },
+          {
+            "rank": 49,
             "name": "Riias",
             "key": "riias-senjin",
-            "score": 1995.7,
+            "score": 2066,
             "class": "Paladin",
             "spec": "Retribution Paladin",
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 0.0,
+            "delta_day": 70.3,
             "is_new": true
           },
           {
-            "rank": 52,
+            "rank": 50,
             "name": "Khorra",
             "key": "khorra-sargeras",
             "score": 1903.1,
@@ -22749,7 +22496,7 @@
             "is_new": false
           },
           {
-            "rank": 53,
+            "rank": 51,
             "name": "Boondocka",
             "key": "boondocka-hydraxis",
             "score": 1900.6,
@@ -22758,11 +22505,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1203.3,
-            "delta_day": 639.1,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 54,
+            "rank": 52,
             "name": "Anbux",
             "key": "anbux-bleeding-hollow",
             "score": 1833.9,
@@ -22775,7 +22522,7 @@
             "is_new": false
           },
           {
-            "rank": 55,
+            "rank": 53,
             "name": "Buchalter",
             "key": "buchalter-area-52",
             "score": 1775,
@@ -22784,24 +22531,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1475.2,
-            "delta_day": 1014.7,
+            "delta_day": 0,
             "is_new": false
           },
           {
-            "rank": 56,
-            "name": "Kirrax",
-            "key": "kirrax-thrall",
-            "score": 1686.8,
-            "class": "Warrior",
-            "spec": "Arms Warrior",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": null,
-            "delta_day": 108.7,
-            "is_new": true
-          },
-          {
-            "rank": 57,
+            "rank": 54,
             "name": "Knitereaver",
             "key": "knitereaver-hyjal",
             "score": 1642.3,
@@ -22810,11 +22544,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 363.1,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
-            "rank": 58,
+            "rank": 55,
             "name": "Ricodandolo",
             "key": "ricodandolo-area-52",
             "score": 1578.5,
@@ -22827,7 +22561,7 @@
             "is_new": false
           },
           {
-            "rank": 59,
+            "rank": 56,
             "name": "Kerrosane",
             "key": "kerrosane-zuljin",
             "score": 1573.1,
@@ -22836,11 +22570,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 1243.9,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
-            "rank": 60,
+            "rank": 57,
             "name": "Rhansìk",
             "key": "rhansìk-area-52",
             "score": 1353.4,
@@ -22853,7 +22587,7 @@
             "is_new": false
           },
           {
-            "rank": 61,
+            "rank": 58,
             "name": "Grëywolf",
             "key": "grëywolf-eldrethalas",
             "score": 1107.3,
@@ -22866,7 +22600,7 @@
             "is_new": false
           },
           {
-            "rank": 62,
+            "rank": 59,
             "name": "Prideblade",
             "key": "prideblade-azgalor",
             "score": 1093.3,
@@ -22879,7 +22613,7 @@
             "is_new": true
           },
           {
-            "rank": 63,
+            "rank": 60,
             "name": "Codedgar",
             "key": "codedgar-queldorei",
             "score": 1081.6,
@@ -22892,7 +22626,7 @@
             "is_new": true
           },
           {
-            "rank": 64,
+            "rank": 61,
             "name": "Danethegreat",
             "key": "danethegreat-area-52",
             "score": 1053.4,
@@ -22905,7 +22639,7 @@
             "is_new": false
           },
           {
-            "rank": 65,
+            "rank": 62,
             "name": "Breakdruid",
             "key": "breakdruid-area-52",
             "score": 1022.2,
@@ -22918,7 +22652,7 @@
             "is_new": false
           },
           {
-            "rank": 66,
+            "rank": 63,
             "name": "Uddershock",
             "key": "uddershock-queldorei",
             "score": 977.9,
@@ -22931,7 +22665,7 @@
             "is_new": false
           },
           {
-            "rank": 67,
+            "rank": 64,
             "name": "Miallo",
             "key": "miallo-area-52",
             "score": 867,
@@ -22944,7 +22678,7 @@
             "is_new": false
           },
           {
-            "rank": 68,
+            "rank": 65,
             "name": "Ranaria",
             "key": "ranaria-area-52",
             "score": 866.7,
@@ -22957,7 +22691,7 @@
             "is_new": false
           },
           {
-            "rank": 69,
+            "rank": 66,
             "name": "Dathar",
             "key": "dathar-area-52",
             "score": 740.1,
@@ -22970,20 +22704,7 @@
             "is_new": false
           },
           {
-            "rank": 70,
-            "name": "Zackoh",
-            "key": "zackoh-bloodhoof",
-            "score": 671.6,
-            "class": "Hunter",
-            "spec": "Beast Mastery Hunter",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 671.6,
-            "is_new": false
-          },
-          {
-            "rank": 71,
+            "rank": 67,
             "name": "Loafz",
             "key": "loafz-stormrage",
             "score": 552.1,
@@ -22996,7 +22717,20 @@
             "is_new": true
           },
           {
-            "rank": 72,
+            "rank": 68,
+            "name": "Andika",
+            "key": "andika-area-52",
+            "score": 488.9,
+            "class": "Hunter",
+            "spec": "Marksmanship Hunter",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": -2517.3,
+            "delta_day": 161.0,
+            "is_new": false
+          },
+          {
+            "rank": 69,
             "name": "Néfèrtítì",
             "key": "néfèrtítì-tichondrius",
             "score": 473.8,
@@ -23009,7 +22743,7 @@
             "is_new": false
           },
           {
-            "rank": 73,
+            "rank": 70,
             "name": "Lørdøfßud",
             "key": "lørdøfßud-bleeding-hollow",
             "score": 408.5,
@@ -23022,20 +22756,7 @@
             "is_new": true
           },
           {
-            "rank": 74,
-            "name": "Andika",
-            "key": "andika-area-52",
-            "score": 327.9,
-            "class": "Hunter",
-            "spec": "Marksmanship Hunter",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": -2678.3,
-            "delta_day": 327.9,
-            "is_new": false
-          },
-          {
-            "rank": 75,
+            "rank": 71,
             "name": "Azerothia",
             "key": "azerothia-tichondrius",
             "score": 194.9,
@@ -23048,7 +22769,7 @@
             "is_new": false
           },
           {
-            "rank": 76,
+            "rank": 72,
             "name": "Madreezus",
             "key": "madreezus-elune",
             "score": 170,
@@ -23057,11 +22778,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -3284.7,
-            "delta_day": 170,
+            "delta_day": 0,
             "is_new": false
           },
           {
-            "rank": 77,
+            "rank": 73,
             "name": "Meyllo",
             "key": "meyllo-area-52",
             "score": 170,
@@ -23074,7 +22795,7 @@
             "is_new": true
           },
           {
-            "rank": 78,
+            "rank": 74,
             "name": "Unholyx",
             "key": "unholyx-bleeding-hollow",
             "score": 168.4,
@@ -23087,7 +22808,7 @@
             "is_new": false
           },
           {
-            "rank": 79,
+            "rank": 75,
             "name": "Sandgs",
             "key": "sandgs-area-52",
             "score": 166.8,
@@ -23100,7 +22821,7 @@
             "is_new": false
           },
           {
-            "rank": 80,
+            "rank": 76,
             "name": "Shadowhausen",
             "key": "shadowhausen-bloodhoof",
             "score": 166.7,
@@ -23113,7 +22834,7 @@
             "is_new": false
           },
           {
-            "rank": 81,
+            "rank": 77,
             "name": "Sosomage",
             "key": "sosomage-zuljin",
             "score": 165.6,
@@ -23126,7 +22847,7 @@
             "is_new": false
           },
           {
-            "rank": 82,
+            "rank": 78,
             "name": "Xavira",
             "key": "xavira-proudmoore",
             "score": 158.9,
@@ -23183,19 +22904,6 @@
           },
           {
             "rank": 4,
-            "name": "Paleghost",
-            "key": "paleghost-sargeras",
-            "score": 2810.7,
-            "class": "Death Knight",
-            "spec": "Unholy DK",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2810.7,
-            "is_new": false
-          },
-          {
-            "rank": 5,
             "name": "Tommybravoo",
             "key": "tommybravoo-bleeding-hollow",
             "score": 2772.1,
@@ -23204,11 +22912,11 @@
             "role": "Tank",
             "top5": false,
             "delta_week": -1109.1,
-            "delta_day": 192.4,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 6,
+            "rank": 5,
             "name": "Skoala",
             "key": "skoala-frostwolf",
             "score": 2750.2,
@@ -23221,7 +22929,7 @@
             "is_new": false
           },
           {
-            "rank": 7,
+            "rank": 6,
             "name": "Knitereaver",
             "key": "knitereaver-hyjal",
             "score": 1642.3,
@@ -23230,11 +22938,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 363.1,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
-            "rank": 8,
+            "rank": 7,
             "name": "Ranstar",
             "key": "ranstar-illidan",
             "score": 1367.7,
@@ -23247,7 +22955,7 @@
             "is_new": true
           },
           {
-            "rank": 9,
+            "rank": 8,
             "name": "Meillo",
             "key": "meillo-area-52",
             "score": 1155.8,
@@ -23260,7 +22968,7 @@
             "is_new": true
           },
           {
-            "rank": 10,
+            "rank": 9,
             "name": "Prideblade",
             "key": "prideblade-azgalor",
             "score": 1093.3,
@@ -23273,7 +22981,7 @@
             "is_new": true
           },
           {
-            "rank": 11,
+            "rank": 10,
             "name": "Ranaria",
             "key": "ranaria-area-52",
             "score": 866.7,
@@ -23286,7 +22994,7 @@
             "is_new": false
           },
           {
-            "rank": 12,
+            "rank": 11,
             "name": "Unholyx",
             "key": "unholyx-bleeding-hollow",
             "score": 168.4,
@@ -23367,19 +23075,6 @@
           },
           {
             "rank": 6,
-            "name": "Autable",
-            "key": "autable-gurubashi",
-            "score": 2873.8,
-            "class": "Demon Hunter",
-            "spec": "Havoc DH",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2873.8,
-            "is_new": false
-          },
-          {
-            "rank": 7,
             "name": "Enyò",
             "key": "enyò-area-52",
             "score": 2864.2,
@@ -23388,11 +23083,11 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1030.7,
-            "delta_day": 143.7,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 8,
+            "rank": 7,
             "name": "Eponax",
             "key": "eponax-bleeding-hollow",
             "score": 2222.1,
@@ -23405,7 +23100,7 @@
             "is_new": false
           },
           {
-            "rank": 9,
+            "rank": 8,
             "name": "Meyllo",
             "key": "meyllo-area-52",
             "score": 170,
@@ -23418,7 +23113,7 @@
             "is_new": true
           },
           {
-            "rank": 10,
+            "rank": 9,
             "name": "Sandgs",
             "key": "sandgs-area-52",
             "score": 166.8,
@@ -23585,7 +23280,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 1243.9,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -23719,7 +23414,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1240.1,
-            "delta_day": 43.2,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -23745,7 +23440,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1203.3,
-            "delta_day": 639.1,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -23776,15 +23471,15 @@
           },
           {
             "rank": 10,
-            "name": "Zackoh",
-            "key": "zackoh-bloodhoof",
-            "score": 671.6,
+            "name": "Andika",
+            "key": "andika-area-52",
+            "score": 488.9,
             "class": "Hunter",
-            "spec": "Beast Mastery Hunter",
+            "spec": "Marksmanship Hunter",
             "role": "DPS",
             "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 671.6,
+            "delta_week": -2517.3,
+            "delta_day": 161.0,
             "is_new": false
           },
           {
@@ -23798,19 +23493,6 @@
             "top5": false,
             "delta_week": 0.0,
             "delta_day": 473.8,
-            "is_new": false
-          },
-          {
-            "rank": 12,
-            "name": "Andika",
-            "key": "andika-area-52",
-            "score": 327.9,
-            "class": "Hunter",
-            "spec": "Marksmanship Hunter",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": -2678.3,
-            "delta_day": 327.9,
             "is_new": false
           }
         ],
@@ -23877,7 +23559,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -1475.2,
-            "delta_day": 1014.7,
+            "delta_day": 0,
             "is_new": false
           },
           {
@@ -23975,19 +23657,6 @@
           },
           {
             "rank": 5,
-            "name": "Kegsmashroll",
-            "key": "kegsmashroll-stormrage",
-            "score": 3414.3,
-            "class": "Monk",
-            "spec": "Brewmaster Monk",
-            "role": "Tank",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 3414.3,
-            "is_new": false
-          },
-          {
-            "rank": 6,
             "name": "Kelova",
             "key": "kelova-stormrage",
             "score": 3142.9,
@@ -24000,7 +23669,7 @@
             "is_new": false
           },
           {
-            "rank": 7,
+            "rank": 6,
             "name": "Widowx",
             "key": "widowx-bleeding-hollow",
             "score": 2879.3,
@@ -24013,20 +23682,7 @@
             "is_new": false
           },
           {
-            "rank": 8,
-            "name": "Azell",
-            "key": "azell-bleeding-hollow",
-            "score": 2345.5,
-            "class": "Monk",
-            "spec": "Brewmaster Monk",
-            "role": "Tank",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2345.5,
-            "is_new": false
-          },
-          {
-            "rank": 9,
+            "rank": 7,
             "name": "Monkmates",
             "key": "monkmates-korgath",
             "score": 364.2,
@@ -24128,37 +23784,24 @@
             "role": "Healer",
             "top5": false,
             "delta_week": null,
-            "delta_day": 646.5,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
             "rank": 8,
-            "name": "Kathrobbin",
-            "key": "kathrobbin-zuljin",
-            "score": 2172.2,
-            "class": "Paladin",
-            "spec": "Holy Paladin",
-            "role": "Healer",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 2172.2,
-            "is_new": false
-          },
-          {
-            "rank": 9,
             "name": "Riias",
             "key": "riias-senjin",
-            "score": 1995.7,
+            "score": 2066,
             "class": "Paladin",
             "spec": "Retribution Paladin",
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 0.0,
+            "delta_day": 70.3,
             "is_new": true
           },
           {
-            "rank": 10,
+            "rank": 9,
             "name": "Mogaslst",
             "key": "mogaslst-malganis",
             "score": 1768.9,
@@ -24167,11 +23810,11 @@
             "role": "Healer",
             "top5": false,
             "delta_week": -1347.1,
-            "delta_day": 192.9,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
-            "rank": 11,
+            "rank": 10,
             "name": "Ricodandolo",
             "key": "ricodandolo-area-52",
             "score": 1578.5,
@@ -24184,7 +23827,7 @@
             "is_new": false
           },
           {
-            "rank": 12,
+            "rank": 11,
             "name": "Sinistrad",
             "key": "sinistrad-stormrage",
             "score": 1175.2,
@@ -24197,7 +23840,7 @@
             "is_new": false
           },
           {
-            "rank": 13,
+            "rank": 12,
             "name": "Pällypocket",
             "key": "pällypocket-illidan",
             "score": 1112.4,
@@ -24210,7 +23853,7 @@
             "is_new": false
           },
           {
-            "rank": 14,
+            "rank": 13,
             "name": "Ravokoflight",
             "key": "ravokoflight-eldrethalas",
             "score": 953.4,
@@ -24223,7 +23866,7 @@
             "is_new": false
           },
           {
-            "rank": 15,
+            "rank": 14,
             "name": "Tonnk",
             "key": "tonnk-stormrage",
             "score": 714.9,
@@ -24236,7 +23879,7 @@
             "is_new": true
           },
           {
-            "rank": 16,
+            "rank": 15,
             "name": "Hantt",
             "key": "hantt-stormrage",
             "score": 304.3,
@@ -24472,7 +24115,7 @@
             "role": "Healer",
             "top5": false,
             "delta_week": -820.8,
-            "delta_day": 201.6,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
@@ -24663,13 +24306,13 @@
             "rank": 9,
             "name": "Boltzaa",
             "key": "boltzaa-thrall",
-            "score": 2188,
+            "score": 2194.6,
             "class": "Warlock",
             "spec": "Demonology Warlock",
             "role": "DPS",
             "top5": false,
-            "delta_week": -816.9,
-            "delta_day": 0,
+            "delta_week": -810.3,
+            "delta_day": 6.6,
             "is_new": false
           },
           {
@@ -24728,19 +24371,6 @@
           },
           {
             "rank": 2,
-            "name": "Ohnomyais",
-            "key": "ohnomyais-area-52",
-            "score": 3125.7,
-            "class": "Warrior",
-            "spec": "Arms Warrior",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": 0.0,
-            "delta_day": 3125.7,
-            "is_new": false
-          },
-          {
-            "rank": 3,
             "name": "Onetruemorty",
             "key": "onetruemorty-area-52",
             "score": 2986.5,
@@ -24753,7 +24383,7 @@
             "is_new": false
           },
           {
-            "rank": 4,
+            "rank": 3,
             "name": "Chohno",
             "key": "chohno-stormrage",
             "score": 2751.4,
@@ -24766,7 +24396,7 @@
             "is_new": false
           },
           {
-            "rank": 5,
+            "rank": 4,
             "name": "Coned",
             "key": "coned-azgalor",
             "score": 2599,
@@ -24779,20 +24409,20 @@
             "is_new": false
           },
           {
-            "rank": 6,
+            "rank": 5,
             "name": "Marceau",
             "key": "marceau-malganis",
-            "score": 2453.3,
+            "score": 2548.4,
             "class": "Warrior",
             "spec": "Arms Warrior",
             "role": "DPS",
             "top5": false,
-            "delta_week": -668.4,
-            "delta_day": 0.0,
+            "delta_week": -573.3,
+            "delta_day": 95.1,
             "is_new": false
           },
           {
-            "rank": 7,
+            "rank": 6,
             "name": "Carun",
             "key": "carun-proudmoore",
             "score": 2129,
@@ -24805,6 +24435,19 @@
             "is_new": false
           },
           {
+            "rank": 7,
+            "name": "Kirrax",
+            "key": "kirrax-thrall",
+            "score": 2103.5,
+            "class": "Warrior",
+            "spec": "Arms Warrior",
+            "role": "DPS",
+            "top5": false,
+            "delta_week": null,
+            "delta_day": 416.7,
+            "is_new": true
+          },
+          {
             "rank": 8,
             "name": "Kao",
             "key": "kao-kalecgos",
@@ -24814,24 +24457,11 @@
             "role": "Tank",
             "top5": false,
             "delta_week": -1150.8,
-            "delta_day": 138.3,
+            "delta_day": 0.0,
             "is_new": false
           },
           {
             "rank": 9,
-            "name": "Kirrax",
-            "key": "kirrax-thrall",
-            "score": 1686.8,
-            "class": "Warrior",
-            "spec": "Arms Warrior",
-            "role": "DPS",
-            "top5": false,
-            "delta_week": null,
-            "delta_day": 108.7,
-            "is_new": true
-          },
-          {
-            "rank": 10,
             "name": "Danethegreat",
             "key": "danethegreat-area-52",
             "score": 1053.4,
@@ -24844,7 +24474,7 @@
             "is_new": false
           },
           {
-            "rank": 11,
+            "rank": 10,
             "name": "Dathar",
             "key": "dathar-area-52",
             "score": 740.1,
@@ -24857,7 +24487,7 @@
             "is_new": false
           },
           {
-            "rank": 12,
+            "rank": 11,
             "name": "Lørdøfßud",
             "key": "lørdøfßud-bleeding-hollow",
             "score": 408.5,
@@ -24870,7 +24500,7 @@
             "is_new": true
           },
           {
-            "rank": 13,
+            "rank": 12,
             "name": "Madreezus",
             "key": "madreezus-elune",
             "score": 170,
@@ -24879,7 +24509,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": -3284.7,
-            "delta_day": 170,
+            "delta_day": 0,
             "is_new": false
           }
         ]
@@ -25107,11 +24737,6 @@
           "delta_day": 3428
         },
         {
-          "name": "Kegsmashroll",
-          "key": "kegsmashroll-stormrage",
-          "delta_day": 3414.3
-        },
-        {
           "name": "Onessarain",
           "key": "onessarain-area-52",
           "delta_day": 3414.3
@@ -25165,11 +24790,6 @@
           "name": "Katesthio",
           "key": "katesthio-zuljin",
           "delta_day": 3128.5
-        },
-        {
-          "name": "Ohnomyais",
-          "key": "ohnomyais-area-52",
-          "delta_day": 3125.7
         },
         {
           "name": "Kirrá",
@@ -25277,11 +24897,6 @@
           "delta_day": 2878.2
         },
         {
-          "name": "Autable",
-          "key": "autable-gurubashi",
-          "delta_day": 2873.8
-        },
-        {
           "name": "Devana",
           "key": "devana-bloodscalp",
           "delta_day": 2860.1
@@ -25295,11 +24910,6 @@
           "name": "Glinkz",
           "key": "glinkz-wyrmrest-accord",
           "delta_day": 2818.1
-        },
-        {
-          "name": "Paleghost",
-          "key": "paleghost-sargeras",
-          "delta_day": 2810.7
         },
         {
           "name": "Dragoonx",
@@ -25377,11 +24987,6 @@
           "delta_day": 2396
         },
         {
-          "name": "Azell",
-          "key": "azell-bleeding-hollow",
-          "delta_day": 2345.5
-        },
-        {
           "name": "Eponax",
           "key": "eponax-bleeding-hollow",
           "delta_day": 2222.1
@@ -25395,11 +25000,6 @@
           "name": "Aime",
           "key": "aime-bleeding-hollow",
           "delta_day": 2175.4
-        },
-        {
-          "name": "Kathrobbin",
-          "key": "kathrobbin-zuljin",
-          "delta_day": 2172.2
         },
         {
           "name": "Milkbreath",
@@ -25425,11 +25025,6 @@
           "name": "Ranstar",
           "key": "ranstar-illidan",
           "delta_day": 1367.7
-        },
-        {
-          "name": "Kerrosane",
-          "key": "kerrosane-zuljin",
-          "delta_day": 1243.9
         },
         {
           "name": "Sinistrad",
@@ -25467,11 +25062,6 @@
           "delta_day": 1022.2
         },
         {
-          "name": "Buchalter",
-          "key": "buchalter-area-52",
-          "delta_day": 1014.7
-        },
-        {
           "name": "Uddershock",
           "key": "uddershock-queldorei",
           "delta_day": 977.9
@@ -25492,59 +25082,19 @@
           "delta_day": 740.1
         },
         {
-          "name": "Zackoh",
-          "key": "zackoh-bloodhoof",
-          "delta_day": 671.6
-        },
-        {
-          "name": "Emmastrasza",
-          "key": "emmastrasza-illidan",
-          "delta_day": 646.5
-        },
-        {
-          "name": "Boondocka",
-          "key": "boondocka-hydraxis",
-          "delta_day": 639.1
-        },
-        {
           "name": "Néfèrtítì",
           "key": "néfèrtítì-tichondrius",
           "delta_day": 473.8
         },
         {
-          "name": "Knitereaver",
-          "key": "knitereaver-hyjal",
-          "delta_day": 363.1
-        },
-        {
-          "name": "Andika",
-          "key": "andika-area-52",
-          "delta_day": 327.9
-        },
-        {
-          "name": "Hellful",
-          "key": "hellful-lightnings-blade",
-          "delta_day": 201.6
+          "name": "Kirrax",
+          "key": "kirrax-thrall",
+          "delta_day": 416.7
         },
         {
           "name": "Azerothia",
           "key": "azerothia-tichondrius",
           "delta_day": 194.9
-        },
-        {
-          "name": "Mogaslst",
-          "key": "mogaslst-malganis",
-          "delta_day": 192.9
-        },
-        {
-          "name": "Tommybravoo",
-          "key": "tommybravoo-bleeding-hollow",
-          "delta_day": 192.4
-        },
-        {
-          "name": "Madreezus",
-          "key": "madreezus-elune",
-          "delta_day": 170
         },
         {
           "name": "Meyllo",
@@ -25567,29 +25117,29 @@
           "delta_day": 166.7
         },
         {
+          "name": "Andika",
+          "key": "andika-area-52",
+          "delta_day": 161.0
+        },
+        {
           "name": "Xavira",
           "key": "xavira-proudmoore",
           "delta_day": 158.9
         },
         {
-          "name": "Enyò",
-          "key": "enyò-area-52",
-          "delta_day": 143.7
+          "name": "Marceau",
+          "key": "marceau-malganis",
+          "delta_day": 95.1
         },
         {
-          "name": "Kao",
-          "key": "kao-kalecgos",
-          "delta_day": 138.3
+          "name": "Riias",
+          "key": "riias-senjin",
+          "delta_day": 70.3
         },
         {
-          "name": "Kirrax",
-          "key": "kirrax-thrall",
-          "delta_day": 108.7
-        },
-        {
-          "name": "Amrevenge",
-          "key": "amrevenge-stormrage",
-          "delta_day": 43.2
+          "name": "Boltzaa",
+          "key": "boltzaa-thrall",
+          "delta_day": 6.6
         }
       ],
       "new_to_board": [
@@ -25619,14 +25169,14 @@
           "score": 2246.1
         },
         {
-          "name": "Riias",
-          "key": "riias-senjin",
-          "score": 1995.7
-        },
-        {
           "name": "Kirrax",
           "key": "kirrax-thrall",
-          "score": 1686.8
+          "score": 2103.5
+        },
+        {
+          "name": "Riias",
+          "key": "riias-senjin",
+          "score": 2066
         },
         {
           "name": "Knitereaver",
@@ -25739,7 +25289,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-21T06:23:49.394556+00:00",
+    "generated_at": "2026-08-21T12:21:01.059006+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
