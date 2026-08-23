@@ -6,6 +6,7 @@ fails here first.
 """
 
 import pytest
+
 from guild_board import season, web_data
 
 
