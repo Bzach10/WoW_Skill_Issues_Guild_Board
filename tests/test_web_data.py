@@ -5,7 +5,17 @@ the front-end builds against, so a shape change that would break the UI
 fails here first.
 """
 
+import pytest
 from guild_board import season, web_data
+
+
+@pytest.fixture(autouse=True)
+def _pin_season_one(monkeypatch):
+    """Every fixture in this file is Season-1 data (Pit of Saron, Fallen-King
+    Salhadaar, season-mn-1). CURRENT_SEASON resolves from the clock at import,
+    so from the S2 flip (2026-08-18 15:00Z) these shapes would otherwise fail
+    on the date; pin the season the fixtures describe."""
+    monkeypatch.setattr(season, "CURRENT_SEASON", season.season_by_slug("season-mn-1"))
 
 # A trimmed board_state with a baseline, so week-over-week diffs are real.
 BOARD_STATE = {
