@@ -1,6 +1,7 @@
 import logging
 from datetime import datetime, timezone
 
+from guild_board.links import site_url
 from guild_board.raiderio import raiderio_profile_url, raiderio_run_url
 from guild_board.wcl import DIFFICULTY_MAP, wcl_character_url, wcl_guild_url, wcl_report_url
 
@@ -11,6 +12,20 @@ MEDALS = ["\U0001F947", "\U0001F948", "\U0001F949", "\U0001F536", "\U0001F537"]
 
 def plural(n, word):
     return f"{n} {word}" if n == 1 else f"{n} {word}s"
+
+
+def masthead(cfg):
+    """What the post calls itself.
+
+    THE PAPER IS THE POST: when the attachments are photographs of the
+    site's newspaper, the post carries the paper's real masthead. Every
+    other path renders this repo's own board instead, and a title that
+    claimed to be the paper over a different image would be the one
+    dishonest line in the post.
+    """
+    return ("The Weekly Wipe"
+            if str((cfg or {}).get("renderer", "")).lower() == "paper"
+            else "Weekly Board")
 
 
 def week_label(cfg):
@@ -464,7 +479,7 @@ def build_embed(cfg, stats, standing, leaders, zone_name, mplus_results, mplus_s
     footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
 
     embed = {
-        "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
+        "title": f"\u2693 {guild_name} — {masthead(cfg)} — {difficulty}",
         "description": f"{week_label(cfg)}: **{date_range}**",
         "color": 0xC69B6D,
         "fields": fields,
@@ -530,17 +545,17 @@ def build_image_embed(cfg, stats, start_dt, end_dt, image_url="attachment://boar
     footer_bits.append("Drop your healer roasts in the thread for next week \U0001F525")
 
     embed = {
-        "title": f"\U0001F3C6 {guild_name} Weekly Board — {difficulty}",
+        "title": f"\u2693 {guild_name} — {masthead(cfg)} — {difficulty}",
         "description": "\n".join(desc_lines),
         "color": 0xC69B6D,
         "image": {"url": image_url},
         "footer": {"text": " | ".join(footer_bits)},
         "timestamp": datetime.now(timezone.utc).isoformat(),
     }
-    # The embed TITLE links to the web board — the most obvious click
+    # The embed TITLE links to the ship site — the most obvious click
     # target Discord offers an embed (link buttons on channel webhooks
     # get silently dropped when Discord rejects them).
-    web_cfg = (cfg.get("display") or {}).get("web_board") or {}
-    if web_cfg.get("enabled") and web_cfg.get("url"):
-        embed["url"] = web_cfg["url"]
+    ship = site_url(cfg)
+    if ship:
+        embed["url"] = ship
     return embed

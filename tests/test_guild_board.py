@@ -1260,15 +1260,33 @@ def test_generate_web_board_writes_file(tmp_path):
     assert out and os.path.exists(out)
 
 
-def test_link_buttons_include_web_board():
-    cfg = {"guild": {"name": "Test", "realm_slug": "bleeding-hollow", "region": "us"},
-           "display": {"web_board": {"url": "https://example.github.io/board/"}}}
-    rows = gb_discord._build_link_buttons(cfg)
-    labels = [b["label"] for b in rows[0]["components"]]
-    assert any("Web Board" in label for label in labels)
+def test_link_buttons_promote_the_ship_site():
+    """The post's button points at the ship site, never the old gh-pages board."""
+    # The real guild name, because the space in it is load-bearing below.
+    cfg = {"guild": {"name": "Skill Issues", "realm_slug": "bleeding-hollow",
+                     "region": "us"},
+           "display": {"site_url": "https://skill-issues-board.pages.dev"}}
+    buttons = gb_discord._build_link_buttons(cfg)[0]["components"]
+    ship = [b for b in buttons if "Wipe Fest" in b["label"]]
+    assert ship and ship[0]["url"].startswith("https://skill-issues-board.pages.dev")
+    assert not any("github.io" in b["url"] for b in buttons)
+    # Discord 400s on a button whose url is not a valid URL and the retry
+    # drops EVERY component, so one raw space here silently unpromotes the
+    # site. "Skill Issues" has a space in it.
+    assert all(" " not in b["url"] for b in buttons), buttons
     cfg["display"] = {}
     labels = [b["label"] for b in gb_discord._build_link_buttons(cfg)[0]["components"]]
-    assert not any("Web Board" in label for label in labels)
+    assert not any("Wipe Fest" in label for label in labels)
+
+
+def test_site_rooms_line_names_live_rooms():
+    """The promo line names the rooms and links each one under the site root."""
+    from guild_board.links import SITE_ROOMS, site_rooms_line
+    line = site_rooms_line({"display": {"site_url": "https://skill-issues-board.pages.dev"}})
+    assert "S.S. Wipe Fest" in line
+    for label, path in SITE_ROOMS:
+        assert f"[{label}](https://skill-issues-board.pages.dev/{path})" in line
+    assert site_rooms_line({"display": {}}) is None
 
 
 def test_tldr_matches_rendered_rows():
@@ -1315,14 +1333,19 @@ def test_raid_attendance_streaks_once_per_week():
                                    week_label="2026-W30") == {"alba": 5}
 
 
-def test_image_embed_title_links_to_web_board():
+def test_image_embed_title_links_to_the_ship_site():
     cfg = {"guild": {"name": "Test Guild", "realm_slug": "x", "region": "us"},
            "raid": {"difficulty": "mythic"}, "lookback_days": 7, "sections": {},
-           "display": {"web_board": {"enabled": True, "url": "https://x.github.io/b/"}}}
+           "display": {"site_url": "https://skill-issues-board.pages.dev"}}
     now = datetime.now(timezone.utc)
     embed = formatters.build_image_embed(cfg, None, now, now)
-    assert embed["url"] == "https://x.github.io/b/"
-    cfg["display"]["web_board"]["enabled"] = False
+    assert embed["url"] == "https://skill-issues-board.pages.dev/"
+    # The masthead follows the renderer: the paper's name only when the
+    # attachments really are photographs of the paper.
+    assert "Weekly Board" in embed["title"]
+    cfg["renderer"] = "paper"
+    assert "The Weekly Wipe" in formatters.build_image_embed(cfg, None, now, now)["title"]
+    cfg["display"] = {}
     assert "url" not in formatters.build_image_embed(cfg, None, now, now)
 
 

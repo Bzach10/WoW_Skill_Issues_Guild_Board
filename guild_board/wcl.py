@@ -2,6 +2,7 @@ import logging
 import time
 from collections import defaultdict
 from datetime import datetime, timezone
+from urllib.parse import quote
 
 import requests
 
@@ -1044,5 +1045,12 @@ def wcl_report_url(code):
 
 
 def wcl_guild_url(name, realm, region):
-    """Build a Warcraft Logs guild progress URL."""
-    return f"https://www.warcraftlogs.com/guild/{region}/{realm}/{name}"
+    """Build a Warcraft Logs guild progress URL.
+
+    The guild name is percent-encoded: "Skill Issues" has a space in it,
+    and Discord rejects a link button whose url is not a valid URL. The
+    rejection is a 400 on the whole message, so post_to_discord retries
+    without ANY components -- which is why the post has been arriving
+    with no buttons at all.
+    """
+    return f"https://www.warcraftlogs.com/guild/{region}/{realm}/{quote(str(name))}"
