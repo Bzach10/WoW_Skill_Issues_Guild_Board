@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "season": {
+    "slug": "season-mn-1",
+    "name": "Midnight Season 1",
+    "starts_utc": "2026-03-24T15:00:00Z",
+    "ends_utc": "2026-08-18T15:00:00Z"
+  },
+  "frozen_at": "2026-08-24T12:01:15.461260+00:00",
+  "final": true,
+  "source": {
+    "generated_at": "2026-08-18T14:34:15.569044+00:00",
+    "file": "web_data_public/island_completion.json"
+  },
+  "islands": {
+    "schema_version": 1,
+    "generated_at": "2026-08-18T14:34:15.569044+00:00",
+    "season_slug": "season-mn-1",
+    "season_name": "Midnight Season 1",
+    "dungeons": {
+      "islands": [
+        {
+          "id": "algethar-academy",
+          "name": "Algeth'ar Academy",
+          "kind": "dungeon",
+          "challenge_mode_id": 402,
+          "status": "conquered",
+          "best_level": 20,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "magisters-terrace",
+          "name": "Magisters' Terrace",
+          "kind": "dungeon",
+          "challenge_mode_id": 558,
+          "status": "conquered",
+          "best_level": 21,
+          "timed": true,
+          "held_by": "Tommybravoo"
+        },
+        {
+          "id": "maisara-caverns",
+          "name": "Maisara Caverns",
+          "kind": "dungeon",
+          "challenge_mode_id": 560,
+          "status": "conquered",
+          "best_level": 20,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "nexuspoint-xenas",
+          "name": "Nexus-Point Xenas",
+          "kind": "dungeon",
+          "challenge_mode_id": 559,
+          "status": "conquered",
+          "best_level": 21,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "pit-of-saron",
+          "name": "Pit of Saron",
+          "kind": "dungeon",
+          "challenge_mode_id": 556,
+          "status": "conquered",
+          "best_level": 21,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "seat-of-the-triumvirate",
+          "name": "Seat of the Triumvirate",
+          "kind": "dungeon",
+          "challenge_mode_id": 239,
+          "status": "conquered",
+          "best_level": 20,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "skyreach",
+          "name": "Skyreach",
+          "kind": "dungeon",
+          "challenge_mode_id": 161,
+          "status": "conquered",
+          "best_level": 21,
+          "timed": true,
+          "held_by": "Amrevenge"
+        },
+        {
+          "id": "windrunner-spire",
+          "name": "Windrunner Spire",
+          "kind": "dungeon",
+          "challenge_mode_id": 557,
+          "status": "conquered",
+          "best_level": 20,
+          "timed": true,
+          "held_by": "Amrevenge"
+        }
+      ],
+      "conquered": 8,
+      "total": 8
+    },
+    "raid": {
+      "slug": "tier-mn-1",
+      "display_name": "Voidspire Sanctum",
+      "summary": "5/9 M",
+      "bosses_killed": 9,
+      "killed_by_difficulty": {
+        "normal": 0,
+        "heroic": 9,
+        "mythic": 5
+      },
+      "total_bosses": 9,
+      "islands": [
+        {
+          "id": "imperator-averzian",
+          "name": "Imperator Averzian",
+          "kind": "raid_boss",
+          "order": 1,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-20T00:28:33.467Z"
+        },
+        {
+          "id": "vorasius",
+          "name": "Vorasius",
+          "kind": "raid_boss",
+          "order": 2,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-20T00:50:30.453Z"
+        },
+        {
+          "id": "fallenking-salhadaar",
+          "name": "Fallen-King Salhadaar",
+          "kind": "raid_boss",
+          "order": 3,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-20T02:25:31.903Z"
+        },
+        {
+          "id": "vaelgor-ezzorak",
+          "name": "Vaelgor & Ezzorak",
+          "kind": "raid_boss",
+          "order": 4,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-27T04:00:35.203Z"
+        },
+        {
+          "id": "lightblinded-vanguard",
+          "name": "Lightblinded Vanguard",
+          "kind": "raid_boss",
+          "order": 5,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-23T02:00:01.386Z"
+        },
+        {
+          "id": "crown-of-the-cosmos",
+          "name": "Crown of the Cosmos",
+          "kind": "raid_boss",
+          "order": 6,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-23T02:20:39.548Z"
+        },
+        {
+          "id": "chimaerus-the-undreamt-god",
+          "name": "Chimaerus the Undreamt God",
+          "kind": "raid_boss",
+          "order": 7,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-23T01:31:55.416Z"
+        },
+        {
+          "id": "beloren-child-of-alar",
+          "name": "Belo'ren, Child of Al'ar",
+          "kind": "raid_boss",
+          "order": 8,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-13T01:33:15.223Z"
+        },
+        {
+          "id": "midnight-falls",
+          "name": "Midnight Falls",
+          "kind": "raid_boss",
+          "order": 9,
+          "status": "conquered",
+          "kill_confirmed": true,
+          "inferred_from_progress": false,
+          "first_kill_at": "2026-07-23T03:13:06.334Z"
+        }
+      ],
+      "detail_source": "raid_kills"
+    }
+  }
+}
