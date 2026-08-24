@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "fetched_at": "2026-08-24T00:31:48.181562+00:00",
+  "fetched_at": "2026-08-24T06:32:32.711384+00:00",
   "available": true,
   "status": "ok",
   "source": "https://raider.io/api/v1/guilds/boss-kill",
@@ -20,7 +20,7 @@
     "mythic"
   ],
   "killed_by_difficulty": {
-    "normal": 5,
+    "normal": 8,
     "heroic": 0,
     "mythic": 0
   },
@@ -79,19 +79,31 @@
       "slug": "the-twin-fangs",
       "name": "The Twin Fangs",
       "order": 6,
-      "kills": {}
+      "kills": {
+        "normal": {
+          "defeated_at": "2026-08-24T01:32:35.789Z"
+        }
+      }
     },
     {
       "slug": "the-coiled-altar",
       "name": "The Coiled Altar",
       "order": 7,
-      "kills": {}
+      "kills": {
+        "normal": {
+          "defeated_at": "2026-08-24T02:06:03.787Z"
+        }
+      }
     },
     {
       "slug": "ulatek",
       "name": "Ula'tek",
       "order": 8,
-      "kills": {}
+      "kills": {
+        "normal": {
+          "defeated_at": "2026-08-24T03:10:21.059Z"
+        }
+      }
     }
   ]
 }

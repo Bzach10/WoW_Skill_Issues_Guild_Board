@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-24T00:31:39.950188+00:00",
+  "generated_at": "2026-08-24T06:32:24.550064+00:00",
   "season_slug": "season-mn-2",
   "season_name": "Midnight Season 2",
   "dungeons": {
@@ -92,10 +92,10 @@
   "raid": {
     "slug": "the-venomous-abyss",
     "display_name": "The Venomous Abyss",
-    "summary": "5/8 N",
-    "bosses_killed": 5,
+    "summary": "8/8 N",
+    "bosses_killed": 8,
     "killed_by_difficulty": {
-      "normal": 5,
+      "normal": 8,
       "heroic": 0,
       "mythic": 0
     },
@@ -156,30 +156,30 @@
         "name": "The Twin Fangs",
         "kind": "raid_boss",
         "order": 6,
-        "status": "locked",
-        "kill_confirmed": false,
-        "inferred_from_progress": false,
-        "first_kill_at": null
+        "status": "conquered",
+        "kill_confirmed": true,
+        "inferred_from_progress": true,
+        "first_kill_at": "2026-08-24T01:32:35.789Z"
       },
       {
         "id": "the-coiled-altar",
         "name": "The Coiled Altar",
         "kind": "raid_boss",
         "order": 7,
-        "status": "locked",
-        "kill_confirmed": false,
-        "inferred_from_progress": false,
-        "first_kill_at": null
+        "status": "conquered",
+        "kill_confirmed": true,
+        "inferred_from_progress": true,
+        "first_kill_at": "2026-08-24T02:06:03.787Z"
       },
       {
         "id": "ulatek",
         "name": "Ula'tek",
         "kind": "raid_boss",
         "order": 8,
-        "status": "locked",
-        "kill_confirmed": false,
-        "inferred_from_progress": false,
-        "first_kill_at": null
+        "status": "conquered",
+        "kill_confirmed": true,
+        "inferred_from_progress": true,
+        "first_kill_at": "2026-08-24T03:10:21.059Z"
       }
     ],
     "detail_source": "raid_kills"
