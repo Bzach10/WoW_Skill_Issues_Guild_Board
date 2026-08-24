@@ -11,11 +11,12 @@ from guild_board.board_image import (
     generate_board_image,
 )
 from guild_board.config import load_config, require_env
-from guild_board.discord import post_to_discord
+from guild_board.discord import _build_link_buttons, post_to_discord
 from guild_board.discord_inputs import fetch_latest_announcement, fetch_top_roast
 from guild_board.filters import apply_roster_filters, make_name_filter
 from guild_board.formatters import build_embed, build_image_embed
 from guild_board.images import generate_progress_image
+from guild_board.links import site_rooms_line
 from guild_board.raiderio import (
     collect_mplus,
     collect_mplus_season_parses,
@@ -525,13 +526,13 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             cfg.setdefault("display", {})["layout"] = "single_column"
 
     # The responsive web twin (templates/web.html.j2 -> site/index.html, which
-    # CI publishes to GitHub Pages). This is the page the post's own "Open the
-    # Web Board" link points at, so it must be rendered on EVERY path that
-    # posts -- including `renderer: paper`, which sets image_path above and
-    # skips the classic block entirely. It did not, and the published site and
-    # its week archive sat frozen at 2026-07-28 for three editions while every
-    # Tuesday post kept linking to them. Best-effort by contract: it renders
-    # pure HTML, needs no browser, and never raises into the posting flow.
+    # CI publishes to GitHub Pages). The post no longer LINKS here -- it
+    # promotes the ship site now -- but gh-pages is still where the per-week
+    # ARCHIVE accumulates, so it must be rendered on EVERY path that posts,
+    # including `renderer: paper`, which sets image_path above and skips the
+    # classic block entirely. It did not, and the archive sat frozen at
+    # 2026-07-28 for three editions. Best-effort by contract: it renders pure
+    # HTML, needs no browser, and never raises into the posting flow.
     if ((cfg.get("display") or {}).get("web_board") or {}).get("enabled", False):
         from guild_board.html_board import generate_web_board
         generate_web_board(*board_args, **board_kwargs)
@@ -546,11 +547,15 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
         # Prefer the lines derived from the rendered rows themselves; the
         # independent computation is only the Pillow-path fallback.
         tldr = list(tldr) if tldr else tldr_lines(stats, standing)
-        web_cfg = (cfg.get("display") or {}).get("web_board") or {}
-        if web_cfg.get("enabled") and web_cfg.get("url"):
-            # Link buttons on channel webhooks get dropped silently when
-            # Discord rejects them — a markdown link in the text always shows.
-            tldr.append(f"\U0001F4F1 [**Open the Web Board**]({web_cfg['url']}) — scales to any screen")
+        # THE POST PROMOTES THE SHIP. Link buttons on channel webhooks get
+        # dropped silently when Discord rejects them, so the site also goes
+        # in the text, where a markdown link always shows. It names the
+        # rooms rather than just the URL: "web board" told nobody what was
+        # behind it, and the crew, the standings and the paper are the
+        # reasons to click.
+        rooms = site_rooms_line(cfg)
+        if rooms:
+            tldr.append(rooms)
         embed = build_image_embed(cfg, stats, start_dt, end_dt,
                                   image_url=f"attachment://{os.path.basename(image_path)}",
                                   tldr=tldr)
@@ -690,8 +695,13 @@ def main(argv=None):
         return
 
     if args.dry_run:
-        import json as _json
-        print(_json.dumps(embed, indent=2))
+        payload = {"embeds": [embed]}
+        components = _build_link_buttons(cfg)
+        if components:
+            payload["components"] = components
+        # ASCII on purpose: this prints to whatever console ran it, and a
+        # cp1252 Windows terminal dies on the anchor in the title.
+        print(json.dumps(payload, indent=2))
 
 
 def _write_preview(embed, image_path):

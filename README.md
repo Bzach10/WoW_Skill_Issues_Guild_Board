@@ -68,12 +68,13 @@ pinch-zooming (toggle: `display.mobile_companion` in `config.yml`).
 
 ## Web board (one-time setup, ~5 minutes)
 
-The post can carry a **📱 Web Board** button linking to a live, responsive
-website version of the board — real HTML that auto-scales to any screen
-(4 columns on a desktop, one column on a phone). CI renders it each week
-and publishes it to a **public** repo's GitHub Pages, so the private guild
-repo stays private. Until this setup is done, the publish step just skips —
-nothing breaks.
+The weekly post promotes the **ship site** (`display.site_url` —
+https://skill-issues-board.pages.dev), and that is the only site link it
+carries. Separately, CI still renders a responsive HTML twin of the board
+each week and publishes it, plus a per-week state snapshot, to a **public**
+repo's GitHub Pages — that page is no longer linked from Discord, but it is
+where the week ARCHIVE accumulates, so the private guild repo stays private.
+Until this setup is done, the publish step just skips — nothing breaks.
 
 1. Have a public repo to host the page (e.g. `wow-guild-board`). In that
    repo: Settings → Pages → Source: "Deploy from a branch" → Branch:
@@ -85,8 +86,8 @@ nothing breaks.
    Read and write**. Copy the token.
 3. In THIS repo: Settings → Secrets and variables → Actions → New repository
    secret → name `WEB_BOARD_TOKEN`, paste the token.
-4. Check `display.web_board` in `config.yml` points at your repo and its
-   Pages URL (that URL is what the Discord button opens).
+4. Check `display.web_board.repo` in `config.yml` points at that public
+   repo. (The Discord button opens `display.site_url`, not this page.)
 
 Note the page is public to anyone with the link — it shows the same
 WCL/Raider.io stats that are already public, plus the roast. Once it's live,

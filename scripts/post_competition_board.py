@@ -2,8 +2,8 @@
 plus a button to the full site — via the existing webhook path.
 
 Uses guild_board.discord.post_to_discord (the same webhook the weekly board
-already uses), so it inherits the link buttons (incl. the Web Board link
-from config display.web_board.url) and the 429/component-retry handling.
+already uses), so it inherits the link buttons (incl. the ship-site link
+from config display.site_url) and the 429/component-retry handling.
 
 SAFE BY DEFAULT: this is an outward-facing post, so it does nothing unless
 BOTH are true:
@@ -25,6 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from guild_board.config import load_config  # noqa: E402
 from guild_board.discord import post_to_discord  # noqa: E402
+from guild_board.links import site_url  # noqa: E402
 
 REPO_ROOT = str(Path(__file__).resolve().parents[1])
 MEDAL = {1: "🥇", 2: "🥈", 3: "🥉"}
@@ -96,8 +97,9 @@ def main(argv=None):
         print("Competition data has no ranked characters — nothing to post.")
         return 0
 
-    web_url = ((cfg.get("display") or {}).get("web_board") or {}).get("url")
-    content = "Daily standings are up! ⚓" + (f"  See the full board → {web_url}" if web_url else "")
+    journal = site_url(cfg, "standings/")
+    content = "Daily standings are up! ⚓" + (
+        f"  The Captain's Journal → {journal}" if journal else "")
     post_to_discord(webhook, embed, content=content, cfg=cfg)
     print("Posted the daily WANTED BOARD to Discord.")
     return 0

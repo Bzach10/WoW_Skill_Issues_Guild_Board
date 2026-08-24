@@ -5,6 +5,7 @@ import time
 
 import requests
 
+from guild_board.links import site_url
 from guild_board.wcl import wcl_guild_url
 
 logger = logging.getLogger(__name__)
@@ -109,13 +110,14 @@ def _build_link_buttons(cfg):
         }
     ]
 
-    web_url = ((cfg.get("display") or {}).get("web_board") or {}).get("url")
-    if web_url:
+    # THE POST PROMOTES THE SHIP, not the old gh-pages board.
+    ship = site_url(cfg)
+    if ship:
         buttons.append({
             "type": 2,
             "style": 5,
-            "label": "\U0001F4F1 Web Board",
-            "url": web_url,
+            "label": "\u2693 S.S. Wipe Fest",
+            "url": ship,
         })
 
     roast_form = cfg.get("roast_form_url")

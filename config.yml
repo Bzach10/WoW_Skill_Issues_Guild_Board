@@ -42,6 +42,11 @@ renderer: paper
 display:
   # Where the paper lives. Only read when renderer: paper.
   paper_url: "https://skill-issues-board.pages.dev/board/"
+  # THE POST PROMOTES THE SHIP. Every link the weekly Discord post carries
+  # — embed title, the button, and the rooms line — is built from this root:
+  # the S.S. Wipe Fest site (the crew, the season standings, the paper, the
+  # tavern). Change it here and the whole post follows.
+  site_url: "https://skill-issues-board.pages.dev"
   layout: image_board
   # Renderer: "html" screenshots the design's own HTML template in headless
   # Chromium (pixel-identical to the mockup); anything else, or any render
@@ -65,19 +70,19 @@ display:
   animate: true
   animate_frames: 10
   # Phone-readable portrait companion image posted alongside the board.
-  # OFF: the web board (linked from the post title and text) replaces it,
-  # and the second image cluttered the post. Flip back on any time.
+  # OFF: the ship site (linked from the post title, button and text)
+  # replaces it, and the second image cluttered the post. Flip back
+  # on any time.
   mobile_companion: false
-  # Responsive WEBSITE version of the board — a "📱 Web Board" button on
-  # the Discord post links to it, and it auto-scales to any screen.
-  # CI publishes site/index.html to the public repo below (needs the
-  # WEB_BOARD_TOKEN secret — see README "Web board" for the 5-minute
-  # one-time setup). Safe to leave enabled before setup: without the
-  # secret the publish step just skips.
+  # LEGACY TWIN — no longer promoted. This renders site/index.html and CI
+  # publishes it (plus the per-week state snapshot) to the gh-pages repo
+  # below, which is where the weekly ARCHIVE accumulates. The Discord post
+  # does not link here any more; it links `site_url` above. Kept enabled so
+  # the archive keeps accruing; needs the WEB_BOARD_TOKEN secret, and
+  # without it the publish step just skips.
   web_board:
     enabled: true
-    repo: "Bzach10/wow-guild-board"                    # public repo that hosts the page
-    url: "https://bzach10.github.io/wow-guild-board/"  # where the button points
+    repo: "Bzach10/wow-guild-board"                    # public repo that hosts the archive
   # NOTE: colors, backgrounds, fonts, header/footer modules and all the
   # gag text moved to theme.yml — see CUSTOMIZING.md. Any member can
   # safely edit that file.
@@ -93,7 +98,9 @@ sections:
     order: 0
     enabled: true
     title: "📢 Guild Announcement"
-    text: "Welcome to the weekly board!"
+    # Fallback only — the officers channel (discord_inputs.announcement_channel_id)
+    # overrides this with its latest message when the bot token is set.
+    text: "The S.S. Wipe Fest is live — come aboard and read this week's paper."
 
   # Progress image (only used by single_column/two_column layouts;
   # image_board renders its own full board image instead)

@@ -87,3 +87,36 @@ def unresolved(names, index):
     realm."""
     return sorted({(n or "").strip().lower() for n in names or []
                    if (n or "").strip().lower() not in (index or {})} - {""})
+
+
+# --- THE SHIP IS THE SITE ---------------------------------------------
+# The weekly post promotes S.S. Wipe Fest (config display.site_url), not the
+# old gh-pages board. The rooms below are the site's LIVE routes — each one
+# was verified to answer 200. A room that 404s is worse than no link at all
+# (see character_url above: the same rule, for the same reason), so nothing
+# goes in this tuple until the page exists. The card game has no route yet;
+# add it here the day it ships.
+SITE_ROOMS = (
+    ("The Crew", "crew/"),
+    ("The Captain's Journal", "standings/"),
+    ("The Weekly Wipe", "board/"),
+    ("The Tavern", "bar/"),
+)
+
+
+def site_url(cfg, path=""):
+    """The ship site's URL, or None when config has no site_url."""
+    base = str(((cfg or {}).get("display") or {}).get("site_url") or "").strip()
+    if not base:
+        return None
+    return base.rstrip("/") + "/" + path.lstrip("/")
+
+
+def site_rooms_line(cfg):
+    """One markdown line naming the ship and its rooms, or None."""
+    root = site_url(cfg)
+    if not root:
+        return None
+    rooms = " · ".join(f"[{label}]({site_url(cfg, path)})"
+                       for label, path in SITE_ROOMS)
+    return f"⚓ [**S.S. Wipe Fest**]({root}) — the whole voyage: {rooms}"
