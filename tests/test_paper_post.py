@@ -258,3 +258,24 @@ def test_fit_steps_an_oversized_capture_down(tmp_path, monkeypatch):
     assert paper_shot._fit(p) == paper_shot.STEPS[-1]
     with Image.open(p) as im:
         assert im.width < 900
+
+
+# --- the state commit outlives a failed publish -----------------------------
+
+def test_web_publish_cannot_take_the_state_commit_down_with_it():
+    """A website that will not publish must not cost us board_state.json.
+
+    2026-08-25: WEB_BOARD_TOKEN expired, the publish step failed, GitHub
+    skipped every later step -- so the run posted the board to Discord and
+    then discarded the state it was computed from. Records, streaks and the
+    week boundary all read from that file next Tuesday."""
+    wf = yaml.safe_load(
+        (REPO / ".github" / "workflows" / "weekly-board.yml").read_text(encoding="utf-8"))
+    steps = wf["jobs"]["post-board"]["steps"]
+    names = [s.get("name", "") for s in steps]
+    publish = next(i for i, n in enumerate(names) if "Publish web board" in n)
+    commit = next(i for i, n in enumerate(names) if "Commit roster cache" in n)
+    assert publish < commit, "the publish step no longer precedes the commit step"
+    assert steps[publish].get("continue-on-error") is True, (
+        "the web publish must be continue-on-error, or a failed push skips "
+        "the state commit that follows it")

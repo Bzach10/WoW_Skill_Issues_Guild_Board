@@ -130,6 +130,13 @@ jobs:
           python leaderboard.py "${args[@]}"
 
       - name: Publish web board to GitHub Pages
+        # The post already went out by now. A website that will not publish
+        # must not take the state commit down with it: on 2026-08-25 an
+        # expired WEB_BOARD_TOKEN failed this step, the commit step was
+        # skipped as a consequence, and the board_state the guild's post was
+        # computed from -- records, streaks, week boundary -- was thrown away
+        # with the runner. Fail loudly, keep going.
+        continue-on-error: true
         env:
           WEB_BOARD_TOKEN: ${{ secrets.WEB_BOARD_TOKEN }}
         run: |
@@ -182,8 +189,14 @@ jobs:
             echo "Web board unchanged; nothing to publish."
           else
             git commit -q -m "Weekly web board ${week}"
-            git -c http.extraheader="$auth" push -q "$remote" gh-pages
-            echo "Web board published (archive week ${week})."
+            if git -c http.extraheader="$auth" push -q "$remote" gh-pages; then
+              echo "Web board published (archive week ${week})."
+            else
+              # Almost always the token: WEB_BOARD_TOKEN is a PAT and PATs
+              # expire. Name the cause here so the red step explains itself.
+              echo "::error title=Web board::Could not push to ${repo} gh-pages -- WEB_BOARD_TOKEN is likely expired or lost its scope. Rotate it in Settings > Secrets > Actions. The Discord post went out; the site stays at its previous edition."
+              exit 1
+            fi
           fi
 
       - name: Commit roster cache and board state
