@@ -21,7 +21,7 @@ jobs:
       contents: write
     steps:
       - name: Check out repo
-        uses: actions/checkout@v5
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0  # Full history for better merge detection
 
