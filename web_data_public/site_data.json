@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-30T15:34:55.282455+00:00",
+  "generated_at": "2026-08-30T17:56:53.321224+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.282576+00:00",
+    "generated_at": "2026-08-30T17:56:53.321339+00:00",
     "week_of": "2026-08-11",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.282771+00:00",
+    "generated_at": "2026-08-30T17:56:53.321500+00:00",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "standing": {},
     "previous_standing": {
@@ -1442,7 +1442,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.283047+00:00",
+    "generated_at": "2026-08-30T17:56:53.321700+00:00",
     "available": true,
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "week_label": "2026-08-11",
@@ -1696,7 +1696,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.283309+00:00",
+    "generated_at": "2026-08-30T17:56:53.321907+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2733,7 +2733,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.283338+00:00",
+    "generated_at": "2026-08-30T17:56:53.321930+00:00",
     "season_slug": "season-mn-2",
     "season_name": "Midnight Season 2",
     "dungeons": {
@@ -2920,7 +2920,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.281201+00:00",
+    "generated_at": "2026-08-30T17:56:53.320336+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2929,7 +2929,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.283344+00:00",
+    "generated_at": "2026-08-30T17:56:53.321935+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2944,7 +2944,7 @@
       "slug": "season-mn-2",
       "name": "Midnight Season 2"
     },
-    "based_on": "2026-08-30T15:33:51.773821+00:00",
+    "based_on": "2026-08-30T17:55:49.576136+00:00",
     "week_baseline_from": "2026-08-18T13:49:34.087997+00:00",
     "character_count": 157,
     "ranked_count": 128,
@@ -4159,9 +4159,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 575,
+          "realm_overall": 578,
           "realm_class": 32,
-          "region_overall": 3777
+          "region_overall": 3823
         },
         "delta_week": -634.3,
         "delta_day": 0.0,
@@ -4484,9 +4484,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 587,
-          "realm_class": 79,
-          "region_overall": 4174
+          "realm_overall": 601,
+          "realm_class": 81,
+          "region_overall": 4253
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -4687,6 +4687,18 @@
           {
             "dungeon": "Murder Row",
             "short": "MR",
+            "level": 10,
+            "timed": true,
+            "upgrades": 2,
+            "score": 331.7,
+            "clear_ms": 1403674,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-30T14:01:26.000Z",
+            "keystone_run_id": 6002354
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
             "level": 12,
             "timed": true,
             "upgrades": 1,
@@ -4791,24 +4803,12 @@
             "par_ms": 1920999,
             "completed_at": "2026-08-28T04:27:02.000Z",
             "keystone_run_id": 4724297
-          },
-          {
-            "dungeon": "Temple of Sethraliss",
-            "short": "TOS",
-            "level": 14,
-            "timed": true,
-            "upgrades": 1,
-            "score": 398.5,
-            "clear_ms": 1742861,
-            "par_ms": 1920999,
-            "completed_at": "2026-08-28T02:13:40.000Z",
-            "keystone_run_id": 4695797
           }
         ],
         "ranks": {
-          "realm_overall": 122,
+          "realm_overall": 127,
           "realm_class": 15,
-          "region_overall": 7274
+          "region_overall": 7395
         },
         "delta_week": -329.0,
         "delta_day": 0.0,
@@ -5156,9 +5156,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 985,
+          "realm_overall": 994,
           "realm_class": 22,
-          "region_overall": 8957
+          "region_overall": 9070
         },
         "delta_week": -782.8,
         "delta_day": 0.0,
@@ -5775,6 +5775,18 @@
         ],
         "recent_runs": [
           {
+            "dungeon": "Voidscar Arena",
+            "short": "VSA",
+            "level": 10,
+            "timed": true,
+            "upgrades": 3,
+            "score": 335,
+            "clear_ms": 1050093,
+            "par_ms": 1800999,
+            "completed_at": "2026-08-30T17:43:19.000Z",
+            "keystone_run_id": 6038806
+          },
+          {
             "dungeon": "Murder Row",
             "short": "MR",
             "level": 12,
@@ -5881,24 +5893,12 @@
             "par_ms": 1800999,
             "completed_at": "2026-08-23T23:14:17.000Z",
             "keystone_run_id": 2944733
-          },
-          {
-            "dungeon": "Voidscar Arena",
-            "short": "VSA",
-            "level": 13,
-            "timed": true,
-            "upgrades": 1,
-            "score": 380.9,
-            "clear_ms": 1757031,
-            "par_ms": 1800999,
-            "completed_at": "2026-08-23T22:05:16.000Z",
-            "keystone_run_id": 2910726
           }
         ],
         "ranks": {
-          "realm_overall": 222,
+          "realm_overall": 223,
           "realm_class": 26,
-          "region_overall": 13033
+          "region_overall": 13195
         },
         "delta_week": -809.0,
         "delta_day": 0.0,
@@ -5953,13 +5953,11 @@
       },
       {
         "name": "Tinyx",
+        "key": "tinyx-bleeding-hollow",
         "realm": "Bleeding Hollow",
         "realm_slug": "bleeding-hollow",
-        "key": "tinyx-bleeding-hollow",
-        "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/tinyx",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/tinyx",
         "class": "Druid",
-        "spec": "Feral Druid",
+        "spec": "Feral",
         "role": "DPS",
         "score": 3058.3,
         "scores_by_role": {
@@ -5968,12 +5966,12 @@
           "tank": 0
         },
         "best_runs": [],
-        "recent_runs": [],
         "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
+          "realm_overall": null,
+          "realm_class": null,
+          "region_overall": null
         },
+        "recent_runs": [],
         "delta_week": 0.0,
         "delta_day": 3058.3,
         "is_new": false,
@@ -6147,6 +6145,18 @@
             "dungeon": "Murder Row",
             "short": "MR",
             "level": 12,
+            "timed": true,
+            "upgrades": 1,
+            "score": 372,
+            "clear_ms": 1657745,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-30T17:50:17.000Z",
+            "keystone_run_id": 6042105
+          },
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 12,
             "timed": false,
             "upgrades": 0,
             "score": 0,
@@ -6250,24 +6260,12 @@
             "par_ms": 1980999,
             "completed_at": "2026-08-28T21:21:49.000Z",
             "keystone_run_id": 5064468
-          },
-          {
-            "dungeon": "Ruby Life Pools",
-            "short": "RLP",
-            "level": 12,
-            "timed": false,
-            "upgrades": 0,
-            "score": 317.4,
-            "clear_ms": 1795926,
-            "par_ms": 1680999,
-            "completed_at": "2026-08-24T05:16:47.000Z",
-            "keystone_run_id": 3041261
           }
         ],
         "ranks": {
-          "realm_overall": 461,
+          "realm_overall": 467,
           "realm_class": 22,
-          "region_overall": 18049
+          "region_overall": 18279
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -6416,7 +6414,7 @@
         "raiderio_url": "https://raider.io/characters/us/malganis/fuazy",
         "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/malganis/fuazy",
         "class": "Warlock",
-        "spec": "Destruction Warlock",
+        "spec": "Demonology Warlock",
         "role": "DPS",
         "score": 3018.9,
         "scores_by_role": {
@@ -6881,9 +6879,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1475,
+          "realm_overall": 1489,
           "realm_class": 134,
-          "region_overall": 34599
+          "region_overall": 34956
         },
         "delta_week": -234.3,
         "delta_day": 0.0,
@@ -7339,9 +7337,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4796,
-          "realm_class": 242,
-          "region_overall": 37261
+          "realm_overall": 4847,
+          "realm_class": 245,
+          "region_overall": 37618
         },
         "delta_week": -656.3,
         "delta_day": 0.0,
@@ -7881,9 +7879,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 329,
+          "realm_overall": 330,
           "realm_class": 51,
-          "region_overall": 51414
+          "region_overall": 51783
         },
         "delta_week": -644.6,
         "delta_day": 0.0,
@@ -8176,9 +8174,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1908,
-          "realm_class": 164,
-          "region_overall": 52934
+          "realm_overall": 1927,
+          "realm_class": 167,
+          "region_overall": 53320
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -8602,9 +8600,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 604,
+          "realm_overall": 607,
           "realm_class": 66,
-          "region_overall": 60793
+          "region_overall": 61227
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -8850,9 +8848,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 247,
+          "realm_overall": 251,
           "realm_class": 17,
-          "region_overall": 66564
+          "region_overall": 67013
         },
         "delta_week": -746.0,
         "delta_day": 0.0,
@@ -9142,9 +9140,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3654,
+          "realm_overall": 3675,
           "realm_class": 273,
-          "region_overall": 77912
+          "region_overall": 78398
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -9564,9 +9562,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 952,
-          "realm_class": 164,
-          "region_overall": 99708
+          "realm_overall": 959,
+          "realm_class": 165,
+          "region_overall": 100361
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -9812,9 +9810,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 553,
+          "realm_overall": 554,
           "realm_class": 85,
-          "region_overall": 100366
+          "region_overall": 101002
         },
         "delta_week": -221.1,
         "delta_day": 0.0,
@@ -10088,9 +10086,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 149,
+          "realm_overall": 150,
           "realm_class": 22,
-          "region_overall": 101914
+          "region_overall": 102562
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10195,7 +10193,7 @@
         "raiderio_url": "https://raider.io/characters/us/bleeding-hollow/lørdøfßud",
         "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/bleeding-hollow/lørdøfßud",
         "class": "Warrior",
-        "spec": "Protection Warrior",
+        "spec": "Arms Warrior",
         "role": "DPS",
         "score": 2588.4,
         "scores_by_role": {
@@ -10424,9 +10422,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2062,
-          "realm_class": 183,
-          "region_overall": 105582
+          "realm_overall": 2073,
+          "realm_class": 185,
+          "region_overall": 106246
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10672,9 +10670,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4468,
-          "realm_class": 530,
-          "region_overall": 106075
+          "realm_overall": 4494,
+          "realm_class": 538,
+          "region_overall": 106744
         },
         "delta_week": -436.7,
         "delta_day": 0,
@@ -10964,9 +10962,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 9890,
-          "realm_class": 1542,
-          "region_overall": 109748
+          "realm_overall": 9948,
+          "realm_class": 1550,
+          "region_overall": 110451
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11212,9 +11210,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 590,
+          "realm_overall": 593,
           "realm_class": 98,
-          "region_overall": 110251
+          "region_overall": 110958
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11460,9 +11458,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 646,
+          "realm_overall": 649,
           "realm_class": 44,
-          "region_overall": 111323
+          "region_overall": 112033
         },
         "delta_week": -544.7,
         "delta_day": 0.0,
@@ -11752,9 +11750,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 12534,
-          "realm_class": 1141,
-          "region_overall": 111822
+          "realm_overall": 12609,
+          "realm_class": 1151,
+          "region_overall": 112524
         },
         "delta_week": -693.9,
         "delta_day": 0.0,
@@ -12074,9 +12072,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10865,
-          "realm_class": 1690,
-          "region_overall": 121738
+          "realm_overall": 10921,
+          "realm_class": 1697,
+          "region_overall": 122472
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12426,9 +12424,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2568,
-          "realm_class": 162,
-          "region_overall": 132827
+          "realm_overall": 2585,
+          "realm_class": 163,
+          "region_overall": 133591
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12674,9 +12672,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 747,
-          "realm_class": 63,
-          "region_overall": 133494
+          "realm_overall": 753,
+          "realm_class": 64,
+          "region_overall": 134250
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12940,9 +12938,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15078,
-          "realm_class": 871,
-          "region_overall": 139958
+          "realm_overall": 15143,
+          "realm_class": 873,
+          "region_overall": 140720
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13188,9 +13186,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15264,
-          "realm_class": 856,
-          "region_overall": 141873
+          "realm_overall": 15326,
+          "realm_class": 860,
+          "region_overall": 142630
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13424,9 +13422,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 14030,
-          "realm_class": 2159,
-          "region_overall": 143115
+          "realm_overall": 14101,
+          "realm_class": 2173,
+          "region_overall": 143868
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13660,9 +13658,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2758,
-          "realm_class": 95,
-          "region_overall": 143817
+          "realm_overall": 2771,
+          "realm_class": 96,
+          "region_overall": 144577
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13908,9 +13906,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1181,
-          "realm_class": 58,
-          "region_overall": 144687
+          "realm_overall": 1189,
+          "realm_class": 59,
+          "region_overall": 145449
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14156,9 +14154,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5770,
+          "realm_overall": 5788,
           "realm_class": 837,
-          "region_overall": 149292
+          "region_overall": 150036
         },
         "delta_week": -837,
         "delta_day": 0,
@@ -14432,9 +14430,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1352,
-          "realm_class": 66,
-          "region_overall": 153323
+          "realm_overall": 1359,
+          "realm_class": 67,
+          "region_overall": 154090
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14746,7 +14744,7 @@
         "ranks": {
           "realm_overall": 354,
           "realm_class": 41,
-          "region_overall": 157250
+          "region_overall": 158076
         },
         "delta_week": -626.1,
         "delta_day": 0.0,
@@ -15038,9 +15036,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1754,
+          "realm_overall": 1762,
           "realm_class": 107,
-          "region_overall": 160716
+          "region_overall": 161521
         },
         "delta_week": -580.8,
         "delta_day": 0.0,
@@ -15384,9 +15382,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3441,
+          "realm_overall": 3450,
           "realm_class": 193,
-          "region_overall": 184041
+          "region_overall": 184929
         },
         "delta_week": -1459.7,
         "delta_day": 0.0,
@@ -15649,9 +15647,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3506,
-          "realm_class": 220,
-          "region_overall": 187916
+          "realm_overall": 3517,
+          "realm_class": 222,
+          "region_overall": 188824
         },
         "delta_week": -966.6,
         "delta_day": 0.0,
@@ -15963,9 +15961,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 19004,
-          "realm_class": 1850,
-          "region_overall": 210053
+          "realm_overall": 19093,
+          "realm_class": 1859,
+          "region_overall": 211032
         },
         "delta_week": -1542.1,
         "delta_day": 0.0,
@@ -16189,9 +16187,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 21312,
-          "realm_class": 2562,
-          "region_overall": 216220
+          "realm_overall": 21412,
+          "realm_class": 2569,
+          "region_overall": 217194
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -16401,9 +16399,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1176,
+          "realm_overall": 1178,
           "realm_class": 125,
-          "region_overall": 220756
+          "region_overall": 221737
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -16625,9 +16623,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 18774,
-          "realm_class": 1721,
-          "region_overall": 226181
+          "realm_overall": 18871,
+          "realm_class": 1729,
+          "region_overall": 227170
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -16783,9 +16781,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 12122,
-          "realm_class": 670,
-          "region_overall": 233028
+          "realm_overall": 12165,
+          "realm_class": 674,
+          "region_overall": 234017
         },
         "delta_week": -2388.6,
         "delta_day": 0.0,
@@ -17003,9 +17001,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 22983,
-          "realm_class": 1848,
-          "region_overall": 236645
+          "realm_overall": 23075,
+          "realm_class": 1856,
+          "region_overall": 237664
         },
         "delta_week": -1899.9,
         "delta_day": 0.0,
@@ -17232,9 +17230,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1614,
-          "realm_class": 51,
-          "region_overall": 241816
+          "realm_overall": 1622,
+          "realm_class": 52,
+          "region_overall": 242848
         },
         "delta_week": -2369.9,
         "delta_day": 0.0,
@@ -17670,9 +17668,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1666,
-          "realm_class": 85,
-          "region_overall": 249345
+          "realm_overall": 1676,
+          "realm_class": 86,
+          "region_overall": 250359
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -17924,9 +17922,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 25516,
-          "realm_class": 2099,
-          "region_overall": 268688
+          "realm_overall": 25610,
+          "realm_class": 2108,
+          "region_overall": 269715
         },
         "delta_week": -1867.1,
         "delta_day": 0,
@@ -18138,9 +18136,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 26197,
-          "realm_class": 2194,
-          "region_overall": 277430
+          "realm_overall": 26286,
+          "realm_class": 2200,
+          "region_overall": 278463
         },
         "delta_week": -2070.7,
         "delta_day": 0.0,
@@ -18316,9 +18314,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 28832,
-          "realm_class": 1892,
-          "region_overall": 310974
+          "realm_overall": 28935,
+          "realm_class": 1899,
+          "region_overall": 312056
         },
         "delta_week": -2517.3,
         "delta_day": 0.0,
@@ -18395,13 +18393,25 @@
         "class": "Warrior",
         "spec": "Fury Warrior",
         "role": "DPS",
-        "score": 394.8,
+        "score": 468.5,
         "scores_by_role": {
-          "dps": 394.8,
+          "dps": 468.5,
           "healer": 0,
           "tank": 0
         },
         "best_runs": [
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 6,
+            "timed": true,
+            "upgrades": 2,
+            "score": 242,
+            "clear_ms": 1386173,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-30T16:54:23.000Z",
+            "keystone_run_id": 6018994
+          },
           {
             "dungeon": "Kings' Rest",
             "short": "KR",
@@ -18413,21 +18423,21 @@
             "par_ms": 1980999,
             "completed_at": "2026-08-30T05:00:10.000Z",
             "keystone_run_id": 5752978
-          },
-          {
-            "dungeon": "Murder Row",
-            "short": "MR",
-            "level": 2,
-            "timed": true,
-            "upgrades": 2,
-            "score": 168.4,
-            "clear_ms": 1313098,
-            "par_ms": 2040999,
-            "completed_at": "2026-08-30T04:30:33.000Z",
-            "keystone_run_id": 5752821
           }
         ],
         "recent_runs": [
+          {
+            "dungeon": "Murder Row",
+            "short": "MR",
+            "level": 6,
+            "timed": true,
+            "upgrades": 2,
+            "score": 242,
+            "clear_ms": 1386173,
+            "par_ms": 2040999,
+            "completed_at": "2026-08-30T16:54:23.000Z",
+            "keystone_run_id": 6018994
+          },
           {
             "dungeon": "Kings' Rest",
             "short": "KR",
@@ -18454,12 +18464,12 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2262,
-          "realm_class": 175,
-          "region_overall": 318835
+          "realm_overall": 2210,
+          "realm_class": 173,
+          "region_overall": 314169
         },
         "delta_week": null,
-        "delta_day": 0.0,
+        "delta_day": 73.7,
         "is_new": true,
         "parse": null,
         "rank": 119,
@@ -18546,9 +18556,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2263,
-          "realm_class": 168,
-          "region_overall": 319069
+          "realm_overall": 2268,
+          "realm_class": 169,
+          "region_overall": 320159
         },
         "delta_week": -2672.0,
         "delta_day": 0.0,
@@ -18630,9 +18640,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 27998,
-          "realm_class": 1627,
-          "region_overall": 339649
+          "realm_overall": 28091,
+          "realm_class": 1634,
+          "region_overall": 340818
         },
         "delta_week": null,
         "delta_day": 0,
@@ -18686,9 +18696,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11215,
-          "realm_class": 945,
-          "region_overall": 345615
+          "realm_overall": 11257,
+          "realm_class": 947,
+          "region_overall": 346793
         },
         "delta_week": -3152.8,
         "delta_day": 0.0,
@@ -18936,9 +18946,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 30938,
-          "realm_class": 4447,
-          "region_overall": 387816
+          "realm_overall": 31028,
+          "realm_class": 4456,
+          "region_overall": 389078
         },
         "delta_week": -2617.1,
         "delta_day": 0.0,
@@ -24461,7 +24471,7 @@
     "departed_count": 58,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-30T15:33:51.773821+00:00",
+      "as_of": "2026-08-30T17:55:49.576136+00:00",
       "member_count": 157
     },
     "key_records": {
@@ -24930,7 +24940,7 @@
           "key": "tinyx-bleeding-hollow",
           "score": 3058.3,
           "class": "Druid",
-          "spec": "Feral Druid",
+          "spec": "Feral",
           "role": "DPS",
           "top5": false,
           "delta_week": 0.0,
@@ -24982,7 +24992,7 @@
           "key": "fuazy-malganis",
           "score": 3018.9,
           "class": "Warlock",
-          "spec": "Destruction Warlock",
+          "spec": "Demonology Warlock",
           "role": "DPS",
           "top5": false,
           "delta_week": 0.0,
@@ -25372,7 +25382,7 @@
           "key": "lørdøfßud-bleeding-hollow",
           "score": 2588.4,
           "class": "Warrior",
-          "spec": "Protection Warrior",
+          "spec": "Arms Warrior",
           "role": "DPS",
           "top5": false,
           "delta_week": null,
@@ -26072,13 +26082,13 @@
           "rank": 119,
           "name": "Iconicmax",
           "key": "iconicmax-stonemaul",
-          "score": 394.8,
+          "score": 468.5,
           "class": "Warrior",
           "spec": "Fury Warrior",
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 0.0,
+          "delta_day": 73.7,
           "is_new": true
         },
         {
@@ -27004,7 +27014,7 @@
             "key": "tinyx-bleeding-hollow",
             "score": 3058.3,
             "class": "Druid",
-            "spec": "Feral Druid",
+            "spec": "Feral",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -27056,7 +27066,7 @@
             "key": "fuazy-malganis",
             "score": 3018.9,
             "class": "Warlock",
-            "spec": "Destruction Warlock",
+            "spec": "Demonology Warlock",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -27316,7 +27326,7 @@
             "key": "lørdøfßud-bleeding-hollow",
             "score": 2588.4,
             "class": "Warrior",
-            "spec": "Protection Warrior",
+            "spec": "Arms Warrior",
             "role": "DPS",
             "top5": false,
             "delta_week": null,
@@ -27756,13 +27766,13 @@
             "rank": 69,
             "name": "Iconicmax",
             "key": "iconicmax-stonemaul",
-            "score": 394.8,
+            "score": 468.5,
             "class": "Warrior",
             "spec": "Fury Warrior",
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 0.0,
+            "delta_day": 73.7,
             "is_new": true
           },
           {
@@ -28169,7 +28179,7 @@
             "key": "tinyx-bleeding-hollow",
             "score": 3058.3,
             "class": "Druid",
-            "spec": "Feral Druid",
+            "spec": "Feral",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -29266,7 +29276,7 @@
             "key": "fuazy-malganis",
             "score": 3018.9,
             "class": "Warlock",
-            "spec": "Destruction Warlock",
+            "spec": "Demonology Warlock",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -29476,7 +29486,7 @@
             "key": "lørdøfßud-bleeding-hollow",
             "score": 2588.4,
             "class": "Warrior",
-            "spec": "Protection Warrior",
+            "spec": "Arms Warrior",
             "role": "DPS",
             "top5": false,
             "delta_week": null,
@@ -29552,13 +29562,13 @@
             "rank": 13,
             "name": "Iconicmax",
             "key": "iconicmax-stonemaul",
-            "score": 394.8,
+            "score": 468.5,
             "class": "Warrior",
             "spec": "Fury Warrior",
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 0.0,
+            "delta_day": 73.7,
             "is_new": true
           }
         ]
@@ -30059,6 +30069,11 @@
           "name": "Xavira",
           "key": "xavira-proudmoore",
           "delta_day": 158.9
+        },
+        {
+          "name": "Iconicmax",
+          "key": "iconicmax-stonemaul",
+          "delta_day": 73.7
         }
       ],
       "new_to_board": [
@@ -30205,7 +30220,7 @@
         {
           "name": "Iconicmax",
           "key": "iconicmax-stonemaul",
-          "score": 394.8
+          "score": 468.5
         },
         {
           "name": "Pøçkëts",
@@ -30253,7 +30268,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-30T15:34:55.282447+00:00",
+    "generated_at": "2026-08-30T17:56:53.321219+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
