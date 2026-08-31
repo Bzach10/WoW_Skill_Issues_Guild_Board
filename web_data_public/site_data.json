@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-08-31T18:11:43.270476+00:00",
+  "generated_at": "2026-08-31T18:33:07.445209+00:00",
   "guild": {
     "name": "Skill Issues",
     "realm": "bleeding-hollow",
@@ -12,7 +12,7 @@
   },
   "recap_ribbon": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.270578+00:00",
+    "generated_at": "2026-08-31T18:33:07.445350+00:00",
     "week_of": "2026-08-11",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "beats": [
@@ -66,7 +66,7 @@
   },
   "records_leaderboard": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.270745+00:00",
+    "generated_at": "2026-08-31T18:33:07.445548+00:00",
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "standing": {},
     "previous_standing": {
@@ -1442,7 +1442,7 @@
   },
   "weekly_board": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.270952+00:00",
+    "generated_at": "2026-08-31T18:33:07.445798+00:00",
     "available": true,
     "based_on": "2026-08-18T13:49:34.087997+00:00",
     "week_label": "2026-08-11",
@@ -1696,7 +1696,7 @@
   },
   "guild_achievements": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.271168+00:00",
+    "generated_at": "2026-08-31T18:33:07.446051+00:00",
     "available": true,
     "status": "ok",
     "source": "/data/wow/guild/{realm}/{name}/achievements",
@@ -2733,7 +2733,7 @@
   },
   "island_completion": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.271191+00:00",
+    "generated_at": "2026-08-31T18:33:07.446079+00:00",
     "season_slug": "season-mn-2",
     "season_name": "Midnight Season 2",
     "dungeons": {
@@ -2920,7 +2920,7 @@
   },
   "transmog_changes": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.269517+00:00",
+    "generated_at": "2026-08-31T18:33:07.444001+00:00",
     "is_first_run": true,
     "changed": [],
     "changed_count": 0,
@@ -2929,7 +2929,7 @@
   },
   "guild_pulse": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.271198+00:00",
+    "generated_at": "2026-08-31T18:33:07.446084+00:00",
     "available": false,
     "status": "pending_discord_refresh",
     "source": "read-only Discord bot, allowlisted guild-public channels",
@@ -2944,7 +2944,7 @@
       "slug": "season-mn-2",
       "name": "Midnight Season 2"
     },
-    "based_on": "2026-08-31T18:05:22.889117+00:00",
+    "based_on": "2026-08-31T18:31:17.768118+00:00",
     "week_baseline_from": "2026-08-18T13:49:34.087997+00:00",
     "character_count": 156,
     "ranked_count": 127,
@@ -4085,9 +4085,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 654,
-          "realm_class": 93,
-          "region_overall": 4557
+          "realm_overall": 656,
+          "realm_class": 94,
+          "region_overall": 4569
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -4333,9 +4333,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 699,
+          "realm_overall": 700,
           "realm_class": 36,
-          "region_overall": 4642
+          "region_overall": 4654
         },
         "delta_week": -634.3,
         "delta_day": 0.0,
@@ -4734,7 +4734,7 @@
         "ranks": {
           "realm_overall": 151,
           "realm_class": 18,
-          "region_overall": 8700
+          "region_overall": 8708
         },
         "delta_week": -329.0,
         "delta_day": 0.0,
@@ -5084,7 +5084,7 @@
         "ranks": {
           "realm_overall": 1151,
           "realm_class": 28,
-          "region_overall": 10553
+          "region_overall": 10559
         },
         "delta_week": -782.8,
         "delta_day": 0.0,
@@ -5139,13 +5139,11 @@
       },
       {
         "name": "Katesthio",
+        "key": "katesthio-zuljin",
         "realm": "Zul'jin",
         "realm_slug": "zuljin",
-        "key": "katesthio-zuljin",
-        "raiderio_url": "https://raider.io/characters/us/zuljin/katesthio",
-        "warcraftlogs_url": "https://www.warcraftlogs.com/character/us/zuljin/katesthio",
         "class": "Demon Hunter",
-        "spec": "Devourer DH",
+        "spec": "Devourer",
         "role": "DPS",
         "score": 3128.5,
         "scores_by_role": {
@@ -5154,12 +5152,12 @@
           "tank": 0
         },
         "best_runs": [],
-        "recent_runs": [],
         "ranks": {
-          "realm_overall": 0,
-          "realm_class": 0,
-          "region_overall": 0
+          "realm_overall": null,
+          "realm_class": null,
+          "region_overall": null
         },
+        "recent_runs": [],
         "delta_week": 0.0,
         "delta_day": 3128.5,
         "is_new": false,
@@ -5480,7 +5478,7 @@
         "ranks": {
           "realm_overall": 269,
           "realm_class": 11,
-          "region_overall": 11331
+          "region_overall": 11340
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -6072,7 +6070,7 @@
         "ranks": {
           "realm_overall": 250,
           "realm_class": 27,
-          "region_overall": 15206
+          "region_overall": 15223
         },
         "delta_week": -809.0,
         "delta_day": 0.0,
@@ -6777,9 +6775,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1645,
+          "realm_overall": 1647,
           "realm_class": 145,
-          "region_overall": 38852
+          "region_overall": 38871
         },
         "delta_week": -234.3,
         "delta_day": 0.0,
@@ -7177,9 +7175,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5312,
+          "realm_overall": 5315,
           "realm_class": 275,
-          "region_overall": 41568
+          "region_overall": 41591
         },
         "delta_week": -656.3,
         "delta_day": 0.0,
@@ -7689,9 +7687,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 526,
+          "realm_overall": 527,
           "realm_class": 58,
-          "region_overall": 53307
+          "region_overall": 53333
         },
         "delta_week": null,
         "delta_day": 0,
@@ -7969,7 +7967,7 @@
         "ranks": {
           "realm_overall": 358,
           "realm_class": 54,
-          "region_overall": 56693
+          "region_overall": 56717
         },
         "delta_week": -644.6,
         "delta_day": 0.0,
@@ -8264,7 +8262,7 @@
         "ranks": {
           "realm_overall": 2112,
           "realm_class": 180,
-          "region_overall": 58277
+          "region_overall": 58306
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -8690,7 +8688,7 @@
         "ranks": {
           "realm_overall": 275,
           "realm_class": 19,
-          "region_overall": 72613
+          "region_overall": 72652
         },
         "delta_week": -746.0,
         "delta_day": 0.0,
@@ -8982,7 +8980,7 @@
         "ranks": {
           "realm_overall": 3943,
           "realm_class": 300,
-          "region_overall": 84754
+          "region_overall": 84797
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -9402,9 +9400,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11988,
+          "realm_overall": 11991,
           "realm_class": 1107,
-          "region_overall": 104821
+          "region_overall": 104860
         },
         "delta_week": -629.4,
         "delta_day": 0.0,
@@ -9696,10 +9694,10 @@
         "ranks": {
           "realm_overall": 555,
           "realm_class": 93,
-          "region_overall": 107614
+          "region_overall": 107665
         },
         "delta_week": null,
-        "delta_day": 48.1,
+        "delta_day": 0.0,
         "is_new": true,
         "parse": null,
         "rank": 58,
@@ -9942,9 +9940,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1060,
+          "realm_overall": 1062,
           "realm_class": 183,
-          "region_overall": 108124
+          "region_overall": 108177
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10192,7 +10190,7 @@
         "ranks": {
           "realm_overall": 607,
           "realm_class": 98,
-          "region_overall": 108799
+          "region_overall": 108853
         },
         "delta_week": -221.1,
         "delta_day": 0.0,
@@ -10468,7 +10466,7 @@
         "ranks": {
           "realm_overall": 170,
           "realm_class": 26,
-          "region_overall": 110488
+          "region_overall": 110541
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -10772,9 +10770,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 4726,
-          "realm_class": 569,
-          "region_overall": 112193
+          "realm_overall": 4729,
+          "realm_class": 570,
+          "region_overall": 112248
         },
         "delta_week": -425.4,
         "delta_day": 0.0,
@@ -11094,9 +11092,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2244,
+          "realm_overall": 2247,
           "realm_class": 204,
-          "region_overall": 114425
+          "region_overall": 114481
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11342,9 +11340,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2299,
+          "realm_overall": 2302,
           "realm_class": 137,
-          "region_overall": 117609
+          "region_overall": 117662
         },
         "delta_week": -308.1,
         "delta_day": 0.0,
@@ -11634,9 +11632,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 10643,
+          "realm_overall": 10647,
           "realm_class": 1682,
-          "region_overall": 118862
+          "region_overall": 118915
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -11882,9 +11880,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 732,
+          "realm_overall": 733,
           "realm_class": 52,
-          "region_overall": 120536
+          "region_overall": 120584
         },
         "delta_week": -544.7,
         "delta_day": 0.0,
@@ -12204,9 +12202,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11688,
+          "realm_overall": 11693,
           "realm_class": 1840,
-          "region_overall": 131206
+          "region_overall": 131262
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -12556,9 +12554,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 5462,
+          "realm_overall": 5464,
           "realm_class": 796,
-          "region_overall": 138982
+          "region_overall": 139029
         },
         "delta_week": -681.5,
         "delta_day": 0.0,
@@ -12834,7 +12832,7 @@
         "ranks": {
           "realm_overall": 309,
           "realm_class": 37,
-          "region_overall": 139914
+          "region_overall": 139963
         },
         "delta_week": -413.9,
         "delta_day": 0.0,
@@ -13080,9 +13078,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 15323,
+          "realm_overall": 15326,
           "realm_class": 878,
-          "region_overall": 142450
+          "region_overall": 142498
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13328,9 +13326,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2773,
+          "realm_overall": 2775,
           "realm_class": 176,
-          "region_overall": 142659
+          "region_overall": 142709
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13578,7 +13576,7 @@
         "ranks": {
           "realm_overall": 810,
           "realm_class": 68,
-          "region_overall": 143363
+          "region_overall": 143416
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -13842,9 +13840,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 16017,
+          "realm_overall": 16018,
           "realm_class": 919,
-          "region_overall": 150100
+          "region_overall": 150150
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14078,9 +14076,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 14922,
+          "realm_overall": 14927,
           "realm_class": 2293,
-          "region_overall": 153366
+          "region_overall": 153421
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14314,9 +14312,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2956,
+          "realm_overall": 2958,
           "realm_class": 100,
-          "region_overall": 154103
+          "region_overall": 154155
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14562,9 +14560,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1291,
+          "realm_overall": 1292,
           "realm_class": 66,
-          "region_overall": 155023
+          "region_overall": 155074
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -14810,9 +14808,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 1437,
+          "realm_overall": 1438,
           "realm_class": 74,
-          "region_overall": 163850
+          "region_overall": 163915
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -15170,7 +15168,7 @@
         "ranks": {
           "realm_overall": 1905,
           "realm_class": 114,
-          "region_overall": 171419
+          "region_overall": 171475
         },
         "delta_week": -580.8,
         "delta_day": 0.0,
@@ -15514,9 +15512,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 3667,
+          "realm_overall": 3668,
           "realm_class": 204,
-          "region_overall": 195453
+          "region_overall": 195509
         },
         "delta_week": -1459.7,
         "delta_day": 0.0,
@@ -15837,9 +15835,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 19970,
-          "realm_class": 1935,
-          "region_overall": 221872
+          "realm_overall": 19979,
+          "realm_class": 1936,
+          "region_overall": 221940
         },
         "delta_week": -1542.1,
         "delta_day": 0.0,
@@ -16137,7 +16135,7 @@
         "ranks": {
           "realm_overall": 1213,
           "realm_class": 132,
-          "region_overall": 223891
+          "region_overall": 223964
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -16287,9 +16285,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 22432,
+          "realm_overall": 22436,
           "realm_class": 2696,
-          "region_overall": 228270
+          "region_overall": 228341
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -16511,9 +16509,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 19791,
+          "realm_overall": 19797,
           "realm_class": 1820,
-          "region_overall": 238596
+          "region_overall": 238664
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -16669,9 +16667,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 12733,
+          "realm_overall": 12739,
           "realm_class": 704,
-          "region_overall": 245608
+          "region_overall": 245682
         },
         "delta_week": -2388.6,
         "delta_day": 0.0,
@@ -16889,9 +16887,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 24105,
-          "realm_class": 1935,
-          "region_overall": 249265
+          "realm_overall": 24116,
+          "realm_class": 1936,
+          "region_overall": 249346
         },
         "delta_week": -1899.9,
         "delta_day": 0.0,
@@ -17120,7 +17118,7 @@
         "ranks": {
           "realm_overall": 1713,
           "realm_class": 53,
-          "region_overall": 254599
+          "region_overall": 254680
         },
         "delta_week": -2369.9,
         "delta_day": 0.0,
@@ -17338,9 +17336,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 2382,
+          "realm_overall": 2383,
           "realm_class": 171,
-          "region_overall": 254852
+          "region_overall": 254932
         },
         "delta_week": -2309.0,
         "delta_day": 0.0,
@@ -17778,7 +17776,7 @@
         "ranks": {
           "realm_overall": 1773,
           "realm_class": 89,
-          "region_overall": 262243
+          "region_overall": 262333
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -18020,7 +18018,7 @@
         "ranks": {
           "realm_overall": 1864,
           "realm_class": 141,
-          "region_overall": 275524
+          "region_overall": 275611
         },
         "delta_week": null,
         "delta_day": 0.0,
@@ -18182,9 +18180,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 26699,
+          "realm_overall": 26710,
           "realm_class": 2208,
-          "region_overall": 281864
+          "region_overall": 281946
         },
         "delta_week": -1867.1,
         "delta_day": 0,
@@ -18396,9 +18394,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 27373,
-          "realm_class": 2292,
-          "region_overall": 290724
+          "realm_overall": 27385,
+          "realm_class": 2293,
+          "region_overall": 290809
         },
         "delta_week": -2070.7,
         "delta_day": 0.0,
@@ -18552,7 +18550,7 @@
         "ranks": {
           "realm_overall": 3178,
           "realm_class": 276,
-          "region_overall": 308061
+          "region_overall": 308147
         },
         "delta_week": -2052.9,
         "delta_day": 0.0,
@@ -18682,9 +18680,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 30084,
+          "realm_overall": 30091,
           "realm_class": 1975,
-          "region_overall": 325176
+          "region_overall": 325254
         },
         "delta_week": -2517.3,
         "delta_day": 0.0,
@@ -18834,7 +18832,7 @@
         "ranks": {
           "realm_overall": 2378,
           "realm_class": 175,
-          "region_overall": 333461
+          "region_overall": 333538
         },
         "delta_week": -2672.0,
         "delta_day": 0.0,
@@ -18916,9 +18914,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 29216,
-          "realm_class": 1703,
-          "region_overall": 354663
+          "realm_overall": 29230,
+          "realm_class": 1704,
+          "region_overall": 354748
         },
         "delta_week": null,
         "delta_day": 0,
@@ -18972,9 +18970,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 11732,
+          "realm_overall": 11733,
           "realm_class": 992,
-          "region_overall": 360784
+          "region_overall": 360881
         },
         "delta_week": -3152.8,
         "delta_day": 0.0,
@@ -19222,9 +19220,9 @@
           }
         ],
         "ranks": {
-          "realm_overall": 32221,
-          "realm_class": 4617,
-          "region_overall": 403673
+          "realm_overall": 32234,
+          "realm_class": 4619,
+          "region_overall": 403794
         },
         "delta_week": -2617.1,
         "delta_day": 0.0,
@@ -24931,7 +24929,7 @@
     "departed_count": 60,
     "membership": {
       "source": "raider.io guild roster",
-      "as_of": "2026-08-31T18:05:22.889117+00:00",
+      "as_of": "2026-08-31T18:31:17.768118+00:00",
       "member_count": 156
     },
     "key_records": {
@@ -25283,7 +25281,7 @@
           "key": "katesthio-zuljin",
           "score": 3128.5,
           "class": "Demon Hunter",
-          "spec": "Devourer DH",
+          "spec": "Devourer",
           "role": "DPS",
           "top5": false,
           "delta_week": 0.0,
@@ -25755,7 +25753,7 @@
           "role": "DPS",
           "top5": false,
           "delta_week": null,
-          "delta_day": 48.1,
+          "delta_day": 0.0,
           "is_new": true
         },
         {
@@ -27396,7 +27394,7 @@
             "key": "katesthio-zuljin",
             "score": 3128.5,
             "class": "Demon Hunter",
-            "spec": "Devourer DH",
+            "spec": "Devourer",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -27738,7 +27736,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 48.1,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -28507,7 +28505,7 @@
             "key": "katesthio-zuljin",
             "score": 3128.5,
             "class": "Demon Hunter",
-            "spec": "Devourer DH",
+            "spec": "Devourer",
             "role": "DPS",
             "top5": false,
             "delta_week": 0.0,
@@ -29212,7 +29210,7 @@
             "role": "DPS",
             "top5": false,
             "delta_week": null,
-            "delta_day": 48.1,
+            "delta_day": 0.0,
             "is_new": true
           },
           {
@@ -30470,11 +30468,6 @@
           "name": "Xavira",
           "key": "xavira-proudmoore",
           "delta_day": 158.9
-        },
-        {
-          "name": "Riias",
-          "key": "riias-senjin",
-          "delta_day": 48.1
         }
       ],
       "new_to_board": [
@@ -30669,7 +30662,7 @@
   },
   "parses": {
     "schema_version": 1,
-    "generated_at": "2026-08-31T18:11:43.270469+00:00",
+    "generated_at": "2026-08-31T18:33:07.445201+00:00",
     "available": true,
     "status": "ok",
     "source": "Warcraft Logs character zoneRankings",
