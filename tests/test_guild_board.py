@@ -1445,6 +1445,52 @@ def test_integrity_flags_streak_inflation():
     assert msgs2 == []
 
 
+def test_integrity_flags_a_stale_state_file():
+    """A lost state commit must not read as a clean bill of health."""
+    from datetime import datetime, timedelta, timezone
+
+    from guild_board import integrity
+
+    def stamp(days):
+        return (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+
+    msgs = []
+    integrity.check_freshness({"last_updated": stamp(14)}, msgs)
+    assert any("stale" in m for m in msgs)
+
+    fresh = []
+    integrity.check_freshness({"last_updated": stamp(6)}, fresh)
+    assert fresh == []
+
+    # No stamp at all is unverifiable, not an alarm; garbage is an alarm.
+    quiet = []
+    integrity.check_freshness({}, quiet)
+    assert quiet == []
+    bad = []
+    integrity.check_freshness({"last_updated": "last tuesday"}, bad)
+    assert any("readable timestamp" in m for m in bad)
+
+
+def test_integrity_cli_reports_stale_state(tmp_path, monkeypatch):
+    import json as _json
+    import subprocess
+    import sys
+    from datetime import datetime, timedelta, timezone
+
+    state = {"records": {"best_dps_parse": {"name": "A", "parse": 59}},
+             "standing": {"realm": 49},
+             "last_updated": (datetime.now(timezone.utc)
+                              - timedelta(days=21)).isoformat()}
+    monkeypatch.chdir(tmp_path)
+    (tmp_path / "board_state.json").write_text(_json.dumps(state), encoding="utf-8")
+    r = subprocess.run([sys.executable, "-m", "guild_board.integrity"],
+                       capture_output=True, text=True, cwd=tmp_path,
+                       env={**os.environ, "PYTHONPATH": os.path.dirname(
+                           os.path.dirname(os.path.abspath(main.__file__)))})
+    assert r.returncode == 1
+    assert "1 needing attention" in r.stdout
+
+
 def test_streaks_from_attendance_season_derivation():
     from guild_board.state import streaks_from_attendance
     scanned = {"2026-06-30", "2026-07-07", "2026-07-14"}

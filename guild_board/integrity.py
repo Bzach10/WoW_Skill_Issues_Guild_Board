@@ -118,6 +118,38 @@ def check_streaks(state, messages):
               f"elapsed since tracking began ({started}) — per-post inflation bug?")
 
 
+def check_freshness(state, messages, max_age_days=9):
+    """The state a board is computed FROM must be from the last posting cycle.
+
+    On 2026-08-25 the scheduled run posted to Discord, then died on the web
+    publish before the commit step -- board_state.json never came back, and
+    the recovery dispatch ran --dry-run, which by design does not save state.
+    The file sat two weeks old while every check reported a clean bill of
+    health, because nothing here ever looked at its age. The next board's
+    streaks, records and week boundary are all differences against this
+    file: stale input is silently wrong output, not a missing tile.
+
+    Read-only -- a lost commit cannot be healed from here, only reported.
+    """
+    stamp = (state or {}).get("last_updated")
+    if not stamp:
+        return
+    from datetime import datetime, timezone
+    try:
+        written = datetime.fromisoformat(str(stamp))
+    except ValueError:
+        _warn(messages, f"last_updated={stamp!r} is not a readable timestamp")
+        return
+    if written.tzinfo is None:
+        written = written.replace(tzinfo=timezone.utc)
+    age = (datetime.now(timezone.utc) - written).days
+    if age > max_age_days:
+        _warn(messages,
+              f"board_state.json is stale: last written {stamp} ({age} days ago), "
+              "so at least one weekly run's state commit was lost — the next "
+              "board's streaks and records will be measured against it")
+
+
 def check_theme_assets(theme, messages):
     """Every configured background image must exist on disk — a typo'd or
     uncommitted path (easy to do when the art director stages new assets)
@@ -189,8 +221,10 @@ def main():
         return 1
     messages = run_all(records=state.get("records"), standing=state.get("standing"))
     check_streaks(state, messages)
+    check_freshness(state, messages)
     hard = [m for m in messages
-            if "clamped" in m or "dropped" in m or "unreadable" in m or "inflation" in m]
+            if "clamped" in m or "dropped" in m or "unreadable" in m
+            or "inflation" in m or "stale" in m]
     print(f"integrity: {len(messages)} finding(s), {len(hard)} needing attention")
     return 1 if hard else 0
 
