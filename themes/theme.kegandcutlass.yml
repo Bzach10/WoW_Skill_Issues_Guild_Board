@@ -1,0 +1,97 @@
+# ==================================================================
+#  THEME: KEG & CUTLASS  ·  layout: poster
+#
+#  September. Brewfest has washed up on the pirate docks and the
+#  whole guild is on a wanted poster. Tar-black timber, amber
+#  lanternlight, sun-bleached sailcloth nailed to the pilings.
+#  Pirates' Day (Sep 19) is the excuse; the ale is the reason.
+#
+#  TO USE IT:  copy this file over theme.yml in the repo root, then
+#  Actions -> "Weekly Guild Board" -> Run workflow.
+#  Art: assets/generated/kegandcutlass/ (see assets/art_prompts.yml).
+# ==================================================================
+board:
+  web_layout: poster           # the public website's layout
+  header: stone_torchlight     # the Discord image's header/footer modules
+  footer: graveyard
+  poster_eyebrow: "☠ DEAD OR DRUNK ☠"
+  poster_reward: "REWARD: ONE (1) BARREL · PAID AT THE DOCK"
+
+colors:
+  accent: "#e8a33d"      # lantern brass / amber ale
+  background: "#0a0806"  # tarred timber, near black
+  panel: "#16100a"       # wet oak
+  hairline: "#3f2d18"
+  text: "#f7ecd9"        # candlelit canvas
+  muted: "#c2a983"
+  faint: "#826e51"
+  red: "#e5544a"
+  green: "#4fc98b"       # sea green
+
+fonts:
+  display: "Rye"         # wanted-poster woodcut slab
+  display_weights: "400" # Rye ships a single weight
+  body: "Inter"
+  mono: "JetBrains Mono"
+
+backgrounds:
+  header: "assets/generated/kegandcutlass/header.png"
+  middle: "assets/generated/kegandcutlass/middle.png"
+  middle_tint: 0.86
+  footer: "assets/generated/kegandcutlass/footer.png"
+  poster: "assets/generated/kegandcutlass/poster.png"
+  crest: "assets/generated/kegandcutlass/crest.png"
+
+header:
+  sign_text: "GIT GUD"
+  sign_subtext: "NO REFUNDS · NO SURVIVORS"
+  wipes_sub: "deaths: {deaths} · personal best: still zero"
+  repair_sub: "donations welcome · thoughts & prayers accepted"
+  counter_label: "“GO AGANE” COUNTER"
+  counter_sub: "morale: unaffected · copium: stable"
+  debuffs:
+    - {icon: inv_misc_questionmark, kind: bad, label: "Skill Issue", stack: "40"}
+    - {icon: spell_fire_fire, kind: bad, label: "Standing in Fire", stack: "6w"}
+    - {icon: inv_misc_bone_humanskull_01, kind: bad, label: "Graveyard Timeshare", stack: "deaths"}
+    - {icon: spell_nature_sleep, kind: good, label: "Coping", stack: "∞"}
+    - {icon: spell_holy_layonhands, kind: good, label: "Healer Diff", stack: "1"}
+
+footer:
+  debt:
+    enabled: true
+    title: "Brewzleeh's Gambling Debt"
+    principal: 137000
+    weekly_rate_pct: 9.99
+    interest_note: "interest: 9.99% weekly · collateral: his monk"
+    lines:
+      - "Binds on !roll"
+      - "Deathroll Ledger|Unique"
+      - "+15 Gambling Addiction"
+      - "-100% Gold Retention Aura"
+      - "Equip: Doubles down on a 2% win chance."
+      - "Equip: Cannot leave while ahead. Has never been ahead."
+      - "Use: Borrows from GBank tab 3. Again. (No Cooldown)"
+    flavor: "“Just one more roll.” — Brewzleeh, at 4 AM"
+    requires: "Requires: An intervention"
+  graveyard:
+    title: "GRAVEYARD CAMPERS MEMORIAL"
+    caption: "Plots assigned by deaths-per-pull. The campfire is load-bearing."
+    reserved: "HEALMATES"
+    reserved_note: "6 consecutive weeks in the fire"
+  item_title: "GUILD ITEM OF THE MONTH"
+
+motd_quips:
+  - "MORE DOTS. MORE DOTS. … OK STOP DOTS."
+  - "That's a 50 DKP MINUS."
+  - "Healmates has now stood in the fire for 6 consecutive weeks — a new guild record."
+  - "Key depleted? That is a you problem."
+  - "At least Leeroy had a plan."
+  - "Raid times: Tue/Thu, 8 PM to whenever Rakdisc stops blaming people."
+  - "Repair bills are self-inflicted and therefore not reimbursable."
+
+credits: "“Git Gud.” — ancient guild proverb"
+
+awards:
+  enabled: true
+  per_week: 2
+  top_n: 3

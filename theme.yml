@@ -15,8 +15,8 @@ board:
   footer: graveyard          # footer module: graveyard or simple
   # The four ranking columns are WANTED posters — these two lines dress
   # them (set to "" to hide either)
-  poster_eyebrow: "★ IMPERIAL BOUNTY ★"
-  poster_reward: "CLAIMED BY THE VOID · REWARD: THE THRONE"
+  poster_eyebrow: "☠ DEAD OR DRUNK ☠"
+  poster_reward: "REWARD: ONE (1) BARREL · PAID AT THE DOCK"
   # Making your own module? Drop a file in board_templates/headers/
   # or board_templates/footers/ and put its name here (CUSTOMIZING.md
   # has a copy-paste recipe).
@@ -26,23 +26,23 @@ board:
 #  bars and highlights; the rest are the dark chrome around the data.
 # ------------------------------------------------------------------
 colors:
-  accent: "#c9974a"
-  background: "#130d1a"
-  panel: "#20152c"
-  hairline: "#3c2e4a"
-  text: "#f3ece0"
-  muted: "#b9abc9"
-  faint: "#7c6d8c"
-  red: "#e5484d"
-  green: "#57e08a"
+  accent: "#e8a33d"      # lantern brass / amber ale
+  background: "#0a0806"  # tarred timber, near black
+  panel: "#16100a"       # wet oak
+  hairline: "#3f2d18"
+  text: "#f7ecd9"        # candlelit canvas
+  muted: "#c2a983"
+  faint: "#826e51"
+  red: "#e5544a"
+  green: "#4fc98b"       # sea green
 
 # ------------------------------------------------------------------
 #  FONTS — any font name from fonts.google.com. display = the big
 #  carved titles, body = all the stats text.
 # ------------------------------------------------------------------
 fonts:
-  display: "Cinzel Decorative"   # engraved imperial serif — titles, signs, tombstones
-  display_weights: "700;900"     # Cinzel Decorative ships 400/700/900
+  display: "Rye"                 # wanted-poster woodcut slab — titles, signs, tombstones
+  display_weights: "400"         # Rye ships a single weight
   body: "Inter"
 
 # ------------------------------------------------------------------
@@ -52,13 +52,13 @@ fonts:
 #  0 = art at full strength, 1 = solid background color.
 # ------------------------------------------------------------------
 backgrounds:
-  header: "assets/generated/imperial_ruin_header.png"
-  middle: "assets/generated/imperial_ruin_middle.png"
-  middle_tint: 0.86
-  footer: "assets/generated/imperial_ruin_footer.png"
+  header: "assets/generated/kegandcutlass/header.png"
+  middle: "assets/generated/kegandcutlass/middle.png"
+  middle_tint: 0.78
+  footer: "assets/generated/kegandcutlass/footer.png"
   # AI-generated parchment (see assets/ART_GUIDE.md) behind each WANTED
   # column — remove this line to go back to the plain CSS parchment
-  poster: "assets/generated/imperial_ruin_poster.png"
+  poster: "assets/generated/kegandcutlass/poster.png"
 
 # ------------------------------------------------------------------
 #  HEADER GAGS — the hanging sign, the widget one-liners, and the
@@ -66,7 +66,7 @@ backgrounds:
 # ------------------------------------------------------------------
 header:
   sign_text: "GIT GUD"
-  sign_subtext: "MGMT IS NOT RESPONSIBLE"
+  sign_subtext: "NO REFUNDS · NO SURVIVORS"
   wipes_sub: "deaths: {deaths} · personal best: still zero"
   repair_sub: "donations welcome · thoughts & prayers accepted"
   counter_label: "“GO AGANE” COUNTER"
