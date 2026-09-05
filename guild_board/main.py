@@ -342,12 +342,19 @@ def build_board(cfg, start_dt=None, end_dt=None, preview=False, dry_run=False):
             if (cfg.get("rankings") or {}).get("enabled", True):
                 zone_id, zone_name = detect_zone(cfg, reports)
                 if zone_id:
-                    try:
-                        standing = fetch_guild_standing(token, cfg, zone_id)
-                        if standing:
-                            logger.info("Guild standing retrieved: %s", standing)
-                    except (RuntimeError, requests.RequestException) as exc:
-                        logger.warning("Guild standing lookup failed: %s", exc)
+                    # An M+ season zone has no guild progress ranking: asking
+                    # WCL for one answers empty, and empty is what erased the
+                    # standing on 2026-08-18. Skip the lookup; the memory
+                    # path below keeps last week's ranks, labeled stale.
+                    if "season" in (zone_name or "").lower():
+                        logger.info("Zone %s is a season zone; keeping the remembered standing.", zone_name)
+                    else:
+                        try:
+                            standing = fetch_guild_standing(token, cfg, zone_id)
+                            if standing:
+                                logger.info("Guild standing retrieved: %s", standing)
+                        except (RuntimeError, requests.RequestException) as exc:
+                            logger.warning("Guild standing lookup failed: %s", exc)
 
                     # Leaders power the WEEKLY BOSS RANKS section — skip the
                     # whole per-character sweep when the section is disabled.

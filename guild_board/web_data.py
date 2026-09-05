@@ -267,19 +267,33 @@ def build_records_leaderboard(board_state, limit=None):
     # standing ALONE is only half of what it shows. Carry the week the arrow
     # is measured against so a consumer can print the same movement instead
     # of re-deriving it (or, as the paper did, dropping it).
-    previous = (current.get("baseline") or {}).get("standing") or {}
-    standing = current.get("standing") or {}
+    base = current.get("baseline") or {}
+    previous = base.get("standing") or {}
+    live = current.get("standing") or {}
+    # A rank the guild HELD does not vanish because one lookup flaked -- the
+    # rule state.py applies when it saves, applied again where the state is
+    # published, because a state written before that rule landed can hold an
+    # empty standing under a full baseline for weeks (2026-08-18 did), and the
+    # paper's parity gate then refuses the very run that would heal it.
+    # Remembered = nothing live, or a live slot the save marked as carried
+    # (state.standing_measured False). A remembered rank was not re-measured,
+    # so it carries NO movement, and no movement is struck against a baseline
+    # that was itself carried: none is not zero.
+    standing = live or previous
+    remembered = bool(standing) and (not live or current.get("standing_measured") is False)
     delta = {}
-    for scope in ("realm", "region", "world"):
-        now, was = standing.get(scope), previous.get(scope)
-        if isinstance(now, int) and isinstance(was, int) and was:
-            delta[scope] = was - now      # positive = climbed
+    if not remembered and base.get("standing_measured", True):
+        for scope in ("realm", "region", "world"):
+            now, was = standing.get(scope), previous.get(scope)
+            if isinstance(now, int) and isinstance(was, int) and was:
+                delta[scope] = was - now      # positive = climbed
 
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
         "based_on": current.get("last_updated"),
-        "standing": current.get("standing"),
+        "standing": standing or None,
+        "standing_source": "remembered" if remembered else ("measured" if standing else None),
         "previous_standing": previous or None,
         "standing_delta": delta or None,
         "headline_records": headline,

@@ -204,6 +204,11 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         k: v for k, v in (standing or {}).items()
         if k in ("realm", "region", "world") and v
     }
+    # Provenance, taken BEFORE the memory fallback and before the stale
+    # flag is stripped: a rank this run actually measured, or one carried.
+    # The carried ranks live in the same slot as measured ones, so without
+    # this marker the next publication would call them this week's.
+    measured = bool(clean_standing) and not (standing or {}).get("stale")
     # Never let a flaked lookup erase the ranks -- and fall back to the
     # baseline when the previous run already wrote an empty one, so the
     # memory survives a miss rather than only the first one.
@@ -215,16 +220,19 @@ def save_board_state(standing, season_scores, streaks=None, records=None, path=S
         # compare this week against itself and zero every delta.
         baseline = (prev.get("baseline")
                     or {"standing": prev.get("standing") or {},
+                        "standing_measured": prev.get("standing_measured", True),
                         "season_scores": prev.get("season_scores") or {},
                         "records": prev.get("records") or {}})
     else:
         # New raid week: last week's finals become the comparison floor.
         baseline = {"standing": prev.get("standing") or {},
+                    "standing_measured": prev.get("standing_measured", True),
                     "season_scores": prev.get("season_scores") or {},
                     "records": prev.get("records") or {}}
     state = {
         "last_updated": datetime.now(timezone.utc).isoformat(),
         "standing": clean_standing,
+        "standing_measured": measured,
         "season_scores": {
             name.strip().lower(): score
             for score, name, _ in (season_scores or [])
