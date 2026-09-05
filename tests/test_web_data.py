@@ -320,3 +320,38 @@ def test_records_publish_remembers_the_standing_the_state_lost():
     assert live["standing"] == {"realm": 49, "region": 2219, "world": 6855}
     assert live["standing_source"] == "measured"
     assert live["standing_delta"] == {"world": -1}
+
+
+def test_remembered_standing_stays_remembered_across_rolled_weeks(tmp_path):
+    # The save carries the ranks INTO the standing slot; without provenance the
+    # next publication would call them measured. Two empty Tuesdays in a row.
+    from guild_board import state as st
+    prev = dict(BOARD_STATE, standing={}, baseline=dict(BOARD_STATE["baseline"],
+                standing={"realm": 35, "region": 1604, "world": 5119}))
+    p = tmp_path / "board_state.json"
+    for week in ("2026-09-08", "2026-09-15"):
+        st.save_board_state({}, [], path=str(p), previous=prev, streaks_week=week)
+        prev = st.load_board_state(str(p))
+        assert prev["standing"] == {"realm": 35, "region": 1604, "world": 5119}
+        assert prev["standing_measured"] is False
+        records = web_data.build_records_leaderboard(prev)
+        assert records["standing_source"] == "remembered"
+        assert records["standing_delta"] is None
+
+
+def test_measured_standing_after_a_carried_week_strikes_no_movement(tmp_path):
+    # The first real lookup after a carried week publishes as measured, but the
+    # baseline it would move against was itself carried: no arrow that week.
+    from guild_board import state as st
+    p = tmp_path / "board_state.json"
+    carried = dict(BOARD_STATE, standing={}, baseline=dict(BOARD_STATE["baseline"],
+                   standing={"realm": 35, "region": 1604, "world": 5119}))
+    st.save_board_state({}, [], path=str(p), previous=carried, streaks_week="2026-09-08")
+    prev = st.load_board_state(str(p))
+    st.save_board_state({"realm": 30, "region": 1500, "world": 5000}, [], path=str(p),
+                        previous=prev, streaks_week="2026-09-15")
+    now = st.load_board_state(str(p))
+    assert now["standing_measured"] is True
+    records = web_data.build_records_leaderboard(now)
+    assert records["standing_source"] == "measured"
+    assert records["standing_delta"] is None
