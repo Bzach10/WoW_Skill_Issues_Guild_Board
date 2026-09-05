@@ -304,3 +304,19 @@ def test_parity_map_covers_every_discord_field():
     # With a real board_state, standing + M+ keys are live, not pending.
     by = {f["field"]: f["state"] for f in parity["fields"]}
     assert by["guild_standing"] == "live"
+
+
+def test_records_publish_remembers_the_standing_the_state_lost():
+    # 2026-08-18: the state saved standing {} under a full baseline, and every
+    # daily refresh republished the empty one. The publication applies the
+    # same memory the save does -- and strikes no movement against a rank it
+    # did not re-measure.
+    state = dict(BOARD_STATE, standing={})
+    records = web_data.build_records_leaderboard(state)
+    assert records["standing"] == {"world": 6854}
+    assert records["standing_source"] == "remembered"
+    assert records["standing_delta"] is None
+    live = web_data.build_records_leaderboard(BOARD_STATE)
+    assert live["standing"] == {"realm": 49, "region": 2219, "world": 6855}
+    assert live["standing_source"] == "measured"
+    assert live["standing_delta"] == {"world": -1}

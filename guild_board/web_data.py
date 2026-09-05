@@ -268,18 +268,29 @@ def build_records_leaderboard(board_state, limit=None):
     # is measured against so a consumer can print the same movement instead
     # of re-deriving it (or, as the paper did, dropping it).
     previous = (current.get("baseline") or {}).get("standing") or {}
-    standing = current.get("standing") or {}
+    live = current.get("standing") or {}
+    # A rank the guild HELD does not vanish because one lookup flaked -- the
+    # rule state.py applies when it saves, applied again where the state is
+    # published, because a state written before that rule landed can hold an
+    # empty standing under a full baseline for weeks (2026-08-18 did), and the
+    # paper's parity gate then refuses the very run that would heal it. A
+    # remembered rank was not re-measured, so it carries NO movement: none is
+    # not zero.
+    remembered = not live and bool(previous)
+    standing = previous if remembered else live
     delta = {}
-    for scope in ("realm", "region", "world"):
-        now, was = standing.get(scope), previous.get(scope)
-        if isinstance(now, int) and isinstance(was, int) and was:
-            delta[scope] = was - now      # positive = climbed
+    if not remembered:
+        for scope in ("realm", "region", "world"):
+            now, was = standing.get(scope), previous.get(scope)
+            if isinstance(now, int) and isinstance(was, int) and was:
+                delta[scope] = was - now      # positive = climbed
 
     return {
         "schema_version": SCHEMA_VERSION,
         "generated_at": _now_iso(),
         "based_on": current.get("last_updated"),
-        "standing": current.get("standing"),
+        "standing": standing or None,
+        "standing_source": "remembered" if remembered else ("measured" if standing else None),
         "previous_standing": previous or None,
         "standing_delta": delta or None,
         "headline_records": headline,
